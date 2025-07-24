@@ -44,7 +44,7 @@ class FileScanner
             foreach ($finder as $file) {
                 $currentFile++;
 
-                if ($progressCallback) {
+                if ($progressCallback !== null) {
                     $progressCallback($currentFile, $totalFiles);
                 }
 
@@ -72,7 +72,7 @@ class FileScanner
         $extensions = $this->config['file_extensions'];
 
         if (! empty($extensions)) {
-            $patterns = array_map(fn ($ext) => "*.$ext", $extensions);
+            $patterns = array_map(fn ($ext): string => '*.'.$ext, $extensions);
             $finder->name($patterns);
         }
 
@@ -80,7 +80,7 @@ class FileScanner
         $excludePatterns = $this->config['exclude_patterns'];
 
         foreach ($excludePatterns as $pattern) {
-            if (str_contains($pattern, '/') || str_contains($pattern, '\\')) {
+            if (str_contains((string) $pattern, '/') || str_contains((string) $pattern, '\\')) {
                 // Pattern de chemin
                 $finder->notPath($pattern);
             } else {
@@ -131,7 +131,7 @@ class FileScanner
                     // Extraire le style et le nom de l'icône
                     $iconData = $this->parseIconString($fullMatch, $extension);
 
-                    if ($iconData) {
+                    if ($iconData !== null && $iconData !== []) {
                         $iconData['full_match'] = $fullMatch;
                         $iconData['offset'] = $offset;
                         $iconData['line'] = substr_count(substr($content, 0, $offset), "\n") + 1;
@@ -162,26 +162,18 @@ class FileScanner
             '/class=["\']([^"\']*\b(?:fa[slrbad]|fas|far|fal|fab|fad)\s+fa-[a-zA-Z0-9-]+[^"\']*)["\']/',
         ];
 
-        switch ($extension) {
-            case 'vue':
-            case 'js':
-            case 'ts':
-                return array_merge($basePatterns, [
-                    // Font Awesome Vue/React components
-                    '/<FontAwesome[^>]*icon=["\']([^"\']+)["\'][^>]*>/',
-                    '/icon:\s*["\']([^"\']+)["\']/',
-                ]);
-
-            case 'php':
-            case 'blade.php':
-                return array_merge($basePatterns, [
-                    // Blade/PHP avec échappement
-                    '/\{\{\s*["\']([^"\']*(?:fa[slrbad]|fas|far|fal|fab|fad)\s+fa-[a-zA-Z0-9-]+[^"\']*)["\']/',
-                ]);
-
-            default:
-                return $basePatterns;
-        }
+        return match ($extension) {
+            'vue', 'js', 'ts' => array_merge($basePatterns, [
+                // Font Awesome Vue/React components
+                '/<FontAwesome[^>]*icon=["\']([^"\']+)["\'][^>]*>/',
+                '/icon:\s*["\']([^"\']+)["\']/',
+            ]),
+            'php', 'blade.php' => array_merge($basePatterns, [
+                // Blade/PHP avec échappement
+                '/\{\{\s*["\']([^"\']*(?:fa[slrbad]|fas|far|fal|fab|fad)\s+fa-[a-zA-Z0-9-]+[^"\']*)["\']/',
+            ]),
+            default => $basePatterns,
+        };
     }
 
     /**

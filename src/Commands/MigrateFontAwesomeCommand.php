@@ -25,21 +25,12 @@ class MigrateFontAwesomeCommand extends Command
      */
     protected $description = 'Migrer Font Awesome 5 vers Font Awesome 6 dans votre application Laravel';
 
-    protected FileScanner $scanner;
-
-    protected IconReplacer $replacer;
-
-    protected MigrationReporter $reporter;
-
     public function __construct(
-        FileScanner $scanner,
-        IconReplacer $replacer,
-        MigrationReporter $reporter
+        protected FileScanner $scanner,
+        protected IconReplacer $replacer,
+        protected MigrationReporter $reporter,
     ) {
         parent::__construct();
-        $this->scanner = $scanner;
-        $this->replacer = $replacer;
-        $this->reporter = $reporter;
     }
 
     /**
@@ -68,7 +59,7 @@ class MigrateFontAwesomeCommand extends Command
         $progressBar = $this->output->createProgressBar();
 
         // Scanner les fichiers
-        $files = $this->scanner->scanPaths($paths, function ($current, $total) use ($progressBar) {
+        $files = $this->scanner->scanPaths($paths, function ($current, $total) use ($progressBar): void {
             $progressBar->setMaxSteps($total);
             $progressBar->setProgress($current);
         });
@@ -76,7 +67,7 @@ class MigrateFontAwesomeCommand extends Command
         $progressBar->finish();
         $this->newLine();
 
-        if (empty($files)) {
+        if ($files === []) {
             $this->warn('Aucun fichier trouvé à analyser.');
 
             return Command::SUCCESS;
@@ -130,14 +121,14 @@ class MigrateFontAwesomeCommand extends Command
     protected function displayResults(array $results, bool $isDryRun): void
     {
         $totalFiles = \count($results);
-        $modifiedFiles = collect($results)->filter(fn ($result) => ! empty($result['changes']))->count();
-        $totalChanges = collect($results)->sum(fn ($result) => \count($result['changes']));
+        $modifiedFiles = collect($results)->filter(fn ($result): bool => ! empty($result['changes']))->count();
+        $totalChanges = collect($results)->sum(fn ($result): int => \count($result['changes']));
 
         $this->newLine();
         $this->info('📊 Résultats de la migration :');
-        $this->line("   • Fichiers analysés : {$totalFiles}");
-        $this->line("   • Fichiers modifiés : {$modifiedFiles}");
-        $this->line("   • Total des changements : {$totalChanges}");
+        $this->line('   • Fichiers analysés : '.$totalFiles);
+        $this->line('   • Fichiers modifiés : '.$modifiedFiles);
+        $this->line('   • Total des changements : '.$totalChanges);
 
         if ($this->option('verbose') || $totalChanges < 20) {
             $this->newLine();
@@ -145,11 +136,11 @@ class MigrateFontAwesomeCommand extends Command
 
             foreach ($results as $result) {
                 if (! empty($result['changes'])) {
-                    $this->line("   📄 {$result['file']}:");
+                    $this->line(\sprintf('   📄 %s:', $result['file']));
 
                     foreach ($result['changes'] as $change) {
                         $status = $isDryRun ? '(DRY-RUN)' : '✓';
-                        $this->line("      {$status} {$change['from']} → {$change['to']}");
+                        $this->line(\sprintf('      %s %s → %s', $status, $change['from'], $change['to']));
                     }
                 }
             }
@@ -161,7 +152,7 @@ class MigrateFontAwesomeCommand extends Command
 
             foreach ($results as $result) {
                 foreach ($result['warnings'] ?? [] as $warning) {
-                    $this->line("   • {$warning}");
+                    $this->line('   • '.$warning);
                 }
             }
         }

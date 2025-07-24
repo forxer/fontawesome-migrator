@@ -175,20 +175,20 @@ class IconMapper
         if (isset($this->renamedIcons[$iconName])) {
             $result['new_name'] = $this->renamedIcons[$iconName];
             $result['renamed'] = true;
-            $result['warnings'][] = "Icône renommée: {$iconName} → {$result['new_name']}";
+            $result['warnings'][] = \sprintf('Icône renommée: %s → %s', $iconName, $result['new_name']);
         }
 
         // Vérifier si l'icône est dépréciée
         if (\in_array($iconName, $this->deprecatedIcons)) {
             $result['deprecated'] = true;
-            $result['warnings'][] = "Icône dépréciée: {$iconName}";
+            $result['warnings'][] = 'Icône dépréciée: '.$iconName;
 
             // Proposer une alternative si disponible
             $alternative = $this->getAlternativeIcon($iconName);
 
-            if ($alternative) {
+            if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
                 $result['new_name'] = $alternative;
-                $result['warnings'][] = "Alternative suggérée: {$alternative}";
+                $result['warnings'][] = 'Alternative suggérée: '.$alternative;
             }
         }
 
@@ -197,12 +197,12 @@ class IconMapper
             $result['pro_only'] = true;
 
             if ($this->config['license_type'] === 'free') {
-                $result['warnings'][] = "Icône Pro uniquement: {$iconName}";
+                $result['warnings'][] = 'Icône Pro uniquement: '.$iconName;
                 $fallback = $this->getFreeFallback($iconName);
 
-                if ($fallback) {
+                if ($fallback !== null && $fallback !== '' && $fallback !== '0') {
                     $result['new_name'] = $fallback;
-                    $result['warnings'][] = "Fallback gratuit: {$fallback}";
+                    $result['warnings'][] = 'Fallback gratuit: '.$fallback;
                 }
             }
         }
@@ -275,7 +275,7 @@ class IconMapper
 
         // Rechercher dans les icônes renommées
         foreach ($this->renamedIcons as $old => $new) {
-            if (str_contains($old, $searchTerm) || str_contains($new, $searchTerm)) {
+            if (str_contains($old, $searchTerm) || str_contains((string) $new, $searchTerm)) {
                 $similar[] = [
                     'icon' => $new,
                     'reason' => 'Renommage',
@@ -286,7 +286,7 @@ class IconMapper
 
         // Rechercher dans les nouvelles icônes FA6
         foreach ($this->newIcons as $newIcon) {
-            if (str_contains($newIcon, $searchTerm)) {
+            if (str_contains((string) $newIcon, $searchTerm)) {
                 $similar[] = [
                     'icon' => $newIcon,
                     'reason' => 'Nouvelle icône FA6',
@@ -314,13 +314,9 @@ class IconMapper
         }
 
         // Vérifier si ce n'est pas une icône dépréciée
-        if (\in_array($iconName, $this->deprecatedIcons)) {
-            return false;
-        }
-
         // Pour les autres icônes, on assume qu'elles existent
         // (cette logique pourrait être améliorée avec une liste complète)
-        return true;
+        return ! \in_array($iconName, $this->deprecatedIcons);
     }
 
     /**

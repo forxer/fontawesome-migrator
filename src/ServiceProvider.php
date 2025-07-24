@@ -4,9 +4,11 @@ namespace FontAwesome\Migrator;
 
 use FontAwesome\Migrator\Commands\MigrateFontAwesomeCommand;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Override;
 
 class ServiceProvider extends BaseServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this->mergeConfigFrom(

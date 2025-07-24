@@ -3,25 +3,18 @@
 namespace FontAwesome\Migrator\Services;
 
 use Illuminate\Support\Facades\File;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class IconReplacer
 {
-    protected IconMapper $iconMapper;
-
-    protected StyleMapper $styleMapper;
-
-    protected FileScanner $fileScanner;
-
     protected array $config;
 
     public function __construct(
-        IconMapper $iconMapper,
-        StyleMapper $styleMapper,
-        FileScanner $fileScanner
+        protected IconMapper $iconMapper,
+        protected StyleMapper $styleMapper,
+        protected FileScanner $fileScanner
     ) {
-        $this->iconMapper = $iconMapper;
-        $this->styleMapper = $styleMapper;
-        $this->fileScanner = $fileScanner;
         $this->config = config('fontawesome-migrator');
     }
 
@@ -68,7 +61,6 @@ class IconReplacer
         $changes = [];
         $warnings = [];
         $content = $analysis['content'];
-        $offset = 0;
 
         // Trier les icônes par offset décroissant pour éviter les décalages
         $icons = collect($analysis['icons'])->sortByDesc('offset')->values()->all();
@@ -93,13 +85,13 @@ class IconReplacer
                     $content,
                     $replacement['new_string'],
                     $icon['offset'],
-                    \strlen($icon['full_match'])
+                    \strlen((string) $icon['full_match'])
                 );
             }
         }
 
         // Sauvegarder le fichier si ce n'est pas un dry-run
-        if (! $isDryRun && ! empty($changes)) {
+        if (! $isDryRun && $changes !== []) {
             $this->saveFile($filePath, $content);
         }
 
@@ -139,17 +131,17 @@ class IconReplacer
 
         // Vérifier les cas spéciaux
         if ($mappingResult['deprecated']) {
-            $warning = "Icône dépréciée '{$iconName}' remplacée par '{$newIconName}'";
+            $warning = \sprintf("Icône dépréciée '%s' remplacée par '%s'", $iconName, $newIconName);
             $type = 'deprecated_icon';
         }
 
         if ($mappingResult['pro_only'] && $this->config['license_type'] === 'free') {
-            $warning = "Icône Pro uniquement '{$iconName}' - fallback vers style ".$this->config['fallback_strategy'];
+            $warning = \sprintf("Icône Pro uniquement '%s' - fallback vers style ", $iconName).$this->config['fallback_strategy'];
             $type = 'pro_fallback';
         }
 
         if (! $mappingResult['found']) {
-            $warning = "Icône non trouvée '{$iconName}' - vérification manuelle requise";
+            $warning = \sprintf("Icône non trouvée '%s' - vérification manuelle requise", $iconName);
             $type = 'manual_review';
         }
 
@@ -205,19 +197,19 @@ class IconReplacer
         $backupDir = $this->config['backup_path'];
         $relativePath = str_replace(base_path().'/', '', $filePath);
 
-        if ($backupTimestamp) {
+        if ($backupTimestamp !== null && $backupTimestamp !== '' && $backupTimestamp !== '0') {
             $backupPath = $backupDir.'/'.$relativePath.'.backup.'.$backupTimestamp;
         } else {
             // Trouver la sauvegarde la plus récente
             $pattern = $backupDir.'/'.$relativePath.'.backup.*';
             $backups = glob($pattern);
 
-            if (empty($backups)) {
+            if ($backups === [] || $backups === false) {
                 return false;
             }
 
             // Trier par date de modification décroissante
-            usort($backups, fn ($a, $b) => filemtime($b) <=> filemtime($a));
+            usort($backups, fn ($a, $b): int => filemtime($b) <=> filemtime($a));
             $backupPath = $backups[0];
         }
 
@@ -239,7 +231,7 @@ class IconReplacer
 
         $backups = glob($pattern);
 
-        return array_map(function ($backupPath) {
+        return array_map(function ($backupPath): array {
             $timestamp = basename($backupPath);
             $timestamp = str_replace(basename($backupPath, '.backup.*').'.backup.', '', $timestamp);
 
@@ -266,19 +258,23 @@ class IconReplacer
         $cutoffTime = time() - ($daysToKeep * 24 * 60 * 60);
         $deleted = 0;
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($backupDir)
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($backupDir)
         );
 
         foreach ($iterator as $file) {
-            if ($file->isFile() &&
-                str_contains($file->getFilename(), '.backup.') &&
-                $file->getMTime() < $cutoffTime
-            ) {
-                if (File::delete($file->getRealPath())) {
-                    $deleted++;
-                }
+            if (! ($file->isFile() && str_contains((string) $file->getFilename(), '.backup.'))) {
+                continue;
             }
+
+            if ($file->getMTime() >= $cutoffTime) {
+                continue;
+            }
+
+            if (! File::delete($file->getRealPath())) {
+                continue;
+            }
+            $deleted++;
         }
 
         return $deleted;
