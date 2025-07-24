@@ -6,7 +6,6 @@ use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MigrationReporter;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 
 class MigrateFontAwesomeCommand extends Command
 {
@@ -27,7 +26,9 @@ class MigrateFontAwesomeCommand extends Command
     protected $description = 'Migrer Font Awesome 5 vers Font Awesome 6 dans votre application Laravel';
 
     protected FileScanner $scanner;
+
     protected IconReplacer $replacer;
+
     protected MigrationReporter $reporter;
 
     public function __construct(
@@ -49,7 +50,7 @@ class MigrateFontAwesomeCommand extends Command
         $this->info('🚀 Démarrage de la migration Font Awesome 5 → 6');
 
         // Validation de la configuration
-        if (!$this->validateConfiguration()) {
+        if (! $this->validateConfiguration()) {
             return Command::FAILURE;
         }
 
@@ -77,10 +78,11 @@ class MigrateFontAwesomeCommand extends Command
 
         if (empty($files)) {
             $this->warn('Aucun fichier trouvé à analyser.');
+
             return Command::SUCCESS;
         }
 
-        $this->info(sprintf('📋 %d fichiers trouvés', count($files)));
+        $this->info(\sprintf('📋 %d fichiers trouvés', \count($files)));
 
         // Analyser et remplacer les icônes
         $this->info('🔍 Recherche des icônes Font Awesome 5...');
@@ -92,7 +94,7 @@ class MigrateFontAwesomeCommand extends Command
         // Générer le rapport si demandé
         if ($this->option('report') || config('fontawesome-migrator.generate_report')) {
             $this->reporter->generateReport($results);
-            $this->info('📊 Rapport généré dans ' . config('fontawesome-migrator.report_path'));
+            $this->info('📊 Rapport généré dans '.config('fontawesome-migrator.report_path'));
         }
 
         if ($isDryRun) {
@@ -108,14 +110,17 @@ class MigrateFontAwesomeCommand extends Command
     {
         $licenseType = config('fontawesome-migrator.license_type');
 
-        if (!in_array($licenseType, ['free', 'pro'])) {
+        if (! \in_array($licenseType, ['free', 'pro'])) {
             $this->error('Type de licence invalide. Utilisez "free" ou "pro".');
+
             return false;
         }
 
         $scanPaths = config('fontawesome-migrator.scan_paths');
+
         if (empty($scanPaths)) {
             $this->error('Aucun chemin de scan configuré.');
+
             return false;
         }
 
@@ -124,9 +129,9 @@ class MigrateFontAwesomeCommand extends Command
 
     protected function displayResults(array $results, bool $isDryRun): void
     {
-        $totalFiles = count($results);
-        $modifiedFiles = collect($results)->filter(fn($result) => !empty($result['changes']))->count();
-        $totalChanges = collect($results)->sum(fn($result) => count($result['changes']));
+        $totalFiles = \count($results);
+        $modifiedFiles = collect($results)->filter(fn ($result) => ! empty($result['changes']))->count();
+        $totalChanges = collect($results)->sum(fn ($result) => \count($result['changes']));
 
         $this->newLine();
         $this->info('📊 Résultats de la migration :');
@@ -139,8 +144,9 @@ class MigrateFontAwesomeCommand extends Command
             $this->info('📝 Détail des changements :');
 
             foreach ($results as $result) {
-                if (!empty($result['changes'])) {
+                if (! empty($result['changes'])) {
                     $this->line("   📄 {$result['file']}:");
+
                     foreach ($result['changes'] as $change) {
                         $status = $isDryRun ? '(DRY-RUN)' : '✓';
                         $this->line("      {$status} {$change['from']} → {$change['to']}");
@@ -149,9 +155,10 @@ class MigrateFontAwesomeCommand extends Command
             }
         }
 
-        if (!empty($results[0]['warnings'] ?? [])) {
+        if (! empty($results[0]['warnings'] ?? [])) {
             $this->newLine();
             $this->warn('⚠️  Avertissements :');
+
             foreach ($results as $result) {
                 foreach ($result['warnings'] ?? [] as $warning) {
                     $this->line("   • {$warning}");

@@ -20,13 +20,13 @@ class MigrationReporter
     {
         $reportPath = $this->config['report_path'];
 
-        if (!File::exists($reportPath)) {
+        if (! File::exists($reportPath)) {
             File::makeDirectory($reportPath, 0755, true);
         }
 
         $timestamp = date('Y-m-d_H-i-s');
         $filename = "fontawesome-migration-report-{$timestamp}.html";
-        $fullPath = $reportPath . '/' . $filename;
+        $fullPath = $reportPath.'/'.$filename;
 
         $htmlContent = $this->generateHtmlReport($results);
 
@@ -34,7 +34,7 @@ class MigrationReporter
 
         // Générer aussi un rapport JSON pour l'automatisation
         $jsonFilename = "fontawesome-migration-report-{$timestamp}.json";
-        $jsonPath = $reportPath . '/' . $jsonFilename;
+        $jsonPath = $reportPath.'/'.$jsonFilename;
         File::put($jsonPath, json_encode($this->generateJsonReport($results), JSON_PRETTY_PRINT));
 
         return $fullPath;
@@ -86,13 +86,13 @@ class MigrationReporter
         <div class='header'>
             <h1>🚀 Rapport de Migration Font Awesome 5 → 6</h1>
             <p>Généré le {$timestamp}</p>
-            <p>Type de licence: <strong>" . ucfirst($this->config['license_type']) . "</strong></p>
+            <p>Type de licence: <strong>".ucfirst($this->config['license_type'])."</strong></p>
         </div>
 
         <div class='summary'>
             <h2>📊 Résumé Exécutif</h2>
             <p><strong>{$stats['total_changes']}</strong> changements appliqués sur <strong>{$stats['modified_files']}</strong> fichiers (sur {$stats['total_files']} analysés)</p>
-            " . ($stats['warnings'] > 0 ? "<p class='error'><strong>{$stats['warnings']}</strong> avertissements nécessitent votre attention</p>" : "") . "
+            ".($stats['warnings'] > 0 ? "<p class='error'><strong>{$stats['warnings']}</strong> avertissements nécessitent votre attention</p>" : '')."
         </div>
 
         <div class='stats-grid'>
@@ -131,15 +131,15 @@ class MigrationReporter
             </tr>";
         }
 
-        $html .= "</table>
-        </div>";
+        $html .= '</table>
+        </div>';
 
         // Section des fichiers modifiés
-        $modifiedFiles = array_filter($results, fn($result) => !empty($result['changes']));
+        $modifiedFiles = array_filter($results, fn ($result) => ! empty($result['changes']));
 
-        if (!empty($modifiedFiles)) {
+        if (! empty($modifiedFiles)) {
             $html .= "<div class='section'>
-                <h2>📝 Fichiers modifiés (" . count($modifiedFiles) . ")</h2>";
+                <h2>📝 Fichiers modifiés (".\count($modifiedFiles).')</h2>';
 
             foreach ($modifiedFiles as $result) {
                 $html .= "<div class='file-item'>
@@ -160,38 +160,39 @@ class MigrationReporter
                     </div>";
                 }
 
-                $html .= "</div>";
+                $html .= '</div>';
 
                 // Afficher les avertissements pour ce fichier
-                if (!empty($result['warnings'])) {
+                if (! empty($result['warnings'])) {
                     foreach ($result['warnings'] as $warning) {
                         $html .= "<div class='warning'>⚠️ {$warning}</div>";
                     }
                 }
 
-                $html .= "</div>";
+                $html .= '</div>';
             }
 
-            $html .= "</div>";
+            $html .= '</div>';
         }
 
         // Section des avertissements
         $allWarnings = [];
+
         foreach ($results as $result) {
-            if (!empty($result['warnings'])) {
+            if (! empty($result['warnings'])) {
                 foreach ($result['warnings'] as $warning) {
                     $allWarnings[] = [
                         'file' => $result['file'],
-                        'warning' => $warning
+                        'warning' => $warning,
                     ];
                 }
             }
         }
 
-        if (!empty($allWarnings)) {
+        if (! empty($allWarnings)) {
             $html .= "<div class='section'>
-                <h2>⚠️ Avertissements (" . count($allWarnings) . ")</h2>
-                <p>Ces éléments nécessitent une attention particulière :</p>";
+                <h2>⚠️ Avertissements (".\count($allWarnings).')</h2>
+                <p>Ces éléments nécessitent une attention particulière :</p>';
 
             foreach ($allWarnings as $warning) {
                 $html .= "<div class='warning'>
@@ -199,7 +200,7 @@ class MigrationReporter
                 </div>";
             }
 
-            $html .= "</div>";
+            $html .= '</div>';
         }
 
         // Section des recommandations
@@ -210,11 +211,11 @@ class MigrationReporter
                 <li><strong>Mettez à jour vos dépendances</strong> Font Awesome vers la version 6</li>";
 
         if ($stats['warnings'] > 0) {
-            $html .= "<li><strong>Vérifiez les avertissements</strong> listés ci-dessus et corrigez manuellement si nécessaire</li>";
+            $html .= '<li><strong>Vérifiez les avertissements</strong> listés ci-dessus et corrigez manuellement si nécessaire</li>';
         }
 
         if ($this->config['license_type'] === 'pro') {
-            $html .= "<li><strong>Explorez les nouveaux styles</strong> Font Awesome 6 Pro comme fa-thin et fa-sharp</li>";
+            $html .= '<li><strong>Explorez les nouveaux styles</strong> Font Awesome 6 Pro comme fa-thin et fa-sharp</li>';
         }
 
         $html .= "<li><strong>Consultez la documentation</strong> Font Awesome 6 pour découvrir les nouvelles fonctionnalités</li>
@@ -254,12 +255,12 @@ class MigrationReporter
                 return [
                     'file' => $result['file'],
                     'success' => $result['success'] ?? true,
-                    'changes_count' => count($result['changes'] ?? []),
-                    'warnings_count' => count($result['warnings'] ?? []),
+                    'changes_count' => \count($result['changes'] ?? []),
+                    'warnings_count' => \count($result['warnings'] ?? []),
                     'changes' => $result['changes'] ?? [],
                     'warnings' => $result['warnings'] ?? [],
                 ];
-            }, $results)
+            }, $results),
         ];
     }
 
@@ -269,18 +270,18 @@ class MigrationReporter
     protected function calculateStats(array $results): array
     {
         $stats = [
-            'total_files' => count($results),
+            'total_files' => \count($results),
             'modified_files' => 0,
             'total_changes' => 0,
             'changes_by_type' => [],
             'warnings' => 0,
-            'errors' => 0
+            'errors' => 0,
         ];
 
         foreach ($results as $result) {
-            if (!empty($result['changes'])) {
+            if (! empty($result['changes'])) {
                 $stats['modified_files']++;
-                $stats['total_changes'] += count($result['changes']);
+                $stats['total_changes'] += \count($result['changes']);
 
                 foreach ($result['changes'] as $change) {
                     $type = $change['type'] ?? 'style_update';
@@ -288,11 +289,11 @@ class MigrationReporter
                 }
             }
 
-            if (!empty($result['warnings'])) {
-                $stats['warnings'] += count($result['warnings']);
+            if (! empty($result['warnings'])) {
+                $stats['warnings'] += \count($result['warnings']);
             }
 
-            if (isset($result['success']) && !$result['success']) {
+            if (isset($result['success']) && ! $result['success']) {
                 $stats['errors']++;
             }
         }
@@ -310,7 +311,7 @@ class MigrationReporter
             'deprecated_icon' => 'Icône dépréciée',
             'pro_fallback' => 'Fallback Pro→Free',
             'manual_review' => 'Révision manuelle',
-            'renamed_icon' => 'Icône renommée'
+            'renamed_icon' => 'Icône renommée',
         ];
 
         return $labels[$type] ?? ucfirst(str_replace('_', ' ', $type));
@@ -326,7 +327,7 @@ class MigrationReporter
             'deprecated_icon' => 'change-type-deprecated',
             'pro_fallback' => 'change-type-deprecated',
             'manual_review' => 'change-type-manual',
-            'renamed_icon' => 'change-type-style'
+            'renamed_icon' => 'change-type-style',
         ];
 
         return $classes[$type] ?? 'change-type-style';
@@ -340,23 +341,24 @@ class MigrationReporter
         $reportPath = $this->config['report_path'];
         $timestamp = date('Y-m-d_H-i-s');
         $filename = "fontawesome-comparison-{$timestamp}.json";
-        $fullPath = $reportPath . '/' . $filename;
+        $fullPath = $reportPath.'/'.$filename;
 
         $comparison = [
             'meta' => [
                 'generated_at' => date('c'),
-                'type' => 'comparison_report'
+                'type' => 'comparison_report',
             ],
             'before' => $beforeStats,
             'after' => $afterStats,
             'improvements' => [
                 'fa6_compliance' => $afterStats['fa6_icons'] ?? 0,
                 'deprecated_removed' => ($beforeStats['deprecated_icons'] ?? 0) - ($afterStats['deprecated_icons'] ?? 0),
-                'styles_updated' => $afterStats['modern_styles'] ?? 0
-            ]
+                'styles_updated' => $afterStats['modern_styles'] ?? 0,
+            ],
         ];
 
         File::put($fullPath, json_encode($comparison, JSON_PRETTY_PRINT));
+
         return $fullPath;
     }
 
@@ -367,7 +369,7 @@ class MigrationReporter
     {
         $reportPath = $this->config['report_path'];
 
-        if (!File::exists($reportPath)) {
+        if (! File::exists($reportPath)) {
             return 0;
         }
 

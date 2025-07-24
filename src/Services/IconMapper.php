@@ -5,9 +5,13 @@ namespace FontAwesome\Migrator\Services;
 class IconMapper
 {
     protected array $config;
+
     protected array $renamedIcons;
+
     protected array $deprecatedIcons;
+
     protected array $proOnlyIcons;
+
     protected array $newIcons;
 
     public function __construct()
@@ -164,7 +168,7 @@ class IconMapper
             'deprecated' => false,
             'pro_only' => false,
             'renamed' => false,
-            'warnings' => []
+            'warnings' => [],
         ];
 
         // Vérifier si l'icône est renommée
@@ -175,12 +179,13 @@ class IconMapper
         }
 
         // Vérifier si l'icône est dépréciée
-        if (in_array($iconName, $this->deprecatedIcons)) {
+        if (\in_array($iconName, $this->deprecatedIcons)) {
             $result['deprecated'] = true;
             $result['warnings'][] = "Icône dépréciée: {$iconName}";
 
             // Proposer une alternative si disponible
             $alternative = $this->getAlternativeIcon($iconName);
+
             if ($alternative) {
                 $result['new_name'] = $alternative;
                 $result['warnings'][] = "Alternative suggérée: {$alternative}";
@@ -188,12 +193,13 @@ class IconMapper
         }
 
         // Vérifier si l'icône est Pro uniquement
-        if (in_array($iconName, $this->proOnlyIcons) || in_array($result['new_name'], $this->proOnlyIcons)) {
+        if (\in_array($iconName, $this->proOnlyIcons) || \in_array($result['new_name'], $this->proOnlyIcons)) {
             $result['pro_only'] = true;
 
             if ($this->config['license_type'] === 'free') {
                 $result['warnings'][] = "Icône Pro uniquement: {$iconName}";
                 $fallback = $this->getFreeFallback($iconName);
+
                 if ($fallback) {
                     $result['new_name'] = $fallback;
                     $result['warnings'][] = "Fallback gratuit: {$fallback}";
@@ -273,7 +279,7 @@ class IconMapper
                 $similar[] = [
                     'icon' => $new,
                     'reason' => 'Renommage',
-                    'confidence' => 0.9
+                    'confidence' => 0.9,
                 ];
             }
         }
@@ -284,7 +290,7 @@ class IconMapper
                 $similar[] = [
                     'icon' => $newIcon,
                     'reason' => 'Nouvelle icône FA6',
-                    'confidence' => 0.7
+                    'confidence' => 0.7,
                 ];
             }
         }
@@ -303,12 +309,12 @@ class IconMapper
         }
 
         // Vérifier si c'est une nouvelle icône FA6
-        if (in_array($iconName, $this->newIcons)) {
+        if (\in_array($iconName, $this->newIcons)) {
             return true;
         }
 
         // Vérifier si ce n'est pas une icône dépréciée
-        if (in_array($iconName, $this->deprecatedIcons)) {
+        if (\in_array($iconName, $this->deprecatedIcons)) {
             return false;
         }
 
@@ -323,10 +329,10 @@ class IconMapper
     public function getMappingStats(): array
     {
         return [
-            'renamed_icons' => count($this->renamedIcons),
-            'deprecated_icons' => count($this->deprecatedIcons),
-            'pro_only_icons' => count($this->proOnlyIcons),
-            'new_fa6_icons' => count($this->newIcons),
+            'renamed_icons' => \count($this->renamedIcons),
+            'deprecated_icons' => \count($this->deprecatedIcons),
+            'pro_only_icons' => \count($this->proOnlyIcons),
+            'new_fa6_icons' => \count($this->newIcons),
         ];
     }
 }

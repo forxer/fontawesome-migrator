@@ -5,6 +5,7 @@ namespace FontAwesome\Migrator\Services;
 class StyleMapper
 {
     protected array $config;
+
     protected array $styleMapping;
 
     public function __construct()
@@ -64,7 +65,7 @@ class StyleMapper
         if ($this->config['license_type'] === 'free') {
             $proStyles = ['fal', 'fad', 'fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp'];
 
-            if (in_array($fa5Style, $proStyles)) {
+            if (\in_array($fa5Style, $proStyles)) {
                 return $this->getFallbackStyle();
             }
         }
@@ -113,7 +114,7 @@ class StyleMapper
         $proOnlyStyles = ['fal', 'fad', 'fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp'];
 
         foreach ($stylesFound as $style) {
-            if (in_array($style, $proOnlyStyles)) {
+            if (\in_array($style, $proOnlyStyles)) {
                 return 'pro';
             }
         }
@@ -134,7 +135,7 @@ class StyleMapper
                 $recommendations[] = [
                     'style' => 'fa-solid',
                     'reason' => 'Style par défaut, le plus lisible',
-                    'priority' => 1
+                    'priority' => 1,
                 ];
                 break;
 
@@ -143,7 +144,7 @@ class StyleMapper
                 $recommendations[] = [
                     'style' => 'fa-regular',
                     'reason' => 'Plus léger visuellement',
-                    'priority' => 1
+                    'priority' => 1,
                 ];
                 break;
 
@@ -153,14 +154,14 @@ class StyleMapper
                     $recommendations[] = [
                         'style' => 'fa-light',
                         'reason' => 'Style fin et élégant (Pro)',
-                        'priority' => 1
+                        'priority' => 1,
                     ];
 
                     if ($this->config['pro_styles']['thin'] ?? false) {
                         $recommendations[] = [
                             'style' => 'fa-thin',
                             'reason' => 'Nouveau style encore plus fin (FA6 Pro)',
-                            'priority' => 2
+                            'priority' => 2,
                         ];
                     }
                 }
@@ -172,7 +173,7 @@ class StyleMapper
                     $recommendations[] = [
                         'style' => 'fa-duotone',
                         'reason' => 'Style à deux couleurs (Pro)',
-                        'priority' => 1
+                        'priority' => 1,
                     ];
                 }
                 break;
@@ -194,7 +195,7 @@ class StyleMapper
             $iconName = $matches[2];
             $newStyle = $this->mapStyle($oldStyle);
 
-            return $newStyle . ' ' . $iconName;
+            return $newStyle.' '.$iconName;
         }, $cssClass);
     }
 }

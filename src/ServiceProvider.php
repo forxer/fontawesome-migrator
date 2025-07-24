@@ -14,6 +14,7 @@ class ServiceProvider extends BaseServiceProvider
             'fontawesome-migrator'
         );
     }
+
     public function boot(): void
     {
         // Publier la configuration

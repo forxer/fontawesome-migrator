@@ -279,6 +279,4 @@ Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique des versions.
 
 ## Support
 
-- 📖 [Documentation complète](https://github.com/forxer/fontawesome-migrator/wiki)
-- 🐛 [Signaler un bug](https://github.com/forxer/fontawesome-migrator/issues)
-- 💬 [Discussions](https://github.com/forxer/fontawesome-migrator/discussions)
+🐛 [Signaler un bug](https://github.com/forxer/fontawesome-migrator/issues)

@@ -2,15 +2,16 @@
 
 namespace FontAwesome\Migrator\Services;
 
-use FontAwesome\Migrator\Services\IconMapper;
-use FontAwesome\Migrator\Services\StyleMapper;
 use Illuminate\Support\Facades\File;
 
 class IconReplacer
 {
     protected IconMapper $iconMapper;
+
     protected StyleMapper $styleMapper;
+
     protected FileScanner $fileScanner;
+
     protected array $config;
 
     public function __construct(
@@ -52,7 +53,7 @@ class IconReplacer
                 'success' => false,
                 'error' => $analysis['error'],
                 'changes' => [],
-                'warnings' => []
+                'warnings' => [],
             ];
         }
 
@@ -60,7 +61,7 @@ class IconReplacer
             return [
                 'success' => true,
                 'changes' => [],
-                'warnings' => []
+                'warnings' => [],
             ];
         }
 
@@ -84,7 +85,7 @@ class IconReplacer
                     'from' => $icon['full_match'],
                     'to' => $replacement['new_string'],
                     'line' => $icon['line'],
-                    'type' => $replacement['type']
+                    'type' => $replacement['type'],
                 ];
 
                 // Appliquer le remplacement dans le contenu
@@ -92,13 +93,13 @@ class IconReplacer
                     $content,
                     $replacement['new_string'],
                     $icon['offset'],
-                    strlen($icon['full_match'])
+                    \strlen($icon['full_match'])
                 );
             }
         }
 
         // Sauvegarder le fichier si ce n'est pas un dry-run
-        if (!$isDryRun && !empty($changes)) {
+        if (! $isDryRun && ! empty($changes)) {
             $this->saveFile($filePath, $content);
         }
 
@@ -106,7 +107,7 @@ class IconReplacer
             'success' => true,
             'changes' => $changes,
             'warnings' => $warnings,
-            'content' => $content
+            'content' => $content,
         ];
     }
 
@@ -143,11 +144,11 @@ class IconReplacer
         }
 
         if ($mappingResult['pro_only'] && $this->config['license_type'] === 'free') {
-            $warning = "Icône Pro uniquement '{$iconName}' - fallback vers style " . $this->config['fallback_strategy'];
+            $warning = "Icône Pro uniquement '{$iconName}' - fallback vers style ".$this->config['fallback_strategy'];
             $type = 'pro_fallback';
         }
 
-        if (!$mappingResult['found']) {
+        if (! $mappingResult['found']) {
             $warning = "Icône non trouvée '{$iconName}' - vérification manuelle requise";
             $type = 'manual_review';
         }
@@ -155,7 +156,7 @@ class IconReplacer
         return [
             'new_string' => $newString,
             'warning' => $warning,
-            'type' => $type
+            'type' => $type,
         ];
     }
 
@@ -179,16 +180,17 @@ class IconReplacer
     {
         $backupDir = $this->config['backup_path'];
 
-        if (!File::exists($backupDir)) {
+        if (! File::exists($backupDir)) {
             File::makeDirectory($backupDir, 0755, true);
         }
 
-        $relativePath = str_replace(base_path() . '/', '', $filePath);
-        $backupPath = $backupDir . '/' . $relativePath . '.backup.' . date('Y-m-d_H-i-s');
+        $relativePath = str_replace(base_path().'/', '', $filePath);
+        $backupPath = $backupDir.'/'.$relativePath.'.backup.'.date('Y-m-d_H-i-s');
 
         // Créer les dossiers nécessaires
-        $backupDirectory = dirname($backupPath);
-        if (!File::exists($backupDirectory)) {
+        $backupDirectory = \dirname($backupPath);
+
+        if (! File::exists($backupDirectory)) {
             File::makeDirectory($backupDirectory, 0755, true);
         }
 
@@ -201,13 +203,13 @@ class IconReplacer
     public function restoreFromBackup(string $filePath, ?string $backupTimestamp = null): bool
     {
         $backupDir = $this->config['backup_path'];
-        $relativePath = str_replace(base_path() . '/', '', $filePath);
+        $relativePath = str_replace(base_path().'/', '', $filePath);
 
         if ($backupTimestamp) {
-            $backupPath = $backupDir . '/' . $relativePath . '.backup.' . $backupTimestamp;
+            $backupPath = $backupDir.'/'.$relativePath.'.backup.'.$backupTimestamp;
         } else {
             // Trouver la sauvegarde la plus récente
-            $pattern = $backupDir . '/' . $relativePath . '.backup.*';
+            $pattern = $backupDir.'/'.$relativePath.'.backup.*';
             $backups = glob($pattern);
 
             if (empty($backups)) {
@@ -215,11 +217,11 @@ class IconReplacer
             }
 
             // Trier par date de modification décroissante
-            usort($backups, fn($a, $b) => filemtime($b) <=> filemtime($a));
+            usort($backups, fn ($a, $b) => filemtime($b) <=> filemtime($a));
             $backupPath = $backups[0];
         }
 
-        if (!File::exists($backupPath)) {
+        if (! File::exists($backupPath)) {
             return false;
         }
 
@@ -232,20 +234,20 @@ class IconReplacer
     public function listBackups(string $filePath): array
     {
         $backupDir = $this->config['backup_path'];
-        $relativePath = str_replace(base_path() . '/', '', $filePath);
-        $pattern = $backupDir . '/' . $relativePath . '.backup.*';
+        $relativePath = str_replace(base_path().'/', '', $filePath);
+        $pattern = $backupDir.'/'.$relativePath.'.backup.*';
 
         $backups = glob($pattern);
 
         return array_map(function ($backupPath) {
             $timestamp = basename($backupPath);
-            $timestamp = str_replace(basename($backupPath, '.backup.*') . '.backup.', '', $timestamp);
+            $timestamp = str_replace(basename($backupPath, '.backup.*').'.backup.', '', $timestamp);
 
             return [
                 'path' => $backupPath,
                 'timestamp' => $timestamp,
                 'created_at' => date('Y-m-d H:i:s', filemtime($backupPath)),
-                'size' => filesize($backupPath)
+                'size' => filesize($backupPath),
             ];
         }, $backups);
     }
@@ -257,7 +259,7 @@ class IconReplacer
     {
         $backupDir = $this->config['backup_path'];
 
-        if (!File::exists($backupDir)) {
+        if (! File::exists($backupDir)) {
             return 0;
         }
 
@@ -305,17 +307,17 @@ class IconReplacer
     public function getReplacementStats(array $results): array
     {
         $stats = [
-            'total_files' => count($results),
+            'total_files' => \count($results),
             'modified_files' => 0,
             'total_changes' => 0,
             'changes_by_type' => [],
-            'warnings' => 0
+            'warnings' => 0,
         ];
 
         foreach ($results as $result) {
-            if (!empty($result['changes'])) {
+            if (! empty($result['changes'])) {
                 $stats['modified_files']++;
-                $stats['total_changes'] += count($result['changes']);
+                $stats['total_changes'] += \count($result['changes']);
 
                 foreach ($result['changes'] as $change) {
                     $type = $change['type'] ?? 'unknown';
@@ -323,8 +325,8 @@ class IconReplacer
                 }
             }
 
-            if (!empty($result['warnings'])) {
-                $stats['warnings'] += count($result['warnings']);
+            if (! empty($result['warnings'])) {
+                $stats['warnings'] += \count($result['warnings']);
             }
         }
 

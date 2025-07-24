@@ -4,7 +4,6 @@ namespace FontAwesome\Migrator\Services;
 
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class FileScanner
 {
@@ -26,7 +25,7 @@ class FileScanner
 
         // Première passe pour compter les fichiers
         foreach ($paths as $path) {
-            if (!File::exists(base_path($path))) {
+            if (! File::exists(base_path($path))) {
                 continue;
             }
 
@@ -36,7 +35,7 @@ class FileScanner
 
         // Deuxième passe pour collecter les fichiers
         foreach ($paths as $path) {
-            if (!File::exists(base_path($path))) {
+            if (! File::exists(base_path($path))) {
                 continue;
             }
 
@@ -71,13 +70,15 @@ class FileScanner
 
         // Ajouter les extensions de fichiers
         $extensions = $this->config['file_extensions'];
-        if (!empty($extensions)) {
-            $patterns = array_map(fn($ext) => "*.$ext", $extensions);
+
+        if (! empty($extensions)) {
+            $patterns = array_map(fn ($ext) => "*.$ext", $extensions);
             $finder->name($patterns);
         }
 
         // Exclure les patterns configurés
         $excludePatterns = $this->config['exclude_patterns'];
+
         foreach ($excludePatterns as $pattern) {
             if (str_contains($pattern, '/') || str_contains($pattern, '\\')) {
                 // Pattern de chemin
@@ -96,10 +97,10 @@ class FileScanner
      */
     public function analyzeFile(string $filePath): array
     {
-        if (!File::exists($filePath)) {
+        if (! File::exists($filePath)) {
             return [
                 'icons' => [],
-                'error' => 'Fichier non trouvé'
+                'error' => 'Fichier non trouvé',
             ];
         }
 
@@ -109,7 +110,7 @@ class FileScanner
         return [
             'icons' => $this->extractFontAwesome5Icons($content, $extension),
             'content' => $content,
-            'error' => null
+            'error' => null,
         ];
     }
 
@@ -206,6 +207,7 @@ class FileScanner
     public function hasFontAwesome5Icons(string $filePath): bool
     {
         $analysis = $this->analyzeFile($filePath);
-        return !empty($analysis['icons']);
+
+        return ! empty($analysis['icons']);
     }
 }
