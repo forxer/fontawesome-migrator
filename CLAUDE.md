@@ -10,16 +10,33 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 
 ### Testing
 ```bash
+# Run all tests
 composer test
+
+# Run tests with coverage report
+composer test-coverage
+
+# Run specific test suite
+./vendor/bin/phpunit --testsuite=Unit
+./vendor/bin/phpunit --testsuite=Feature
 ```
 
 ### Code Quality
 ```bash
 # Laravel Pint for code formatting
-./vendor/bin/pint
+composer pint
+
+# Check code style without fixing
+composer pint-test
 
 # Rector for automated refactoring and modernization
-./vendor/bin/rector process
+composer rector
+
+# Rector dry-run (preview changes)
+composer rector-dry
+
+# Complete quality check (style + rector + tests)
+composer quality
 ```
 
 ### Package Commands
@@ -80,11 +97,21 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 - Configured with Laravel Pint using Laravel preset
 - Uses Rector for automated code modernization
 
-### Testing
-- Uses Orchestra Testbench for Laravel package testing
-- PHPUnit for unit tests
+### Testing Structure
+- **Orchestra Testbench**: Laravel package testing environment
+- **PHPUnit 10.5+**: Test runner with coverage support
+- **Unit Tests** (`tests/Unit/`): Test individual services (IconMapper, StyleMapper, FileScanner)
+- **Feature Tests** (`tests/Feature/`): Test complete Artisan command functionality
+- **Test Fixtures** (`tests/Fixtures/`): Sample files for testing migrations
+
+### Test Coverage
+- Core services: IconMapper, StyleMapper, FileScanner, IconReplacer
+- Command integration: MigrateFontAwesomeCommand with all options
+- Configuration validation and error handling
+- File scanning and pattern matching
 
 ### Configuration
-- Pint configuration in `pint.json` with Laravel preset
-- Rector configuration in `rector.php` with Laravel-specific rules
-- Composer scripts for common development tasks
+- **PHPUnit**: `phpunit.xml` with testsuites and coverage configuration
+- **Pint**: `pint.json` with Laravel preset and custom rules
+- **Rector**: `rector.php` with Laravel-specific modernization rules
+- **Composer Scripts**: Automated workflows for development tasks

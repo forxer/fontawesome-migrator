@@ -265,15 +265,72 @@ Modifiez `exclude_patterns` dans la configuration :
 ],
 ```
 
+## Développement
+
+### Workflow de développement
+
+```bash
+# 1. Cloner le projet
+git clone https://github.com/forxer/fontawesome-migrator.git
+cd fontawesome-migrator
+
+# 2. Installer les dépendances
+composer install
+
+# 3. Exécuter les tests
+composer test
+
+# 4. Vérifier la qualité du code
+composer quality
+```
+
+### Scripts Composer disponibles
+
+```bash
+# Tests
+composer test              # Exécuter tous les tests
+composer test-coverage     # Tests avec couverture HTML
+
+# Qualité de code
+composer pint             # Formatter le code (Laravel Pint)
+composer pint-test        # Vérifier le style sans corriger
+composer rector           # Moderniser le code (Rector)
+composer rector-dry       # Prévisualiser les modernisations
+composer quality          # Contrôle qualité complet (style + rector + tests)
+```
+
+### Avant de soumettre une PR
+
+1. **Tests** : Assurez-vous que tous les tests passent
+```bash
+composer test
+```
+
+2. **Style de code** : Formatez le code avec Pint
+```bash
+composer pint
+```
+
+3. **Modernisation** : Appliquez les améliorations Rector
+```bash
+composer rector
+```
+
+4. **Contrôle complet** : Exécutez le contrôle qualité global
+```bash
+composer quality
+```
+
 ## Contribution
 
 Les contributions sont les bienvenues ! Veuillez :
 
 1. Fork le projet
 2. Créer une branche feature (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Commit vos changements (`git commit -am 'Ajout nouvelle fonctionnalité'`)
-4. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Créer une Pull Request
+3. Développer en suivant le workflow ci-dessus
+4. Commit vos changements (`git commit -am 'Ajout nouvelle fonctionnalité'`)
+5. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
+6. Créer une Pull Request
 
 ## Tests
 
@@ -285,18 +342,50 @@ Le package utilise PHPUnit avec Orchestra Testbench pour les tests Laravel :
 # Exécuter tous les tests
 composer test
 
-# Avec PHPUnit directement
-./vendor/bin/phpunit
+# Tests avec couverture de code HTML
+composer test-coverage
 
-# Tests avec couverture de code
-./vendor/bin/phpunit --coverage-html coverage/
+# Exécuter une suite spécifique
+./vendor/bin/phpunit --testsuite=Unit
+./vendor/bin/phpunit --testsuite=Feature
+
+# Test d'un fichier spécifique
+./vendor/bin/phpunit tests/Unit/Services/IconMapperTest.php
 ```
 
 ### Structure des tests
 
-- **Tests unitaires** : Test des services individuels (IconMapper, StyleMapper, FileScanner)
-- **Tests d'intégration** : Test de la commande Artisan complète
+```
+tests/
+├── TestCase.php                           # Classe de base avec configuration Laravel
+├── Unit/                                  # Tests unitaires
+│   └── Services/
+│       ├── IconMapperTest.php            # Test des mappings d'icônes FA5→FA6
+│       ├── StyleMapperTest.php           # Test des conversions de styles
+│       └── FileScannerTest.php           # Test du scanner de fichiers
+├── Feature/                              # Tests d'intégration
+│   └── MigrateFontAwesomeCommandTest.php # Test complet de la commande Artisan
+└── Fixtures/                             # Fichiers d'exemple pour les tests
+    ├── sample-blade.php                  # Exemple Blade avec icônes FA5
+    └── sample-vue.vue                    # Exemple Vue avec icônes FA5
+```
+
+### Types de tests
+
+- **Tests unitaires** : Services individuels (IconMapper, StyleMapper, FileScanner)
+- **Tests d'intégration** : Commande Artisan complète avec toutes les options
 - **Tests de régression** : Validation des mappings d'icônes FA5 → FA6
+- **Tests de configuration** : Validation des paramètres et gestion d'erreurs
+
+### Couverture de code
+
+Les tests couvrent :
+- ✅ Mappings d'icônes renommées et dépréciées
+- ✅ Conversions de styles FA5 → FA6 (fas → fa-solid, etc.)
+- ✅ Gestion des licences Free/Pro avec fallbacks
+- ✅ Scanner de fichiers avec filtres et exclusions
+- ✅ Commande Artisan (dry-run, chemins spécifiques, rapports)
+- ✅ Validation de configuration et gestion d'erreurs
 
 Les tests utilisent Orchestra Testbench pour simuler un environnement Laravel complet.
 

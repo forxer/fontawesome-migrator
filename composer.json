@@ -47,5 +47,18 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html coverage",
+        "pint": "./vendor/bin/pint",
+        "pint-test": "./vendor/bin/pint --test",
+        "rector": "./vendor/bin/rector process",
+        "rector-dry": "./vendor/bin/rector process --dry-run",
+        "quality": [
+            "@pint-test",
+            "@rector-dry",
+            "@test"
+        ]
+    }
 }
