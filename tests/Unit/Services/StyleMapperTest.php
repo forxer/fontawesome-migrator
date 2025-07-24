@@ -33,9 +33,9 @@ class StyleMapperTest extends TestCase
     {
         config()->set('fontawesome-migrator.license_type', 'free');
         config()->set('fontawesome-migrator.fallback_strategy', 'solid');
-        
+
         $styleMapper = new StyleMapper();
-        
+
         $this->assertEquals('fa-solid', $styleMapper->mapStyle('fal'));
         $this->assertEquals('fa-solid', $styleMapper->mapStyle('fad'));
     }
@@ -45,9 +45,9 @@ class StyleMapperTest extends TestCase
         config()->set('fontawesome-migrator.license_type', 'pro');
         config()->set('fontawesome-migrator.pro_styles.light', true);
         config()->set('fontawesome-migrator.pro_styles.duotone', true);
-        
+
         $styleMapper = new StyleMapper();
-        
+
         $this->assertEquals('fa-light', $styleMapper->mapStyle('fal'));
         $this->assertEquals('fa-duotone', $styleMapper->mapStyle('fad'));
     }
@@ -57,9 +57,9 @@ class StyleMapperTest extends TestCase
         config()->set('fontawesome-migrator.license_type', 'pro');
         config()->set('fontawesome-migrator.pro_styles.thin', true);
         config()->set('fontawesome-migrator.pro_styles.sharp', true);
-        
+
         $styleMapper = new StyleMapper();
-        
+
         $this->assertEquals('fa-thin', $styleMapper->mapStyle('fa-thin'));
         $this->assertEquals('fa-sharp', $styleMapper->mapStyle('fa-sharp'));
     }
@@ -67,7 +67,7 @@ class StyleMapperTest extends TestCase
     public function test_returns_original_style_when_no_mapping_exists(): void
     {
         $result = $this->styleMapper->mapStyle('unknown-style');
-        
+
         $this->assertEquals('unknown-style', $result);
     }
 
@@ -77,7 +77,7 @@ class StyleMapperTest extends TestCase
         $this->assertTrue($this->styleMapper->isProStyle('fad'));
         $this->assertTrue($this->styleMapper->isProStyle('fa-light'));
         $this->assertTrue($this->styleMapper->isProStyle('fa-duotone'));
-        
+
         $this->assertFalse($this->styleMapper->isProStyle('fas'));
         $this->assertFalse($this->styleMapper->isProStyle('far'));
         $this->assertFalse($this->styleMapper->isProStyle('fa-solid'));

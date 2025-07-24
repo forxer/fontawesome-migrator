@@ -18,21 +18,21 @@ class IconMapperTest extends TestCase
     public function test_can_map_renamed_icons(): void
     {
         $mappedIcon = $this->iconMapper->mapIcon('fa-times');
-        
+
         $this->assertEquals('fa-xmark', $mappedIcon);
     }
 
     public function test_can_map_deprecated_icons(): void
     {
         $mappedIcon = $this->iconMapper->mapIcon('fa-glass');
-        
+
         $this->assertEquals('fa-martini-glass-empty', $mappedIcon);
     }
 
     public function test_returns_original_icon_when_no_mapping_exists(): void
     {
         $mappedIcon = $this->iconMapper->mapIcon('fa-house');
-        
+
         $this->assertEquals('fa-house', $mappedIcon);
     }
 
@@ -60,9 +60,9 @@ class IconMapperTest extends TestCase
     public function test_can_get_fallback_for_pro_icons(): void
     {
         config()->set('fontawesome-migrator.fallback_strategy', 'solid');
-        
+
         $fallback = $this->iconMapper->getFallbackStyle('fa-light');
-        
+
         $this->assertEquals('fa-solid', $fallback);
     }
 }
