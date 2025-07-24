@@ -269,6 +269,7 @@ Modifiez `exclude_patterns` dans la configuration :
 
 ### Workflow de développement
 
+#### Environnement standard
 ```bash
 # 1. Cloner le projet
 git clone https://github.com/forxer/fontawesome-migrator.git
@@ -284,8 +285,35 @@ composer test
 composer quality
 ```
 
+#### Environnement Docker (avec d-packages-exec)
+
+Si vous utilisez Docker avec `d-packages-exec php84` :
+
+```bash
+# 1. Cloner le projet
+git clone https://github.com/forxer/fontawesome-migrator.git
+cd fontawesome-migrator
+
+# 2. Utiliser le script de test automatisé
+./test.sh
+
+# 3. Ou exécuter les commandes manuellement
+d-packages-exec php84 composer install
+d-packages-exec php84 composer test
+d-packages-exec php84 composer quality
+```
+
+Le script `test.sh` effectue automatiquement :
+- ✅ Installation des dépendances
+- ✅ Tests unitaires complets
+- ✅ Vérification du style de code
+- ✅ Vérification de modernisation du code
+- ✅ Test d'intégration avec Laravel
+- ✅ Test des commandes Artisan
+
 ### Scripts Composer disponibles
 
+#### Environnement standard
 ```bash
 # Tests
 composer test              # Exécuter tous les tests
@@ -299,8 +327,26 @@ composer rector-dry       # Prévisualiser les modernisations
 composer quality          # Contrôle qualité complet (style + rector + tests)
 ```
 
+#### Environnement Docker
+```bash
+# Tests
+d-packages-exec php84 composer test              # Exécuter tous les tests
+d-packages-exec php84 composer test-coverage     # Tests avec couverture HTML
+
+# Qualité de code
+d-packages-exec php84 composer pint             # Formatter le code
+d-packages-exec php84 composer pint-test        # Vérifier le style sans corriger
+d-packages-exec php84 composer rector           # Moderniser le code
+d-packages-exec php84 composer rector-dry       # Prévisualiser les modernisations
+d-packages-exec php84 composer quality          # Contrôle qualité complet
+
+# Script automatisé (recommandé)
+./test.sh                                        # Test complet automatisé
+```
+
 ### Avant de soumettre une PR
 
+#### Environnement standard
 1. **Tests** : Assurez-vous que tous les tests passent
 ```bash
 composer test
@@ -319,6 +365,20 @@ composer rector
 4. **Contrôle complet** : Exécutez le contrôle qualité global
 ```bash
 composer quality
+```
+
+#### Environnement Docker
+**Méthode simple** : Utilisez le script automatisé
+```bash
+./test.sh
+```
+
+**Méthode manuelle** :
+```bash
+d-packages-exec php84 composer test     # Tests
+d-packages-exec php84 composer pint     # Style
+d-packages-exec php84 composer rector   # Modernisation
+d-packages-exec php84 composer quality  # Contrôle complet
 ```
 
 ## Contribution
