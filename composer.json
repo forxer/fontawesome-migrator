@@ -1,0 +1,48 @@
+{
+    "name": "forxer/fontawesome-migrator",
+    "description": "Package Laravel pour automatiser la migration de Font Awesome 5 vers Font Awesome 6 (Free et Pro)",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "fontawesome",
+        "migration",
+        "font-awesome-5",
+        "font-awesome-6",
+        "icons"
+    ],
+    "authors": [
+        {
+            "name": "Vincent Garnier",
+            "email": "forxer@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^9.0|^10.0|^11.0",
+        "symfony/finder": "^6.0|^7.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0|^8.0|^9.14",
+        "phpunit/phpunit": "^9.0|^10.5.48"
+    },
+    "autoload": {
+        "psr-4": {
+            "FontAwesome\\Migrator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FontAwesome\\Migrator\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FontAwesome\\Migrator\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
