@@ -58,7 +58,7 @@ class FileScannerTest extends TestCase
 
         $this->assertCount(2, $files);
 
-        $filenames = array_map(fn ($file) => basename($file), $files);
+        $filenames = array_map(fn ($file) => basename($file['path']), $files);
         $this->assertContains('test.blade.php', $filenames);
         $this->assertContains('test.vue', $filenames);
         $this->assertNotContains('test.txt', $filenames);
@@ -75,7 +75,7 @@ class FileScannerTest extends TestCase
         $files = $this->fileScanner->scanPaths(['test-files']);
 
         $this->assertCount(1, $files);
-        $this->assertStringContains('test.blade.php', $files[0]);
+        $this->assertStringContainsString('test.blade.php', $files[0]['path']);
     }
 
     public function test_handles_nonexistent_paths_gracefully(): void

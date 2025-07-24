@@ -83,9 +83,12 @@ class FileScanner
             if (str_contains((string) $pattern, '/') || str_contains((string) $pattern, '\\')) {
                 // Pattern de chemin
                 $finder->notPath($pattern);
-            } else {
-                // Pattern de nom de fichier
+            } elseif (str_contains((string) $pattern, '*')) {
+                // Pattern avec wildcards pour nom de fichier
                 $finder->notName($pattern);
+            } else {
+                // Pattern simple - exclure les dossiers et fichiers
+                $finder->notPath($pattern)->notName($pattern);
             }
         }
 

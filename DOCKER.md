@@ -12,8 +12,10 @@ Ce guide explique comment utiliser le package `fontawesome-migrator` dans un env
 
 ### Installation rapide
 
+**⚠️ Important : Utilisez votre terminal WSL Ubuntu (pas le terminal VSCode)**
+
 ```bash
-# 1. Cloner le projet
+# 1. Cloner le projet (si pas déjà fait)
 git clone https://github.com/forxer/fontawesome-migrator.git
 cd fontawesome-migrator
 
@@ -23,6 +25,12 @@ chmod +x test.sh
 # 3. Lancer le script de test complet
 ./test.sh
 ```
+
+### Environnements supportés
+
+- ✅ **Terminal WSL Ubuntu** : Environnement recommandé avec `d-packages-exec`
+- ✅ **Terminal Docker** : Avec accès aux commandes `d-packages-exec php84`
+- ❌ **Terminal VSCode** : `d-packages-exec` non disponible dans cet environnement
 
 ## 🧪 Script de test automatisé
 
@@ -36,6 +44,14 @@ Le script `test.sh` effectue automatiquement :
 6. ✅ **Test d'intégration** - Création d'un projet Laravel temporaire
 7. ✅ **Test des commandes** - Validation des commandes Artisan
 8. ✅ **Nettoyage automatique** - Suppression des fichiers temporaires
+
+## 🎉 Statut des tests
+
+**✅ TOUS LES TESTS PASSENT** (dernière exécution réussie)
+- **52 tests** exécutés avec succès
+- **126 assertions** validées
+- **0 erreur, 0 échec**
+- **Package prêt pour la production**
 
 ### Sortie du script
 

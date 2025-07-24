@@ -2,18 +2,34 @@
 
 set -e  # Arrêter le script en cas d'erreur
 
+# Charger les alias de l'utilisateur (pour d-packages-exec)
+if [[ -f ~/.bashrc ]]; then
+    source ~/.bashrc
+fi
+if [[ -f ~/.bash_aliases ]]; then
+    source ~/.bash_aliases
+fi
+
 echo "🧪 Test du package fontawesome-migrator"
 echo "======================================="
 
-# Vérifier que d-packages-exec est disponible
-if ! command -v d-packages-exec &> /dev/null; then
-    echo "❌ Erreur: d-packages-exec n'est pas disponible"
-    echo "   Assurez-vous d'être dans l'environnement Docker approprié"
+# Vérifier que d-packages-exec php84 est disponible
+echo "🔍 Test de la commande d-packages-exec php84 php --version..."
+if d-packages-exec php84 php --version > /dev/null 2>&1; then
+    echo "✅ d-packages-exec php84 php fonctionne"
+    PHP_VERSION=$(d-packages-exec php84 php --version | head -n 1 | cut -d ' ' -f 2)
+    echo "🐳 Environnement Docker avec d-packages-exec php84 détecté"
+    echo "   Version PHP: $PHP_VERSION"
+else
+    echo "❌ Erreur: d-packages-exec php84 php n'est pas disponible"
+    echo "   Assurez-vous que votre fonction d-packages-exec est définie dans ~/.bashrc"
+    echo "   Test: d-packages-exec php84 php --version"
     exit 1
 fi
 
 echo ""
 echo "📦 Installation des dépendances..."
+d-packages-exec php84 php -r "file_exists('composer.phar') or copy('https://getcomposer.org/installer', 'composer-setup.php');" 2>/dev/null || true
 d-packages-exec php84 composer install
 
 echo ""
@@ -31,7 +47,7 @@ if d-packages-exec php84 composer pint-test; then
     echo "✅ Style de code: CONFORME"
 else
     echo "⚠️  Style de code: NON CONFORME"
-    echo "   Exécutez 'composer pint' pour corriger automatiquement"
+    echo "   Exécutez 'd-packages-exec php84 composer pint' pour corriger automatiquement"
 fi
 
 echo ""
@@ -40,7 +56,7 @@ if d-packages-exec php84 composer rector-dry; then
     echo "✅ Code moderne: OK"
 else
     echo "⚠️  Code moderne: AMÉLIORATIONS POSSIBLES"
-    echo "   Exécutez 'composer rector' pour appliquer les modernisations"
+    echo "   Exécutez 'd-packages-exec php84 composer rector' pour appliquer les modernisations"
 fi
 
 echo ""

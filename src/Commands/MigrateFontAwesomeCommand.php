@@ -17,7 +17,6 @@ class MigrateFontAwesomeCommand extends Command
                             {--path= : Chemin spécifique à analyser}
                             {--backup : Forcer la création de sauvegardes}
                             {--no-backup : Désactiver les sauvegardes}
-                            {--verbose : Mode verbeux}
                             {--report : Générer un rapport détaillé}';
 
     /**
@@ -130,7 +129,7 @@ class MigrateFontAwesomeCommand extends Command
         $this->line('   • Fichiers modifiés : '.$modifiedFiles);
         $this->line('   • Total des changements : '.$totalChanges);
 
-        if ($this->option('verbose') || $totalChanges < 20) {
+        if ($this->getOutput()->isVerbose() || $totalChanges < 20) {
             $this->newLine();
             $this->info('📝 Détail des changements :');
 

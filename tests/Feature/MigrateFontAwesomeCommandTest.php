@@ -44,8 +44,8 @@ class MigrateFontAwesomeCommandTest extends TestCase
 
         // Verify file wasn't actually modified
         $content = File::get($this->testViewsPath.'/test.blade.php');
-        $this->assertStringContains('fas fa-home', $content);
-        $this->assertStringContains('fas fa-times', $content);
+        $this->assertStringContainsString('fas fa-home', $content);
+        $this->assertStringContainsString('fas fa-times', $content);
     }
 
     public function test_can_run_actual_migration(): void
@@ -62,8 +62,8 @@ class MigrateFontAwesomeCommandTest extends TestCase
 
         // Verify file was modified
         $content = File::get($this->testViewsPath.'/test.blade.php');
-        $this->assertStringContains('fa-solid fa-house', $content);
-        $this->assertStringContains('fa-solid fa-xmark', $content);
+        $this->assertStringContainsString('fa-solid fa-house', $content);
+        $this->assertStringContainsString('fa-solid fa-xmark', $content);
     }
 
     public function test_can_migrate_specific_path(): void
@@ -80,8 +80,8 @@ class MigrateFontAwesomeCommandTest extends TestCase
         $viewsContent = File::get($this->testViewsPath.'/views-test.blade.php');
         $jsContent = File::get(base_path('resources/js/js-test.js'));
 
-        $this->assertStringContains('fa-solid fa-house', $viewsContent);
-        $this->assertStringContains('fas fa-home', $jsContent); // Should remain unchanged
+        $this->assertStringContainsString('fa-solid fa-house', $viewsContent);
+        $this->assertStringContainsString('fas fa-home', $jsContent); // Should remain unchanged
     }
 
     public function test_shows_verbose_output_when_requested(): void
@@ -127,7 +127,7 @@ class MigrateFontAwesomeCommandTest extends TestCase
         File::makeDirectory(storage_path('fontawesome-migrator/reports'), 0755, true, true);
 
         $this->artisan('fontawesome:migrate --report --dry-run')
-            ->expectsOutput('📊 Rapport généré dans')
+            ->expectsOutputToContain('📊 Rapport généré dans')
             ->assertExitCode(0);
     }
 }
