@@ -2,6 +2,12 @@
 
 🚀 Package Laravel pour automatiser la migration de Font Awesome 5 vers Font Awesome 6 (versions Free et Pro).
 
+## Prérequis
+
+- PHP 8.4+
+- Laravel 11.0+
+- Symfony Finder 7.0+
+
 ## Fonctionnalités
 
 - ✅ **Migration automatique** des classes CSS FA5 → FA6
@@ -79,13 +85,19 @@ return [
 ```bash
 # Migration de tous les fichiers
 php artisan fontawesome:migrate
+```
 
+```bash
 # Prévisualisation sans modification (dry-run)
 php artisan fontawesome:migrate --dry-run
+```
 
+```bash
 # Migration d'un dossier spécifique
 php artisan fontawesome:migrate --path=resources/views
+```
 
+```bash
 # Migration avec rapport détaillé
 php artisan fontawesome:migrate --report --verbose
 ```
@@ -265,9 +277,28 @@ Les contributions sont les bienvenues ! Veuillez :
 
 ## Tests
 
+### Tests automatisés
+
+Le package utilise PHPUnit avec Orchestra Testbench pour les tests Laravel :
+
 ```bash
+# Exécuter tous les tests
 composer test
+
+# Avec PHPUnit directement
+./vendor/bin/phpunit
+
+# Tests avec couverture de code
+./vendor/bin/phpunit --coverage-html coverage/
 ```
+
+### Structure des tests
+
+- **Tests unitaires** : Test des services individuels (IconMapper, StyleMapper, FileScanner)
+- **Tests d'intégration** : Test de la commande Artisan complète
+- **Tests de régression** : Validation des mappings d'icônes FA5 → FA6
+
+Les tests utilisent Orchestra Testbench pour simuler un environnement Laravel complet.
 
 ## Licence
 
