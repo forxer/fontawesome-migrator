@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Laravel package called `fontawesome-migrator` that automates the migration from Font Awesome 5 to Font Awesome 6 (both Free and Pro versions). The package scans Laravel applications for Font Awesome classes and automatically converts them to the new FA6 syntax.
 
+**Target version**: Laravel 12.0+ with PHP 8.4+
+
 ## Development Commands
 
 ### Testing

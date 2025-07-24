@@ -5,6 +5,7 @@
 ## 🎉 Statut du package
 
 **✅ PRODUCTION READY** - Tous les tests passent (52 tests, 126 assertions)
+- ✅ Compatible Laravel 12.0+ et PHP 8.4+
 - ✅ Fonctionnellement complet et testé
 - ✅ Compatible avec les environnements Docker
 - ✅ Prêt pour la publication et l'utilisation en production
@@ -12,8 +13,8 @@
 ## Prérequis
 
 - PHP 8.4+
-- Laravel 11.0+
-- Symfony Finder 7.0+
+- Laravel 12.0+
+- Symfony Finder 8.0+
 
 ## Fonctionnalités
 

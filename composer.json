@@ -19,13 +19,13 @@
     ],
     "require": {
         "php": "^8.4",
-        "laravel/framework": "^11.0",
-        "symfony/finder": "^7.0"
+        "laravel/framework": "^12.0",
+        "symfony/finder": "^8.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0.5",
         "laravel/pint": "^1.24.0",
-        "orchestra/testbench": "^9.14",
+        "orchestra/testbench": "^10.0",
         "phpunit/phpunit": "^10.5.48",
         "rector/rector": "^2.1.2"
     },
