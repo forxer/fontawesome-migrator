@@ -185,6 +185,16 @@ class StyleMapper
     }
 
     /**
+     * Vérifier si un style est Pro uniquement
+     */
+    public function isProStyle(string $style): bool
+    {
+        $proStyles = ['fal', 'fad', 'fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp'];
+
+        return \in_array($style, $proStyles);
+    }
+
+    /**
      * Convertir une classe CSS complète
      */
     public function convertFullClass(string $cssClass): string

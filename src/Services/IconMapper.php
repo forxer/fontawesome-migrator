@@ -68,6 +68,7 @@ class IconMapper
             'fa-times' => 'fa-xmark',
             'fa-times-circle' => 'fa-circle-xmark',
             'fa-times-circle-o' => 'fa-circle-xmark',
+            'fa-home' => 'fa-house',
             'fa-plus-square-o' => 'fa-square-plus',
             'fa-minus-square-o' => 'fa-square-minus',
             'fa-th' => 'fa-table-cells',
@@ -155,59 +156,6 @@ class IconMapper
             'fa-up-down',
             'fa-up-down-left-right',
         ];
-    }
-
-    /**
-     * Mapper une icône FA5 vers FA6
-     */
-    public function mapIcon(string $iconName, string $style = 'fas'): array
-    {
-        $result = [
-            'new_name' => $iconName,
-            'found' => true,
-            'deprecated' => false,
-            'pro_only' => false,
-            'renamed' => false,
-            'warnings' => [],
-        ];
-
-        // Vérifier si l'icône est renommée
-        if (isset($this->renamedIcons[$iconName])) {
-            $result['new_name'] = $this->renamedIcons[$iconName];
-            $result['renamed'] = true;
-            $result['warnings'][] = \sprintf('Icône renommée: %s → %s', $iconName, $result['new_name']);
-        }
-
-        // Vérifier si l'icône est dépréciée
-        if (\in_array($iconName, $this->deprecatedIcons)) {
-            $result['deprecated'] = true;
-            $result['warnings'][] = 'Icône dépréciée: '.$iconName;
-
-            // Proposer une alternative si disponible
-            $alternative = $this->getAlternativeIcon($iconName);
-
-            if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
-                $result['new_name'] = $alternative;
-                $result['warnings'][] = 'Alternative suggérée: '.$alternative;
-            }
-        }
-
-        // Vérifier si l'icône est Pro uniquement
-        if (\in_array($iconName, $this->proOnlyIcons) || \in_array($result['new_name'], $this->proOnlyIcons)) {
-            $result['pro_only'] = true;
-
-            if ($this->config['license_type'] === 'free') {
-                $result['warnings'][] = 'Icône Pro uniquement: '.$iconName;
-                $fallback = $this->getFreeFallback($iconName);
-
-                if ($fallback !== null && $fallback !== '' && $fallback !== '0') {
-                    $result['new_name'] = $fallback;
-                    $result['warnings'][] = 'Fallback gratuit: '.$fallback;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -317,6 +265,97 @@ class IconMapper
         // Pour les autres icônes, on assume qu'elles existent
         // (cette logique pourrait être améliorée avec une liste complète)
         return ! \in_array($iconName, $this->deprecatedIcons);
+    }
+
+    /**
+     * Mapper une icône simple (pour les tests)
+     */
+    public function mapIcon(string $iconName): string
+    {
+        if (isset($this->renamedIcons[$iconName])) {
+            return $this->renamedIcons[$iconName];
+        }
+
+        $alternative = $this->getAlternativeIcon($iconName);
+
+        if ($alternative !== null) {
+            return $alternative;
+        }
+
+        return $iconName;
+    }
+
+    /**
+     * Mapper une icône avec détails complets
+     */
+    public function mapIconDetailed(string $iconName, string $style = 'fas'): array
+    {
+        $result = [
+            'new_name' => $iconName,
+            'found' => true,
+            'deprecated' => false,
+            'pro_only' => false,
+            'renamed' => false,
+            'warnings' => [],
+        ];
+
+        // Vérifier si l'icône est renommée
+        if (isset($this->renamedIcons[$iconName])) {
+            $result['new_name'] = $this->renamedIcons[$iconName];
+            $result['renamed'] = true;
+            $result['warnings'][] = \sprintf('Icône renommée: %s → %s', $iconName, $result['new_name']);
+        }
+
+        // Vérifier si l'icône est dépréciée
+        if (\in_array($iconName, $this->deprecatedIcons)) {
+            $result['deprecated'] = true;
+            $result['warnings'][] = 'Icône dépréciée: '.$iconName;
+
+            // Proposer une alternative si disponible
+            $alternative = $this->getAlternativeIcon($iconName);
+
+            if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
+                $result['new_name'] = $alternative;
+                $result['warnings'][] = 'Alternative suggérée: '.$alternative;
+            }
+        }
+
+        // Vérifier si l'icône est Pro uniquement
+        if (\in_array($iconName, $this->proOnlyIcons) || \in_array($result['new_name'], $this->proOnlyIcons)) {
+            $result['pro_only'] = true;
+
+            if ($this->config['license_type'] === 'free') {
+                $result['warnings'][] = 'Icône Pro uniquement: '.$iconName;
+                $fallback = $this->getFreeFallback($iconName);
+
+                if ($fallback !== null && $fallback !== '' && $fallback !== '0') {
+                    $result['new_name'] = $fallback;
+                    $result['warnings'][] = 'Fallback gratuit: '.$fallback;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Vérifier si un style est Pro uniquement
+     */
+    public function isProOnly(string $style): bool
+    {
+        $proStyles = ['fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp', 'fal', 'fad'];
+
+        return \in_array($style, $proStyles);
+    }
+
+    /**
+     * Obtenir le style de fallback pour un style Pro
+     */
+    public function getFallbackStyle(string $proStyle): string
+    {
+        $fallbackStrategy = $this->config['fallback_strategy'] ?? 'solid';
+
+        return 'fa-'.$fallbackStrategy;
     }
 
     /**

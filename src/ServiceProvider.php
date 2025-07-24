@@ -12,7 +12,7 @@ class ServiceProvider extends BaseServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__.'/config/fontawesome-migrator.php',
+            __DIR__.'/../config/fontawesome-migrator.php',
             'fontawesome-migrator'
         );
     }
@@ -21,7 +21,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         // Publier la configuration
         $this->publishes([
-            __DIR__.'/config/fontawesome-migrator.php' => config_path('fontawesome-migrator.php'),
+            __DIR__.'/../config/fontawesome-migrator.php' => config_path('fontawesome-migrator.php'),
         ], 'fontawesome-migrator-config');
 
         // Publier les fichiers de mapping

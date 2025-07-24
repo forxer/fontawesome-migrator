@@ -25,9 +25,18 @@ class IconReplacer
     {
         $results = [];
 
-        foreach ($files as $fileInfo) {
-            $result = $this->processFile($fileInfo['path'], $isDryRun);
-            $result['file'] = $fileInfo['relative_path'];
+        foreach ($files as $filePath) {
+            // Gérer les deux formats possibles (string ou array)
+            if (\is_array($filePath)) {
+                $actualPath = $filePath['path'];
+                $relativePath = $filePath['relative_path'] ?? basename($actualPath);
+            } else {
+                $actualPath = $filePath;
+                $relativePath = basename($filePath);
+            }
+
+            $result = $this->processFile($actualPath, $isDryRun);
+            $result['file'] = $relativePath;
             $results[] = $result;
         }
 
@@ -39,68 +48,113 @@ class IconReplacer
      */
     public function processFile(string $filePath, bool $isDryRun = false): array
     {
-        $analysis = $this->fileScanner->analyzeFile($filePath);
+        try {
+            if (! File::exists($filePath)) {
+                return [
+                    'success' => false,
+                    'error' => "File not found: {$filePath}",
+                    'changes' => [],
+                    'warnings' => [],
+                ];
+            }
 
-        if ($analysis['error']) {
-            return [
-                'success' => false,
-                'error' => $analysis['error'],
-                'changes' => [],
-                'warnings' => [],
-            ];
-        }
+            $content = File::get($filePath);
+            $icons = $this->findFontAwesomeIcons($content);
 
-        if (empty($analysis['icons'])) {
+            if (empty($icons)) {
+                return [
+                    'success' => true,
+                    'changes' => [],
+                    'warnings' => [],
+                ];
+            }
+
+            $changes = [];
+            $warnings = [];
+            $modifiedContent = $content;
+
+            // Trier les icônes par offset décroissant pour éviter les décalages
+            $icons = collect($icons)->sortByDesc('offset')->values()->all();
+
+            foreach ($icons as $icon) {
+                $replacement = $this->getReplacement($icon);
+
+                if ($replacement['warning']) {
+                    $warnings[] = $replacement['warning'];
+                }
+
+                if ($replacement['new_string'] !== $icon['full_match']) {
+                    $changes[] = [
+                        'from' => $icon['full_match'],
+                        'to' => $replacement['new_string'],
+                        'line' => $icon['line'],
+                        'type' => $replacement['type'],
+                    ];
+
+                    // Appliquer le remplacement dans le contenu
+                    $modifiedContent = substr_replace(
+                        $modifiedContent,
+                        $replacement['new_string'],
+                        $icon['offset'],
+                        \strlen((string) $icon['full_match'])
+                    );
+                }
+            }
+
+            // Sauvegarder le fichier si ce n'est pas un dry-run
+            if (! $isDryRun && $changes !== []) {
+                $this->saveFile($filePath, $modifiedContent);
+            }
+
             return [
                 'success' => true,
+                'changes' => $changes,
+                'warnings' => $warnings,
+                'content' => $modifiedContent,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
                 'changes' => [],
                 'warnings' => [],
             ];
         }
+    }
 
-        $changes = [];
-        $warnings = [];
-        $content = $analysis['content'];
+    /**
+     * Trouver les icônes Font Awesome dans le contenu d'un fichier
+     */
+    protected function findFontAwesomeIcons(string $content): array
+    {
+        $icons = [];
+        $lines = explode("\n", $content);
+        $offset = 0;
 
-        // Trier les icônes par offset décroissant pour éviter les décalages
-        $icons = collect($analysis['icons'])->sortByDesc('offset')->values()->all();
+        // Pattern pour capturer les icônes Font Awesome
+        $pattern = '/\b(fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone|fa-thin|fa-sharp)\s+(fa-[a-zA-Z0-9-]+)\b/';
 
-        foreach ($icons as $icon) {
-            $replacement = $this->getReplacement($icon);
+        foreach ($lines as $lineNumber => $line) {
+            if (preg_match_all($pattern, $line, $matches, PREG_OFFSET_CAPTURE)) {
+                foreach ($matches[0] as $index => $match) {
+                    $fullMatch = $match[0];
+                    $lineOffset = $match[1];
+                    $style = $matches[1][$index][0];
+                    $iconName = $matches[2][$index][0];
 
-            if ($replacement['warning']) {
-                $warnings[] = $replacement['warning'];
+                    $icons[] = [
+                        'full_match' => $fullMatch,
+                        'style' => $style,
+                        'name' => $iconName,
+                        'line' => $lineNumber + 1,
+                        'offset' => $offset + $lineOffset,
+                    ];
+                }
             }
-
-            if ($replacement['new_string'] !== $icon['full_match']) {
-                $changes[] = [
-                    'from' => $icon['full_match'],
-                    'to' => $replacement['new_string'],
-                    'line' => $icon['line'],
-                    'type' => $replacement['type'],
-                ];
-
-                // Appliquer le remplacement dans le contenu
-                $content = substr_replace(
-                    $content,
-                    $replacement['new_string'],
-                    $icon['offset'],
-                    \strlen((string) $icon['full_match'])
-                );
-            }
+            $offset += \strlen($line) + 1; // +1 pour le \n
         }
 
-        // Sauvegarder le fichier si ce n'est pas un dry-run
-        if (! $isDryRun && $changes !== []) {
-            $this->saveFile($filePath, $content);
-        }
-
-        return [
-            'success' => true,
-            'changes' => $changes,
-            'warnings' => $warnings,
-            'content' => $content,
-        ];
+        return $icons;
     }
 
     /**
@@ -116,8 +170,7 @@ class IconReplacer
         $newStyle = $this->styleMapper->mapStyle($style);
 
         // Mapper le nom de l'icône si nécessaire
-        $mappingResult = $this->iconMapper->mapIcon($iconName, $style);
-        $newIconName = $mappingResult['new_name'];
+        $newIconName = $this->iconMapper->mapIcon($iconName);
 
         // Construire la nouvelle chaîne
         $newString = str_replace(
@@ -130,19 +183,14 @@ class IconReplacer
         $type = 'style_update';
 
         // Vérifier les cas spéciaux
-        if ($mappingResult['deprecated']) {
-            $warning = \sprintf("Icône dépréciée '%s' remplacée par '%s'", $iconName, $newIconName);
-            $type = 'deprecated_icon';
+        if ($newIconName !== $iconName) {
+            $warning = \sprintf("Icône renommée '%s' → '%s'", $iconName, $newIconName);
+            $type = 'renamed_icon';
         }
 
-        if ($mappingResult['pro_only'] && $this->config['license_type'] === 'free') {
-            $warning = \sprintf("Icône Pro uniquement '%s' - fallback vers style ", $iconName).$this->config['fallback_strategy'];
+        if ($this->styleMapper->isProStyle($style) && $this->config['license_type'] === 'free') {
+            $warning = \sprintf("Style Pro '%s' → fallback vers '%s'", $style, $newStyle);
             $type = 'pro_fallback';
-        }
-
-        if (! $mappingResult['found']) {
-            $warning = \sprintf("Icône non trouvée '%s' - vérification manuelle requise", $iconName);
-            $type = 'manual_review';
         }
 
         return [
