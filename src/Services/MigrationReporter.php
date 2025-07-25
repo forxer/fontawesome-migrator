@@ -9,9 +9,21 @@ class MigrationReporter
 {
     protected array $config;
 
+    protected bool $isDryRun = false;
+
     public function __construct()
     {
         $this->config = config('fontawesome-migrator');
+    }
+
+    /**
+     * Définir le mode dry-run
+     */
+    public function setDryRun(bool $isDryRun): self
+    {
+        $this->isDryRun = $isDryRun;
+
+        return $this;
     }
 
     /**
@@ -60,219 +72,15 @@ class MigrationReporter
         $stats = $this->calculateStats($results);
         $timestamp = date('Y-m-d H:i:s');
 
-        $html = "<!DOCTYPE html>
-<html lang='fr'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Rapport de Migration Font Awesome 5 → 6</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: white; padding: 30px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .stat-number { font-size: 2em; font-weight: bold; color: #2563eb; }
-        .stat-label { color: #6b7280; margin-top: 5px; }
-        .section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .file-item { border-bottom: 1px solid #e5e7eb; padding: 15px 0; }
-        .file-item:last-child { border-bottom: none; }
-        .file-path { font-weight: 600; color: #1f2937; }
-        .change-item { margin: 8px 0; padding: 8px; background: #f3f4f6; border-radius: 4px; font-family: monospace; }
-        .change-from { color: #dc2626; }
-        .change-to { color: #059669; }
-        .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 10px; margin: 5px 0; }
-        .success { color: #059669; }
-        .error { color: #dc2626; }
-        .summary { background: #dbeafe; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e5e7eb; }
-        th { background: #f9fafb; font-weight: 600; }
-        .change-type-style { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
-        .change-type-deprecated { background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
-        .change-type-manual { background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>
-            <h1>🚀 Rapport de Migration Font Awesome 5 → 6</h1>
-            <p>Généré le {$timestamp}</p>
-            <p>Type de licence: <strong>".ucfirst((string) $this->config['license_type'])."</strong></p>
-        </div>
+        // Préparer les données pour la vue
+        $viewData = [
+            'results' => $results,
+            'stats' => $stats,
+            'timestamp' => $timestamp,
+            'isDryRun' => $this->isDryRun ?? false,
+        ];
 
-        <div class='summary'>
-            <h2>📊 Résumé Exécutif</h2>
-            <p><strong>{$stats['total_changes']}</strong> changements appliqués sur <strong>{$stats['modified_files']}</strong> fichiers (sur {$stats['total_files']} analysés)</p>
-            ".($stats['warnings'] > 0 ? \sprintf("<p class='error'><strong>%s</strong> avertissements nécessitent votre attention</p>", $stats['warnings']) : '')."
-        </div>
-
-        <div class='stats-grid'>
-            <div class='stat-card'>
-                <div class='stat-number'>{$stats['total_files']}</div>
-                <div class='stat-label'>Fichiers analysés</div>
-            </div>
-            <div class='stat-card'>
-                <div class='stat-number'>{$stats['modified_files']}</div>
-                <div class='stat-label'>Fichiers modifiés</div>
-            </div>
-            <div class='stat-card'>
-                <div class='stat-number'>{$stats['icons_migrated']}</div>
-                <div class='stat-label'>Icônes migrées</div>
-            </div>
-            <div class='stat-card'>
-                <div class='stat-number'>{$stats['assets_migrated']}</div>
-                <div class='stat-label'>Assets migrés</div>
-            </div>
-            <div class='stat-card'>
-                <div class='stat-number'>{$stats['total_changes']}</div>
-                <div class='stat-label'>Total des changements</div>
-            </div>
-            <div class='stat-card'>
-                <div class='stat-number'>{$stats['warnings']}</div>
-                <div class='stat-label'>Avertissements</div>
-            </div>
-        </div>
-
-        <div class='section'>
-            <h2>📈 Répartition des changements</h2>
-            <table>
-                <tr><th>Type de changement</th><th>Nombre</th><th>Pourcentage</th></tr>";
-
-        foreach ($stats['changes_by_type'] as $type => $count) {
-            $percentage = $stats['total_changes'] > 0 ? round(($count / $stats['total_changes']) * 100, 1) : 0;
-            $typeLabel = $this->getChangeTypeLabel($type);
-            $typeClass = $this->getChangeTypeClass($type);
-
-            $html .= "<tr>
-                <td><span class='{$typeClass}'>{$typeLabel}</span></td>
-                <td>{$count}</td>
-                <td>{$percentage}%</td>
-            </tr>";
-        }
-
-        $html .= '</table>
-        </div>';
-
-        // Section des assets si présents
-        if (! empty($stats['asset_types'])) {
-            $html .= "<div class='section'>
-                <h2>🎨 Assets détectés</h2>
-                <table>
-                    <tr><th>Type d'asset</th><th>Nombre</th><th>Description</th></tr>";
-
-            foreach ($stats['asset_types'] as $assetType => $count) {
-                $description = $this->getAssetTypeDescription($assetType);
-                $html .= "<tr>
-                    <td><strong>{$assetType}</strong></td>
-                    <td>{$count}</td>
-                    <td>{$description}</td>
-                </tr>";
-            }
-
-            $html .= '</table>
-            </div>';
-        }
-
-        // Section des fichiers modifiés
-        $modifiedFiles = array_filter($results, fn ($result): bool => ! empty($result['changes']));
-
-        if ($modifiedFiles !== []) {
-            $html .= "<div class='section'>
-                <h2>📝 Fichiers modifiés (".\count($modifiedFiles).')</h2>';
-
-            foreach ($modifiedFiles as $result) {
-                $html .= "<div class='file-item'>
-                    <div class='file-path'>📄 {$result['file']}</div>
-                    <div style='margin-top: 10px;'>";
-
-                foreach ($result['changes'] as $change) {
-                    $typeClass = $this->getChangeTypeClass($change['type'] ?? 'style_update');
-                    $typeLabel = $this->getChangeTypeLabel($change['type'] ?? 'style_update');
-
-                    $html .= "<div class='change-item'>
-                        <span class='{$typeClass}'>{$typeLabel}</span>
-                        <br>
-                        <span class='change-from'>{$change['from']}</span>
-                        →
-                        <span class='change-to'>{$change['to']}</span>
-                        <small style='color: #6b7280;'> (ligne {$change['line']})</small>
-                    </div>";
-                }
-
-                $html .= '</div>';
-
-                // Afficher les avertissements pour ce fichier
-                if (! empty($result['warnings'])) {
-                    foreach ($result['warnings'] as $warning) {
-                        $html .= \sprintf("<div class='warning'>⚠️ %s</div>", $warning);
-                    }
-                }
-
-                $html .= '</div>';
-            }
-
-            $html .= '</div>';
-        }
-
-        // Section des avertissements
-        $allWarnings = [];
-
-        foreach ($results as $result) {
-            if (! empty($result['warnings'])) {
-                foreach ($result['warnings'] as $warning) {
-                    $allWarnings[] = [
-                        'file' => $result['file'],
-                        'warning' => $warning,
-                    ];
-                }
-            }
-        }
-
-        if ($allWarnings !== []) {
-            $html .= "<div class='section'>
-                <h2>⚠️ Avertissements (".\count($allWarnings).')</h2>
-                <p>Ces éléments nécessitent une attention particulière :</p>';
-
-            foreach ($allWarnings as $warning) {
-                $html .= "<div class='warning'>
-                    <strong>{$warning['file']}</strong>: {$warning['warning']}
-                </div>";
-            }
-
-            $html .= '</div>';
-        }
-
-        // Section des recommandations
-        $html .= "<div class='section'>
-            <h2>💡 Recommandations</h2>
-            <ul>
-                <li><strong>Testez votre application</strong> après la migration pour vous assurer que toutes les icônes s'affichent correctement</li>
-                <li><strong>Mettez à jour vos dépendances</strong> Font Awesome vers la version 6</li>";
-
-        if ($stats['warnings'] > 0) {
-            $html .= '<li><strong>Vérifiez les avertissements</strong> listés ci-dessus et corrigez manuellement si nécessaire</li>';
-        }
-
-        if ($this->config['license_type'] === 'pro') {
-            $html .= '<li><strong>Explorez les nouveaux styles</strong> Font Awesome 6 Pro comme fa-thin et fa-sharp</li>';
-        }
-
-        return $html."<li><strong>Consultez la documentation</strong> Font Awesome 6 pour découvrir les nouvelles fonctionnalités</li>
-            </ul>
-        </div>
-
-        <div class='section'>
-            <h2>🔗 Liens utiles</h2>
-            <ul>
-                <li><a href='https://fontawesome.com/docs/web/setup/upgrade/' target='_blank'>Guide de migration officiel Font Awesome</a></li>
-                <li><a href='https://fontawesome.com/v6/docs/web/setup/upgrade/whats-changed' target='_blank'>Liste des changements FA6</a></li>
-                <li><a href='https://fontawesome.com/search' target='_blank'>Recherche d'icônes FA6</a></li>
-            </ul>
-        </div>
-    </div>
-</body>
-</html>";
+        return view('fontawesome-migrator::reports.migration', $viewData)->render();
     }
 
     /**
@@ -353,6 +161,9 @@ class MigrationReporter
                 $stats['errors']++;
             }
         }
+
+        // Calculer le succès de la migration
+        $stats['migration_success'] = $stats['errors'] === 0;
 
         return $stats;
     }

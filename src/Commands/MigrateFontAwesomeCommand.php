@@ -125,7 +125,7 @@ class MigrateFontAwesomeCommand extends Command
 
         // Générer le rapport si demandé
         if ($this->option('report') || config('fontawesome-migrator.generate_report')) {
-            $reportInfo = $this->reporter->generateReport($results);
+            $reportInfo = $this->reporter->setDryRun($isDryRun)->generateReport($results);
             $this->info('📊 Rapport généré :');
             $this->line('   • Fichier : '.$reportInfo['filename']);
             $this->line('   • HTML : '.$reportInfo['html_url']);

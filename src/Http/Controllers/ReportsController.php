@@ -63,8 +63,28 @@ class ReportsController extends Controller
             return response()->json(json_decode(File::get($filePath), true));
         }
 
-        // Sinon afficher le HTML directement
-        return response(File::get($filePath))->header('Content-Type', 'text/html');
+        // Pour les fichiers HTML, utiliser la vue Blade partagée
+        $jsonFilename = str_replace('.html', '.json', $filename);
+        $jsonPath = $reportPath.'/'.$jsonFilename;
+
+        if (! File::exists($jsonPath)) {
+            // Fallback : afficher le HTML directement si pas de JSON
+            return response(File::get($filePath))->header('Content-Type', 'text/html');
+        }
+
+        // Charger les données depuis le fichier JSON
+        $jsonData = json_decode(File::get($jsonPath), true);
+
+        $viewData = [
+            'results' => $jsonData['files'] ?? [],
+            'stats' => $jsonData['summary'] ?? [],
+            'timestamp' => isset($jsonData['meta']['generated_at']) ?
+                date('Y-m-d H:i:s', strtotime((string) $jsonData['meta']['generated_at'])) :
+                date('Y-m-d H:i:s'),
+            'isDryRun' => false, // Les rapports archivés sont des migrations réelles
+        ];
+
+        return view('fontawesome-migrator::reports.migration', $viewData);
     }
 
     /**
