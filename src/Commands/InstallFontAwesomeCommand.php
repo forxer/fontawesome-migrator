@@ -82,12 +82,21 @@ class InstallFontAwesomeCommand extends Command
             return;
         }
 
-        Artisan::call('vendor:publish', [
-            '--tag' => 'fontawesome-migrator-config',
-            '--force' => $this->option('force') || $configExists,
-        ]);
+        // Copier le fichier stub au lieu du fichier complet
+        $stubPath = __DIR__.'/../../config/fontawesome-migrator.stub';
+        $configPath = config_path('fontawesome-migrator.php');
 
-        $this->info('   ✅ Configuration publiée dans config/fontawesome-migrator.php');
+        if (File::exists($stubPath)) {
+            File::copy($stubPath, $configPath);
+            $this->info('   ✅ Configuration initialisée dans config/fontawesome-migrator.php');
+        } else {
+            // Fallback vers la méthode classique si le stub n'existe pas
+            Artisan::call('vendor:publish', [
+                '--tag' => 'fontawesome-migrator-config',
+                '--force' => $this->option('force') || $configExists,
+            ]);
+            $this->info('   ✅ Configuration publiée dans config/fontawesome-migrator.php');
+        }
     }
 
     /**
@@ -206,27 +215,64 @@ class InstallFontAwesomeCommand extends Command
     protected function writeConfiguration(string $licenseType, array $scanPaths, bool $generateReports, bool $enableBackups): void
     {
         $configPath = config_path('fontawesome-migrator.php');
-        $config = include $configPath;
 
-        // Mettre à jour la configuration
-        $config['license_type'] = $licenseType;
-        $config['scan_paths'] = $scanPaths;
-        $config['generate_report'] = $generateReports;
-        $config['backup_files'] = $enableBackups;
+        // Charger la configuration par défaut depuis le package
+        $defaultConfig = include __DIR__.'/../../config/fontawesome-migrator.php';
 
-        // Si Pro, activer tous les styles
+        // Créer seulement les valeurs modifiées
+        $customConfig = [];
+
+        // Vérifier et ajouter seulement les valeurs différentes des défauts
+        if ($licenseType !== $defaultConfig['license_type']) {
+            $customConfig['license_type'] = $licenseType;
+        }
+
+        if ($scanPaths !== $defaultConfig['scan_paths']) {
+            $customConfig['scan_paths'] = $scanPaths;
+        }
+
+        if ($generateReports !== $defaultConfig['generate_report']) {
+            $customConfig['generate_report'] = $generateReports;
+        }
+
+        if ($enableBackups !== $defaultConfig['backup_files']) {
+            $customConfig['backup_files'] = $enableBackups;
+        }
+
+        // Si Pro, activer tous les styles seulement si différent du défaut
         if ($licenseType === 'pro') {
-            $config['pro_styles'] = [
+            $proStyles = [
                 'light' => true,
                 'duotone' => true,
                 'thin' => true,
                 'sharp' => true,
             ];
+
+            if ($proStyles !== $defaultConfig['pro_styles']) {
+                $customConfig['pro_styles'] = $proStyles;
+            }
         }
 
-        // Générer le nouveau fichier de configuration
-        $configContent = "<?php\n\nreturn ".$this->arrayToString($config).";\n";
-        File::put($configPath, $configContent);
+        // Générer le contenu du fichier avec seulement les valeurs personnalisées
+        $this->writeCustomConfigFile($configPath, $customConfig);
+    }
+
+    /**
+     * Écrire le fichier de configuration personnalisé
+     */
+    protected function writeCustomConfigFile(string $configPath, array $customConfig): void
+    {
+        // Template de base
+        $template = "<?php\n\nreturn [\n    /*\n    |--------------------------------------------------------------------------\n    | Configuration FontAwesome Migrator\n    |--------------------------------------------------------------------------\n    |\n    | Ce fichier contient uniquement les paramètres personnalisés.\n    | Les valeurs par défaut sont définies dans le package.\n    | \n    | Pour voir toutes les options disponibles :\n    | php artisan vendor:publish --tag=fontawesome-migrator-config --force\n    |\n    */\n\n";
+
+        // Si aucune configuration personnalisée, créer un fichier vide
+        if (empty($customConfig)) {
+            $content = $template."    // Aucune configuration personnalisée\n    // Toutes les valeurs par défaut sont utilisées\n];\n";
+        } else {
+            $content = $template.$this->arrayToString($customConfig, 1)."\n];\n";
+        }
+
+        File::put($configPath, $content);
     }
 
     /**
@@ -235,17 +281,17 @@ class InstallFontAwesomeCommand extends Command
     protected function arrayToString(array $array, int $indent = 0): string
     {
         $spaces = str_repeat('    ', $indent);
-        $result = "[\n";
+        $result = '';
 
         foreach ($array as $key => $value) {
-            $result .= $spaces.'    ';
+            $result .= $spaces;
 
             if (\is_string($key)) {
                 $result .= \sprintf("'%s' => ", $key);
             }
 
             if (\is_array($value)) {
-                $result .= $this->arrayToString($value, $indent + 1);
+                $result .= "[\n".$this->arrayToString($value, $indent + 1)."\n".$spaces.']';
             } elseif (\is_bool($value)) {
                 $result .= $value ? 'true' : 'false';
             } elseif (\is_string($value)) {
@@ -262,7 +308,7 @@ class InstallFontAwesomeCommand extends Command
             $result .= ",\n";
         }
 
-        return $result.($spaces.']');
+        return rtrim($result, ",\n");
     }
 
     /**

@@ -20,10 +20,15 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(): void
     {
-        // Publier la configuration
+        // Publier la configuration (stub pour une configuration minimale)
         $this->publishes([
-            __DIR__.'/../config/fontawesome-migrator.php' => config_path('fontawesome-migrator.php'),
+            __DIR__.'/../config/fontawesome-migrator.stub' => config_path('fontawesome-migrator.php'),
         ], 'fontawesome-migrator-config');
+
+        // Publier la configuration complète (pour référence)
+        $this->publishes([
+            __DIR__.'/../config/fontawesome-migrator.php' => config_path('fontawesome-migrator-full.php'),
+        ], 'fontawesome-migrator-config-full');
 
         // Publier les fichiers de mapping
         $this->publishes([

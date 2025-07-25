@@ -99,10 +99,10 @@ class InstallFontAwesomeCommandTest extends TestCase
         $this->artisan('fontawesome:install --force')
             ->assertExitCode(0);
 
-        // Verify config was overwritten
-        $config = include config_path('fontawesome-migrator.php');
-        $this->assertArrayHasKey('license_type', $config);
-        $this->assertArrayNotHasKey('test', $config);
+        // Verify config was overwritten with stub content
+        $configContent = File::get(config_path('fontawesome-migrator.php'));
+        $this->assertStringContainsString('Ce fichier contient uniquement les paramètres personnalisés', $configContent);
+        $this->assertStringNotContainsString('test', $configContent);
     }
 
     public function test_handles_existing_storage_link(): void
@@ -154,10 +154,48 @@ class InstallFontAwesomeCommandTest extends TestCase
             ->expectsQuestion('Créer le lien symbolique storage pour l\'accès web ?', true)
             ->assertExitCode(0);
 
-        // Verify Pro configuration
-        $config = include config_path('fontawesome-migrator.php');
-        $this->assertEquals('pro', $config['license_type']);
-        $this->assertTrue($config['pro_styles']['thin']);
-        $this->assertTrue($config['pro_styles']['sharp']);
+        // Verify Pro configuration dans le fichier généré
+        $configContent = File::get(config_path('fontawesome-migrator.php'));
+        $this->assertStringContainsString("'license_type' => 'pro'", $configContent);
+        $this->assertStringContainsString("'thin' => true", $configContent);
+        $this->assertStringContainsString("'sharp' => true", $configContent);
+    }
+
+    public function test_only_writes_modified_values(): void
+    {
+        $this->artisan('fontawesome:install')
+            ->expectsQuestion('Quel type de licence FontAwesome utilisez-vous ?', 'free')
+            ->expectsQuestion('Voulez-vous ajouter des chemins personnalisés ?', false)
+            ->expectsQuestion('Générer automatiquement des rapports ?', true)
+            ->expectsQuestion('Créer des sauvegardes avant modification ?', true)
+            ->expectsQuestion('Créer le lien symbolique storage pour l\'accès web ?', true)
+            ->assertExitCode(0);
+
+        // Si toutes les valeurs sont par défaut, le fichier ne devrait contenir que le template
+        $configContent = File::get(config_path('fontawesome-migrator.php'));
+        $this->assertStringContainsString('Aucune configuration personnalisée', $configContent);
+        $this->assertStringNotContainsString("'license_type'", $configContent);
+    }
+
+    public function test_writes_custom_values_only(): void
+    {
+        $this->artisan('fontawesome:install')
+            ->expectsQuestion('Quel type de licence FontAwesome utilisez-vous ?', 'pro')
+            ->expectsQuestion('Voulez-vous ajouter des chemins personnalisés ?', true)
+            ->expectsQuestion('Chemin supplémentaire (ex: app/Views)', 'custom/path')
+            ->expectsQuestion('Ajouter un autre chemin ?', false)
+            ->expectsQuestion('Générer automatiquement des rapports ?', false)
+            ->expectsQuestion('Créer des sauvegardes avant modification ?', true)
+            ->expectsQuestion('Créer le lien symbolique storage pour l\'accès web ?', true)
+            ->assertExitCode(0);
+
+        $configContent = File::get(config_path('fontawesome-migrator.php'));
+        // Devrait contenir les valeurs modifiées
+        $this->assertStringContainsString("'license_type' => 'pro'", $configContent);
+        $this->assertStringContainsString("'generate_report' => false", $configContent);
+        $this->assertStringContainsString("'custom/path'", $configContent);
+
+        // Ne devrait PAS contenir backup_files car c'est la valeur par défaut
+        $this->assertStringNotContainsString("'backup_files'", $configContent);
     }
 }

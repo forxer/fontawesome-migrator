@@ -59,6 +59,7 @@ Cette commande interactive vous guide à travers :
 - **🔗 Lien symbolique** : Configuration automatique pour l'accès web aux rapports
 - **✅ Vérifications** : Validation complète de l'installation
 - **📋 Instructions** : Prochaines étapes et commandes utiles
+- **⚡ Configuration optimisée** : Seules les valeurs modifiées sont sauvegardées
 
 ### Installation manuelle
 
@@ -71,7 +72,46 @@ php artisan storage:link
 
 ## Configuration
 
-Éditez `config/fontawesome-migrator.php` :
+### 🎯 Configuration optimisée
+
+Le package utilise un système de configuration intelligent : **seules les valeurs que vous modifiez sont sauvegardées** dans `config/fontawesome-migrator.php`. Cela simplifie la maintenance et les mises à jour.
+
+**Exemple de fichier généré après installation interactive :**
+```php
+<?php
+
+return [
+    /*
+    | Ce fichier contient uniquement les paramètres personnalisés.
+    | Les valeurs par défaut sont définies dans le package.
+    */
+
+    'license_type' => 'pro',
+    'scan_paths' => [
+        'resources/views',
+        'resources/js', 
+        'resources/css',
+        'public/css',
+        'public/js',
+        'custom/path'  // Chemin ajouté
+    ],
+    'generate_report' => false,  // Modifié
+    'pro_styles' => [
+        'thin' => true,   // Activé pour FA6 Pro
+        'sharp' => true,  // Activé pour FA6 Pro
+    ]
+];
+```
+
+### 📋 Configuration complète
+
+Pour voir **toutes les options disponibles**, publiez la configuration complète :
+
+```bash
+php artisan vendor:publish --tag=fontawesome-migrator-config-full
+```
+
+Cela créera `config/fontawesome-migrator-full.php` avec toutes les options documentées :
 
 ```php
 return [
