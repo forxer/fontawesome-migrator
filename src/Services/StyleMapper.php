@@ -19,36 +19,27 @@ class StyleMapper
      */
     protected function initializeStyleMapping(): void
     {
+        // Mapping COMPLET de tous les styles FA5 → FA6
+        // Peu importe la licence, tous les styles sont reconnus et convertis
         $this->styleMapping = [
-            // Formats courts FA5 → FA6
+            // Styles de base (Free)
             'fas' => 'fa-solid',
             'far' => 'fa-regular',
             'fab' => 'fa-brands',
-
-            // Formats longs (déjà corrects en FA5 Pro)
             'fa-solid' => 'fa-solid',
             'fa-regular' => 'fa-regular',
             'fa-brands' => 'fa-brands',
+
+            // Styles Pro (toujours mappés pour la conversion)
+            'fal' => 'fa-light',
+            'fad' => 'fa-duotone',
+            'fa-light' => 'fa-light',
+            'fa-duotone' => 'fa-duotone',
+
+            // Nouveaux styles FA6 Pro
+            'fa-thin' => 'fa-thin',
+            'fa-sharp' => 'fa-sharp',
         ];
-
-        // Ajouter les styles Pro si disponibles
-        if ($this->config['license_type'] === 'pro') {
-            $this->styleMapping = array_merge($this->styleMapping, [
-                'fal' => 'fa-light',
-                'fad' => 'fa-duotone',
-                'fa-light' => 'fa-light',
-                'fa-duotone' => 'fa-duotone',
-            ]);
-
-            // Nouveaux styles FA6 Pro si activés
-            if ($this->config['pro_styles']['thin'] ?? false) {
-                $this->styleMapping['fa-thin'] = 'fa-thin';
-            }
-
-            if ($this->config['pro_styles']['sharp'] ?? false) {
-                $this->styleMapping['fa-sharp'] = 'fa-sharp';
-            }
-        }
     }
 
     /**
@@ -56,22 +47,28 @@ class StyleMapper
      */
     public function mapStyle(string $fa5Style): string
     {
-        // Retourner le style mappé ou appliquer la stratégie de fallback
+        // Toujours mapper vers le style FA6 correspondant
         if (isset($this->styleMapping[$fa5Style])) {
             return $this->styleMapping[$fa5Style];
         }
 
-        // Gestion des styles Pro non disponibles
-        if ($this->config['license_type'] === 'free') {
-            $proStyles = ['fal', 'fad', 'fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp'];
+        // Style non reconnu, retourner tel quel
+        return $fa5Style;
+    }
 
-            if (\in_array($fa5Style, $proStyles)) {
-                return $this->getFallbackStyle();
-            }
+    /**
+     * Mapper un style avec fallback selon la licence
+     */
+    public function mapStyleWithFallback(string $fa5Style): string
+    {
+        $mappedStyle = $this->mapStyle($fa5Style);
+
+        // Appliquer le fallback seulement si licence Free ET style Pro
+        if ($this->config['license_type'] === 'free' && $this->isProStyle($mappedStyle)) {
+            return $this->getFallbackStyle();
         }
 
-        // Style non reconnu, retourner tel quel avec avertissement
-        return $fa5Style;
+        return $mappedStyle;
     }
 
     /**
@@ -200,12 +197,12 @@ class StyleMapper
     public function convertFullClass(string $cssClass): string
     {
         // Pattern pour matcher les classes Font Awesome
-        $pattern = '/\b(fa[slrbad]|fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone)\s+(fa-[a-zA-Z0-9-]+)\b/';
+        $pattern = '/\b(fa[slrbad]|fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone|fa-thin|fa-sharp)\s+(fa-[a-zA-Z0-9-]+)\b/';
 
         return preg_replace_callback($pattern, function (array $matches): string {
             $oldStyle = $matches[1];
             $iconName = $matches[2];
-            $newStyle = $this->mapStyle($oldStyle);
+            $newStyle = $this->mapStyleWithFallback($oldStyle);
 
             return $newStyle.' '.$iconName;
         }, $cssClass);

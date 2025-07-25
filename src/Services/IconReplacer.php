@@ -168,8 +168,8 @@ class IconReplacer
         $iconName = $icon['name'];
         $originalString = $icon['full_match'];
 
-        // Mapper le style FA5 vers FA6
-        $newStyle = $this->styleMapper->mapStyle($style);
+        // Mapper le style FA5 vers FA6 avec fallback selon la licence
+        $newStyle = $this->styleMapper->mapStyleWithFallback($style);
 
         // Mapper le nom de l'icône si nécessaire
         $newIconName = $this->iconMapper->mapIcon($iconName);

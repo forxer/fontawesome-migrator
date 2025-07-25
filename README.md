@@ -311,17 +311,46 @@ const lightIcons = require("@fortawesome/pro-light-svg-icons");
 <font-awesome-icon icon="fa-solid fa-user" />
 ```
 
-## Migration Pro vers Free
+## Support universel des styles
 
-Si vous migrez d'une licence Pro vers Free, le package :
+Le package **reconnaît et convertit TOUS les styles FontAwesome** (solid, regular, light, duotone, thin, sharp) indépendamment de votre licence :
 
-1. **Détecte automatiquement** les icônes Pro uniquement
-2. **Propose des alternatives** gratuites quand disponible
-3. **Applique le fallback** configuré pour les styles Pro
-4. **Génère des avertissements** pour les icônes nécessitant une intervention manuelle
+### 🎯 **Comportement intelligent :**
+
+1. **Reconnaissance complète** : Tous les styles FA5 sont convertis vers leur équivalent FA6
+   - `fal fa-star` → `fa-light fa-star` (toujours)
+   - `fad fa-heart` → `fa-duotone fa-heart` (toujours)
+
+2. **Fallback selon la licence** : Les styles Pro sont adaptés selon votre licence
+   - **Licence Pro** : Styles Pro conservés (`fa-light`, `fa-duotone`)
+   - **Licence Free** : Fallback vers styles gratuits (`fa-solid`, `fa-regular`)
+
+### 📝 **Exemple avec licence Free :**
+```bash
+# Input (FA5)
+<i class="fal fa-star"></i>   # Light style
+<i class="fad fa-heart"></i>  # Duotone style
+
+# Output (FA6 avec fallback)
+<i class="fa-solid fa-star"></i>  # Fallback vers solid
+<i class="fa-solid fa-heart"></i> # Fallback vers solid
+```
+
+### 📝 **Exemple avec licence Pro :**
+```bash
+# Input (FA5)
+<i class="fal fa-star"></i>   # Light style
+<i class="fad fa-heart"></i>  # Duotone style
+
+# Output (FA6 Pro)
+<i class="fa-light fa-star"></i>   # Style Pro conservé
+<i class="fa-duotone fa-heart"></i> # Style Pro conservé
+```
+
+### Configuration du fallback
 
 ```bash
-# Exemple de migration Pro → Free
+# Exemple de test avant migration
 FONTAWESOME_LICENSE=free php artisan fontawesome:migrate --dry-run
 ```
 

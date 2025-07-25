@@ -266,7 +266,7 @@ class InstallFontAwesomeCommand extends Command
         $template = "<?php\n\nreturn [\n    /*\n    |--------------------------------------------------------------------------\n    | Configuration FontAwesome Migrator\n    |--------------------------------------------------------------------------\n    |\n    | Ce fichier contient uniquement les paramètres personnalisés.\n    | Les valeurs par défaut sont définies dans le package.\n    | \n    | Pour voir toutes les options disponibles :\n    | php artisan vendor:publish --tag=fontawesome-migrator-config --force\n    |\n    */\n\n";
 
         // Si aucune configuration personnalisée, créer un fichier vide
-        if (empty($customConfig)) {
+        if ($customConfig === []) {
             $content = $template."    // Aucune configuration personnalisée\n    // Toutes les valeurs par défaut sont utilisées\n];\n";
         } else {
             $content = $template.$this->arrayToString($customConfig, 1)."\n];\n";
