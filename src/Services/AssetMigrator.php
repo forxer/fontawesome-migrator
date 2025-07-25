@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 
 class AssetMigrator
@@ -18,7 +19,7 @@ class AssetMigrator
     {
         try {
             return config('fontawesome-migrator', []);
-        } catch (\Exception $e) {
+        } catch (Exception) {
             // Fallback pour les tests ou environnements sans configuration
             return [
                 'license_type' => 'free',
