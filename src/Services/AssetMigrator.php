@@ -205,9 +205,8 @@ class AssetMigrator
     {
         // Combiner les migrations HTML et JavaScript pour Vue
         $content = $this->migrateHtmlAssets($content);
-        $content = $this->migrateJavaScriptAssets($content);
 
-        return $content;
+        return $this->migrateJavaScriptAssets($content);
     }
 
     /**
@@ -403,11 +402,12 @@ class AssetMigrator
 
             if (! empty($analysis['assets'])) {
                 $stats['total_files_with_assets']++;
-                $extension = pathinfo($file['path'], PATHINFO_EXTENSION);
+                $extension = pathinfo((string) $file['path'], PATHINFO_EXTENSION);
 
                 if (! isset($stats['by_extension'][$extension])) {
                     $stats['by_extension'][$extension] = 0;
                 }
+
                 $stats['by_extension'][$extension]++;
 
                 foreach ($analysis['assets'] as $asset) {
@@ -422,6 +422,7 @@ class AssetMigrator
                     if (! isset($stats['by_type'][$asset['type']])) {
                         $stats['by_type'][$asset['type']] = 0;
                     }
+
                     $stats['by_type'][$asset['type']]++;
                 }
             }

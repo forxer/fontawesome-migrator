@@ -278,7 +278,7 @@ class MigrateFontAwesomeCommand extends Command
                 $from = trim($originalLines[$i]);
                 $to = trim($migratedLines[$i]);
 
-                if ($from !== $to && ! empty($from) && ! empty($to)) {
+                if ($from !== $to && ($from !== '' && $from !== '0') && ($to !== '' && $to !== '0')) {
                     $result['changes'][] = [
                         'type' => 'asset',
                         'line' => $i + 1,
