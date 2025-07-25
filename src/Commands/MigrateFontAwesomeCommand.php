@@ -222,40 +222,37 @@ class MigrateFontAwesomeCommand extends Command
                 'assets' => [],
             ];
 
-            // Analyser les assets présents
+            // Toujours essayer la migration des assets, même si analyzeAssets ne trouve rien
             $assetAnalysis = $this->assetMigrator->analyzeAssets($filePath);
+            $result['assets'] = $assetAnalysis['assets'] ?? [];
 
-            if (! empty($assetAnalysis['assets'])) {
-                $result['assets'] = $assetAnalysis['assets'];
+            if (! $isDryRun) {
+                // Lire le contenu du fichier
+                $content = file_get_contents($filePath);
+                $originalContent = $content;
 
-                if (! $isDryRun) {
-                    // Lire le contenu du fichier
-                    $content = file_get_contents($filePath);
-                    $originalContent = $content;
+                // Appliquer la migration des assets
+                $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
 
-                    // Appliquer la migration des assets
-                    $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
-
-                    if ($migratedContent !== $originalContent) {
-                        // Créer une sauvegarde si configuré
-                        if ($this->shouldCreateBackup()) {
-                            $this->createBackup($filePath);
-                        }
-
-                        // Écrire le contenu migré
-                        file_put_contents($filePath, $migratedContent);
-
-                        // Enregistrer les changements détectés
-                        $this->detectAssetChanges($originalContent, $migratedContent, $result);
+                if ($migratedContent !== $originalContent) {
+                    // Créer une sauvegarde si configuré
+                    if ($this->shouldCreateBackup()) {
+                        $this->createBackup($filePath);
                     }
-                } else {
-                    // Mode dry-run : simuler les changements
-                    $content = file_get_contents($filePath);
-                    $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
 
-                    if ($migratedContent !== $content) {
-                        $this->detectAssetChanges($content, $migratedContent, $result);
-                    }
+                    // Écrire le contenu migré
+                    file_put_contents($filePath, $migratedContent);
+
+                    // Enregistrer les changements détectés
+                    $this->detectAssetChanges($originalContent, $migratedContent, $result);
+                }
+            } else {
+                // Mode dry-run : simuler les changements
+                $content = file_get_contents($filePath);
+                $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
+
+                if ($migratedContent !== $content) {
+                    $this->detectAssetChanges($content, $migratedContent, $result);
                 }
             }
 

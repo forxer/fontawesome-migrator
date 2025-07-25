@@ -16,7 +16,17 @@ class AssetMigrator
      */
     protected function getConfig(): array
     {
-        return config('fontawesome-migrator', []);
+        try {
+            return config('fontawesome-migrator', []);
+        } catch (\Exception $e) {
+            // Fallback pour les tests ou environnements sans configuration
+            return [
+                'license_type' => 'free',
+                'scan_paths' => [],
+                'generate_report' => true,
+                'backup_files' => true,
+            ];
+        }
     }
 
     /**
@@ -46,7 +56,9 @@ class AssetMigrator
         $isPro = ($config['license_type'] ?? 'free') === 'pro';
 
         $replacements = [
-            // CDN URLs - Free
+            // CDN URLs - Free (patterns plus spécifiques)
+            'font-awesome/5.' => 'font-awesome/6.',
+            '/font-awesome/5.' => '/font-awesome/6.',
             'https://use.fontawesome.com/releases/v5.' => 'https://use.fontawesome.com/releases/v6.',
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.',
             'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.' => 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.',

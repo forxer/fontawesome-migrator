@@ -123,9 +123,12 @@ class InstallFontAwesomeCommand extends Command
         // Type de licence
         $licenseType = $this->choice(
             '   Quel type de licence FontAwesome utilisez-vous ?',
-            ['free' => 'Free (gratuite)', 'pro' => 'Pro (payante)'],
-            'free'
+            ['Free (gratuite)', 'Pro (payante)'],
+            'Free (gratuite)'
         );
+
+        // Convertir la réponse en clé
+        $licenseType = $licenseType === 'Pro (payante)' ? 'pro' : 'free';
 
         // Chemins de scan personnalisés
         $this->info('   📂 Chemins de scan par défaut :');
