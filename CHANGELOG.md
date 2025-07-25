@@ -12,6 +12,7 @@ CHANGELOG
 - Service AssetMigrator pour la gestion modulaire des assets
 - Interface web de gestion des rapports à `/fontawesome-migrator/reports`
 - ReportsController avec API REST pour CRUD et nettoyage automatique
+- Commande d'installation interactive `php artisan fontawesome:install`
 
 ### Changed
 - Rapports générés dans `storage/app/public` avec URLs web accessibles

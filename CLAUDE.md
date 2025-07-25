@@ -53,6 +53,9 @@ composer quality
 
 ### Package Commands
 ```bash
+# Interactive installation (recommended for first setup)
+php artisan fontawesome:install
+
 # Main migration command (icons + assets)
 php artisan fontawesome:migrate
 

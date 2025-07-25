@@ -48,10 +48,25 @@ composer require forxer/fontawesome-migrator
 
 Le package sera automatiquement enregistré grâce à la découverte automatique de Laravel.
 
-### Publication des fichiers de configuration
+### 🚀 Installation interactive (recommandée)
+
+```bash
+php artisan fontawesome:install
+```
+
+Cette commande interactive vous guide à travers :
+- **📝 Configuration personnalisée** : Licence (Free/Pro), chemins de scan, options
+- **🔗 Lien symbolique** : Configuration automatique pour l'accès web aux rapports
+- **✅ Vérifications** : Validation complète de l'installation
+- **📋 Instructions** : Prochaines étapes et commandes utiles
+
+### Installation manuelle
+
+Si vous préférez configurer manuellement :
 
 ```bash
 php artisan vendor:publish --tag=fontawesome-migrator-config
+php artisan storage:link
 ```
 
 ## Configuration
