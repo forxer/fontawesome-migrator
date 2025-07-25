@@ -128,7 +128,7 @@ class MigrateFontAwesomeCommandTest extends TestCase
         File::makeDirectory(storage_path('fontawesome-migrator/reports'), 0755, true, true);
 
         $this->artisan('fontawesome:migrate --report --dry-run')
-            ->expectsOutputToContain('📊 Rapport généré dans')
+            ->expectsOutputToContain('📊 Rapport généré :')
             ->assertExitCode(0);
     }
 

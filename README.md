@@ -36,6 +36,7 @@
 ### 🛠️ Outils
 - ✅ **Sauvegarde automatique** des fichiers modifiés
 - ✅ **Rapports détaillés** HTML et JSON
+- ✅ **Interface web** de gestion des rapports
 - ✅ **Mode dry-run** pour prévisualiser les changements
 - ✅ **Modes de migration** : complet, icônes uniquement, assets uniquement
 
@@ -94,7 +95,7 @@ return [
 
     // Génération de rapports
     'generate_report' => true,
-    'report_path' => storage_path('fontawesome-migrator/reports'),
+    'report_path' => storage_path('app/public/fontawesome-migrator/reports'),
 ];
 ```
 
@@ -284,7 +285,65 @@ Le package génère automatiquement des rapports détaillés :
 - Métadonnées de migration
 - Détails techniques complets
 
-Les rapports sont sauvegardés dans `storage/fontawesome-migrator/reports/`.
+### Accès aux rapports
+
+Les rapports sont automatiquement sauvegardés dans `storage/app/public/fontawesome-migrator/reports/` et **accessibles directement via votre navigateur** :
+
+```bash
+# Après migration, la commande affiche :
+📊 Rapport généré :
+   • Fichier : fontawesome-migration-report-2024-01-15_14-30-25.html
+   • HTML : /storage/fontawesome-migrator/reports/fontawesome-migration-report-2024-01-15_14-30-25.html
+   • JSON : /storage/fontawesome-migrator/reports/fontawesome-migration-report-2024-01-15_14-30-25.json
+   • Menu : http://localhost/fontawesome-migrator/reports
+```
+
+### 🎛️ Interface de gestion des rapports
+
+Le package inclut une **interface web complète** accessible à `/fontawesome-migrator/reports` :
+
+- **📊 Vue d'ensemble** : Liste de tous les rapports avec métadonnées
+- **🔍 Accès direct** : Liens vers HTML et JSON de chaque rapport  
+- **🗑️ Gestion** : Suppression individuelle ou nettoyage automatique
+- **🔄 Temps réel** : Actualisation et notifications AJAX
+- **📱 Responsive** : Interface adaptée mobile et desktop
+
+**Note :** Assurez-vous que le lien symbolique `public/storage` existe :
+```bash
+php artisan storage:link
+```
+
+### 🔧 Fonctionnalités de l'interface
+
+L'interface de gestion des rapports offre :
+
+**📊 Vue d'ensemble**
+- Liste complète des rapports avec date, heure et taille
+- Tri automatique par date (plus récent en premier)
+- Compteur total des rapports disponibles
+
+**🔗 Accès direct**  
+- Boutons "Voir HTML" et "Voir JSON" pour chaque rapport
+- Ouverture dans de nouveaux onglets pour consultation facile
+- URLs directes pour partage et intégration
+
+**🗑️ Gestion avancée**
+- Suppression individuelle avec confirmation
+- Nettoyage automatique des rapports anciens (30+ jours)
+- Notifications temps réel des actions
+
+**🔄 Interface dynamique**
+- Actualisation AJAX sans rechargement de page
+- Animations et transitions fluides
+- Responsive design pour mobile et desktop
+
+### 🎨 Design moderne
+
+L'interface utilise un design moderne avec :
+- Gradients et ombres pour un aspect professionnel
+- Cards avec effets hover pour une UX intuitive
+- Icons et couleurs cohérentes avec l'identité FontAwesome
+- États vides informatifs quand aucun rapport n'existe
 
 ## Sauvegardes
 

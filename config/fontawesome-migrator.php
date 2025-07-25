@@ -150,8 +150,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | Où sauvegarder le rapport de migration
+    | Par défaut dans storage/app/public pour accès web via Storage::url()
     |
     */
 
-    'report_path' => storage_path('fontawesome-migrator/reports'),
+    'report_path' => storage_path('app/public/fontawesome-migrator/reports'),
 ];

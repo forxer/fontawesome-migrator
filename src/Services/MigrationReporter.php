@@ -3,6 +3,7 @@
 namespace FontAwesome\Migrator\Services;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class MigrationReporter
 {
@@ -16,7 +17,7 @@ class MigrationReporter
     /**
      * Générer un rapport de migration
      */
-    public function generateReport(array $results): string
+    public function generateReport(array $results): array
     {
         $reportPath = $this->config['report_path'];
 
@@ -37,7 +38,18 @@ class MigrationReporter
         $jsonPath = $reportPath.'/'.$jsonFilename;
         File::put($jsonPath, json_encode($this->generateJsonReport($results), JSON_PRETTY_PRINT));
 
-        return $fullPath;
+        // Générer les URLs d'accès web
+        $relativePath = str_replace(storage_path('app/public'), '', $fullPath);
+        $jsonRelativePath = str_replace(storage_path('app/public'), '', $jsonPath);
+
+        return [
+            'html_path' => $fullPath,
+            'json_path' => $jsonPath,
+            'html_url' => Storage::url($relativePath),
+            'json_url' => Storage::url($jsonRelativePath),
+            'filename' => $filename,
+            'timestamp' => $timestamp,
+        ];
     }
 
     /**
@@ -105,6 +117,14 @@ class MigrationReporter
                 <div class='stat-label'>Fichiers modifiés</div>
             </div>
             <div class='stat-card'>
+                <div class='stat-number'>{$stats['icons_migrated']}</div>
+                <div class='stat-label'>Icônes migrées</div>
+            </div>
+            <div class='stat-card'>
+                <div class='stat-number'>{$stats['assets_migrated']}</div>
+                <div class='stat-label'>Assets migrés</div>
+            </div>
+            <div class='stat-card'>
                 <div class='stat-number'>{$stats['total_changes']}</div>
                 <div class='stat-label'>Total des changements</div>
             </div>
@@ -133,6 +153,26 @@ class MigrationReporter
 
         $html .= '</table>
         </div>';
+
+        // Section des assets si présents
+        if (! empty($stats['asset_types'])) {
+            $html .= "<div class='section'>
+                <h2>🎨 Assets détectés</h2>
+                <table>
+                    <tr><th>Type d'asset</th><th>Nombre</th><th>Description</th></tr>";
+
+            foreach ($stats['asset_types'] as $assetType => $count) {
+                $description = $this->getAssetTypeDescription($assetType);
+                $html .= "<tr>
+                    <td><strong>{$assetType}</strong></td>
+                    <td>{$count}</td>
+                    <td>{$description}</td>
+                </tr>";
+            }
+
+            $html .= '</table>
+            </div>';
+        }
 
         // Section des fichiers modifiés
         $modifiedFiles = array_filter($results, fn ($result): bool => ! empty($result['changes']));
@@ -254,8 +294,10 @@ class MigrationReporter
                 'success' => $result['success'] ?? true,
                 'changes_count' => \count($result['changes'] ?? []),
                 'warnings_count' => \count($result['warnings'] ?? []),
+                'assets_count' => \count($result['assets'] ?? []),
                 'changes' => $result['changes'] ?? [],
                 'warnings' => $result['warnings'] ?? [],
+                'assets' => $result['assets'] ?? [],
             ], $results),
         ];
     }
@@ -272,6 +314,9 @@ class MigrationReporter
             'changes_by_type' => [],
             'warnings' => 0,
             'errors' => 0,
+            'assets_migrated' => 0,
+            'icons_migrated' => 0,
+            'asset_types' => [],
         ];
 
         foreach ($results as $result) {
@@ -282,6 +327,21 @@ class MigrationReporter
                 foreach ($result['changes'] as $change) {
                     $type = $change['type'] ?? 'style_update';
                     $stats['changes_by_type'][$type] = ($stats['changes_by_type'][$type] ?? 0) + 1;
+
+                    // Compter les types de changements
+                    if ($type === 'asset') {
+                        $stats['assets_migrated']++;
+                    } else {
+                        $stats['icons_migrated']++;
+                    }
+                }
+            }
+
+            // Compter les types d'assets analysés
+            if (! empty($result['assets'])) {
+                foreach ($result['assets'] as $asset) {
+                    $assetType = $asset['type'] ?? 'unknown';
+                    $stats['asset_types'][$assetType] = ($stats['asset_types'][$assetType] ?? 0) + 1;
                 }
             }
 
@@ -308,6 +368,7 @@ class MigrationReporter
             'pro_fallback' => 'Fallback Pro→Free',
             'manual_review' => 'Révision manuelle',
             'renamed_icon' => 'Icône renommée',
+            'asset' => 'Asset migré',
         ];
 
         return $labels[$type] ?? ucfirst(str_replace('_', ' ', $type));
@@ -324,9 +385,33 @@ class MigrationReporter
             'pro_fallback' => 'change-type-deprecated',
             'manual_review' => 'change-type-manual',
             'renamed_icon' => 'change-type-style',
+            'asset' => 'change-type-style',
         ];
 
         return $classes[$type] ?? 'change-type-style';
+    }
+
+    /**
+     * Obtenir la description d'un type d'asset
+     */
+    protected function getAssetTypeDescription(string $type): string
+    {
+        $descriptions = [
+            'cdn_url' => 'URLs CDN FontAwesome',
+            'import' => 'Imports ES6/CommonJS',
+            'require' => 'Modules CommonJS',
+            'local_path' => 'Chemins locaux',
+            'node_modules' => 'Références node_modules',
+            'link_tag' => 'Balises <link> HTML',
+            'script_tag' => 'Balises <script> HTML',
+            'asset_helper' => 'Helpers Laravel asset()',
+            'npm_package' => 'Packages NPM',
+            'free_package' => 'Packages Free',
+            'pro_package' => 'Packages Pro',
+            'dynamic_import' => 'Imports dynamiques',
+        ];
+
+        return $descriptions[$type] ?? 'Type d\'asset détecté';
     }
 
     /**
