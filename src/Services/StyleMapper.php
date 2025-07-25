@@ -4,14 +4,19 @@ namespace FontAwesome\Migrator\Services;
 
 class StyleMapper
 {
-    protected array $config;
-
     protected array $styleMapping;
 
     public function __construct()
     {
-        $this->config = config('fontawesome-migrator');
         $this->initializeStyleMapping();
+    }
+
+    /**
+     * Obtenir la configuration actuelle
+     */
+    protected function getConfig(): array
+    {
+        return config('fontawesome-migrator', []);
     }
 
     /**
@@ -47,13 +52,8 @@ class StyleMapper
      */
     public function mapStyle(string $fa5Style): string
     {
-        // Toujours mapper vers le style FA6 correspondant
-        if (isset($this->styleMapping[$fa5Style])) {
-            return $this->styleMapping[$fa5Style];
-        }
-
         // Style non reconnu, retourner tel quel
-        return $fa5Style;
+        return $this->styleMapping[$fa5Style] ?? $fa5Style;
     }
 
     /**
@@ -64,7 +64,8 @@ class StyleMapper
         $mappedStyle = $this->mapStyle($fa5Style);
 
         // Appliquer le fallback seulement si licence Free ET style Pro
-        if ($this->config['license_type'] === 'free' && $this->isProStyle($mappedStyle)) {
+        $config = $this->getConfig();
+        if (($config['license_type'] ?? 'free') === 'free' && $this->isProStyle($mappedStyle)) {
             return $this->getFallbackStyle();
         }
 
@@ -76,7 +77,8 @@ class StyleMapper
      */
     protected function getFallbackStyle(): string
     {
-        $fallback = $this->config['fallback_strategy'] ?? 'solid';
+        $config = $this->getConfig();
+        $fallback = $config['fallback_strategy'] ?? 'solid';
 
         $fallbackMapping = [
             'solid' => 'fa-solid',
@@ -147,14 +149,15 @@ class StyleMapper
 
             case 'fal':
             case 'fa-light':
-                if ($this->config['license_type'] === 'pro') {
+                $config = $this->getConfig();
+                if (($config['license_type'] ?? 'free') === 'pro') {
                     $recommendations[] = [
                         'style' => 'fa-light',
                         'reason' => 'Style fin et élégant (Pro)',
                         'priority' => 1,
                     ];
 
-                    if ($this->config['pro_styles']['thin'] ?? false) {
+                    if ($config['pro_styles']['thin'] ?? false) {
                         $recommendations[] = [
                             'style' => 'fa-thin',
                             'reason' => 'Nouveau style encore plus fin (FA6 Pro)',
@@ -167,7 +170,8 @@ class StyleMapper
 
             case 'fad':
             case 'fa-duotone':
-                if ($this->config['license_type'] === 'pro') {
+                $config = $this->getConfig();
+                if (($config['license_type'] ?? 'free') === 'pro') {
                     $recommendations[] = [
                         'style' => 'fa-duotone',
                         'reason' => 'Style à deux couleurs (Pro)',

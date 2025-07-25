@@ -13,7 +13,8 @@ class InstallFontAwesomeCommand extends Command
      * The name and signature of the console command.
      */
     protected $signature = 'fontawesome:install
-                            {--force : Forcer la réécriture des fichiers existants}';
+                            {--force : Forcer la réécriture des fichiers existants}
+                            {--non-interactive : Mode non-interactif pour les tests}';
 
     /**
      * The console command description.
@@ -76,7 +77,7 @@ class InstallFontAwesomeCommand extends Command
     {
         $configExists = File::exists(config_path('fontawesome-migrator.php'));
 
-        if ($configExists && ! $this->option('force') && ! $this->confirm('Le fichier de configuration existe déjà. Le remplacer ?', false)) {
+        if ($configExists && ! $this->option('force') && ! $this->option('non-interactive') && ! $this->confirm('Le fichier de configuration existe déjà. Le remplacer ?', false)) {
             $this->info('   Configuration existante conservée');
 
             return;
@@ -106,6 +107,18 @@ class InstallFontAwesomeCommand extends Command
     {
         $this->line('   📝 Configuration du package...');
 
+        // Mode non-interactif pour les tests
+        if ($this->option('non-interactive')) {
+            $licenseType = 'free';
+            $customPaths = [];
+            $generateReports = true;
+            $enableBackups = true;
+            
+            $this->info('   ✅ Configuration par défaut appliquée (mode non-interactif)');
+            $this->writeConfiguration($licenseType, array_merge($this->getDefaultPaths(), $customPaths), $generateReports, $enableBackups);
+            return;
+        }
+
         // Type de licence
         $licenseType = $this->choice(
             '   Quel type de licence FontAwesome utilisez-vous ?',
@@ -115,13 +128,7 @@ class InstallFontAwesomeCommand extends Command
 
         // Chemins de scan personnalisés
         $this->info('   📂 Chemins de scan par défaut :');
-        $defaultPaths = [
-            'resources/views',
-            'resources/js',
-            'resources/css',
-            'public/css',
-            'public/js',
-        ];
+        $defaultPaths = $this->getDefaultPaths();
 
         foreach ($defaultPaths as $path) {
             $this->line('      • '.$path);
@@ -163,7 +170,7 @@ class InstallFontAwesomeCommand extends Command
         $storageLink = public_path('storage');
 
         if (! File::exists($storageLink)) {
-            if ($this->confirm('   Créer le lien symbolique storage pour l\'accès web ?', true)) {
+            if ($this->option('non-interactive') || $this->confirm('   Créer le lien symbolique storage pour l\'accès web ?', true)) {
                 Artisan::call('storage:link');
                 $this->info('   ✅ Lien symbolique storage créé');
             } else {
@@ -217,7 +224,11 @@ class InstallFontAwesomeCommand extends Command
         $configPath = config_path('fontawesome-migrator.php');
 
         // Charger la configuration par défaut depuis le package
-        $defaultConfig = include __DIR__.'/../../config/fontawesome-migrator.php';
+        $defaultConfigPath = __DIR__.'/../../config/fontawesome-migrator.php';
+        if (!file_exists($defaultConfigPath)) {
+            throw new \Exception("Configuration par défaut introuvable : {$defaultConfigPath}");
+        }
+        $defaultConfig = include $defaultConfigPath;
 
         // Créer seulement les valeurs modifiées
         $customConfig = [];
@@ -365,5 +376,19 @@ class InstallFontAwesomeCommand extends Command
         }
 
         $this->newLine();
+    }
+
+    /**
+     * Obtenir les chemins de scan par défaut
+     */
+    protected function getDefaultPaths(): array
+    {
+        return [
+            'resources/views',
+            'resources/js',
+            'resources/css',
+            'public/css',
+            'public/js',
+        ];
     }
 }

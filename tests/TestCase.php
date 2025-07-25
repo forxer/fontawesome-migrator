@@ -22,6 +22,13 @@ abstract class TestCase extends Orchestra
     protected function getEnvironmentSetUp($app): void
     {
         config()->set('fontawesome-migrator.license_type', 'free');
+        config()->set('fontawesome-migrator.fallback_strategy', 'solid');
+        config()->set('fontawesome-migrator.pro_styles', [
+            'light' => true,
+            'duotone' => true,
+            'thin' => false,
+            'sharp' => false,
+        ]);
         config()->set('fontawesome-migrator.scan_paths', [
             'resources/views',
             'resources/js',

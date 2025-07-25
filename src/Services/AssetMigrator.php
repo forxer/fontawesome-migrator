@@ -6,11 +6,18 @@ use Illuminate\Support\Facades\File;
 
 class AssetMigrator
 {
-    protected array $config;
 
     public function __construct()
     {
-        $this->config = config('fontawesome-migrator');
+        // Configuration chargée dynamiquement pour les tests
+    }
+
+    /**
+     * Obtenir la configuration actuelle
+     */
+    protected function getConfig(): array
+    {
+        return config('fontawesome-migrator', []);
     }
 
     /**
@@ -36,7 +43,8 @@ class AssetMigrator
      */
     protected function migrateStylesheetAssets(string $content): string
     {
-        $isPro = $this->config['license_type'] === 'pro';
+        $config = $this->getConfig();
+        $isPro = ($config['license_type'] ?? 'free') === 'pro';
 
         $replacements = [
             // CDN URLs - Free
@@ -90,7 +98,8 @@ class AssetMigrator
      */
     protected function migrateJavaScriptAssets(string $content): string
     {
-        $isPro = $this->config['license_type'] === 'pro';
+        $config = $this->getConfig();
+        $isPro = ($config['license_type'] ?? 'free') === 'pro';
 
         $replacements = [
             // Package managers - Free packages
@@ -158,7 +167,8 @@ class AssetMigrator
      */
     protected function migrateHtmlAssets(string $content): string
     {
-        $isPro = $this->config['license_type'] === 'pro';
+        $config = $this->getConfig();
+        $isPro = ($config['license_type'] ?? 'free') === 'pro';
 
         $replacements = [
             // CDN links - Free
@@ -214,7 +224,8 @@ class AssetMigrator
      */
     protected function migratePackageJsonAssets(string $content): string
     {
-        $isPro = $this->config['license_type'] === 'pro';
+        $config = $this->getConfig();
+        $isPro = ($config['license_type'] ?? 'free') === 'pro';
 
         $replacements = [
             // NPM packages - Free
