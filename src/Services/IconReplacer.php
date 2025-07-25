@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -29,10 +30,10 @@ class IconReplacer
             // Gérer les deux formats possibles (string ou array)
             if (\is_array($filePath)) {
                 $actualPath = $filePath['path'];
-                $relativePath = $filePath['relative_path'] ?? basename($actualPath);
+                $relativePath = $filePath['relative_path'] ?? basename((string) $actualPath);
             } else {
                 $actualPath = $filePath;
-                $relativePath = basename($filePath);
+                $relativePath = basename((string) $filePath);
             }
 
             $result = $this->processFile($actualPath, $isDryRun);
@@ -52,7 +53,7 @@ class IconReplacer
             if (! File::exists($filePath)) {
                 return [
                     'success' => false,
-                    'error' => "File not found: {$filePath}",
+                    'error' => 'File not found: '.$filePath,
                     'changes' => [],
                     'warnings' => [],
                 ];
@@ -61,7 +62,7 @@ class IconReplacer
             $content = File::get($filePath);
             $icons = $this->findFontAwesomeIcons($content);
 
-            if (empty($icons)) {
+            if ($icons === []) {
                 return [
                     'success' => true,
                     'changes' => [],
@@ -112,10 +113,10 @@ class IconReplacer
                 'warnings' => $warnings,
                 'content' => $modifiedContent,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => $exception->getMessage(),
                 'changes' => [],
                 'warnings' => [],
             ];
@@ -151,6 +152,7 @@ class IconReplacer
                     ];
                 }
             }
+
             $offset += \strlen($line) + 1; // +1 pour le \n
         }
 
@@ -322,6 +324,7 @@ class IconReplacer
             if (! File::delete($file->getRealPath())) {
                 continue;
             }
+
             $deleted++;
         }
 

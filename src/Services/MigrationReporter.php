@@ -382,6 +382,7 @@ class MigrationReporter
             if (! File::delete($file->getRealPath())) {
                 continue;
             }
+
             $deleted++;
         }
 

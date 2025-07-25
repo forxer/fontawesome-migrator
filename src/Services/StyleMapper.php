@@ -202,7 +202,7 @@ class StyleMapper
         // Pattern pour matcher les classes Font Awesome
         $pattern = '/\b(fa[slrbad]|fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone)\s+(fa-[a-zA-Z0-9-]+)\b/';
 
-        return preg_replace_callback($pattern, function ($matches): string {
+        return preg_replace_callback($pattern, function (array $matches): string {
             $oldStyle = $matches[1];
             $iconName = $matches[2];
             $newStyle = $this->mapStyle($oldStyle);
