@@ -113,9 +113,10 @@ class InstallFontAwesomeCommand extends Command
             $customPaths = [];
             $generateReports = true;
             $enableBackups = true;
-            
+
             $this->info('   ✅ Configuration par défaut appliquée (mode non-interactif)');
             $this->writeConfiguration($licenseType, array_merge($this->getDefaultPaths(), $customPaths), $generateReports, $enableBackups);
+
             return;
         }
 
@@ -225,9 +226,11 @@ class InstallFontAwesomeCommand extends Command
 
         // Charger la configuration par défaut depuis le package
         $defaultConfigPath = __DIR__.'/../../config/fontawesome-migrator.php';
-        if (!file_exists($defaultConfigPath)) {
-            throw new \Exception("Configuration par défaut introuvable : {$defaultConfigPath}");
+
+        if (! file_exists($defaultConfigPath)) {
+            throw new Exception('Configuration par défaut introuvable : '.$defaultConfigPath);
         }
+
         $defaultConfig = include $defaultConfigPath;
 
         // Créer seulement les valeurs modifiées

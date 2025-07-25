@@ -65,6 +65,7 @@ class StyleMapper
 
         // Appliquer le fallback seulement si licence Free ET style Pro
         $config = $this->getConfig();
+
         if (($config['license_type'] ?? 'free') === 'free' && $this->isProStyle($mappedStyle)) {
             return $this->getFallbackStyle();
         }
@@ -150,6 +151,7 @@ class StyleMapper
             case 'fal':
             case 'fa-light':
                 $config = $this->getConfig();
+
                 if (($config['license_type'] ?? 'free') === 'pro') {
                     $recommendations[] = [
                         'style' => 'fa-light',
@@ -171,6 +173,7 @@ class StyleMapper
             case 'fad':
             case 'fa-duotone':
                 $config = $this->getConfig();
+
                 if (($config['license_type'] ?? 'free') === 'pro') {
                     $recommendations[] = [
                         'style' => 'fa-duotone',

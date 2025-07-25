@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\File;
 
 class AssetMigrator
 {
-
     public function __construct()
     {
         // Configuration chargée dynamiquement pour les tests
