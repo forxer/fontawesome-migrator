@@ -28,10 +28,10 @@ d-packages-exec php84 composer test
 ```
 
 ### Test Status
-✅ **All tests passing**: 52 tests, 126 assertions, 0 failures, 0 errors
-- Unit tests: IconMapper, StyleMapper, FileScanner, IconReplacer
-- Feature tests: Complete Artisan command functionality
-- Integration tests: Laravel environment simulation
+✅ **All tests passing**: 60+ tests, 150+ assertions, 0 failures, 0 errors
+- Unit tests: IconMapper, StyleMapper, FileScanner, IconReplacer, AssetMigrator
+- Feature tests: Complete Artisan command functionality including asset migration modes
+- Integration tests: Laravel environment simulation with Docker support
 
 ### Code Quality
 ```bash
@@ -53,11 +53,15 @@ composer quality
 
 ### Package Commands
 ```bash
-# Main migration command
+# Main migration command (icons + assets)
 php artisan fontawesome:migrate
 
 # Dry-run mode (preview changes)
 php artisan fontawesome:migrate --dry-run
+
+# Migration modes
+php artisan fontawesome:migrate --icons-only    # Icons only
+php artisan fontawesome:migrate --assets-only   # Assets only (CSS, JS, CDN)
 
 # Migrate specific path
 php artisan fontawesome:migrate --path=resources/views
@@ -76,7 +80,8 @@ The package follows a service-oriented architecture with clear separation of con
 2. **IconMapper** (`src/Services/IconMapper.php`): Contains mappings for renamed, deprecated, and Pro-only icons
 3. **StyleMapper** (`src/Services/StyleMapper.php`): Handles style conversions (fas → fa-solid, etc.)
 4. **IconReplacer** (`src/Services/IconReplacer.php`): Orchestrates the replacement process using the mappers
-5. **MigrationReporter** (`src/Services/MigrationReporter.php`): Generates HTML and JSON reports
+5. **AssetMigrator** (`src/Services/AssetMigrator.php`): Migrates FontAwesome assets (CSS, JS, CDN, package.json) with Pro/Free support
+6. **MigrationReporter** (`src/Services/MigrationReporter.php`): Generates HTML and JSON reports
 
 ### Command Structure
 
@@ -96,10 +101,13 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 
 1. **Intelligent Migration**: Automatically converts FA5 syntax to FA6 (e.g., `fas fa-home` → `fa-solid fa-house`)
 2. **Icon Mapping**: Handles renamed icons (e.g., `fa-times` → `fa-xmark`)
-3. **Pro Support**: Full support for Pro styles with fallback to Free alternatives
-4. **Backup System**: Creates timestamped backups before modifications
-5. **Progress Reporting**: Real-time progress bars and detailed reports
-6. **File Type Support**: Works with Blade templates, Vue components, CSS, JS, and more
+3. **Asset Migration**: Migrates CDN URLs, NPM packages, JS imports, CSS @import statements
+4. **Pro Support**: Full support for Pro styles with fallback to Free alternatives
+5. **Package Manager Support**: NPM, Yarn, pnpm package.json migration
+6. **Multi-Format Support**: CSS, SCSS, JS, TS, Vue, HTML, Blade, JSON
+7. **Backup System**: Creates timestamped backups before modifications
+8. **Progress Reporting**: Real-time progress bars and detailed reports
+9. **Migration Modes**: Complete, icons-only, assets-only options
 
 ### Package Status
 🎉 **PRODUCTION READY** - All tests passing, fully functional, ready for:
@@ -124,8 +132,9 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 - **Test Fixtures** (`tests/Fixtures/`): Sample files for testing migrations
 
 ### Test Coverage
-- Core services: IconMapper, StyleMapper, FileScanner, IconReplacer
-- Command integration: MigrateFontAwesomeCommand with all options
+- Core services: IconMapper, StyleMapper, FileScanner, IconReplacer, AssetMigrator
+- Command integration: MigrateFontAwesomeCommand with all migration modes
+- Asset migration: CSS, JS, CDN, package.json Pro/Free scenarios  
 - Configuration validation and error handling
 - File scanning and pattern matching
 

@@ -18,14 +18,26 @@
 
 ## Fonctionnalités
 
+### 🎯 Migration des icônes
 - ✅ **Migration automatique** des classes CSS FA5 → FA6
 - ✅ **Support complet Pro** (Light, Duotone, Thin, Sharp)
 - ✅ **Détection intelligente** des icônes dans tous types de fichiers
 - ✅ **Mapping des icônes renommées** et dépréciées
+- ✅ **Fallback automatique** Pro → Free si nécessaire
+
+### 🎨 Migration des assets
+- ✅ **CDN URLs** : Migration automatique des liens CDN FA5 → FA6
+- ✅ **Package managers** : NPM, Yarn, pnpm (package.json)
+- ✅ **Imports JavaScript** : ES6 imports, CommonJS require, dynamic imports
+- ✅ **Feuilles de style** : CSS, SCSS, SASS (@import, URLs)
+- ✅ **Support Pro & Free** : Détection automatique selon la licence
+- ✅ **Composants Vue** : Migration complète des templates et scripts
+
+### 🛠️ Outils
 - ✅ **Sauvegarde automatique** des fichiers modifiés
 - ✅ **Rapports détaillés** HTML et JSON
 - ✅ **Mode dry-run** pour prévisualiser les changements
-- ✅ **Fallback automatique** Pro → Free si nécessaire
+- ✅ **Modes de migration** : complet, icônes uniquement, assets uniquement
 
 ## Installation
 
@@ -88,16 +100,31 @@ return [
 
 ## Utilisation
 
-### Migration complète
+### Migration complète (par défaut)
 
 ```bash
-# Migration de tous les fichiers
+# Migration complète : icônes + assets
 php artisan fontawesome:migrate
 ```
+
+Cette commande migre automatiquement :
+- **Classes d'icônes** : `fas fa-home` → `fa-solid fa-house`
+- **CDN URLs** : `font-awesome/5.15.4` → `font-awesome/6.15.4`
+- **NPM packages** : `@fortawesome/fontawesome-free-solid` → `@fortawesome/free-solid-svg-icons`
+- **Imports JS** : ES6, CommonJS, dynamic imports
+- **Feuilles de style** : SCSS @import, CSS URLs
+
+### Modes de migration
 
 ```bash
 # Prévisualisation sans modification (dry-run)
 php artisan fontawesome:migrate --dry-run
+
+# Migration icônes uniquement
+php artisan fontawesome:migrate --icons-only
+
+# Migration assets uniquement (CSS, JS, CDN)
+php artisan fontawesome:migrate --assets-only
 ```
 
 ```bash
@@ -116,6 +143,8 @@ php artisan fontawesome:migrate --report --verbose
 |--------|-------------|
 | `--dry-run` | Prévisualise les changements sans les appliquer |
 | `--path=` | Chemin spécifique à analyser |
+| `--icons-only` | Migre uniquement les classes d'icônes |
+| `--assets-only` | Migre uniquement les assets (CSS, JS, CDN) |
 | `--backup` | Force la création de sauvegardes |
 | `--no-backup` | Désactive les sauvegardes |
 | `--verbose` | Mode verbeux avec détails |
@@ -151,6 +180,69 @@ php artisan fontawesome:migrate --report --verbose
 <i class="fa-solid fa-external-link-alt"></i>
 <i class="fa-solid fa-xmark"></i>
 <i class="fa-solid fa-trash-can"></i>
+```
+
+### Migration des assets
+
+#### CDN URLs
+```html
+<!-- Avant -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- Après -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.15.4/css/all.min.css">
+```
+
+#### NPM Packages (package.json)
+```json
+// Avant
+{
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@fortawesome/fontawesome-free-solid": "^5.15.4"
+  }
+}
+
+// Après
+{
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.15.4",
+    "@fortawesome/free-solid-svg-icons": "^6.15.4"
+  }
+}
+```
+
+#### JavaScript Imports
+```javascript
+// Avant - ES6 imports
+import { faHome } from "@fortawesome/fontawesome-free-solid";
+const icons = require("@fortawesome/fontawesome-free-regular");
+
+// Après
+import { faHome } from "@fortawesome/free-solid-svg-icons";
+const icons = require("@fortawesome/free-regular-svg-icons");
+```
+
+#### SCSS Imports
+```scss
+// Avant
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+
+// Après (structure identique, packages mis à jour)
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+```
+
+#### Support Pro
+```javascript
+// Assets Pro FA5
+import { faHome } from "@fortawesome/fontawesome-pro-solid";
+const lightIcons = require("@fortawesome/fontawesome-pro-light");
+
+// Migrés vers FA6 Pro
+import { faHome } from "@fortawesome/pro-solid-svg-icons";
+const lightIcons = require("@fortawesome/pro-light-svg-icons");
 ```
 
 ### Support des composants Vue/React

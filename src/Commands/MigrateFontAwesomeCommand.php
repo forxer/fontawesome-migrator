@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Commands;
 
+use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MigrationReporter;
@@ -17,17 +18,20 @@ class MigrateFontAwesomeCommand extends Command
                             {--path= : Chemin spécifique à analyser}
                             {--backup : Forcer la création de sauvegardes}
                             {--no-backup : Désactiver les sauvegardes}
-                            {--report : Générer un rapport détaillé}';
+                            {--report : Générer un rapport détaillé}
+                            {--icons-only : Migrer uniquement les classes d\'icônes}
+                            {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}';
 
     /**
      * The console command description.
      */
-    protected $description = 'Migrer Font Awesome 5 vers Font Awesome 6 dans votre application Laravel';
+    protected $description = 'Migrer Font Awesome 5 vers Font Awesome 6 (icônes et assets) dans votre application Laravel';
 
     public function __construct(
         protected FileScanner $scanner,
         protected IconReplacer $replacer,
         protected MigrationReporter $reporter,
+        protected AssetMigrator $assetMigrator,
     ) {
         parent::__construct();
     }
@@ -46,9 +50,30 @@ class MigrateFontAwesomeCommand extends Command
 
         $isDryRun = $this->option('dry-run');
         $customPath = $this->option('path');
+        $iconsOnly = $this->option('icons-only');
+        $assetsOnly = $this->option('assets-only');
+
+        // Validation des options
+        if ($iconsOnly && $assetsOnly) {
+            $this->error('Les options --icons-only et --assets-only sont mutuellement exclusives');
+
+            return Command::FAILURE;
+        }
+
+        // Par défaut : migration complète (icônes + assets)
+        $migrateIcons = ! $assetsOnly;
+        $migrateAssets = ! $iconsOnly;
 
         if ($isDryRun) {
             $this->warn('Mode DRY-RUN activé - Aucune modification ne sera appliquée');
+        }
+
+        if ($assetsOnly) {
+            $this->info('🎨 Mode assets uniquement - Migration des références CSS/JS/CDN');
+        } elseif ($iconsOnly) {
+            $this->info('🎯 Mode icônes uniquement - Migration des classes d\'icônes');
+        } else {
+            $this->info('🔄 Mode complet - Migration des icônes ET des assets');
         }
 
         // Configuration du scanner
@@ -74,9 +99,26 @@ class MigrateFontAwesomeCommand extends Command
 
         $this->info(\sprintf('📋 %d fichiers trouvés', \count($files)));
 
-        // Analyser et remplacer les icônes
-        $this->info('🔍 Recherche des icônes Font Awesome 5...');
-        $results = $this->replacer->processFiles($files, $isDryRun);
+        // Traitement selon le mode sélectionné
+        $results = [];
+
+        if ($migrateIcons) {
+            $this->info('🔍 Recherche des icônes Font Awesome 5...');
+            $iconResults = $this->replacer->processFiles($files, $isDryRun);
+            $results = $iconResults;
+        }
+
+        if ($migrateAssets) {
+            $this->info('🎨 Migration des assets Font Awesome 5...');
+            $assetResults = $this->processAssets($files, $isDryRun);
+
+            if ($migrateIcons) {
+                // Fusionner les résultats
+                $results = $this->mergeResults($results, $assetResults);
+            } else {
+                $results = $assetResults;
+            }
+        }
 
         // Afficher les résultats
         $this->displayResults($results, $isDryRun);
@@ -155,5 +197,170 @@ class MigrateFontAwesomeCommand extends Command
                 }
             }
         }
+    }
+
+    /**
+     * Traiter les assets FontAwesome dans les fichiers
+     */
+    protected function processAssets(array $files, bool $isDryRun): array
+    {
+        $results = [];
+        $progressBar = $this->output->createProgressBar(\count($files));
+
+        foreach ($files as $file) {
+            $progressBar->advance();
+
+            $filePath = $file['path'];
+            $result = [
+                'file' => $filePath,
+                'changes' => [],
+                'warnings' => [],
+                'assets' => [],
+            ];
+
+            // Analyser les assets présents
+            $assetAnalysis = $this->assetMigrator->analyzeAssets($filePath);
+
+            if (! empty($assetAnalysis['assets'])) {
+                $result['assets'] = $assetAnalysis['assets'];
+
+                if (! $isDryRun) {
+                    // Lire le contenu du fichier
+                    $content = file_get_contents($filePath);
+                    $originalContent = $content;
+
+                    // Appliquer la migration des assets
+                    $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
+
+                    if ($migratedContent !== $originalContent) {
+                        // Créer une sauvegarde si configuré
+                        if ($this->shouldCreateBackup()) {
+                            $this->createBackup($filePath);
+                        }
+
+                        // Écrire le contenu migré
+                        file_put_contents($filePath, $migratedContent);
+
+                        // Enregistrer les changements détectés
+                        $this->detectAssetChanges($originalContent, $migratedContent, $result);
+                    }
+                } else {
+                    // Mode dry-run : simuler les changements
+                    $content = file_get_contents($filePath);
+                    $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
+
+                    if ($migratedContent !== $content) {
+                        $this->detectAssetChanges($content, $migratedContent, $result);
+                    }
+                }
+            }
+
+            $results[] = $result;
+        }
+
+        $progressBar->finish();
+        $this->newLine();
+
+        return $results;
+    }
+
+    /**
+     * Détecter les changements d'assets entre l'original et le migré
+     */
+    protected function detectAssetChanges(string $original, string $migrated, array &$result): void
+    {
+        $originalLines = explode("\n", $original);
+        $migratedLines = explode("\n", $migrated);
+
+        for ($i = 0; $i < min(\count($originalLines), \count($migratedLines)); $i++) {
+            if ($originalLines[$i] !== $migratedLines[$i]) {
+                // Simplifier l'affichage pour les changements d'assets
+                $from = trim($originalLines[$i]);
+                $to = trim($migratedLines[$i]);
+
+                if ($from !== $to && ! empty($from) && ! empty($to)) {
+                    $result['changes'][] = [
+                        'type' => 'asset',
+                        'line' => $i + 1,
+                        'from' => \strlen($from) > 80 ? substr($from, 0, 77).'...' : $from,
+                        'to' => \strlen($to) > 80 ? substr($to, 0, 77).'...' : $to,
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
+     * Fusionner les résultats de migration des icônes et des assets
+     */
+    protected function mergeResults(array $iconResults, array $assetResults): array
+    {
+        $fileMap = [];
+
+        // Indexer les résultats par fichier
+        foreach ($iconResults as $result) {
+            $fileMap[$result['file']] = $result;
+        }
+
+        // Fusionner avec les résultats d'assets
+        foreach ($assetResults as $assetResult) {
+            $filePath = $assetResult['file'];
+
+            if (isset($fileMap[$filePath])) {
+                // Fusionner les changements
+                $fileMap[$filePath]['changes'] = array_merge(
+                    $fileMap[$filePath]['changes'] ?? [],
+                    $assetResult['changes'] ?? []
+                );
+
+                // Fusionner les avertissements
+                $fileMap[$filePath]['warnings'] = array_merge(
+                    $fileMap[$filePath]['warnings'] ?? [],
+                    $assetResult['warnings'] ?? []
+                );
+
+                // Ajouter les assets
+                $fileMap[$filePath]['assets'] = $assetResult['assets'] ?? [];
+            } else {
+                // Nouveau fichier avec seulement des changements d'assets
+                $fileMap[$filePath] = $assetResult;
+            }
+        }
+
+        return array_values($fileMap);
+    }
+
+    /**
+     * Déterminer si une sauvegarde doit être créée
+     */
+    protected function shouldCreateBackup(): bool
+    {
+        if ($this->option('backup')) {
+            return true;
+        }
+
+        if ($this->option('no-backup')) {
+            return false;
+        }
+
+        return config('fontawesome-migrator.backup.enabled', true);
+    }
+
+    /**
+     * Créer une sauvegarde d'un fichier
+     */
+    protected function createBackup(string $filePath): void
+    {
+        $backupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+
+        if (! is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        $timestamp = date('Y-m-d_H-i-s');
+        $relativePath = str_replace(base_path().'/', '', $filePath);
+        $backupPath = $backupDir.'/'.$timestamp.'_'.str_replace('/', '_', $relativePath);
+
+        copy($filePath, $backupPath);
     }
 }

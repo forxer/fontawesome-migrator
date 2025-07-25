@@ -40,6 +40,7 @@ class MigrateFontAwesomeCommandTest extends TestCase
         $this->artisan('fontawesome:migrate --dry-run')
             ->expectsOutput('🚀 Démarrage de la migration Font Awesome 5 → 6')
             ->expectsOutput('Mode DRY-RUN activé - Aucune modification ne sera appliquée')
+            ->expectsOutput('🔄 Mode complet - Migration des icônes ET des assets')
             ->assertExitCode(0);
 
         // Verify file wasn't actually modified
@@ -129,5 +130,111 @@ class MigrateFontAwesomeCommandTest extends TestCase
         $this->artisan('fontawesome:migrate --report --dry-run')
             ->expectsOutputToContain('📊 Rapport généré dans')
             ->assertExitCode(0);
+    }
+
+    public function test_can_migrate_assets_only(): void
+    {
+        // Create test CSS file with FA5 CDN
+        File::makeDirectory(base_path('resources/css'), 0755, true);
+        File::put(base_path('resources/css/app.css'), '
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css");
+            .icon { font-family: "Font Awesome 5 Free"; }
+        ');
+
+        // Create test JS file with FA5 imports
+        File::makeDirectory(base_path('resources/js'), 0755, true);
+        File::put(base_path('resources/js/app.js'), '
+            import { faHome } from "@fortawesome/fontawesome-free-solid";
+            const icons = require("@fortawesome/fontawesome-free-regular");
+        ');
+
+        $this->artisan('fontawesome:migrate --assets-only')
+            ->expectsOutput('🚀 Démarrage de la migration Font Awesome 5 → 6')
+            ->expectsOutput('🎨 Mode assets uniquement - Migration des références CSS/JS/CDN')
+            ->assertExitCode(0);
+
+        // Verify CSS was migrated
+        $cssContent = File::get(base_path('resources/css/app.css'));
+        $this->assertStringContainsString('font-awesome/6.15.4', $cssContent);
+
+        // Verify JS was migrated
+        $jsContent = File::get(base_path('resources/js/app.js'));
+        $this->assertStringContainsString('@fortawesome/free-solid-svg-icons', $jsContent);
+        $this->assertStringContainsString('@fortawesome/free-regular-svg-icons', $jsContent);
+    }
+
+    public function test_can_migrate_icons_only(): void
+    {
+        // Create test file with both icons and assets
+        File::put($this->testViewsPath.'/mixed.blade.php', '
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+            <i class="fas fa-home"></i>
+            <i class="fas fa-times"></i>
+        ');
+
+        $this->artisan('fontawesome:migrate --icons-only')
+            ->expectsOutput('🚀 Démarrage de la migration Font Awesome 5 → 6')
+            ->expectsOutput('🎯 Mode icônes uniquement - Migration des classes d\'icônes')
+            ->assertExitCode(0);
+
+        $content = File::get($this->testViewsPath.'/mixed.blade.php');
+
+        // Icons should be migrated
+        $this->assertStringContainsString('fa-solid fa-house', $content);
+        $this->assertStringContainsString('fa-solid fa-xmark', $content);
+
+        // CDN link should NOT be migrated
+        $this->assertStringContainsString('font-awesome/5.15.4', $content);
+    }
+
+    public function test_complete_migration_with_assets_and_icons(): void
+    {
+        // Create test file with both
+        File::put($this->testViewsPath.'/complete.blade.php', '
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+            <i class="fas fa-home"></i>
+            <i class="fas fa-times"></i>
+        ');
+
+        $this->artisan('fontawesome:migrate')
+            ->expectsOutput('🚀 Démarrage de la migration Font Awesome 5 → 6')
+            ->expectsOutput('🔄 Mode complet - Migration des icônes ET des assets')
+            ->assertExitCode(0);
+
+        $content = File::get($this->testViewsPath.'/complete.blade.php');
+
+        // Both should be migrated
+        $this->assertStringContainsString('fa-solid fa-house', $content);
+        $this->assertStringContainsString('fa-solid fa-xmark', $content);
+        $this->assertStringContainsString('releases/v6.15.4', $content);
+    }
+
+    public function test_pro_assets_migration(): void
+    {
+        // Set Pro license
+        config(['fontawesome-migrator.license_type' => 'pro']);
+
+        // Create test file with Pro assets
+        File::makeDirectory(base_path('resources/js'), 0755, true);
+        File::put(base_path('resources/js/pro.js'), '
+            import { faHome } from "@fortawesome/fontawesome-pro-solid";
+            const lightIcons = require("@fortawesome/fontawesome-pro-light");
+        ');
+
+        $this->artisan('fontawesome:migrate --assets-only')
+            ->expectsOutput('🚀 Démarrage de la migration Font Awesome 5 → 6')
+            ->expectsOutput('🎨 Mode assets uniquement - Migration des références CSS/JS/CDN')
+            ->assertExitCode(0);
+
+        $content = File::get(base_path('resources/js/pro.js'));
+        $this->assertStringContainsString('@fortawesome/pro-solid-svg-icons', $content);
+        $this->assertStringContainsString('@fortawesome/pro-light-svg-icons', $content);
+    }
+
+    public function test_validates_mutually_exclusive_options(): void
+    {
+        $this->artisan('fontawesome:migrate --icons-only --assets-only')
+            ->expectsOutput('Les options --icons-only et --assets-only sont mutuellement exclusives')
+            ->assertExitCode(1);
     }
 }
