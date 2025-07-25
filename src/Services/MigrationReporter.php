@@ -11,6 +11,8 @@ class MigrationReporter
 
     protected bool $isDryRun = false;
 
+    protected array $migrationOptions = [];
+
     public function __construct()
     {
         $this->config = config('fontawesome-migrator');
@@ -22,6 +24,16 @@ class MigrationReporter
     public function setDryRun(bool $isDryRun): self
     {
         $this->isDryRun = $isDryRun;
+
+        return $this;
+    }
+
+    /**
+     * Définir les options de migration utilisées
+     */
+    public function setMigrationOptions(array $options): self
+    {
+        $this->migrationOptions = $options;
 
         return $this;
     }
@@ -78,6 +90,14 @@ class MigrationReporter
             'stats' => $stats,
             'timestamp' => $timestamp,
             'isDryRun' => $this->isDryRun ?? false,
+            'migrationOptions' => $this->migrationOptions,
+            'configuration' => [
+                'license_type' => $this->config['license_type'],
+                'scan_paths' => $this->config['scan_paths'] ?? [],
+                'file_extensions' => $this->config['file_extensions'] ?? [],
+                'backup_enabled' => $this->config['backup']['enabled'] ?? true,
+            ],
+            'packageVersion' => $this->getPackageVersion(),
         ];
 
         return view('fontawesome-migrator::reports.migration', $viewData)->render();
@@ -94,7 +114,14 @@ class MigrationReporter
             'meta' => [
                 'generated_at' => date('c'),
                 'license_type' => $this->config['license_type'],
-                'package_version' => '1.0.0', // À récupérer dynamiquement
+                'package_version' => $this->getPackageVersion(),
+                'dry_run' => $this->isDryRun,
+                'migration_options' => $this->migrationOptions,
+                'configuration' => [
+                    'scan_paths' => $this->config['scan_paths'] ?? [],
+                    'file_extensions' => $this->config['file_extensions'] ?? [],
+                    'backup_enabled' => $this->config['backup']['enabled'] ?? true,
+                ],
             ],
             'summary' => $stats,
             'files' => array_map(fn ($result): array => [
@@ -283,5 +310,24 @@ class MigrationReporter
         }
 
         return $deleted;
+    }
+
+    /**
+     * Obtenir la version du package
+     */
+    protected function getPackageVersion(): string
+    {
+        $composerPath = __DIR__.'/../../composer.json';
+
+        if (file_exists($composerPath)) {
+            $composer = json_decode(file_get_contents($composerPath), true);
+
+            if (isset($composer['version'])) {
+                return $composer['version'];
+            }
+        }
+
+        // Fallback version
+        return '1.1.0';
     }
 }

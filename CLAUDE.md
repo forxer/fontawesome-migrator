@@ -84,7 +84,7 @@ The package follows a service-oriented architecture with clear separation of con
 3. **StyleMapper** (`src/Services/StyleMapper.php`): Handles style conversions (fas → fa-solid, etc.)
 4. **IconReplacer** (`src/Services/IconReplacer.php`): Orchestrates the replacement process using the mappers
 5. **AssetMigrator** (`src/Services/AssetMigrator.php`): Migrates FontAwesome assets (CSS, JS, CDN, package.json) with Pro/Free support
-6. **MigrationReporter** (`src/Services/MigrationReporter.php`): Generates HTML and JSON reports using Blade views with shared layout system
+6. **MigrationReporter** (`src/Services/MigrationReporter.php`): Generates HTML and JSON reports using Blade views with shared layout system and comprehensive metadata tracking
 
 ### Command Structure
 
@@ -121,6 +121,43 @@ The package implements a **unified design system** with complete mutualization o
 - **Flexibility**: Easy theming through CSS variables modification
 - **Performance**: Cached Blade views and optimized CSS without external dependencies
 
+### Report Configuration & Traceability
+
+The package provides comprehensive **migration context tracking** in reports:
+
+#### Configuration Capture
+- **Migration Options**: Captures all command-line options (--dry-run, --icons-only, --assets-only, --path, etc.)
+- **Environment Configuration**: Records license type, scan paths, file extensions, backup settings
+- **Dynamic Versioning**: Package version automatically extracted from composer.json with fallback
+
+#### Report Metadata Structure
+```json
+{
+  "meta": {
+    "generated_at": "2025-01-25T10:30:00+00:00",
+    "package_version": "1.1.0",
+    "dry_run": true,
+    "migration_options": {
+      "icons_only": false,
+      "assets_only": false,
+      "custom_path": null,
+      "backup": null
+    },
+    "configuration": {
+      "license_type": "free",
+      "scan_paths": ["resources/views", "resources/js"],
+      "file_extensions": ["blade.php", "vue", "js", "css"]
+    }
+  }
+}
+```
+
+#### Traceability Benefits
+- **Reproducibility**: Exact command reconstruction from report metadata
+- **Audit Trail**: Complete history of migration parameters and context
+- **Debugging Support**: Configuration visibility for troubleshooting issues
+- **Version Tracking**: Dynamic package version prevents outdated documentation
+
 ### Configuration System
 
 The package uses a comprehensive configuration file (`config/fontawesome-migrator.php`) that supports:
@@ -143,6 +180,7 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 9. **Progress Reporting**: Real-time progress bars and detailed reports
 10. **Migration Modes**: Complete, icons-only, assets-only options
 11. **Unified UI Design**: Complete mutualization of HTML formatting with shared Blade layout system for consistent visual experience
+12. **Configuration Traceability**: Comprehensive migration context tracking with dynamic versioning and reproducible audit trails
 
 ### Package Status
 🎉 **PRODUCTION READY** - All tests passing, fully functional, ready for:

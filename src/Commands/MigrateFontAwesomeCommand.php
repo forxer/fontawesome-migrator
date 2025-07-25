@@ -125,7 +125,23 @@ class MigrateFontAwesomeCommand extends Command
 
         // Générer le rapport si demandé
         if ($this->option('report') || config('fontawesome-migrator.generate_report')) {
-            $reportInfo = $this->reporter->setDryRun($isDryRun)->generateReport($results);
+            // Préparer les options de migration pour le rapport
+            $migrationOptions = [
+                'dry_run' => $isDryRun,
+                'custom_path' => $customPath,
+                'icons_only' => $iconsOnly,
+                'assets_only' => $assetsOnly,
+                'migrate_icons' => $migrateIcons,
+                'migrate_assets' => $migrateAssets,
+                'backup' => $this->option('backup'),
+                'no_backup' => $this->option('no-backup'),
+                'report' => $this->option('report'),
+            ];
+
+            $reportInfo = $this->reporter
+                ->setDryRun($isDryRun)
+                ->setMigrationOptions($migrationOptions)
+                ->generateReport($results);
             $this->info('📊 Rapport généré :');
             $this->line('   • Fichier : '.$reportInfo['filename']);
             $this->line('   • HTML : '.$reportInfo['html_url']);

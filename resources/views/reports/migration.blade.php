@@ -126,12 +126,69 @@
         </div>
     @endif
 
+    <!-- Configuration et options -->
+    <div class="section">
+        <h2>⚙️ Configuration de migration</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <h3 style="margin: 0 0 10px 0; color: var(--gray-700);">Options utilisées</h3>
+                <table style="margin-top: 0;">
+                    <tr><td><strong>Mode</strong></td><td>{{ $isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète' }}</td></tr>
+                    @if(!empty($migrationOptions['custom_path']))
+                        <tr><td><strong>Chemin personnalisé</strong></td><td><code>{{ $migrationOptions['custom_path'] }}</code></td></tr>
+                    @endif
+                    @if($migrationOptions['icons_only'] ?? false)
+                        <tr><td><strong>Migration</strong></td><td>Icônes uniquement</td></tr>
+                    @elseif($migrationOptions['assets_only'] ?? false)
+                        <tr><td><strong>Migration</strong></td><td>Assets uniquement</td></tr>
+                    @else
+                        <tr><td><strong>Migration</strong></td><td>Complète (icônes + assets)</td></tr>
+                    @endif
+                    <tr><td><strong>Sauvegarde</strong></td><td>
+                        @if($migrationOptions['no_backup'] ?? false)
+                            Désactivée
+                        @elseif($migrationOptions['backup'] ?? false)
+                            Forcée
+                        @else
+                            {{ ($configuration['backup_enabled'] ?? true) ? 'Activée' : 'Désactivée' }}
+                        @endif
+                    </td></tr>
+                </table>
+            </div>
+            
+            <div>
+                <h3 style="margin: 0 0 10px 0; color: var(--gray-700);">Configuration</h3>
+                <table style="margin-top: 0;">
+                    <tr><td><strong>Type de licence</strong></td><td>{{ ucfirst($configuration['license_type'] ?? 'free') }}</td></tr>
+                    <tr><td><strong>Chemins scannés</strong></td><td>
+                        @if(!empty($configuration['scan_paths']))
+                            @foreach($configuration['scan_paths'] as $path)
+                                <code>{{ $path }}</code>@if(!$loop->last), @endif
+                            @endforeach
+                        @else
+                            Non définis
+                        @endif
+                    </td></tr>
+                    <tr><td><strong>Extensions</strong></td><td>
+                        @if(!empty($configuration['file_extensions']))
+                            @foreach($configuration['file_extensions'] as $ext)
+                                <code>{{ $ext }}</code>@if(!$loop->last), @endif
+                            @endforeach
+                        @else
+                            Toutes
+                        @endif
+                    </td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- Informations de fin -->
     <div class="section">
         <h2>ℹ️ Informations supplémentaires</h2>
         <p><strong>Rapport généré :</strong> {{ $timestamp }}</p>
-        <p><strong>Package :</strong> FontAwesome Migrator v1.1.0</p>
-        <p><strong>Mode :</strong> {{ $isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète' }}</p>
+        <p><strong>Package :</strong> FontAwesome Migrator v{{ $packageVersion ?? '1.1.0' }}</p>
         
         @if($stats['total_changes'] > 0 && !$isDryRun)
             <div class="alert alert-info">

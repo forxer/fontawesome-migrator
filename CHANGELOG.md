@@ -11,6 +11,7 @@ CHANGELOG
 - Interface web de gestion des rapports à `/fontawesome-migrator/reports`
 - Commande d'installation interactive `php artisan fontawesome:install`
 - Design system unifié pour toutes les interfaces web
+- Traçabilité complète des configurations et options de migration dans les rapports
 
 ### Changed
 - Migration complète (icônes + assets) activée par défaut
@@ -20,6 +21,7 @@ CHANGELOG
 ### Fixed  
 - Affichage des rapports avec URLs clickables
 - Support complet des assets dans les statistiques
+- Version du package rendue dynamique (plus de valeurs en dur)
 
 
 

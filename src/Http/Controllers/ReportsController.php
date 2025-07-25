@@ -81,7 +81,10 @@ class ReportsController extends Controller
             'timestamp' => isset($jsonData['meta']['generated_at']) ?
                 date('Y-m-d H:i:s', strtotime((string) $jsonData['meta']['generated_at'])) :
                 date('Y-m-d H:i:s'),
-            'isDryRun' => false, // Les rapports archivés sont des migrations réelles
+            'isDryRun' => $jsonData['meta']['dry_run'] ?? false,
+            'migrationOptions' => $jsonData['meta']['migration_options'] ?? [],
+            'configuration' => $jsonData['meta']['configuration'] ?? [],
+            'packageVersion' => $jsonData['meta']['package_version'] ?? '1.1.0',
         ];
 
         return view('fontawesome-migrator::reports.migration', $viewData);
