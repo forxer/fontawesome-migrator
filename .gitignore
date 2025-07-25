@@ -1,4 +1,5 @@
 /.phpunit.cache
 /.rector_cache
 /vendor
+composer-setup.php
 composer.lock
