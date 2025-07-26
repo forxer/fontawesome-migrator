@@ -44,6 +44,44 @@
             margin: 10px 0;
         }
         
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .toggle-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn:hover {
+            background: var(--gray-200);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.active {
+            max-height: 2000px;
+            transition: max-height 0.3s ease-in;
+        }
+        
+        .highlight-match {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
         .timeline-item {
             position: relative;
             padding-left: 30px;
@@ -702,7 +740,8 @@
                        class="search-box" 
                        id="searchBox" 
                        placeholder="🔍 Rechercher dans les fichiers, changements ou extensions..."
-                       onkeyup="filterChanges()">
+                       onkeyup="filterChanges()"
+                       style="display: block; width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
             </div>
 
             <div id="modificationsContainer">
@@ -717,7 +756,7 @@
                                 </button>
                             </div>
 
-                            <div class="collapsible-content active" id="details-{{ $index }}">
+                            <div class="collapsible-content active" id="details-{{ $index }}" style="max-height: none; overflow: visible;">
                                 @foreach($result['changes'] as $changeIndex => $change)
                                     <div class="change-item" data-change-from="{{ $change['from'] }}" data-change-to="{{ $change['to'] }}">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -814,6 +853,17 @@
 
         // Initialisation du graphique Chart.js
         document.addEventListener('DOMContentLoaded', function() {
+            // S'assurer que tous les détails sont visibles par défaut
+            const allDetails = document.querySelectorAll('.collapsible-content');
+            allDetails.forEach(detail => {
+                detail.classList.add('active');
+            });
+            
+            // S'assurer que toutes les icônes sont en mode "ouvert"
+            const allIcons = document.querySelectorAll('[id^="toggle-icon-"]');
+            allIcons.forEach(icon => {
+                icon.textContent = '▼';
+            });
             @if($stats['total_changes'] > 0 && !empty($stats['changes_by_type']))
             const ctx = document.getElementById('changesChart');
             if (ctx) {
