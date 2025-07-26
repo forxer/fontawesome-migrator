@@ -562,7 +562,7 @@
             <div class="stat-number" style="color: var(--warning-color);">{{ number_format($stats['warnings'], 0, ',', ' ') }}</div>
             <div class="stat-label">Avertissements</div>
             <div style="margin-top: 10px; color: var(--warning-color); font-size: 0.9em;">
-                ⚠️ À vérifier
+                ⚠️ Icônes renommées/dépréciées
             </div>
         </div>
         @endif
@@ -662,8 +662,8 @@
                 <div class="recommendation-card priority-high">
                     <div class="rec-icon">⚠️</div>
                     <div class="rec-content">
-                        <h4>Vérifications nécessaires</h4>
-                        <p>{{ number_format($stats['warnings'], 0, ',', ' ') }} avertissement(s) détecté(s). Vérifiez manuellement ces éléments.</p>
+                        <h4>Icônes à vérifier</h4>
+                        <p>{{ number_format($stats['warnings'], 0, ',', ' ') }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
                         <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()">👀 Voir les avertissements</button>
                     </div>
                 </div>
