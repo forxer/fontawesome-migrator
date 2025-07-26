@@ -4,7 +4,6 @@ namespace FontAwesome\Migrator;
 
 use FontAwesome\Migrator\Commands\InstallFontAwesomeCommand;
 use FontAwesome\Migrator\Commands\MigrateFontAwesomeCommand;
-use FontAwesome\Migrator\Http\Controllers\AssetsController;
 use FontAwesome\Migrator\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -70,15 +69,6 @@ class ServiceProvider extends BaseServiceProvider
 
                 Route::post('/reports/cleanup', [ReportsController::class, 'cleanup'])
                     ->name('fontawesome-migrator.reports.cleanup');
-
-                // Routes pour servir les assets
-                Route::get('/assets/css/{filename}', [AssetsController::class, 'css'])
-                    ->name('fontawesome-migrator.assets.css')
-                    ->where('filename', '[a-zA-Z0-9\-\.]+');
-
-                Route::get('/assets/js/{filename}', [AssetsController::class, 'js'])
-                    ->name('fontawesome-migrator.assets.js')
-                    ->where('filename', '[a-zA-Z0-9\-\.]+');
             });
     }
 }
