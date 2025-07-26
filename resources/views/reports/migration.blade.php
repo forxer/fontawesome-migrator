@@ -405,12 +405,12 @@
                             <div class="file-path" style="display: flex; justify-content: space-between; align-items: center;">
                                 <span>📁 {{ $result['file'] }}</span>
                                 <button class="toggle-btn" onclick="toggleFileDetails({{ $index }})">
-                                    <span id="toggle-icon-{{ $index }}">▼</span>
+                                    <span id="toggle-icon-{{ $index }}">▶</span>
                                     {{ count($result['changes']) }} changement(s)
                                 </button>
                             </div>
 
-                            <div class="collapsible-content active" id="details-{{ $index }}">
+                            <div class="collapsible-content" id="details-{{ $index }}">
                                 @foreach($result['changes'] as $changeIndex => $change)
                                     <div class="change-item" data-change-from="{{ $change['from'] }}" data-change-to="{{ $change['to'] }}">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -612,12 +612,19 @@
             });
         }
         
-        // S'assurer que tous les détails sont visibles au chargement
+        // Initialiser l'état fermé par défaut
         document.addEventListener('DOMContentLoaded', function() {
             const allDetails = document.querySelectorAll('.collapsible-content');
             allDetails.forEach(detail => {
-                detail.classList.add('active');
+                detail.classList.remove('active');
             });
+            
+            const allIcons = document.querySelectorAll('[id^="toggle-icon-"]');
+            allIcons.forEach(icon => {
+                icon.textContent = '▶';
+            });
+            
+            allExpanded = false;
         });
     </script>
     
