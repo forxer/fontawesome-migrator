@@ -68,8 +68,30 @@ class ReportsController extends Controller
         $jsonPath = $reportPath.'/'.$jsonFilename;
 
         if (! File::exists($jsonPath)) {
-            // Fallback : afficher le HTML directement si pas de JSON
-            return response(File::get($filePath))->header('Content-Type', 'text/html');
+            // Fallback : utiliser la vue Blade avec données par défaut
+            $viewData = [
+                'results' => [],
+                'stats' => [
+                    'total_files' => 0,
+                    'modified_files' => 0,
+                    'total_changes' => 0,
+                    'icons_migrated' => 0,
+                    'assets_migrated' => 0,
+                    'migration_success' => true,
+                ],
+                'timestamp' => date('Y-m-d H:i:s', filemtime($filePath)),
+                'isDryRun' => false,
+                'migrationOptions' => [],
+                'configuration' => [
+                    'license_type' => 'free',
+                    'scan_paths' => [],
+                    'file_extensions' => [],
+                    'backup_enabled' => true,
+                ],
+                'packageVersion' => '1.1.0',
+            ];
+            
+            return view('fontawesome-migrator::reports.migration', $viewData);
         }
 
         // Charger les données depuis le fichier JSON
