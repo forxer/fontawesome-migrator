@@ -401,7 +401,7 @@
                                 </button>
                             </div>
 
-                            <div class="collapsible-content active" id="details-{{ $index }}" style="max-height: none; overflow: visible;">
+                            <div class="collapsible-content active" id="details-{{ $index }}">
                                 @foreach($result['changes'] as $changeIndex => $change)
                                     <div class="change-item" data-change-from="{{ $change['from'] }}" data-change-to="{{ $change['to'] }}">
                                         <div style="display: flex; justify-content: space-between; align-items: center;">

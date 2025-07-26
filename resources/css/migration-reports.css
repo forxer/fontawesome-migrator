@@ -3,6 +3,23 @@
  * Styles pour l'interface des rapports HTML avec fonctionnalités avancées
  */
 
+/* Variables CSS */
+:root {
+    --primary-color: #4299e1;
+    --primary-hover: #3182ce;
+    --secondary-color: #667eea;
+    --success-color: #48bb78;
+    --error-color: #e53e3e;
+    --warning-color: #ed8936;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --blue-500: #3b82f6;
+}
+
 /* Sections améliorées */
 .enhanced-section {
     position: relative;
@@ -94,8 +111,66 @@
 }
 
 .collapsible-content.active {
-    max-height: 2000px;
+    max-height: 2000px !important;
+    overflow: visible !important;
     transition: max-height 0.3s ease-in;
+}
+
+/* Styles pour les fichiers et changements */
+.file-item {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.file-path {
+    background: var(--gray-50);
+    padding: 15px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.toggle-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.toggle-btn:hover {
+    background: var(--primary-hover);
+}
+
+.change-item {
+    padding: 15px;
+    border-bottom: 1px solid var(--gray-100);
+    background: white;
+}
+
+.change-item:last-child {
+    border-bottom: none;
+}
+
+.change-from {
+    color: var(--error-color);
+    font-family: monospace;
+    background: #fef2f2;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.change-to {
+    color: var(--success-color);
+    font-family: monospace;
+    background: #f0fdf4;
+    padding: 8px;
+    border-radius: 4px;
 }
 
 /* Surlignage de recherche */
