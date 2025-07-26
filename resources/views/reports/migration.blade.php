@@ -6,7 +6,16 @@
 
 @section('head-extra')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ route('fontawesome-migrator.assets.css', 'migration-reports.css') }}">
+    <style>
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .collapsible-content.active { max-height: 2000px !important; overflow: visible !important; }
+        .file-item { background: white; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 15px; }
+        .file-path { background: #f9fafb; padding: 15px; border-bottom: 1px solid #e5e7eb; }
+        .toggle-btn { background: #4299e1; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+        .change-item { padding: 15px; border-bottom: 1px solid #f3f4f6; }
+        .change-from { color: #e53e3e; font-family: monospace; background: #fef2f2; padding: 8px; border-radius: 4px; margin-bottom: 5px; }
+        .change-to { color: #48bb78; font-family: monospace; background: #f0fdf4; padding: 8px; border-radius: 4px; }
+    </style>
 @endsection
 
 @section('content')
@@ -455,8 +464,50 @@
         </div>
     </div>
 
-    {{-- Script externe pour les rapports --}}
-    <script src="{{ route('fontawesome-migrator.assets.js', 'migration-reports.js') }}"></script>
+    {{-- JavaScript essentiel pour les détails --}}
+    <script>
+        let allExpanded = true;
+        
+        function toggleFileDetails(index) {
+            const details = document.getElementById('details-' + index);
+            const icon = document.getElementById('toggle-icon-' + index);
+            
+            if (details.classList.contains('active')) {
+                details.classList.remove('active');
+                icon.textContent = '▶';
+            } else {
+                details.classList.add('active');
+                icon.textContent = '▼';
+            }
+        }
+        
+        function toggleAllDetails() {
+            const allDetails = document.querySelectorAll('.collapsible-content');
+            const allIcons = document.querySelectorAll('[id^="toggle-icon-"]');
+            
+            allExpanded = !allExpanded;
+            
+            allDetails.forEach(detail => {
+                if (allExpanded) {
+                    detail.classList.add('active');
+                } else {
+                    detail.classList.remove('active');
+                }
+            });
+            
+            allIcons.forEach(icon => {
+                icon.textContent = allExpanded ? '▼' : '▶';
+            });
+        }
+        
+        // S'assurer que tous les détails sont visibles au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const allDetails = document.querySelectorAll('.collapsible-content');
+            allDetails.forEach(detail => {
+                detail.classList.add('active');
+            });
+        });
+    </script>
     
     {{-- Données pour les scripts externes --}}
     <script>
