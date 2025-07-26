@@ -112,6 +112,215 @@
             background: yellow;
             font-weight: bold;
         }
+        
+        /* Timeline styles */
+        .timeline-container {
+            margin: 20px 0;
+        }
+        
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-left: 10px;
+        }
+        
+        .timeline-content h4 {
+            margin: 0 0 10px 0;
+            color: var(--gray-800);
+            font-size: 1.1em;
+        }
+        
+        .timeline-content p {
+            margin: 0 0 5px 0;
+            color: var(--gray-600);
+        }
+        
+        .timeline-content small {
+            color: var(--gray-500);
+            font-size: 0.85em;
+        }
+        
+        /* Recommendations grid */
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .recommendation-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .recommendation-card.priority-high {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .recommendation-card.priority-medium {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .recommendation-card.priority-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .recommendation-card.priority-info {
+            background: linear-gradient(135deg, var(--blue-50), var(--blue-100));
+            border-left: 4px solid var(--blue-500);
+        }
+        
+        .rec-icon {
+            font-size: 2em;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .rec-content {
+            flex: 1;
+        }
+        
+        .rec-content h4 {
+            margin: 0 0 10px 0;
+            color: var(--gray-800);
+            font-size: 1.1em;
+        }
+        
+        .rec-content p {
+            margin: 0 0 15px 0;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        
+        .rec-content code {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.9em;
+        }
+        
+        /* Performance metrics */
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: var(--gray-600);
+            font-size: 0.9em;
+        }
+        
+        .metric-trend {
+            margin-top: 10px;
+            font-size: 0.8em;
+        }
+        
+        .trend-up {
+            color: var(--success-color);
+        }
+        
+        .trend-down {
+            color: var(--danger-color);
+        }
+        
+        /* Modal styles pour les tips */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--gray-800);
+        }
+        
+        .close {
+            color: var(--gray-500);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: var(--gray-800);
+        }
+        
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tips-list li {
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .tips-list li strong {
+            color: var(--primary-color);
+        }
     </style>
 @endsection
 
@@ -196,6 +405,153 @@
         <h2>📊 Répartition des changements</h2>
         <div class="chart-container">
             <canvas id="changesChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Chronologie de migration -->
+    <div class="section enhanced-section">
+        <h2>🕒 Chronologie de migration</h2>
+        <div class="timeline-container">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4>🔍 Analyse effectuée</h4>
+                    <p>{{ $stats['total_files'] }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
+                    <small>{{ $timestamp }}</small>
+                </div>
+            </div>
+            
+            @if($stats['modified_files'] > 0)
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4>🎯 Fichiers ciblés</h4>
+                    <p>{{ $stats['modified_files'] }} fichier(s) contenant du code Font Awesome 5</p>
+                    <small>Détection automatique</small>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4>⚡ Migration appliquée</h4>
+                    <p>{{ $stats['total_changes'] }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
+                    <small>{{ $isDryRun ? 'Mode prévisualisation' : 'Modifications effectives' }}</small>
+                </div>
+            </div>
+            @endif
+            
+            @if(($stats['assets_migrated'] ?? 0) > 0)
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4>📦 Assets migrés</h4>
+                    <p>{{ $stats['assets_migrated'] }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
+                    <small>Packages et liens modernisés</small>
+                </div>
+            </div>
+            @endif
+            
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    @if($stats['migration_success'] ?? true)
+                        <h4>✅ Migration {{ $isDryRun ? 'planifiée' : 'terminée' }}</h4>
+                        <p>Votre code est {{ $isDryRun ? 'prêt pour' : 'maintenant compatible avec' }} Font Awesome 6</p>
+                    @else
+                        <h4>⚠️ Migration partielle</h4>
+                        <p>Certains éléments nécessitent une vérification manuelle</p>
+                    @endif
+                    <small>{{ $timestamp }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recommandations intelligentes -->
+    <div class="section enhanced-section">
+        <h2>🎯 Recommandations</h2>
+        <div class="recommendations-grid">
+            @if($isDryRun && $stats['total_changes'] > 0)
+                <div class="recommendation-card priority-high">
+                    <div class="rec-icon">🚀</div>
+                    <div class="rec-content">
+                        <h4>Prêt pour la migration</h4>
+                        <p>Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ $stats['total_changes'] }} changements.</p>
+                        <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')">📋 Copier la commande</button>
+                    </div>
+                </div>
+            @endif
+            
+            @if(!$isDryRun && $stats['total_changes'] > 0)
+                <div class="recommendation-card priority-medium">
+                    <div class="rec-icon">🧪</div>
+                    <div class="rec-content">
+                        <h4>Tests recommandés</h4>
+                        <p>Testez votre application pour vérifier que les icônes s'affichent correctement.</p>
+                        <button class="btn btn-primary btn-sm" onclick="showTestingTips()">📝 Conseils de test</button>
+                    </div>
+                </div>
+            @endif
+            
+            @if(($stats['warnings'] ?? 0) > 0)
+                <div class="recommendation-card priority-high">
+                    <div class="rec-icon">⚠️</div>
+                    <div class="rec-content">
+                        <h4>Vérifications nécessaires</h4>
+                        <p>{{ $stats['warnings'] }} avertissement(s) détecté(s). Vérifiez manuellement ces éléments.</p>
+                        <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()">👀 Voir les avertissements</button>
+                    </div>
+                </div>
+            @endif
+            
+            @if(($stats['assets_migrated'] ?? 0) > 0)
+                <div class="recommendation-card priority-medium">
+                    <div class="rec-icon">📦</div>
+                    <div class="rec-content">
+                        <h4>Mise à jour des dépendances</h4>
+                        <p>N'oubliez pas d'exécuter <code>npm install</code> pour installer les nouvelles versions.</p>
+                        <button class="btn btn-primary btn-sm" onclick="copyCommand('npm install')">📋 Copier npm install</button>
+                    </div>
+                </div>
+            @endif
+            
+            @php
+                $migrationScore = 0;
+                if ($stats['total_files'] > 0) {
+                    $migrationScore = round(($stats['modified_files'] / $stats['total_files']) * 100);
+                }
+            @endphp
+            
+            @if($migrationScore >= 80)
+                <div class="recommendation-card priority-success">
+                    <div class="rec-icon">🏆</div>
+                    <div class="rec-content">
+                        <h4>Excellent score de migration</h4>
+                        <p>{{ $migrationScore }}% de votre code a été optimisé pour Font Awesome 6 !</p>
+                    </div>
+                </div>
+            @elseif($migrationScore >= 50)
+                <div class="recommendation-card priority-medium">
+                    <div class="rec-icon">👍</div>
+                    <div class="rec-content">
+                        <h4>Bonne migration</h4>
+                        <p>{{ $migrationScore }}% de votre code utilise maintenant Font Awesome 6.</p>
+                    </div>
+                </div>
+            @elseif($stats['total_changes'] == 0)
+                <div class="recommendation-card priority-success">
+                    <div class="rec-icon">✨</div>
+                    <div class="rec-content">
+                        <h4>Code déjà optimisé</h4>
+                        <p>Votre code semble déjà compatible avec Font Awesome 6 !</p>
+                    </div>
+                </div>
+            @endif
+            
+            <div class="recommendation-card priority-info">
+                <div class="rec-icon">📚</div>
+                <div class="rec-content">
+                    <h4>Documentation officielle</h4>
+                    <p>Consultez le guide de migration Font Awesome 6 pour plus d'informations.</p>
+                    <a href="https://fontawesome.com/v6/docs/web/setup/upgrade/" target="_blank" class="btn btn-primary btn-sm">🔗 Guide officiel</a>
+                </div>
+            </div>
         </div>
     </div>
     @endif
@@ -695,6 +1051,146 @@
             }, 3000);
         }
 
+        // Fonctions pour les recommandations
+        function copyCommand(command) {
+            navigator.clipboard.writeText(command).then(() => {
+                showNotification(`📋 Commande copiée: ${command}`, 'success');
+            }).catch(() => {
+                showNotification('❌ Erreur lors de la copie', 'error');
+            });
+        }
+
+        function showTestingTips() {
+            showModal('🧪 Conseils de test', `
+                <ul class="tips-list">
+                    <li><strong>🔍 Vérification visuelle :</strong> Naviguez sur votre site et vérifiez que toutes les icônes s'affichent correctement.</li>
+                    <li><strong>📱 Tests multi-appareils :</strong> Testez sur différentes tailles d'écrans (mobile, tablette, desktop).</li>
+                    <li><strong>🌐 Compatibilité navigateurs :</strong> Vérifiez Chrome, Firefox, Safari et Edge.</li>
+                    <li><strong>⚡ Performance :</strong> Utilisez les outils de développement pour vérifier les temps de chargement.</li>
+                    <li><strong>🎨 Cohérence design :</strong> Assurez-vous que le style et la taille des icônes restent cohérents.</li>
+                    <li><strong>🔄 Cache navigateur :</strong> Videz le cache ou testez en navigation privée.</li>
+                </ul>
+            `);
+        }
+
+        function scrollToWarnings() {
+            const warnings = document.querySelectorAll('.alert-warning');
+            if (warnings.length > 0) {
+                warnings[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                warnings[0].style.animation = 'pulse 2s';
+            } else {
+                showNotification('ℹ️ Aucun avertissement dans cette vue', 'info');
+            }
+        }
+
+        function showModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>${title}</h3>
+                        <span class="close" onclick="closeModal(this)">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'block';
+            
+            // Fermer en cliquant à l'extérieur
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeModal(modal.querySelector('.close'));
+                }
+            };
+        }
+
+        function closeModal(closeBtn) {
+            const modal = closeBtn.closest('.modal');
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+        }
+
+        // Ajout d'une section métriques de performance
+        function addPerformanceMetrics() {
+            const stats = @json($stats);
+            const timestamp = '{{ $timestamp }}';
+            
+            // Calculer quelques métriques intéressantes
+            const migrationRate = stats.total_files > 0 ? (stats.modified_files / stats.total_files * 100).toFixed(1) : 0;
+            const changesDensity = stats.modified_files > 0 ? (stats.total_changes / stats.modified_files).toFixed(1) : 0;
+            const successRate = stats.total_changes > 0 ? (((stats.total_changes - (stats.warnings || 0)) / stats.total_changes) * 100).toFixed(1) : 100;
+            
+            const performanceSection = document.createElement('div');
+            performanceSection.className = 'section enhanced-section';
+            performanceSection.innerHTML = `
+                <h2>📈 Métriques de performance</h2>
+                <div class="performance-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">${migrationRate}%</div>
+                        <div class="metric-label">Taux de migration</div>
+                        <div class="metric-trend ${migrationRate > 50 ? 'trend-up' : 'trend-down'}">
+                            ${migrationRate > 50 ? '↗ Excellent' : '→ Partiel'}
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${changesDensity}</div>
+                        <div class="metric-label">Changements par fichier</div>
+                        <div class="metric-trend ${changesDensity < 5 ? 'trend-up' : 'trend-down'}">
+                            ${changesDensity < 5 ? '↗ Léger' : '↗ Intensif'}
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${successRate}%</div>
+                        <div class="metric-label">Taux de succès</div>
+                        <div class="metric-trend ${successRate > 95 ? 'trend-up' : successRate > 80 ? 'trend-up' : 'trend-down'}">
+                            ${successRate > 95 ? '↗ Parfait' : successRate > 80 ? '↗ Bon' : '→ À améliorer'}
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${stats.total_changes || 0}</div>
+                        <div class="metric-label">Optimisations totales</div>
+                        <div class="metric-trend trend-up">
+                            ↗ Modernisé
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Insérer après les statistiques principales
+            const statsGrid = document.querySelector('.stats-grid');
+            if (statsGrid && stats.total_changes > 0) {
+                statsGrid.parentNode.insertBefore(performanceSection, statsGrid.nextSibling);
+            }
+        }
+
+        // Améliorer les animations
+        function enhanceAnimations() {
+            // Animation des cartes de recommandations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            // Observer toutes les sections
+            document.querySelectorAll('.section, .recommendation-card').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
         // Ajout des animations CSS
         const style = document.createElement('style');
         style.textContent = `
@@ -706,8 +1202,26 @@
                 from { transform: translateX(0); opacity: 1; }
                 to { transform: translateX(100%); opacity: 0; }
             }
+            @keyframes fadeInUp {
+                from { transform: translateY(30px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            .section {
+                opacity: 0;
+                transform: translateY(30px);
+            }
         `;
         document.head.appendChild(style);
+        
+        // Initialiser les améliorations au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            addPerformanceMetrics();
+            enhanceAnimations();
+        });
     </script>
 
 @endsection
