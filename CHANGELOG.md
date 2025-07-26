@@ -10,6 +10,7 @@ CHANGELOG
 - Section configuration de migration dans les rapports avec options et environnement
 - Extraction dynamique de version depuis CHANGELOG.md
 - Support des fichiers individuels dans scan_paths (en plus des répertoires)
+- Support webpack.mix.js avec patterns pour fichiers JS FontAwesome individuels
 
 ### Changed
 - Interface web unifiée avec layout partagé

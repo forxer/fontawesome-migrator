@@ -60,11 +60,14 @@ return [
         'resources/views',
         'resources/js',
         'resources/css',
+        'resources/scss',
+        'resources/sass',
         'public/css',
         'public/js',
         // Exemples de fichiers spécifiques :
         // 'resources/views/layouts/app.blade.php',
         // 'public/js/custom-icons.js',
+        // 'webpack.mix.js'
     ],
 
     /*
