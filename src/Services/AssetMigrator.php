@@ -121,6 +121,18 @@ class AssetMigrator
             'from "@fortawesome/fontawesome-free/js/all"' => 'from "@fortawesome/fontawesome-free/js/all"',
             'from "@fortawesome/fontawesome-free/js/fontawesome"' => 'from "@fortawesome/fontawesome-free/js/fontawesome"',
 
+            // Free webpack.mix.js et autres bundlers - Fichiers JS individuels
+            '@fortawesome/fontawesome-free/js/brands.js' => '@fortawesome/fontawesome-free/js/brands.js',
+            '@fortawesome/fontawesome-free/js/solid.js' => '@fortawesome/fontawesome-free/js/solid.js',
+            '@fortawesome/fontawesome-free/js/regular.js' => '@fortawesome/fontawesome-free/js/regular.js',
+            '@fortawesome/fontawesome-free/js/fontawesome.js' => '@fortawesome/fontawesome-free/js/fontawesome.js',
+            
+            // Free webpack.mix.js avec concaténation de variables
+            "'@fortawesome/fontawesome-free/js/brands.js'" => "'@fortawesome/fontawesome-free/js/brands.js'",
+            "'@fortawesome/fontawesome-free/js/solid.js'" => "'@fortawesome/fontawesome-free/js/solid.js'",
+            "'@fortawesome/fontawesome-free/js/regular.js'" => "'@fortawesome/fontawesome-free/js/regular.js'",
+            "'@fortawesome/fontawesome-free/js/fontawesome.js'" => "'@fortawesome/fontawesome-free/js/fontawesome.js'",
+
             // Dynamic imports
             'import("@fortawesome/fontawesome-free-solid")' => 'import("@fortawesome/free-solid-svg-icons")',
             'import("@fortawesome/fontawesome-free-regular")' => 'import("@fortawesome/free-regular-svg-icons")',
@@ -148,6 +160,24 @@ class AssetMigrator
                 'from "@fortawesome/fontawesome-pro-thin"' => 'from "@fortawesome/pro-thin-svg-icons"',
                 'from "@fortawesome/fontawesome-pro-brands"' => 'from "@fortawesome/free-brands-svg-icons"', // Brands reste free
                 'from "@fortawesome/fontawesome-pro/js/all"' => 'from "@fortawesome/fontawesome-pro/js/all"',
+
+                // Pro webpack.mix.js et autres bundlers - Fichiers JS individuels
+                '@fortawesome/fontawesome-pro/js/brands.js' => '@fortawesome/fontawesome-pro/js/brands.js', // Brands reste identique
+                '@fortawesome/fontawesome-pro/js/solid.js' => '@fortawesome/fontawesome-pro/js/solid.js',
+                '@fortawesome/fontawesome-pro/js/regular.js' => '@fortawesome/fontawesome-pro/js/regular.js',
+                '@fortawesome/fontawesome-pro/js/light.js' => '@fortawesome/fontawesome-pro/js/light.js',
+                '@fortawesome/fontawesome-pro/js/duotone.js' => '@fortawesome/fontawesome-pro/js/duotone.js',
+                '@fortawesome/fontawesome-pro/js/thin.js' => '@fortawesome/fontawesome-pro/js/thin.js',
+                '@fortawesome/fontawesome-pro/js/fontawesome.js' => '@fortawesome/fontawesome-pro/js/fontawesome.js',
+                
+                // Pro webpack.mix.js avec concaténation de variables (vendor + '@fortawesome/...')
+                "'@fortawesome/fontawesome-pro/js/brands.js'" => "'@fortawesome/fontawesome-pro/js/brands.js'",
+                "'@fortawesome/fontawesome-pro/js/solid.js'" => "'@fortawesome/fontawesome-pro/js/solid.js'",
+                "'@fortawesome/fontawesome-pro/js/regular.js'" => "'@fortawesome/fontawesome-pro/js/regular.js'",
+                "'@fortawesome/fontawesome-pro/js/light.js'" => "'@fortawesome/fontawesome-pro/js/light.js'",
+                "'@fortawesome/fontawesome-pro/js/duotone.js'" => "'@fortawesome/fontawesome-pro/js/duotone.js'",
+                "'@fortawesome/fontawesome-pro/js/thin.js'" => "'@fortawesome/fontawesome-pro/js/thin.js'",
+                "'@fortawesome/fontawesome-pro/js/fontawesome.js'" => "'@fortawesome/fontawesome-pro/js/fontawesome.js'",
 
                 // Pro dynamic imports
                 'import("@fortawesome/fontawesome-pro-solid")' => 'import("@fortawesome/pro-solid-svg-icons")',
