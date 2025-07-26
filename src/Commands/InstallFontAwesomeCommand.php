@@ -115,7 +115,8 @@ class InstallFontAwesomeCommand extends Command
             $enableBackups = true;
 
             $this->info('   ✅ Configuration par défaut appliquée (mode non-interactif)');
-            $this->writeConfiguration($licenseType, array_merge($this->getDefaultPaths(), $customPaths), $generateReports, $enableBackups);
+            // En mode non-interactif, utiliser seulement les chemins personnalisés (vides = valeurs par défaut du package)
+            $this->writeConfiguration($licenseType, $customPaths, $generateReports, $enableBackups);
 
             return;
         }
@@ -244,7 +245,8 @@ class InstallFontAwesomeCommand extends Command
             $customConfig['license_type'] = $licenseType;
         }
 
-        if ($scanPaths !== $defaultConfig['scan_paths']) {
+        // N'écrire scan_paths que s'il y a vraiment des chemins personnalisés (non vides et différents des défauts)
+        if (! empty($scanPaths) && $scanPaths !== $defaultConfig['scan_paths']) {
             $customConfig['scan_paths'] = $scanPaths;
         }
 
@@ -393,6 +395,8 @@ class InstallFontAwesomeCommand extends Command
             'resources/views',
             'resources/js',
             'resources/css',
+            'resources/scss',
+            'resources/sass',
             'public/css',
             'public/js',
         ];

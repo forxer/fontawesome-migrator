@@ -26,8 +26,8 @@ return [
     'pro_styles' => [
         'light' => true,
         'duotone' => true,
-        'thin' => false,    // Nouveau dans FA6 Pro
-        'sharp' => false,   // Nouveau dans FA6 Pro
+        'thin' => false,
+        'sharp' => false,
     ],
 
     /*
@@ -67,6 +67,7 @@ return [
         // Exemples de fichiers spécifiques :
         // 'resources/views/layouts/app.blade.php',
         // 'public/js/custom-icons.js',
+        // 'package.json',
         // 'webpack.mix.js'
     ],
 
@@ -81,15 +82,16 @@ return [
 
     'file_extensions' => [
         'blade.php',
-        'php',
-        'html',
-        'vue',
-        'js',
-        'ts',
         'css',
-        'scss',
-        'sass',
+        'html',
+        'js',
+        'json',
         'less',
+        'php',
+        'sass',
+        'scss',
+        'ts',
+        'vue',
     ],
 
     /*

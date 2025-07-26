@@ -1,6 +1,37 @@
 CHANGELOG
 =========
 
+1.3.1 (2025-07-26)
+------------------
+
+### Fixed
+- Tests MigrationReporter avec mock View::make() pour support des vues Blade
+- Tests InstallFontAwesome en mode non-interactif pour éviter écriture configuration vide
+- Tests ReportsController adaptés au nouveau système de vues Blade partagées
+- Synchronisation getDefaultPaths() avec la configuration par défaut du package
+
+### Changed
+- Documentation complète mise à jour avec chiffres de tests exacts (78 tests, 243 assertions)
+- CLAUDE.md enrichi avec fonctionnalités webpack.mix.js et support .json extension
+- README.md avec exemples webpack.mix.js pour Laravel Mix
+- STATUS.md actualisé avec version 1.3.1 et phase de développement asset migration
+
+### Technical
+- Résolution des conflits entre configuration par défaut et mode test non-interactif
+- Amélioration de la robustesse des tests avec mocks appropriés pour l'environnement Blade
+- Suppression du package.json des chemins par défaut pour éviter conflits de configuration
+
+
+
+1.3.0 (2025-07-26)
+------------------
+
+### Added
+- Extension .json dans les types de fichiers supportés (ordre alphabétique)
+
+### Fixed
+- Support complet des fichiers package.json pour migration des dépendances NPM
+
 1.2.0 (2025-07-26)
 ------------------
 

@@ -4,7 +4,7 @@
 
 ## 🎉 Statut du package
 
-**✅ PRODUCTION READY** - Tous les tests passent (52 tests, 126 assertions)
+**✅ PRODUCTION READY** - Tous les tests passent (78 tests, 243 assertions)
 - ✅ Compatible Laravel 12.0+ et PHP 8.4+
 - ✅ Fonctionnellement complet et testé
 - ✅ Compatible avec les environnements Docker
@@ -27,7 +27,8 @@
 
 ### 🎨 Migration des assets
 - ✅ **CDN URLs** : Migration automatique des liens CDN FA5 → FA6
-- ✅ **Package managers** : NPM, Yarn, pnpm (package.json)
+- ✅ **Package managers** : NPM, Yarn, pnpm (package.json avec extension .json)
+- ✅ **Build tools** : webpack.mix.js avec support des fichiers JS individuels
 - ✅ **Imports JavaScript** : ES6 imports, CommonJS require, dynamic imports
 - ✅ **Feuilles de style** : CSS, SCSS, SASS (@import, URLs)
 - ✅ **Support Pro & Free** : Détection automatique selon la licence
@@ -277,6 +278,21 @@ const icons = require("@fortawesome/fontawesome-free-regular");
 // Après
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 const icons = require("@fortawesome/free-regular-svg-icons");
+```
+
+#### webpack.mix.js
+```javascript
+// Avant - Laravel Mix avec FontAwesome 5
+mix.scripts([
+    'node_modules/@fortawesome/fontawesome-free/js/solid.js',
+    'node_modules/@fortawesome/fontawesome-free/js/fontawesome.js'
+], 'public/js/fontawesome.js');
+
+// Après - Laravel Mix avec FontAwesome 6
+mix.scripts([
+    'node_modules/@fortawesome/fontawesome-free/js/solid.js',
+    'node_modules/@fortawesome/fontawesome-free/js/fontawesome.js'
+], 'public/js/fontawesome.js');
 ```
 
 #### SCSS Imports

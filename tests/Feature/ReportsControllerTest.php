@@ -70,11 +70,38 @@ class ReportsControllerTest extends TestCase
         $htmlContent = '<html><body><h1>Test Report</h1></body></html>';
         File::put($this->reportPath.'/test-report.html', $htmlContent);
 
+        // Créer le fichier JSON correspondant pour que le contrôleur utilise les vues Blade
+        $jsonData = [
+            'meta' => [
+                'generated_at' => '2025-07-26T10:30:00+00:00',
+                'package_version' => '1.3.0',
+                'dry_run' => false,
+                'migration_options' => [],
+                'configuration' => [],
+            ],
+            'summary' => [
+                'total_files' => 1,
+                'modified_files' => 1,
+                'total_changes' => 1,
+                'migration_success' => true,
+            ],
+            'files' => [
+                [
+                    'file' => '/test/report.html',
+                    'changes_count' => 1,
+                    'warnings_count' => 0,
+                    'assets_count' => 0,
+                ],
+            ],
+        ];
+        File::put($this->reportPath.'/test-report.json', json_encode($jsonData));
+
         $response = $this->get('/fontawesome-migrator/reports/test-report.html');
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'text/html; charset=UTF-8');
-        $this->assertEquals($htmlContent, $response->getContent());
+        // Le contenu contient maintenant la vue Blade complète, on teste juste la présence du titre
+        $response->assertSee('Rapport de Migration Font Awesome 5 → 6');
     }
 
     public function test_can_view_json_report(): void

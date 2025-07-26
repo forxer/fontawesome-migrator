@@ -6,6 +6,7 @@ use FontAwesome\Migrator\Services\MigrationReporter;
 use FontAwesome\Migrator\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 
 class MigrationReporterTest extends TestCase
 {
@@ -47,6 +48,13 @@ class MigrationReporterTest extends TestCase
         File::shouldReceive('makeDirectory')->andReturn(true);
         File::shouldReceive('put')->twice()->andReturn(true);
         Storage::shouldReceive('url')->twice()->andReturn('/storage/fontawesome-migrator/reports/test.html', '/storage/fontawesome-migrator/reports/test.json');
+
+        // Mock de la vue Blade
+        View::shouldReceive('make')
+            ->with('fontawesome-migrator::reports.migration', \Mockery::any(), \Mockery::any())
+            ->andReturnSelf();
+        View::shouldReceive('render')
+            ->andReturn('<html><body>Mocked report content</body></html>');
 
         $reportInfo = $this->reporter->generateReport($results);
 

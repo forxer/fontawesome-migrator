@@ -28,10 +28,10 @@ d-packages-exec php84 composer test
 ```
 
 ### Test Status
-✅ **All tests passing**: 60+ tests, 150+ assertions, 0 failures, 0 errors
-- Unit tests: IconMapper, StyleMapper, FileScanner, IconReplacer, AssetMigrator
-- Feature tests: Complete Artisan command functionality including asset migration modes
-- Integration tests: Laravel environment simulation with Docker support
+✅ **All tests passing**: 78 tests, 243 assertions, 0 failures, 0 errors
+- Unit tests: IconMapper, StyleMapper, FileScanner, IconReplacer, AssetMigrator, MigrationReporter
+- Feature tests: Complete Artisan command functionality including install wizard and web interface
+- Integration tests: Laravel environment simulation with comprehensive asset migration support
 
 ### Code Quality
 ```bash
@@ -171,10 +171,10 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 
 1. **Intelligent Migration**: Automatically converts FA5 syntax to FA6 (e.g., `fas fa-home` → `fa-solid fa-house`)
 2. **Icon Mapping**: Handles renamed icons (e.g., `fa-times` → `fa-xmark`)
-3. **Asset Migration**: Migrates CDN URLs, NPM packages, JS imports, CSS @import statements
+3. **Asset Migration**: Migrates CDN URLs, NPM packages, JS imports, CSS @import statements, webpack.mix.js
 4. **Pro Support**: Full support for Pro styles with fallback to Free alternatives
-5. **Package Manager Support**: NPM, Yarn, pnpm package.json migration
-6. **Multi-Format Support**: CSS, SCSS, JS, TS, Vue, HTML, Blade, JSON
+5. **Package Manager Support**: Complete NPM, Yarn, pnpm package.json migration with .json extension support
+6. **Multi-Format Support**: CSS, SCSS, JS, TS, Vue, HTML, Blade, JSON (including package.json and webpack.mix.js)
 7. **Web Interface**: Reports management UI at `/fontawesome-migrator/reports`
 8. **Backup System**: Creates timestamped backups before modifications
 9. **Progress Reporting**: Real-time progress bars and detailed reports

@@ -126,7 +126,7 @@ class AssetMigrator
             '@fortawesome/fontawesome-free/js/solid.js' => '@fortawesome/fontawesome-free/js/solid.js',
             '@fortawesome/fontawesome-free/js/regular.js' => '@fortawesome/fontawesome-free/js/regular.js',
             '@fortawesome/fontawesome-free/js/fontawesome.js' => '@fortawesome/fontawesome-free/js/fontawesome.js',
-            
+
             // Free webpack.mix.js avec concaténation de variables
             "'@fortawesome/fontawesome-free/js/brands.js'" => "'@fortawesome/fontawesome-free/js/brands.js'",
             "'@fortawesome/fontawesome-free/js/solid.js'" => "'@fortawesome/fontawesome-free/js/solid.js'",
@@ -169,7 +169,7 @@ class AssetMigrator
                 '@fortawesome/fontawesome-pro/js/duotone.js' => '@fortawesome/fontawesome-pro/js/duotone.js',
                 '@fortawesome/fontawesome-pro/js/thin.js' => '@fortawesome/fontawesome-pro/js/thin.js',
                 '@fortawesome/fontawesome-pro/js/fontawesome.js' => '@fortawesome/fontawesome-pro/js/fontawesome.js',
-                
+
                 // Pro webpack.mix.js avec concaténation de variables (vendor + '@fortawesome/...')
                 "'@fortawesome/fontawesome-pro/js/brands.js'" => "'@fortawesome/fontawesome-pro/js/brands.js'",
                 "'@fortawesome/fontawesome-pro/js/solid.js'" => "'@fortawesome/fontawesome-pro/js/solid.js'",
