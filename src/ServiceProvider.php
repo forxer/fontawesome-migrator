@@ -4,6 +4,7 @@ namespace FontAwesome\Migrator;
 
 use FontAwesome\Migrator\Commands\InstallFontAwesomeCommand;
 use FontAwesome\Migrator\Commands\MigrateFontAwesomeCommand;
+use FontAwesome\Migrator\Http\Controllers\AssetsController;
 use FontAwesome\Migrator\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -20,6 +21,25 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(): void
     {
+        // Créer une fonction helper pour les assets
+        if (! \function_exists('fontawesome_migrator_asset')) {
+            function fontawesome_migrator_asset(string $path): string
+            {
+                if (str_starts_with($path, 'css/')) {
+                    $filename = str_replace('css/', '', $path);
+
+                    return route('fontawesome-migrator.assets.css', $filename);
+                }
+
+                if (str_starts_with($path, 'js/')) {
+                    $filename = str_replace('js/', '', $path);
+
+                    return route('fontawesome-migrator.assets.js', $filename);
+                }
+
+                throw new \InvalidArgumentException("Chemin d'asset non supporté: {$path}");
+            }
+        }
         // Publier la configuration (stub pour une configuration minimale)
         $this->publishes([
             __DIR__.'/../config/fontawesome-migrator.stub' => config_path('fontawesome-migrator.php'),
@@ -34,12 +54,6 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             __DIR__.'/Mappers' => resource_path('fontawesome-migrator/mappers'),
         ], 'fontawesome-migrator-mappers');
-
-        // Publier les assets (CSS et JS)
-        $this->publishes([
-            __DIR__.'/../resources/css' => public_path('vendor/fontawesome-migrator/css'),
-            __DIR__.'/../resources/js' => public_path('vendor/fontawesome-migrator/js'),
-        ], 'fontawesome-migrator-assets');
 
         // Enregistrer les vues
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'fontawesome-migrator');
@@ -75,6 +89,15 @@ class ServiceProvider extends BaseServiceProvider
 
                 Route::post('/reports/cleanup', [ReportsController::class, 'cleanup'])
                     ->name('fontawesome-migrator.reports.cleanup');
+
+                // Routes pour servir les assets
+                Route::get('/assets/css/{filename}', [AssetsController::class, 'css'])
+                    ->name('fontawesome-migrator.assets.css')
+                    ->where('filename', '[a-zA-Z0-9\-\.]+');
+
+                Route::get('/assets/js/{filename}', [AssetsController::class, 'js'])
+                    ->name('fontawesome-migrator.assets.js')
+                    ->where('filename', '[a-zA-Z0-9\-\.]+');
             });
     }
 }
