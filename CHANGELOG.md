@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-1.1.0 (2025-07-25)
+1.1.0 (2025-07-26)
 ------------------
 
 ### Added
@@ -18,7 +18,7 @@ CHANGELOG
 - Rapports générés avec URLs web accessibles
 - Interface web unifiée avec layout partagé
 
-### Fixed  
+### Fixed
 - Affichage des rapports avec URLs clickables
 - Support complet des assets dans les statistiques
 - Version du package rendue dynamique (plus de valeurs en dur)

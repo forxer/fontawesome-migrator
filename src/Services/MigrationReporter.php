@@ -313,21 +313,23 @@ class MigrationReporter
     }
 
     /**
-     * Obtenir la version du package
+     * Obtenir la version du package depuis le CHANGELOG.md
      */
     protected function getPackageVersion(): string
     {
-        $composerPath = __DIR__.'/../../composer.json';
+        $changelogPath = __DIR__.'/../../CHANGELOG.md';
 
-        if (file_exists($composerPath)) {
-            $composer = json_decode(file_get_contents($composerPath), true);
-
-            if (isset($composer['version'])) {
-                return $composer['version'];
+        if (file_exists($changelogPath)) {
+            $content = file_get_contents($changelogPath);
+            
+            // Chercher le premier titre de niveau 2 : format ## ou souligné avec ---
+            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) || 
+                preg_match('/^## (\d+\.\d+\.\d+)/m', $content, $matches)) {
+                return $matches[1];
             }
         }
 
         // Fallback version
-        return '1.1.0';
+        return '?';
     }
 }
