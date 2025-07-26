@@ -6,7 +6,7 @@
 
 @section('head-extra')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ fontawesome_migrator_asset('css/migration-reports.css') }}">
+    <link rel="stylesheet" href="{{ route('fontawesome-migrator.assets.css', 'migration-reports.css') }}">
     <style>
         .enhanced-section {
             position: relative;
@@ -1293,7 +1293,7 @@
     </script>
 
     {{-- Script externe pour les rapports --}}
-    <script src="{{ fontawesome_migrator_asset('js/migration-reports.js') }}"></script>
+    <script src="{{ route('fontawesome-migrator.assets.js', 'migration-reports.js') }}"></script>
     
     {{-- Données pour les scripts externes --}}
     <script>

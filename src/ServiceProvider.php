@@ -21,25 +21,6 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(): void
     {
-        // Créer une fonction helper pour les assets
-        if (! \function_exists('fontawesome_migrator_asset')) {
-            function fontawesome_migrator_asset(string $path): string
-            {
-                if (str_starts_with($path, 'css/')) {
-                    $filename = str_replace('css/', '', $path);
-
-                    return route('fontawesome-migrator.assets.css', $filename);
-                }
-
-                if (str_starts_with($path, 'js/')) {
-                    $filename = str_replace('js/', '', $path);
-
-                    return route('fontawesome-migrator.assets.js', $filename);
-                }
-
-                throw new \InvalidArgumentException("Chemin d'asset non supporté: {$path}");
-            }
-        }
         // Publier la configuration (stub pour une configuration minimale)
         $this->publishes([
             __DIR__.'/../config/fontawesome-migrator.stub' => config_path('fontawesome-migrator.php'),
