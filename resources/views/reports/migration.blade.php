@@ -500,6 +500,118 @@
             });
         }
         
+        // Autres fonctions nécessaires
+        function copyCommand(command) {
+            navigator.clipboard.writeText(command).then(() => {
+                alert('📋 Commande copiée: ' + command);
+            }).catch(() => {
+                alert('❌ Erreur lors de la copie');
+            });
+        }
+        
+        function copyToClipboard() {
+            if (typeof window.migrationData === 'undefined') {
+                alert('❌ Données du rapport non disponibles');
+                return;
+            }
+            
+            let report = '📊 RAPPORT DE MIGRATION FONT AWESOME 5 → 6\n';
+            report += '=' .repeat(50) + '\n\n';
+            report += '📅 Généré le: ' + window.migrationData.timestamp + '\n';
+            report += '📦 Version: FontAwesome Migrator ' + window.migrationData.packageVersion + '\n\n';
+            
+            navigator.clipboard.writeText(report).then(() => {
+                alert('📋 Rapport copié dans le presse-papier !');
+            }).catch(() => {
+                alert('❌ Erreur lors de la copie');
+            });
+        }
+        
+        function showTestingTips() {
+            alert('🧪 Conseils de test:\n\n• Vérifiez que toutes les icônes s\'affichent correctement\n• Testez sur différents navigateurs\n• Vérifiez les performances de chargement');
+        }
+        
+        function scrollToWarnings() {
+            const warnings = document.querySelectorAll('.alert-warning');
+            if (warnings.length > 0) {
+                warnings[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                alert('ℹ️ Aucun avertissement dans cette vue');
+            }
+        }
+        
+        function filterChanges() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const container = document.getElementById('modificationsContainer');
+            const fileItems = container.querySelectorAll('.file-item');
+            const noResults = document.getElementById('noResults');
+            let visibleCount = 0;
+
+            fileItems.forEach(item => {
+                const fileName = item.dataset.file.toLowerCase();
+                const changeItems = item.querySelectorAll('.change-item');
+                let hasVisibleChanges = false;
+
+                const fileMatches = fileName.includes(searchTerm);
+                
+                changeItems.forEach(changeItem => {
+                    const changeFrom = changeItem.dataset.changeFrom.toLowerCase();
+                    const changeTo = changeItem.dataset.changeTo.toLowerCase();
+                    const matches = changeFrom.includes(searchTerm) || changeTo.includes(searchTerm);
+                    
+                    if (matches || fileMatches || searchTerm === '') {
+                        changeItem.style.display = 'block';
+                        hasVisibleChanges = true;
+                    } else {
+                        changeItem.style.display = 'none';
+                    }
+                });
+
+                if (hasVisibleChanges || fileMatches || searchTerm === '') {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+        
+        // Initialisation du graphique Chart.js
+        function initializeChart(chartData, hasChanges) {
+            if (!hasChanges || !chartData.labels.length) return;
+            
+            const ctx = document.getElementById('changesChart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        data: chartData.data,
+                        backgroundColor: chartData.colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
         // S'assurer que tous les détails sont visibles au chargement
         document.addEventListener('DOMContentLoaded', function() {
             const allDetails = document.querySelectorAll('.collapsible-content');
