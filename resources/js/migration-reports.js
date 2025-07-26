@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Initialisation du graphique Chart.js (sera appelée depuis la vue avec les données)
-function initializeChart(chartData, hasChanges) {
+window.initializeChart = function(chartData, hasChanges) {
     if (!hasChanges || !chartData.labels.length) return;
     
     const ctx = document.getElementById('changesChart');
@@ -126,7 +126,7 @@ function animateStatCards() {
 }
 
 // Fonction de recherche et filtrage
-function filterChanges() {
+window.filterChanges = function() {
     const searchTerm = document.getElementById('searchBox').value.toLowerCase();
     const container = document.getElementById('modificationsContainer');
     const fileItems = container.querySelectorAll('.file-item');
@@ -195,7 +195,7 @@ function removeHighlights(element) {
 }
 
 // Toggle pour afficher/masquer les détails d'un fichier
-function toggleFileDetails(index) {
+window.toggleFileDetails = function(index) {
     const details = document.getElementById(`details-${index}`);
     const icon = document.getElementById(`toggle-icon-${index}`);
     
@@ -209,7 +209,7 @@ function toggleFileDetails(index) {
 }
 
 // Toggle pour développer/réduire tous les détails
-function toggleAllDetails() {
+window.toggleAllDetails = function() {
     const allDetails = document.querySelectorAll('.collapsible-content');
     const allIcons = document.querySelectorAll('[id^="toggle-icon-"]');
     
@@ -229,7 +229,7 @@ function toggleAllDetails() {
 }
 
 // Copier le rapport dans le presse-papier
-function copyToClipboard() {
+window.copyToClipboard = function() {
     if (typeof window.migrationData === 'undefined') {
         showNotification('❌ Données du rapport non disponibles', 'error');
         return;
@@ -302,7 +302,7 @@ function showNotification(message, type) {
 }
 
 // Fonctions pour les recommandations
-function copyCommand(command) {
+window.copyCommand = function(command) {
     navigator.clipboard.writeText(command).then(() => {
         showNotification(`📋 Commande copiée: ${command}`, 'success');
     }).catch(() => {
@@ -310,7 +310,7 @@ function copyCommand(command) {
     });
 }
 
-function showTestingTips() {
+window.showTestingTips = function() {
     showModal('🧪 Conseils de test', `
         <ul class="tips-list">
             <li><strong>🔍 Vérification visuelle :</strong> Naviguez sur votre site et vérifiez que toutes les icônes s'affichent correctement.</li>
@@ -323,7 +323,7 @@ function showTestingTips() {
     `);
 }
 
-function scrollToWarnings() {
+window.scrollToWarnings = function() {
     const warnings = document.querySelectorAll('.alert-warning');
     if (warnings.length > 0) {
         warnings[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -360,7 +360,7 @@ function showModal(title, content) {
     };
 }
 
-function closeModal(closeBtn) {
+window.closeModal = function(closeBtn) {
     const modal = closeBtn.closest('.modal');
     modal.style.display = 'none';
     document.body.removeChild(modal);
