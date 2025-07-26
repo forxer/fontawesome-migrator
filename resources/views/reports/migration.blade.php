@@ -333,7 +333,7 @@
     <!-- Statistiques générales améliorées -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['total_files'] }}</div>
+            <div class="stat-number">{{ number_format($stats['total_files'], 0, ',', ' ') }}</div>
             <div class="stat-label">Fichiers analysés</div>
             @if($stats['total_files'] > 0)
                 <div style="margin-top: 10px;">
@@ -341,25 +341,25 @@
                         <circle class="progress-ring-circle" style="stroke-dashoffset: {{ 326.726 * (1 - ($stats['modified_files'] / $stats['total_files'])) }}"></circle>
                     </svg>
                     <div style="text-align: center; margin-top: -80px; color: var(--primary-color); font-weight: bold;">
-                        {{ $stats['total_files'] > 0 ? round(($stats['modified_files'] / $stats['total_files']) * 100, 1) : 0 }}%
+                        {{ $stats['total_files'] > 0 ? number_format(round(($stats['modified_files'] / $stats['total_files']) * 100, 1), 1, ',', ' ') : '0' }} %
                     </div>
                 </div>
             @endif
         </div>
 
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['modified_files'] }}</div>
+            <div class="stat-number">{{ number_format($stats['modified_files'], 0, ',', ' ') }}</div>
             <div class="stat-label">Fichiers modifiés</div>
             @if($stats['modified_files'] > 0)
                 <div class="metric-improvement">
                     <span>🎯</span>
-                    <span>{{ $stats['modified_files'] }} fichier(s) optimisé(s)</span>
+                    <span>{{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) optimisé(s)</span>
                 </div>
             @endif
         </div>
 
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['total_changes'] }}</div>
+            <div class="stat-number">{{ number_format($stats['total_changes'], 0, ',', ' ') }}</div>
             <div class="stat-label">Total des changements</div>
             @if($stats['total_changes'] > 0)
                 <div style="margin-top: 10px; font-size: 0.9em; color: var(--success-color);">
@@ -369,7 +369,7 @@
         </div>
 
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['icons_migrated'] ?? 0 }}</div>
+            <div class="stat-number">{{ number_format($stats['icons_migrated'] ?? 0, 0, ',', ' ') }}</div>
             <div class="stat-label">Icônes migrées</div>
             @if(($stats['icons_migrated'] ?? 0) > 0)
                 <div style="margin-top: 10px; color: var(--primary-color); font-size: 0.9em;">
@@ -380,7 +380,7 @@
 
         @if(($stats['assets_migrated'] ?? 0) > 0)
         <div class="stat-card">
-            <div class="stat-number">{{ $stats['assets_migrated'] }}</div>
+            <div class="stat-number">{{ number_format($stats['assets_migrated'], 0, ',', ' ') }}</div>
             <div class="stat-label">Assets migrés</div>
             <div style="margin-top: 10px; color: var(--secondary-color); font-size: 0.9em;">
                 📦 CDN + NPM
@@ -390,7 +390,7 @@
         
         @if(!empty($stats['warnings']) && $stats['warnings'] > 0)
         <div class="stat-card" style="border-left: 4px solid var(--warning-color);">
-            <div class="stat-number" style="color: var(--warning-color);">{{ $stats['warnings'] }}</div>
+            <div class="stat-number" style="color: var(--warning-color);">{{ number_format($stats['warnings'], 0, ',', ' ') }}</div>
             <div class="stat-label">Avertissements</div>
             <div style="margin-top: 10px; color: var(--warning-color); font-size: 0.9em;">
                 ⚠️ À vérifier
@@ -415,7 +415,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4>🔍 Analyse effectuée</h4>
-                    <p>{{ $stats['total_files'] }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
+                    <p>{{ number_format($stats['total_files'], 0, ',', ' ') }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
                     <small>{{ $timestamp }}</small>
                 </div>
             </div>
@@ -424,7 +424,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4>🎯 Fichiers ciblés</h4>
-                    <p>{{ $stats['modified_files'] }} fichier(s) contenant du code Font Awesome 5</p>
+                    <p>{{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) contenant du code Font Awesome 5</p>
                     <small>Détection automatique</small>
                 </div>
             </div>
@@ -432,7 +432,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4>⚡ Migration appliquée</h4>
-                    <p>{{ $stats['total_changes'] }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
+                    <p>{{ number_format($stats['total_changes'], 0, ',', ' ') }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
                     <small>{{ $isDryRun ? 'Mode prévisualisation' : 'Modifications effectives' }}</small>
                 </div>
             </div>
@@ -442,7 +442,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4>📦 Assets migrés</h4>
-                    <p>{{ $stats['assets_migrated'] }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
+                    <p>{{ number_format($stats['assets_migrated'], 0, ',', ' ') }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
                     <small>Packages et liens modernisés</small>
                 </div>
             </div>
@@ -472,7 +472,7 @@
                     <div class="rec-icon">🚀</div>
                     <div class="rec-content">
                         <h4>Prêt pour la migration</h4>
-                        <p>Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ $stats['total_changes'] }} changements.</p>
+                        <p>Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ number_format($stats['total_changes'], 0, ',', ' ') }} changements.</p>
                         <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')">📋 Copier la commande</button>
                     </div>
                 </div>
@@ -494,7 +494,7 @@
                     <div class="rec-icon">⚠️</div>
                     <div class="rec-content">
                         <h4>Vérifications nécessaires</h4>
-                        <p>{{ $stats['warnings'] }} avertissement(s) détecté(s). Vérifiez manuellement ces éléments.</p>
+                        <p>{{ number_format($stats['warnings'], 0, ',', ' ') }} avertissement(s) détecté(s). Vérifiez manuellement ces éléments.</p>
                         <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()">👀 Voir les avertissements</button>
                     </div>
                 </div>
@@ -523,7 +523,7 @@
                     <div class="rec-icon">🏆</div>
                     <div class="rec-content">
                         <h4>Excellent score de migration</h4>
-                        <p>{{ $migrationScore }}% de votre code a été optimisé pour Font Awesome 6 !</p>
+                        <p>{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code a été optimisé pour Font Awesome 6 !</p>
                     </div>
                 </div>
             @elseif($migrationScore >= 50)
@@ -531,7 +531,7 @@
                     <div class="rec-icon">👍</div>
                     <div class="rec-content">
                         <h4>Bonne migration</h4>
-                        <p>{{ $migrationScore }}% de votre code utilise maintenant Font Awesome 6.</p>
+                        <p>{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code utilise maintenant Font Awesome 6.</p>
                     </div>
                 </div>
             @elseif($stats['total_changes'] == 0)
@@ -640,7 +640,7 @@
 
             @if($stats['migration_success'])
                 <div class="alert alert-success">
-                    ✅ Migration terminée avec succès ! {{ $stats['total_changes'] }} changement(s) appliqué(s) sur {{ $stats['modified_files'] }} fichier(s).
+                    ✅ Migration terminée avec succès ! {{ number_format($stats['total_changes'], 0, ',', ' ') }} changement(s) appliqué(s) sur {{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s).
                 </div>
             @else
                 <div class="alert alert-warning">
@@ -657,8 +657,8 @@
                         @endphp
                         <tr>
                             <td><span class="badge">{{ ucfirst($type) }}</span></td>
-                            <td>{{ $count }}</td>
-                            <td>{{ $percentage }}%</td>
+                            <td>{{ number_format($count, 0, ',', ' ') }}</td>
+                            <td>{{ number_format($percentage, 1, ',', ' ') }} %</td>
                         </tr>
                     @endforeach
                 </table>
@@ -674,7 +674,7 @@
                     @foreach($stats['asset_types'] as $assetType => $count)
                         <tr>
                             <td><strong>{{ $assetType }}</strong></td>
-                            <td>{{ $count }}</td>
+                            <td>{{ number_format($count, 0, ',', ' ') }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $assetType)) }}</td>
                         </tr>
                     @endforeach
@@ -775,6 +775,22 @@
 
     <!-- JavaScript pour l'interactivité -->
     <script>
+        // Formatage français des nombres
+        function formatNumber(number, decimals = 0) {
+            return new Intl.NumberFormat('fr-FR', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }).format(number);
+        }
+        
+        function formatPercentage(number, decimals = 1) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'percent',
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }).format(number / 100);
+        }
+        
         // Données pour les graphiques
         const chartData = {
             labels: [
@@ -826,9 +842,9 @@
                                         const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
                                         return data.labels.map((label, i) => {
                                             const value = data.datasets[0].data[i];
-                                            const percentage = ((value / total) * 100).toFixed(1);
+                                            const percentage = formatPercentage((value / total) * 100);
                                             return {
-                                                text: `${label}: ${value} (${percentage}%)`,
+                                                text: `${label}: ${formatNumber(value)} (${percentage})`,
                                                 fillStyle: data.datasets[0].backgroundColor[i],
                                                 strokeStyle: data.datasets[0].backgroundColor[i],
                                                 pointStyle: 'circle'
@@ -841,8 +857,8 @@
                                 callbacks: {
                                     label: function(context) {
                                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                        return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                        const percentage = formatPercentage((context.parsed / total) * 100);
+                                        return `${context.label}: ${formatNumber(context.parsed)} (${percentage})`;
                                     }
                                 }
                             }
@@ -859,17 +875,17 @@
         function animateStatCards() {
             const statNumbers = document.querySelectorAll('.stat-number');
             statNumbers.forEach(el => {
-                const finalValue = parseInt(el.textContent);
+                const finalValue = parseInt(el.textContent.replace(/\s/g, ''));
                 if (finalValue > 0) {
                     let currentValue = 0;
                     const increment = Math.ceil(finalValue / 30);
                     const timer = setInterval(() => {
                         currentValue += increment;
                         if (currentValue >= finalValue) {
-                            el.textContent = finalValue;
+                            el.textContent = formatNumber(finalValue);
                             clearInterval(timer);
                         } else {
-                            el.textContent = currentValue;
+                            el.textContent = formatNumber(currentValue);
                         }
                     }, 50);
                 }
@@ -1006,11 +1022,11 @@
             report += `🔄 Mode: ${data.isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète'}\n\n`;
             
             report += `📈 STATISTIQUES:\n`;
-            report += `- Fichiers analysés: ${data.stats.total_files}\n`;
-            report += `- Fichiers modifiés: ${data.stats.modified_files}\n`;
-            report += `- Total changements: ${data.stats.total_changes}\n`;
-            report += `- Icônes migrées: ${data.stats.icons_migrated || 0}\n`;
-            report += `- Assets migrés: ${data.stats.assets_migrated || 0}\n\n`;
+            report += `- Fichiers analysés: ${formatNumber(data.stats.total_files)}\n`;
+            report += `- Fichiers modifiés: ${formatNumber(data.stats.modified_files)}\n`;
+            report += `- Total changements: ${formatNumber(data.stats.total_changes)}\n`;
+            report += `- Icônes migrées: ${formatNumber(data.stats.icons_migrated || 0)}\n`;
+            report += `- Assets migrés: ${formatNumber(data.stats.assets_migrated || 0)}\n\n`;
             
             if (data.files.length > 0) {
                 report += `📄 DÉTAIL DES MODIFICATIONS:\n`;
@@ -1121,9 +1137,9 @@
             const timestamp = '{{ $timestamp }}';
             
             // Calculer quelques métriques intéressantes
-            const migrationRate = stats.total_files > 0 ? (stats.modified_files / stats.total_files * 100).toFixed(1) : 0;
-            const changesDensity = stats.modified_files > 0 ? (stats.total_changes / stats.modified_files).toFixed(1) : 0;
-            const successRate = stats.total_changes > 0 ? (((stats.total_changes - (stats.warnings || 0)) / stats.total_changes) * 100).toFixed(1) : 100;
+            const migrationRate = stats.total_files > 0 ? formatPercentage((stats.modified_files / stats.total_files) * 100) : '0 %';
+            const changesDensity = stats.modified_files > 0 ? formatNumber((stats.total_changes / stats.modified_files), 1) : '0';
+            const successRate = stats.total_changes > 0 ? formatPercentage(((stats.total_changes - (stats.warnings || 0)) / stats.total_changes) * 100) : '100 %';
             
             const performanceSection = document.createElement('div');
             performanceSection.className = 'section enhanced-section';
@@ -1131,28 +1147,28 @@
                 <h2>📈 Métriques de performance</h2>
                 <div class="performance-metrics">
                     <div class="metric-card">
-                        <div class="metric-value">${migrationRate}%</div>
+                        <div class="metric-value">${migrationRate}</div>
                         <div class="metric-label">Taux de migration</div>
-                        <div class="metric-trend ${migrationRate > 50 ? 'trend-up' : 'trend-down'}">
-                            ${migrationRate > 50 ? '↗ Excellent' : '→ Partiel'}
+                        <div class="metric-trend ${parseFloat(migrationRate) > 50 ? 'trend-up' : 'trend-down'}">
+                            ${parseFloat(migrationRate) > 50 ? '↗ Excellent' : '→ Partiel'}
                         </div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-value">${changesDensity}</div>
                         <div class="metric-label">Changements par fichier</div>
-                        <div class="metric-trend ${changesDensity < 5 ? 'trend-up' : 'trend-down'}">
-                            ${changesDensity < 5 ? '↗ Léger' : '↗ Intensif'}
+                        <div class="metric-trend ${parseFloat(changesDensity) < 5 ? 'trend-up' : 'trend-down'}">
+                            ${parseFloat(changesDensity) < 5 ? '↗ Léger' : '↗ Intensif'}
                         </div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">${successRate}%</div>
+                        <div class="metric-value">${successRate}</div>
                         <div class="metric-label">Taux de succès</div>
-                        <div class="metric-trend ${successRate > 95 ? 'trend-up' : successRate > 80 ? 'trend-up' : 'trend-down'}">
-                            ${successRate > 95 ? '↗ Parfait' : successRate > 80 ? '↗ Bon' : '→ À améliorer'}
+                        <div class="metric-trend ${parseFloat(successRate) > 95 ? 'trend-up' : parseFloat(successRate) > 80 ? 'trend-up' : 'trend-down'}">
+                            ${parseFloat(successRate) > 95 ? '↗ Parfait' : parseFloat(successRate) > 80 ? '↗ Bon' : '→ À améliorer'}
                         </div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">${stats.total_changes || 0}</div>
+                        <div class="metric-value">${formatNumber(stats.total_changes || 0)}</div>
                         <div class="metric-label">Optimisations totales</div>
                         <div class="metric-trend trend-up">
                             ↗ Modernisé
