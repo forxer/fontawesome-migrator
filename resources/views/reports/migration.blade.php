@@ -36,10 +36,7 @@
         }
 
         .enhanced-section h2 {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--gray-700);
             margin-bottom: 20px;
         }
 
