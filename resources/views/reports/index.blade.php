@@ -165,8 +165,8 @@
                     </div>
                     
                     <div class="report-actions">
-                        <a href="{{ $report['html_url'] }}" target="_blank" class="btn btn-primary btn-sm">
-                            📄 Voir HTML
+                        <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary btn-sm">
+                            📄 Voir Rapport
                         </a>
                         
                         @if ($report['json_url'])

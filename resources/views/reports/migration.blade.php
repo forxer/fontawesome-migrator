@@ -495,6 +495,11 @@
 
 @section('content')
     <div class="header">
+        <div style="margin-bottom: 15px;">
+            <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
+                ← Retour aux rapports
+            </a>
+        </div>
         <h1>📊 Rapport de Migration Font Awesome 5 → 6</h1>
         <p>Généré le {{ $timestamp }}</p>
     </div>
