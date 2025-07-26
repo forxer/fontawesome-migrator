@@ -88,9 +88,9 @@ class ReportsController extends Controller
                     'file_extensions' => [],
                     'backup_enabled' => true,
                 ],
-                'packageVersion' => '1.1.0',
+                'packageVersion' => '?',
             ];
-            
+
             return view('fontawesome-migrator::reports.migration', $viewData);
         }
 

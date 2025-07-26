@@ -23,22 +23,59 @@ class FileScanner
         $totalFiles = 0;
         $currentFile = 0;
 
-        // Première passe pour compter les fichiers
+        // Séparer les fichiers et répertoires
+        $filePaths = [];
+        $directoryPaths = [];
+
         foreach ($paths as $path) {
-            if (! File::exists(base_path($path))) {
+            $fullPath = base_path($path);
+
+            if (! File::exists($fullPath)) {
                 continue;
             }
 
+            if (is_file($fullPath)) {
+                $filePaths[] = $path;
+            } else {
+                $directoryPaths[] = $path;
+            }
+        }
+
+        // Première passe pour compter les fichiers
+        // Compter les fichiers individuels
+        $totalFiles = \count($filePaths);
+
+        // Compter les fichiers dans les répertoires
+        foreach ($directoryPaths as $path) {
             $finder = $this->createFinder($path);
             $totalFiles += iterator_count($finder);
         }
 
         // Deuxième passe pour collecter les fichiers
-        foreach ($paths as $path) {
-            if (! File::exists(base_path($path))) {
-                continue;
+        // Traiter les fichiers individuels
+        foreach ($filePaths as $path) {
+            $currentFile++;
+
+            if ($progressCallback !== null) {
+                $progressCallback($currentFile, $totalFiles);
             }
 
+            $fullPath = base_path($path);
+            $fileInfo = new \SplFileInfo($fullPath);
+
+            // Vérifier si l'extension est acceptée
+            if ($this->isFileExtensionAllowed($fileInfo->getExtension())) {
+                $files[] = [
+                    'path' => $fullPath,
+                    'relative_path' => $path,
+                    'extension' => $fileInfo->getExtension(),
+                    'size' => $fileInfo->getSize(),
+                ];
+            }
+        }
+
+        // Traiter les répertoires
+        foreach ($directoryPaths as $path) {
             $finder = $this->createFinder($path);
 
             foreach ($finder as $file) {
@@ -93,6 +130,20 @@ class FileScanner
         }
 
         return $finder;
+    }
+
+    /**
+     * Vérifier si une extension de fichier est autorisée
+     */
+    protected function isFileExtensionAllowed(string $extension): bool
+    {
+        $extensions = $this->config['file_extensions'];
+
+        if (empty($extensions)) {
+            return true; // Si aucune extension configurée, accepter tous les fichiers
+        }
+
+        return \in_array($extension, $extensions);
     }
 
     /**

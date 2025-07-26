@@ -321,9 +321,9 @@ class MigrationReporter
 
         if (file_exists($changelogPath)) {
             $content = file_get_contents($changelogPath);
-            
+
             // Chercher le premier titre de niveau 2 : format ## ou souligné avec ---
-            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) || 
+            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) ||
                 preg_match('/^## (\d+\.\d+\.\d+)/m', $content, $matches)) {
                 return $matches[1];
             }

@@ -47,7 +47,12 @@ return [
     | Chemins à scanner
     |--------------------------------------------------------------------------
     |
-    | Répertoires et types de fichiers à analyser pour la migration
+    | Répertoires et fichiers à analyser pour la migration.
+    | Peut contenir des répertoires ou des fichiers individuels.
+    |
+    | Exemples:
+    | - 'resources/views' (répertoire)
+    | - 'resources/views/layouts/app.blade.php' (fichier spécifique)
     |
     */
 
@@ -57,6 +62,9 @@ return [
         'resources/css',
         'public/css',
         'public/js',
+        // Exemples de fichiers spécifiques :
+        // 'resources/views/layouts/app.blade.php',
+        // 'public/js/custom-icons.js',
     ],
 
     /*
