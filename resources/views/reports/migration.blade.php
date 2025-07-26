@@ -571,7 +571,11 @@
     @if($stats['total_changes'] > 0)
     <!-- Graphique des types de changements -->
     <div class="section enhanced-section">
-        <h2>📊 Répartition des changements</h2>
+        <h2>📊 Répartition par type de changement</h2>
+        <p style="color: var(--gray-600); margin-bottom: 20px; text-align: center;">
+            Ce graphique montre la répartition des différents types de modifications : 
+            <strong>style_update</strong> (icônes), <strong>asset</strong> (CDN/imports), etc.
+        </p>
         <div class="chart-container">
             <canvas id="changesChart"></canvas>
         </div>
