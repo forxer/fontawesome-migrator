@@ -1292,45 +1292,4 @@
         });
     </script>
 
-    {{-- Script externe pour les rapports --}}
-    <script src="{{ asset('vendor/fontawesome-migrator/js/migration-reports.js') }}"></script>
-    
-    {{-- Données pour les scripts externes --}}
-    <script>
-        // Données de migration pour les scripts externes
-        window.migrationData = {
-            timestamp: '{{ $timestamp }}',
-            packageVersion: '{{ $packageVersion }}',
-            stats: @json($stats),
-            isDryRun: {{ $isDryRun ? 'true' : 'false' }},
-            files: @json($results)
-        };
-        
-        // Données pour le graphique
-        const chartData = {
-            labels: [
-                @if(!empty($stats['changes_by_type']))
-                    @foreach($stats['changes_by_type'] as $type => $count)
-                        '{{ ucfirst(str_replace("_", " ", $type)) }}',
-                    @endforeach
-                @endif
-            ],
-            data: [
-                @if(!empty($stats['changes_by_type']))
-                    @foreach($stats['changes_by_type'] as $type => $count)
-                        {{ $count }},
-                    @endforeach
-                @endif
-            ],
-            colors: [
-                '#4299e1', '#667eea', '#059669', '#f59e0b', '#f56565', '#8b5cf6', '#06b6d4'
-            ]
-        };
-        
-        // Initialiser le graphique si des changements existent
-        @if($stats['total_changes'] > 0 && !empty($stats['changes_by_type']))
-            initializeChart(chartData, true);
-        @endif
-    </script>
-
 @endsection

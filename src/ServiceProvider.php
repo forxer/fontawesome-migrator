@@ -35,6 +35,12 @@ class ServiceProvider extends BaseServiceProvider
             __DIR__.'/Mappers' => resource_path('fontawesome-migrator/mappers'),
         ], 'fontawesome-migrator-mappers');
 
+        // Publier les assets (CSS et JS)
+        $this->publishes([
+            __DIR__.'/../resources/css' => public_path('vendor/fontawesome-migrator/css'),
+            __DIR__.'/../resources/js' => public_path('vendor/fontawesome-migrator/js'),
+        ], 'fontawesome-migrator-assets');
+
         // Enregistrer les vues
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'fontawesome-migrator');
 
