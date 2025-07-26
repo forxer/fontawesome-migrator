@@ -720,31 +720,34 @@
             </div>
         @endif
 
-        <!-- Détail des fichiers modifiés avec recherche -->
-        <div class="section enhanced-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>📄 Détail des modifications</h2>
-                
-                <div class="export-buttons">
-                    <button class="btn btn-primary btn-sm" onclick="copyToClipboard()">
-                        📋 Copier le rapport
-                    </button>
-                    <button class="btn btn-primary btn-sm" onclick="toggleAllDetails()">
-                        🔄 Développer/Réduire
-                    </button>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <input type="text" 
-                       class="search-box" 
-                       id="searchBox" 
-                       placeholder="🔍 Rechercher dans les fichiers, changements ou extensions..."
-                       onkeyup="filterChanges()"
-                       style="display: block; width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
-            </div>
+    @endif
 
-            <div id="modificationsContainer">
+    <!-- Détail des fichiers modifiés avec recherche -->
+    <div class="section enhanced-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>📄 Détail des modifications</h2>
+            
+            <div class="export-buttons">
+                <button class="btn btn-primary btn-sm" onclick="copyToClipboard()">
+                    📋 Copier le rapport
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="toggleAllDetails()">
+                    🔄 Développer/Réduire
+                </button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <input type="text" 
+                   class="search-box" 
+                   id="searchBox" 
+                   placeholder="🔍 Rechercher dans les fichiers, changements ou extensions..."
+                   onkeyup="filterChanges()"
+                   style="display: block; width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+        </div>
+
+        <div id="modificationsContainer">
+            @if($stats['total_changes'] > 0)
                 @foreach($results as $index => $result)
                     @if(!empty($result['changes']))
                         <div class="file-item" data-file="{{ $result['file'] }}" data-index="{{ $index }}">
@@ -796,21 +799,19 @@
                         </div>
                     @endif
                 @endforeach
-            </div>
-            
-            <div id="noResults" style="display: none; text-align: center; padding: 40px; color: var(--gray-500);">
-                <div style="font-size: 3em;">🔍</div>
-                <p>Aucun résultat trouvé pour votre recherche</p>
-            </div>
+            @else
+                <!-- Aucun changement -->
+                <div class="alert alert-info">
+                    ℹ️ Aucun changement nécessaire. Votre code semble déjà compatible avec Font Awesome 6.
+                </div>
+            @endif
         </div>
-    @else
-        <!-- Aucun changement -->
-        <div class="section">
-            <div class="alert alert-info">
-                ℹ️ Aucun changement nécessaire. Votre code semble déjà compatible avec Font Awesome 6.
-            </div>
+        
+        <div id="noResults" style="display: none; text-align: center; padding: 40px; color: var(--gray-500);">
+            <div style="font-size: 3em;">🔍</div>
+            <p>Aucun résultat trouvé pour votre recherche</p>
         </div>
-    @endif
+    </div>
 
     <!-- JavaScript pour l'interactivité -->
     <script>
