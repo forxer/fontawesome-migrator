@@ -21,8 +21,6 @@ CHANGELOG
 - Amélioration de la robustesse des tests avec mocks appropriés pour l'environnement Blade
 - Suppression du package.json des chemins par défaut pour éviter conflits de configuration
 
-
-
 1.3.0 (2025-07-26)
 ------------------
 
