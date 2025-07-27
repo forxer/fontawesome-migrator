@@ -1911,27 +1911,14 @@
             const backToTopBtn = document.getElementById('backToTop');
             
             if (backToTopBtn) {
-                console.log('✅ Bouton back-to-top trouvé et initialisé');
-                
                 // Afficher/masquer le bouton selon le scroll
                 window.addEventListener('scroll', function() {
                     if (window.pageYOffset > 300) {
                         backToTopBtn.classList.add('show');
-                        console.log('📍 Bouton back-to-top affiché (scroll: ' + window.pageYOffset + 'px)');
                     } else {
                         backToTopBtn.classList.remove('show');
                     }
                 });
-                
-                // Test de visibilité forcée après 2 secondes (pour débugger)
-                setTimeout(() => {
-                    if (window.pageYOffset > 100) {
-                        backToTopBtn.classList.add('show');
-                        console.log('🔧 Test de visibilité forcée du bouton');
-                    }
-                }, 2000);
-            } else {
-                console.error('❌ Bouton back-to-top non trouvé dans le DOM');
             }
 
             // Amélioration de la navigation de la table des matières
@@ -1964,14 +1951,5 @@
     <button id="backToTop" class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
         ↑
     </button>
-    
-    <!-- Bouton de test temporaire (visible immédiatement) -->
-    <div style="position: fixed; bottom: 90px; right: 30px; background: red; color: white; padding: 10px; border-radius: 5px; z-index: 1002; font-size: 12px;">
-        Test Bouton
-        <br>
-        <button onclick="document.getElementById('backToTop').classList.add('show')" style="margin-top: 5px; font-size: 11px;">
-            Forcer affichage
-        </button>
-    </div>
 
 @endsection
