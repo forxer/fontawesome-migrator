@@ -498,7 +498,7 @@
             right: 30px;
             width: 50px;
             height: 50px;
-            background: var(--primary-color);
+            background: #4299e1; /* Couleur fixe pour éviter les problèmes de variable */
             color: white;
             border: none;
             border-radius: 50%;
@@ -507,19 +507,24 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            font-weight: bold;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
-            z-index: 999;
+            z-index: 1001; /* Z-index plus élevé que les modales */
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         .back-to-top:hover {
-            background: var(--primary-hover);
+            background: #3182ce;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.2);
         }
 
         .back-to-top.show {
             display: flex;
+            opacity: 1;
+            transform: translateY(0);
             animation: fadeInUp 0.3s ease;
         }
 
@@ -1892,18 +1897,6 @@
             });
         };
 
-        // Gestion du bouton retour en haut
-        const backToTopBtn = document.getElementById('backToTop');
-        
-        // Afficher/masquer le bouton selon le scroll
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
-                backToTopBtn.classList.add('show');
-            } else {
-                backToTopBtn.classList.remove('show');
-            }
-        });
-
         // Fonction de retour en haut avec animation fluide
         window.scrollToTop = function() {
             window.scrollTo({
@@ -1912,27 +1905,57 @@
             });
         };
 
-        // Amélioration de la navigation de la table des matières
-        document.querySelectorAll('.toc-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
+        // Initialisation après chargement du DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion du bouton retour en haut
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            if (backToTopBtn) {
+                console.log('✅ Bouton back-to-top trouvé et initialisé');
                 
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
+                // Afficher/masquer le bouton selon le scroll
+                window.addEventListener('scroll', function() {
+                    if (window.pageYOffset > 300) {
+                        backToTopBtn.classList.add('show');
+                        console.log('📍 Bouton back-to-top affiché (scroll: ' + window.pageYOffset + 'px)');
+                    } else {
+                        backToTopBtn.classList.remove('show');
+                    }
+                });
                 
-                if (targetElement) {
-                    // Scroll fluide vers la section
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                // Test de visibilité forcée après 2 secondes (pour débugger)
+                setTimeout(() => {
+                    if (window.pageYOffset > 100) {
+                        backToTopBtn.classList.add('show');
+                        console.log('🔧 Test de visibilité forcée du bouton');
+                    }
+                }, 2000);
+            } else {
+                console.error('❌ Bouton back-to-top non trouvé dans le DOM');
+            }
+
+            // Amélioration de la navigation de la table des matières
+            document.querySelectorAll('.toc-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
                     
-                    // Animation de highlight de la section
-                    targetElement.style.animation = 'pulse 1.5s ease-in-out';
-                    setTimeout(() => {
-                        targetElement.style.animation = '';
-                    }, 1500);
-                }
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Scroll fluide vers la section
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Animation de highlight de la section
+                        targetElement.style.animation = 'pulse 1.5s ease-in-out';
+                        setTimeout(() => {
+                            targetElement.style.animation = '';
+                        }, 1500);
+                    }
+                });
             });
         });
     </script>
@@ -1941,5 +1964,14 @@
     <button id="backToTop" class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
         ↑
     </button>
+    
+    <!-- Bouton de test temporaire (visible immédiatement) -->
+    <div style="position: fixed; bottom: 90px; right: 30px; background: red; color: white; padding: 10px; border-radius: 5px; z-index: 1002; font-size: 12px;">
+        Test Bouton
+        <br>
+        <button onclick="document.getElementById('backToTop').classList.add('show')" style="margin-top: 5px; font-size: 11px;">
+            Forcer affichage
+        </button>
+    </div>
 
 @endsection
