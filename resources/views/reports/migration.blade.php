@@ -490,6 +490,108 @@
             border-radius: 6px;
             border-left: 4px solid var(--primary-color);
         }
+
+        /* Bouton retour en haut */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .back-to-top.show {
+            display: flex;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+
+        /* Table des matières */
+        .table-of-contents {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .toc-title {
+            margin: 0 0 15px 0;
+            color: var(--gray-700);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 8px;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .toc-link {
+            display: flex;
+            align-items: center;
+            color: var(--gray-600);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .toc-link:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateX(4px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toc-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 @endsection
 
@@ -504,8 +606,75 @@
         <p>Généré le {{ $timestamp }}</p>
     </div>
 
+    <!-- Table des matières -->
+    <div class="table-of-contents">
+        <h3 class="toc-title">📋 Navigation rapide</h3>
+        <ul class="toc-list">
+            <li class="toc-item">
+                <a href="#statistics" class="toc-link">
+                    <span class="toc-icon">📊</span>
+                    Statistiques générales
+                </a>
+            </li>
+            @if ($stats['total_changes'] > 0)
+            <li class="toc-item">
+                <a href="#chart-section" class="toc-link">
+                    <span class="toc-icon">📈</span>
+                    Répartition des changements
+                </a>
+            </li>
+            @endif
+            <li class="toc-item">
+                <a href="#timeline-section" class="toc-link">
+                    <span class="toc-icon">🕒</span>
+                    Chronologie de migration
+                </a>
+            </li>
+            <li class="toc-item">
+                <a href="#recommendations-section" class="toc-link">
+                    <span class="toc-icon">🎯</span>
+                    Recommandations
+                </a>
+            </li>
+            <li class="toc-item">
+                <a href="#configuration-section" class="toc-link">
+                    <span class="toc-icon">⚙️</span>
+                    Configuration
+                </a>
+            </li>
+            <li class="toc-item">
+                <a href="#info-section" class="toc-link">
+                    <span class="toc-icon">ℹ️</span>
+                    Informations supplémentaires
+                </a>
+            </li>
+            @if ($stats['total_changes'] > 0)
+            <li class="toc-item">
+                <a href="#summary-section" class="toc-link">
+                    <span class="toc-icon">📋</span>
+                    Résumé de migration
+                </a>
+            </li>
+            @if (!empty($stats['asset_types']))
+            <li class="toc-item">
+                <a href="#assets-section" class="toc-link">
+                    <span class="toc-icon">🎨</span>
+                    Assets détectés
+                </a>
+            </li>
+            @endif
+            <li class="toc-item">
+                <a href="#details-section" class="toc-link">
+                    <span class="toc-icon">📄</span>
+                    Détail des modifications
+                </a>
+            </li>
+            @endif
+        </ul>
+    </div>
+
     <!-- Statistiques générales -->
-    <div class="stats-grid">
+    <div id="statistics" class="stats-grid">
         <div class="stat-card">
             <div class="stat-number">{{ number_format($stats['total_files'], 0, ',', ' ') }}</div>
             <div class="stat-label">Fichiers analysés</div>
@@ -570,7 +739,7 @@
 
     @if ($stats['total_changes'] > 0)
     <!-- Graphique des types de changements -->
-    <div class="section enhanced-section">
+    <div id="chart-section" class="section enhanced-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">📊 Répartition par type de changement</h2>
             <button onclick="showChartHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.2s;">
@@ -583,7 +752,7 @@
     </div>
 
     <!-- Chronologie de migration -->
-    <div class="section enhanced-section">
+    <div id="timeline-section" class="section enhanced-section">
         <h2>🕒 Chronologie de migration</h2>
         <div class="timeline-container">
             <div class="timeline-item">
@@ -638,7 +807,7 @@
     </div>
 
     <!-- Recommandations intelligentes -->
-    <div class="section enhanced-section">
+    <div id="recommendations-section" class="section enhanced-section">
         <h2>🎯 Recommandations</h2>
         <div class="recommendations-grid">
             @if ($isDryRun && $stats['total_changes'] > 0)
@@ -731,7 +900,7 @@
     @endif
 
     <!-- Configuration et options -->
-    <div class="section">
+    <div id="configuration-section" class="section">
         <h2>⚙️ Configuration de migration</h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
@@ -789,7 +958,7 @@
     </div>
 
     <!-- Informations de fin -->
-    <div class="section">
+    <div id="info-section" class="section">
         <h2>ℹ️ Informations supplémentaires</h2>
         <p><strong>Rapport généré :</strong> {{ $timestamp }}</p>
         <p><strong>Package :</strong> FontAwesome Migrator version {{ $packageVersion }}</p>
@@ -809,7 +978,7 @@
 
     @if ($stats['total_changes'] > 0)
         <!-- Résumé de migration -->
-        <div class="section">
+        <div id="summary-section" class="section">
             <h2>📋 Résumé de la migration</h2>
 
             @if ($stats['migration_success'])
@@ -853,7 +1022,7 @@
 
         <!-- Section des assets si présents -->
         @if (!empty($stats['asset_types']))
-            <div class="section">
+            <div id="assets-section" class="section">
                 <h2>🎨 Assets détectés</h2>
                 <table>
                     <tr><th>Type d'asset</th><th>Nombre</th><th>Description</th></tr>
@@ -871,7 +1040,7 @@
     @endif
 
     <!-- Détail des fichiers modifiés avec recherche -->
-    <div class="section enhanced-section">
+    <div id="details-section" class="section enhanced-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2>📄 Détail des modifications</h2>
 
@@ -1420,9 +1589,15 @@
             const successRate = stats.total_changes > 0 ? ((stats.total_changes - (stats.warnings || 0)) / stats.total_changes) * 100 : 100;
 
             const performanceSection = document.createElement('div');
+            performanceSection.id = 'performance-section';
             performanceSection.className = 'section enhanced-section';
             performanceSection.innerHTML = `
-                <h2>📈 Métriques de performance</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0;">📈 Métriques de performance</h2>
+                    <button onclick="showPerformanceHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.2s;">
+                        ❓ Comprendre les métriques
+                    </button>
+                </div>
                 <div class="performance-metrics">
                     <div class="metric-card">
                         <div class="metric-value">${formatPercentage(migrationRate)}</div>
@@ -1638,7 +1813,133 @@
                 simpleHeader: true 
             });
         };
+
+        // Fonction pour la modal d'aide des métriques de performance
+        window.showPerformanceHelpModal = function() {
+            const content = `
+                <p style="color: var(--gray-600); margin-bottom: 25px; line-height: 1.6;">
+                    Ces métriques vous aident à évaluer la qualité et l'efficacité de votre migration Font Awesome 5 vers 6 :
+                </p>
+
+                <div style="display: grid; gap: 16px;">
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Taux de migration</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Pourcentage de fichiers modifiés par rapport au total scanné.<br>
+                            <strong>↗ Excellent :</strong> > 50% des fichiers migrés<br>
+                            <strong>→ Partiel :</strong> ≤ 50% des fichiers migrés
+                        </p>
+                    </div>
+
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--secondary-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Changements par fichier</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Densité moyenne des modifications par fichier.<br>
+                            <strong>↗ Léger :</strong> < 5 changements par fichier (peu d'icônes FA)<br>
+                            <strong>↗ Intensif :</strong> ≥ 5 changements par fichier (beaucoup d'icônes FA)
+                        </p>
+                    </div>
+
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Taux de succès</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Pourcentage de changements réussis sans avertissement.<br>
+                            <strong>↗ Parfait :</strong> > 95% sans avertissement<br>
+                            <strong>↗ Bon :</strong> 80-95% sans avertissement<br>
+                            <strong>→ À améliorer :</strong> < 80% sans avertissement
+                        </p>
+                    </div>
+
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--warning-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Optimisations totales</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Nombre total de changements appliqués (icônes + assets).<br>
+                            <strong>↗ Modernisé :</strong> Votre code utilise maintenant Font Awesome 6
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background-color: #e6f3ff; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                    <strong style="color: var(--gray-700);">💡 Conseil d'interprétation :</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray-600); line-height: 1.5;">
+                        Un bon score combine un taux de migration élevé et un taux de succès élevé. 
+                        Si le taux de succès est faible, vérifiez les avertissements pour identifier les éléments nécessitant une révision manuelle.
+                    </p>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center;">
+                    <button onclick="ModalSystem.hide('performanceHelpModal')" style="background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">
+                        Compris !
+                    </button>
+                </div>
+            `;
+            
+            ModalSystem.show('📈 Comprendre les métriques de performance', content, { 
+                id: 'performanceHelpModal', 
+                simpleHeader: true 
+            });
+        };
+
+        // Gestion du bouton retour en haut
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        // Afficher/masquer le bouton selon le scroll
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        // Fonction de retour en haut avec animation fluide
+        window.scrollToTop = function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+
+        // Amélioration de la navigation de la table des matières
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    // Scroll fluide vers la section
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Animation de highlight de la section
+                    targetElement.style.animation = 'pulse 1.5s ease-in-out';
+                    setTimeout(() => {
+                        targetElement.style.animation = '';
+                    }, 1500);
+                }
+            });
+        });
     </script>
 
+    <!-- Bouton retour en haut -->
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
+        ↑
+    </button>
 
 @endsection
