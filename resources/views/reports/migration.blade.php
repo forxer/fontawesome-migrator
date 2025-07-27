@@ -1371,10 +1371,10 @@
                     <li><strong>🔄 Cache navigateur :</strong> Videz le cache ou testez en navigation privée.</li>
                 </ul>
             `;
-            
-            ModalSystem.show('🧪 Conseils de test', content, { 
+
+            ModalSystem.show('🧪 Conseils de test', content, {
                 id: 'testing-tips-modal',
-                simpleHeader: false 
+                simpleHeader: false
             });
         }
 
@@ -1444,7 +1444,7 @@
             show: function(title, content, options = {}) {
                 const modalId = options.id || 'modal-' + Date.now();
                 const styles = this.getModalStyles();
-                
+
                 const modal = document.createElement('div');
                 modal.id = modalId;
                 modal.className = 'modal';
@@ -1812,10 +1812,10 @@
                     </button>
                 </div>
             `;
-            
-            ModalSystem.show('📋 Comprendre les types de changements', content, { 
-                id: 'chartHelpModal', 
-                simpleHeader: true 
+
+            ModalSystem.show('📋 Comprendre les types de changements', content, {
+                id: 'chartHelpModal',
+                simpleHeader: true
             });
         };
 
@@ -1879,7 +1879,7 @@
                 <div style="margin-top: 25px; padding: 15px; background-color: #e6f3ff; border-radius: 8px; border-left: 4px solid var(--primary-color);">
                     <strong style="color: var(--gray-700);">💡 Conseil d'interprétation :</strong>
                     <p style="margin: 5px 0 0 0; color: var(--gray-600); line-height: 1.5;">
-                        Un bon score combine un taux de migration élevé et un taux de succès élevé. 
+                        Un bon score combine un taux de migration élevé et un taux de succès élevé.
                         Si le taux de succès est faible, vérifiez les avertissements pour identifier les éléments nécessitant une révision manuelle.
                     </p>
                 </div>
@@ -1890,10 +1890,10 @@
                     </button>
                 </div>
             `;
-            
-            ModalSystem.show('📈 Comprendre les métriques de performance', content, { 
-                id: 'performanceHelpModal', 
-                simpleHeader: true 
+
+            ModalSystem.show('📈 Comprendre les métriques de performance', content, {
+                id: 'performanceHelpModal',
+                simpleHeader: true
             });
         };
 
@@ -1909,7 +1909,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Gestion du bouton retour en haut
             const backToTopBtn = document.getElementById('backToTop');
-            
+
             if (backToTopBtn) {
                 // Afficher/masquer le bouton selon le scroll
                 window.addEventListener('scroll', function() {
@@ -1925,17 +1925,17 @@
             document.querySelectorAll('.toc-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     const targetId = this.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
-                    
+
                     if (targetElement) {
                         // Scroll fluide vers la section
                         targetElement.scrollIntoView({
                             behavior: 'smooth',
                             block: 'start'
                         });
-                        
+
                         // Animation de highlight de la section
                         targetElement.style.animation = 'pulse 1.5s ease-in-out';
                         setTimeout(() => {
