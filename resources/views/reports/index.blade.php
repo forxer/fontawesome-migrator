@@ -324,16 +324,16 @@
             .reports-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
-            
+
             .actions {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .report-meta {
                 grid-template-columns: 1fr 1fr;
             }
@@ -378,11 +378,11 @@
         <button onclick="refreshReports()" class="btn btn-primary">
             <span id="refresh-icon">🔄</span> Actualiser les rapports
         </button>
-        
+
         <button onclick="cleanupReports()" class="btn btn-danger">
             🗑️ Nettoyer (30j+)
         </button>
-        
+
         <div style="margin-left: auto; color: var(--gray-500); font-weight: 500;">
             📊 {{ count($reports) }} rapport(s) disponible(s)
         </div>
@@ -403,7 +403,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="report-meta">
                         <div class="meta-item">
                             <div class="meta-value">{{ number_format($report['size'] / 1024, 1, ',', ' ') }}</div>
@@ -425,18 +425,18 @@
                             <div class="meta-label">⏰ Âge</div>
                         </div>
                     </div>
-                    
+
                     <div class="report-actions">
                         <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary btn-sm">
                             📄 Voir Rapport
                         </a>
-                        
+
                         @if ($report['json_url'])
                             <a href="{{ $report['json_url'] }}" target="_blank" class="btn btn-primary btn-sm">
                                 📋 Voir JSON
                             </a>
                         @endif
-                        
+
                         <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-danger btn-sm">
                             🗑️ Supprimer
                         </button>
@@ -472,9 +472,9 @@
         const alert = document.createElement('div');
         alert.className = `alert alert-${type}`;
         alert.textContent = message;
-        
+
         alertsContainer.appendChild(alert);
-        
+
         setTimeout(() => {
             alert.remove();
         }, 5000);
@@ -483,7 +483,7 @@
     function refreshReports() {
         const icon = document.getElementById('refresh-icon');
         icon.innerHTML = '<span class="spinner"></span>';
-        
+
         // Recharger la page après un court délai
         setTimeout(() => {
             window.location.reload();
