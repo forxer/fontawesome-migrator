@@ -7,6 +7,18 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\intro;
+use function Laravel\Prompts\outro;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\warning;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\spin;
+
 class InstallFontAwesomeCommand extends Command
 {
     /**
@@ -58,16 +70,12 @@ class InstallFontAwesomeCommand extends Command
      */
     protected function displayWelcome(): void
     {
-        $this->newLine();
-        $this->line('┌─────────────────────────────────────────────────────────────┐');
-        $this->line('│                                                             │');
-        $this->line('│  🚀 <fg=cyan;options=bold>FontAwesome Migrator - Installation Interactive</fg=cyan;options=bold>  │');
-        $this->line('│                                                             │');
-        $this->line('│  Migration automatique Font Awesome 5 → 6                  │');
-        $this->line('│  Support Free & Pro • Assets & Icônes • Interface Web      │');
-        $this->line('│                                                             │');
-        $this->line('└─────────────────────────────────────────────────────────────┘');
-        $this->newLine();
+        intro('🚀 FontAwesome Migrator - Installation Interactive');
+        
+        note(
+            'Migration automatique Font Awesome 5 → 6\n' .
+            'Support Free & Pro • Assets & Icônes • Interface Web'
+        );
     }
 
     /**
@@ -77,10 +85,13 @@ class InstallFontAwesomeCommand extends Command
     {
         $configExists = File::exists(config_path('fontawesome-migrator.php'));
 
-        if ($configExists && ! $this->option('force') && ! $this->option('non-interactive') && ! $this->confirm('Le fichier de configuration existe déjà. Le remplacer ?', false)) {
-            $this->info('   Configuration existante conservée');
-
-            return;
+        if ($configExists && ! $this->option('force') && ! $this->option('non-interactive')) {
+            $replace = confirm('Le fichier de configuration existe déjà. Le remplacer ?', false);
+            
+            if (! $replace) {
+                info('Configuration existante conservée');
+                return;
+            }
         }
 
         // Copier le fichier stub au lieu du fichier complet
@@ -89,14 +100,14 @@ class InstallFontAwesomeCommand extends Command
 
         if (File::exists($stubPath)) {
             File::copy($stubPath, $configPath);
-            $this->info('   ✅ Configuration initialisée dans config/fontawesome-migrator.php');
+            info('✅ Configuration initialisée dans config/fontawesome-migrator.php');
         } else {
             // Fallback vers la méthode classique si le stub n'existe pas
             Artisan::call('vendor:publish', [
                 '--tag' => 'fontawesome-migrator-config',
                 '--force' => $this->option('force') || $configExists,
             ]);
-            $this->info('   ✅ Configuration publiée dans config/fontawesome-migrator.php');
+            info('✅ Configuration publiée dans config/fontawesome-migrator.php');
         }
     }
 
@@ -105,7 +116,7 @@ class InstallFontAwesomeCommand extends Command
      */
     protected function configurePackage(): void
     {
-        $this->line('   📝 Configuration du package...');
+        info('📝 Configuration du package...');
 
         // Mode non-interactif pour les tests
         if ($this->option('non-interactive')) {
@@ -114,7 +125,7 @@ class InstallFontAwesomeCommand extends Command
             $generateReports = true;
             $enableBackups = true;
 
-            $this->info('   ✅ Configuration par défaut appliquée (mode non-interactif)');
+            info('✅ Configuration par défaut appliquée (mode non-interactif)');
             // En mode non-interactif, utiliser seulement les chemins personnalisés (vides = valeurs par défaut du package)
             $this->writeConfiguration($licenseType, $customPaths, $generateReports, $enableBackups);
 
@@ -122,46 +133,52 @@ class InstallFontAwesomeCommand extends Command
         }
 
         // Type de licence
-        $licenseType = $this->choice(
-            '   Quel type de licence FontAwesome utilisez-vous ?',
-            ['Free (gratuite)', 'Pro (payante)'],
-            'Free (gratuite)'
+        $licenseType = select(
+            'Quel type de licence FontAwesome utilisez-vous ?',
+            [
+                'free' => 'Free (gratuite)',
+                'pro' => 'Pro (payante)'
+            ],
+            default: 'free'
         );
 
-        // Convertir la réponse en clé
-        $licenseType = $licenseType === 'Pro (payante)' ? 'pro' : 'free';
-
         // Chemins de scan personnalisés
-        $this->info('   📂 Chemins de scan par défaut :');
         $defaultPaths = $this->getDefaultPaths();
-
-        foreach ($defaultPaths as $path) {
-            $this->line('      • '.$path);
-        }
+        
+        note(
+            '📂 Chemins de scan par défaut :\n' .
+            collect($defaultPaths)->map(fn($path) => "  • {$path}")->join('\n')
+        );
 
         $customPaths = [];
+        $addCustomPaths = confirm('Voulez-vous ajouter des chemins personnalisés ?', false);
 
-        if ($this->confirm('   Voulez-vous ajouter des chemins personnalisés ?', false)) {
+        if ($addCustomPaths) {
             do {
-                $path = $this->ask('   Chemin supplémentaire (ex: app/Views)');
+                $path = text(
+                    'Chemin supplémentaire',
+                    placeholder: 'ex: app/Views, resources/components'
+                );
 
                 if ($path) {
                     $customPaths[] = $path;
-                    $this->info('      ✅ Ajouté: '.$path);
+                    info("✅ Ajouté: {$path}");
                 }
-            } while ($path && $this->confirm('   Ajouter un autre chemin ?', false));
+                
+                $continueAdding = $path ? confirm('Ajouter un autre chemin ?', false) : false;
+            } while ($continueAdding);
         }
 
         // Génération de rapports
-        $generateReports = $this->confirm('   Générer automatiquement des rapports ?', true);
+        $generateReports = confirm('Générer automatiquement des rapports ?', true);
 
         // Sauvegardes
-        $enableBackups = $this->confirm('   Créer des sauvegardes avant modification ?', true);
+        $enableBackups = confirm('Créer des sauvegardes avant modification ?', true);
 
         // Écrire la configuration
         $this->writeConfiguration($licenseType, array_merge($defaultPaths, $customPaths), $generateReports, $enableBackups);
 
-        $this->info('   ✅ Configuration personnalisée sauvegardée');
+        info('✅ Configuration personnalisée sauvegardée');
     }
 
     /**
@@ -169,30 +186,36 @@ class InstallFontAwesomeCommand extends Command
      */
     protected function setupStorage(): void
     {
-        $this->line('   🔗 Configuration du stockage pour l\'interface web...');
+        info('🔗 Configuration du stockage pour l\'interface web...');
 
         // Vérifier si le lien symbolique existe
         $storageLink = public_path('storage');
 
         if (! File::exists($storageLink)) {
-            if ($this->option('non-interactive') || $this->confirm('   Créer le lien symbolique storage pour l\'accès web ?', true)) {
-                Artisan::call('storage:link');
-                $this->info('   ✅ Lien symbolique storage créé');
+            if ($this->option('non-interactive') || confirm('Créer le lien symbolique storage pour l\'accès web ?', true)) {
+                spin(
+                    fn() => Artisan::call('storage:link'),
+                    'Création du lien symbolique...'
+                );
+                info('✅ Lien symbolique storage créé');
             } else {
-                $this->warn('   ⚠️  Sans le lien storage, les rapports ne seront pas accessibles via le web');
+                warning('⚠️  Sans le lien storage, les rapports ne seront pas accessibles via le web');
             }
         } else {
-            $this->info('   ✅ Lien symbolique storage déjà configuré');
+            info('✅ Lien symbolique storage déjà configuré');
         }
 
         // Créer le répertoire des rapports
         $reportPath = storage_path('app/public/fontawesome-migrator/reports');
 
         if (! File::exists($reportPath)) {
-            File::makeDirectory($reportPath, 0755, true);
-            $this->info('   ✅ Répertoire des rapports créé');
+            spin(
+                fn() => File::makeDirectory($reportPath, 0755, true),
+                'Création du répertoire des rapports...'
+            );
+            info('✅ Répertoire des rapports créé');
         } else {
-            $this->info('   ✅ Répertoire des rapports existe déjà');
+            info('✅ Répertoire des rapports existe déjà');
         }
     }
 
@@ -201,7 +224,7 @@ class InstallFontAwesomeCommand extends Command
      */
     protected function verifyInstallation(): void
     {
-        $this->line('   🔍 Vérification de l\'installation...');
+        info('🔍 Vérification de l\'installation...');
 
         $checks = [
             'Configuration' => File::exists(config_path('fontawesome-migrator.php')),
@@ -209,15 +232,17 @@ class InstallFontAwesomeCommand extends Command
             'Répertoire rapports' => File::exists(storage_path('app/public/fontawesome-migrator/reports')),
         ];
 
+        $results = [];
         foreach ($checks as $check => $passed) {
-            $status = $passed ? '✅' : '❌';
-            $this->line(\sprintf('      %s %s', $status, $check));
+            $results[] = ($passed ? '✅' : '❌') . ' ' . $check;
         }
+        
+        note(implode('\n', $results));
 
         if (\in_array(false, $checks, true)) {
-            $this->warn('   ⚠️  Certaines vérifications ont échoué');
+            warning('Certaines vérifications ont échoué');
         } else {
-            $this->info('   ✅ Installation vérifiée avec succès');
+            info('✅ Installation vérifiée avec succès');
         }
     }
 
@@ -335,38 +360,26 @@ class InstallFontAwesomeCommand extends Command
      */
     protected function displayCompletion(): void
     {
-        $this->newLine();
-        $this->line('┌─────────────────────────────────────────────────────────────┐');
-        $this->line('│                                                             │');
-        $this->line('│  🎉 <fg=green;options=bold>Installation terminée avec succès !</fg=green;options=bold>             │');
-        $this->line('│                                                             │');
-        $this->line('└─────────────────────────────────────────────────────────────┘');
-        $this->newLine();
-
-        $this->info('📋 <options=bold>Prochaines étapes :</options=bold>');
-        $this->newLine();
-
-        $this->line('   1️⃣  <fg=cyan>Tester la migration :</fg=cyan>');
-        $this->line('       php artisan fontawesome:migrate --dry-run');
-        $this->newLine();
-
-        $this->line('   2️⃣  <fg=cyan>Effectuer la migration :</fg=cyan>');
-        $this->line('       php artisan fontawesome:migrate');
-        $this->newLine();
-
-        $this->line('   3️⃣  <fg=cyan>Accéder aux rapports :</fg=cyan>');
-        $this->line('       '.url('/fontawesome-migrator/reports'));
-        $this->newLine();
-
-        $this->line('📖 <fg=yellow>Documentation complète :</fg=yellow>');
-        $this->line('   • README.md du package');
-        $this->line('   • config/fontawesome-migrator.php');
-        $this->newLine();
-
-        $this->line('🆘 <fg=magenta>Support :</fg=magenta>');
-        $this->line('   • php artisan fontawesome:migrate --help');
-        $this->line('   • GitHub Issues pour les problèmes');
-        $this->newLine();
+        outro('🎉 Installation terminée avec succès !');
+        
+        note(
+            '📋 Prochaines étapes :\n\n' .
+            '1️⃣  Tester la migration :\n' .
+            '    php artisan fontawesome:migrate --dry-run\n\n' .
+            '2️⃣  Effectuer la migration :\n' .
+            '    php artisan fontawesome:migrate\n\n' .
+            '3️⃣  Accéder aux rapports :\n' .
+            '    ' . url('/fontawesome-migrator/reports')
+        );
+        
+        note(
+            '📖 Documentation complète :\n' .
+            '  • README.md du package\n' .
+            '  • config/fontawesome-migrator.php\n\n' .
+            '🆘 Support :\n' .
+            '  • php artisan fontawesome:migrate --help\n' .
+            '  • GitHub Issues pour les problèmes'
+        );
     }
 
     /**
@@ -374,16 +387,12 @@ class InstallFontAwesomeCommand extends Command
      */
     protected function step(string $title, callable $callback): void
     {
-        $this->info('🔧 '.$title);
-
         try {
-            $callback();
+            spin($callback, '🔧 ' . $title);
         } catch (Exception $exception) {
-            $this->error('   ❌ Erreur: '.$exception->getMessage());
-            $this->warn('   Vous pouvez réessayer avec --force si nécessaire');
+            error('❌ Erreur: ' . $exception->getMessage());
+            warning('Vous pouvez réessayer avec --force si nécessaire');
         }
-
-        $this->newLine();
     }
 
     /**
