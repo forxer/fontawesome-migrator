@@ -396,6 +396,30 @@
             border-radius: 4px;
         }
 
+        /* Styles pour les changements avec avertissements */
+        .change-with-warning {
+            border-left: 4px solid var(--warning-color);
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .change-item {
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 6px;
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .change-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(66, 153, 225, 0.1);
+        }
+
         /* Surlignage de recherche */
         .highlight-match {
             background: #fef3c7;
@@ -1083,29 +1107,93 @@
 
                             <div class="collapsible-content" id="details-{{ $index }}">
                                 @foreach($result['changes'] as $changeIndex => $change)
-                                    <div class="change-item" data-change-from="{{ $change['from'] }}" data-change-to="{{ $change['to'] }}">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    @php
+                                        // Chercher si ce changement a un avertissement correspondant
+                                        $hasWarning = in_array($change['type'] ?? '', ['pro_fallback', 'renamed_icon', 'deprecated_icon', 'manual_review']);
+                                        $warningMessage = null;
+                                        
+                                        if ($hasWarning && !empty($result['warnings'])) {
+                                            // Essayer de trouver le warning correspondant
+                                            foreach ($result['warnings'] as $warning) {
+                                                if (str_contains($warning, $change['from'] ?? '')) {
+                                                    $warningMessage = $warning;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+                                    
+                                    <div class="change-item {{ $hasWarning ? 'change-with-warning' : '' }}" 
+                                         data-change-from="{{ $change['from'] }}" 
+                                         data-change-to="{{ $change['to'] }}">
+                                        
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
                                             <div style="flex: 1;">
                                                 <div class="change-from">- {{ $change['from'] }}</div>
                                                 <div class="change-to">+ {{ $change['to'] }}</div>
-                                            </div>
-                                            <div style="text-align: right; color: var(--gray-500); font-size: 0.8em;">
-                                                @if (isset($change['line']))
-                                                    📍 Ligne {{ $change['line'] }}<br>
+                                                
+                                                {{-- Afficher l'avertissement spécifique si présent --}}
+                                                @if ($hasWarning && $warningMessage)
+                                                    <div style="margin-top: 8px; padding: 8px 12px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; font-size: 0.9em;">
+                                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                                            <span style="color: var(--warning-color); font-weight: bold;">⚠️</span>
+                                                            <span style="color: var(--gray-700);">{{ $warningMessage }}</span>
+                                                        </div>
+                                                        
+                                                        {{-- Conseils contextuels selon le type --}}
+                                                        @switch($change['type'])
+                                                            @case('pro_fallback')
+                                                                <div style="margin-top: 6px; font-size: 0.8em; color: var(--gray-600);">
+                                                                    💡 <em>Considérez une licence Pro pour conserver le style original</em>
+                                                                </div>
+                                                                @break
+                                                            @case('renamed_icon')
+                                                                <div style="margin-top: 6px; font-size: 0.8em; color: var(--gray-600);">
+                                                                    ✅ <em>Renommage automatique appliqué</em>
+                                                                </div>
+                                                                @break
+                                                            @case('deprecated_icon')
+                                                                <div style="margin-top: 6px; font-size: 0.8em; color: var(--gray-600);">
+                                                                    🔍 <em>Vérifiez le rendu et remplacez manuellement si nécessaire</em>
+                                                                </div>
+                                                                @break
+                                                            @case('manual_review')
+                                                                <div style="margin-top: 6px; font-size: 0.8em; color: var(--gray-600);">
+                                                                    👁️ <em>Révision manuelle recommandée</em>
+                                                                </div>
+                                                                @break
+                                                        @endswitch
+                                                    </div>
                                                 @endif
+                                            </div>
+                                            
+                                            <div style="text-align: right; color: var(--gray-500); font-size: 0.8em; min-width: 120px;">
+                                                @if (isset($change['line']))
+                                                    <div style="background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-bottom: 6px; display: inline-block;">
+                                                        📍 L.{{ $change['line'] }}
+                                                    </div><br>
+                                                @endif
+                                                
                                                 @if (isset($change['type']))
-                                                    <span class="badge badge-{{ $change['type'] }}">{{ ucfirst($change['type']) }}</span>
+                                                    @php
+                                                        $typeLabels = [
+                                                            'style_update' => ['label' => 'Style', 'color' => 'var(--primary-color)'],
+                                                            'renamed_icon' => ['label' => 'Renommé', 'color' => 'var(--warning-color)'],
+                                                            'pro_fallback' => ['label' => 'Fallback', 'color' => 'var(--error-color)'],
+                                                            'deprecated_icon' => ['label' => 'Déprécié', 'color' => 'var(--error-color)'],
+                                                            'manual_review' => ['label' => 'Manuel', 'color' => 'var(--warning-color)'],
+                                                            'asset' => ['label' => 'Asset', 'color' => 'var(--success-color)'],
+                                                        ];
+                                                        $typeInfo = $typeLabels[$change['type']] ?? ['label' => ucfirst($change['type']), 'color' => 'var(--gray-500)'];
+                                                    @endphp
+                                                    <span style="background: {{ $typeInfo['color'] }}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase;">
+                                                        {{ $typeInfo['label'] }}
+                                                    </span>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
-
-                                @if (!empty($result['warnings']))
-                                    @foreach($result['warnings'] as $warning)
-                                        <div class="alert alert-warning">⚠️ {{ $warning }}</div>
-                                    @endforeach
-                                @endif
 
                                 @if (!empty($result['assets']))
                                     <div class="timeline-item">
@@ -1379,13 +1467,106 @@
         }
 
         function scrollToWarnings() {
-            const warnings = document.querySelectorAll('.alert-warning');
-            if (warnings.length > 0) {
-                warnings[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                warnings[0].style.animation = 'pulse 2s';
-            } else {
-                showNotification('ℹ️ Aucun avertissement dans cette vue', 'info');
+            showWarningsModal();
+        }
+
+        // Fonction pour afficher les avertissements dans une modal
+        function showWarningsModal() {
+            // Utiliser les données enrichies depuis PHP
+            const enrichedWarnings = @json($enrichedWarnings ?? []);
+            
+            if (enrichedWarnings.length === 0) {
+                ModalSystem.show('✅ Aucun avertissement', 
+                    '<p style="text-align: center; color: var(--success-color); font-size: 18px; margin: 20px 0;">🎉 Félicitations ! Aucun avertissement détecté dans cette migration.</p>', 
+                    { id: 'no-warnings-modal', simpleHeader: true }
+                );
+                return;
             }
+            
+            // Grouper les avertissements par fichier
+            const warningsByFile = {};
+            enrichedWarnings.forEach(warning => {
+                if (!warningsByFile[warning.file]) {
+                    warningsByFile[warning.file] = [];
+                }
+                warningsByFile[warning.file].push(warning);
+            });
+            
+            const warningCount = enrichedWarnings.length;
+            
+            // Construire le contenu de la modal
+            let content = `
+                <div style="margin-bottom: 20px; padding: 15px; background: var(--gray-50); border-radius: 8px; border-left: 4px solid var(--warning-color);">
+                    <strong style="color: var(--warning-color);">⚠️ ${warningCount} avertissement(s) détecté(s)</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray-600);">
+                        Ces éléments nécessitent une vérification manuelle après la migration.
+                    </p>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+            `;
+            
+            Object.keys(warningsByFile).forEach(fileName => {
+                const fileWarnings = warningsByFile[fileName];
+                content += `
+                    <div style="margin-bottom: 20px; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden;">
+                        <div style="background: var(--gray-100); padding: 12px; border-bottom: 1px solid var(--gray-200);">
+                            <strong style="color: var(--gray-700);">📁 ${fileName}</strong>
+                            <span style="background: var(--warning-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 10px;">
+                                ${fileWarnings.length} avertissement(s)
+                            </span>
+                        </div>
+                        <div style="padding: 12px;">
+                `;
+                
+                fileWarnings.forEach(warning => {
+                    content += `
+                        <div style="margin-bottom: 10px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <div style="font-size: 14px; color: var(--gray-700); flex: 1;">
+                                    ${warning.message}
+                                </div>
+                                ${warning.line && warning.line !== 'N/A' && warning.line !== null ? `
+                                    <div style="background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 10px; white-space: nowrap;">
+                                        L.${warning.line}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            ${warning.change ? `
+                                <div style="font-size: 12px; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                    <code style="color: var(--error-color);">${warning.change.from}</code> 
+                                    → 
+                                    <code style="color: var(--success-color);">${warning.change.to}</code>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                content += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content += `</div>`;
+            
+            // Ajouter les conseils d'action
+            content += `
+                <div style="margin-top: 20px; padding: 15px; background-color: #e6f3ff; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                    <strong style="color: var(--gray-700);">💡 Actions recommandées :</strong>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px; color: var(--gray-600);">
+                        <li>Vérifiez visuellement chaque icône concernée</li>
+                        <li>Testez le rendu sur différents navigateurs</li>
+                        <li>Remplacez manuellement les icônes dépréciées si nécessaire</li>
+                        <li>Considérez une licence Pro si vous utilisez des styles Pro</li>
+                    </ul>
+                </div>
+            `;
+            
+            ModalSystem.show(`⚠️ Avertissements de migration (${warningCount})`, content, {
+                id: 'warnings-modal',
+                simpleHeader: true
+            });
         }
 
         // Système de gestion des modales unifié

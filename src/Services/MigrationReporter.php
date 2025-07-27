@@ -253,6 +253,56 @@ class MigrationReporter
     }
 
     /**
+     * Extraire et enrichir les avertissements depuis les résultats
+     */
+    public function extractWarnings(array $results): array
+    {
+        $enrichedWarnings = [];
+
+        foreach ($results as $result) {
+            $filePath = $result['file'] ?? 'Fichier inconnu';
+
+            // Collecter les changements qui génèrent des avertissements
+            if (! empty($result['changes'])) {
+                foreach ($result['changes'] as $changeIndex => $change) {
+                    // Seulement les types qui génèrent des avertissements
+                    $warningTypes = ['pro_fallback', 'renamed_icon', 'deprecated_icon', 'manual_review'];
+
+                    if (\in_array($change['type'] ?? '', $warningTypes)) {
+                        // Chercher le warning correspondant dans la liste
+                        $warningMessage = null;
+
+                        if (! empty($result['warnings']) && isset($result['warnings'][$changeIndex])) {
+                            $warningMessage = $result['warnings'][$changeIndex];
+                        } else {
+                            // Fallback si pas de correspondance exacte
+                            foreach ($result['warnings'] ?? [] as $warning) {
+                                $from = $change['from'] ?? '';
+
+                                if (str_contains($warning, $from)) {
+                                    $warningMessage = $warning;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($warningMessage) {
+                            $enrichedWarnings[] = [
+                                'file' => $filePath,
+                                'line' => $change['line'] ?? null,
+                                'message' => $warningMessage,
+                                'change' => $change,
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $enrichedWarnings;
+    }
+
+    /**
      * Générer un rapport de comparaison avant/après
      */
     public function generateComparisonReport(array $beforeStats, array $afterStats): string

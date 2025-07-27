@@ -97,8 +97,13 @@ class ReportsController extends Controller
         // Charger les données depuis le fichier JSON
         $jsonData = json_decode(File::get($jsonPath), true);
 
+        // Enrichir les données avec les avertissements formatés
+        $results = $jsonData['files'] ?? [];
+        $migrationReporter = app(\FontAwesome\Migrator\Services\MigrationReporter::class);
+        $enrichedWarnings = $migrationReporter->extractWarnings($results);
+
         $viewData = [
-            'results' => $jsonData['files'] ?? [],
+            'results' => $results,
             'stats' => $jsonData['summary'] ?? [],
             'timestamp' => isset($jsonData['meta']['generated_at']) ?
                 date('Y-m-d H:i:s', strtotime((string) $jsonData['meta']['generated_at'])) :
@@ -107,6 +112,7 @@ class ReportsController extends Controller
             'migrationOptions' => $jsonData['meta']['migration_options'] ?? [],
             'configuration' => $jsonData['meta']['configuration'] ?? [],
             'packageVersion' => $jsonData['meta']['package_version'] ?? '1.1.0',
+            'enrichedWarnings' => $enrichedWarnings,
         ];
 
         return view('fontawesome-migrator::reports.migration', $viewData);
