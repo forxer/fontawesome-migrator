@@ -571,27 +571,11 @@
     @if ($stats['total_changes'] > 0)
     <!-- Graphique des types de changements -->
     <div class="section enhanced-section">
-        <h2>📊 Répartition par type de changement</h2>
-        <div style="background: var(--gray-50); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-color);">
-            <h4 style="margin: 0 0 10px 0; color: var(--gray-700);">📋 Comprendre les types de changements</h4>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 10px;">
-                <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--gray-200);">
-                    <strong style="color: var(--primary-color);">Style update</strong> : Conversion des styles FA5 → FA6<br>
-                    <small style="color: var(--gray-600);">Ex: <code>fas</code> → <code>fa-solid</code></small>
-                </div>
-                <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--gray-200);">
-                    <strong style="color: var(--secondary-color);">Renamed icon</strong> : Icônes renommées<br>
-                    <small style="color: var(--gray-600);">Ex: <code>fa-times</code> → <code>fa-xmark</code></small>
-                </div>
-                <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--gray-200);">
-                    <strong style="color: var(--warning-color);">Pro fallback</strong> : Style Pro → Free<br>
-                    <small style="color: var(--gray-600);">Conversion automatique pour licence Free</small>
-                </div>
-                <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--gray-200);">
-                    <strong style="color: var(--success-color);">Asset</strong> : Migration des ressources<br>
-                    <small style="color: var(--gray-600);">CDN URLs, imports JS/CSS, package.json</small>
-                </div>
-            </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">📊 Répartition par type de changement</h2>
+            <button onclick="showChartHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.2s;">
+                ❓ Comprendre les types
+            </button>
         </div>
         <div class="chart-container">
             <canvas id="changesChart"></canvas>
@@ -1484,6 +1468,120 @@
         @if ($stats['total_changes'] > 0 && !empty($stats['changes_by_type']))
             initializeChart(chartData, true);
         @endif
+
+        // Fonctions pour la modal d'aide
+        window.showChartHelpModal = function() {
+            document.getElementById('chartHelpModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.hideChartHelpModal = function() {
+            document.getElementById('chartHelpModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fermer la modal en cliquant à l'extérieur
+        window.onclick = function(event) {
+            const modal = document.getElementById('chartHelpModal');
+            if (event.target === modal) {
+                hideChartHelpModal();
+            }
+        }
+
+        // Fermer avec Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                hideChartHelpModal();
+            }
+        });
     </script>
+
+    <!-- Modal d'aide pour les types de changements -->
+    <div id="chartHelpModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <!-- Bouton fermer -->
+            <button onclick="hideChartHelpModal()" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; color: var(--gray-500); cursor: pointer; padding: 0; line-height: 1;">
+                ×
+            </button>
+
+            <h3 style="margin: 0 0 20px 0; color: var(--gray-700); font-size: 24px;">📋 Comprendre les types de changements</h3>
+            
+            <p style="color: var(--gray-600); margin-bottom: 25px; line-height: 1.6;">
+                Le graphique montre la répartition des différents types de modifications effectuées lors de la migration Font Awesome 5 vers 6 :
+            </p>
+
+            <div style="display: grid; gap: 16px;">
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; margin-right: 12px;"></div>
+                        <strong style="color: var(--gray-700); font-size: 16px;">Mise à jour de style</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                        Conversion automatique des styles FA5 vers FA6.<br>
+                        <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fas fa-home</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-solid fa-house</code>
+                    </p>
+                </div>
+
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: var(--secondary-color); border-radius: 50%; margin-right: 12px;"></div>
+                        <strong style="color: var(--gray-700); font-size: 16px;">Icône renommée</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                        Icônes qui ont changé de nom entre Font Awesome 5 et 6.<br>
+                        <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-times</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-xmark</code>
+                    </p>
+                </div>
+
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: var(--warning-color); border-radius: 50%; margin-right: 12px;"></div>
+                        <strong style="color: var(--gray-700); font-size: 16px;">Fallback Pro→Free</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                        Conversion automatique des styles Pro vers Free quand vous avez une licence Free.<br>
+                        <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fal fa-star</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">far fa-star</code>
+                    </p>
+                </div>
+
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 50%; margin-right: 12px;"></div>
+                        <strong style="color: var(--gray-700); font-size: 16px;">Asset migré</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                        Migration des ressources externes (CDN, imports, packages).<br>
+                        <strong>Exemple :</strong> URLs CDN v5 → v6, imports JavaScript, package.json
+                    </p>
+                </div>
+
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: var(--error-color); border-radius: 50%; margin-right: 12px;"></div>
+                        <strong style="color: var(--gray-700); font-size: 16px;">Icône dépréciée</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                        Icônes qui n'existent plus en Font Awesome 6 et nécessitent une révision manuelle.
+                    </p>
+                </div>
+
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: #8b5cf6; border-radius: 50%; margin-right: 12px;"></div>
+                        <strong style="color: var(--gray-700); font-size: 16px;">Révision manuelle</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                        Changements qui nécessitent une vérification et une intervention manuelle.
+                    </p>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center;">
+                <button onclick="hideChartHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">
+                    Compris !
+                </button>
+            </div>
+        </div>
+    </div>
 
 @endsection
