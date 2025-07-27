@@ -1187,7 +1187,7 @@
         }
 
         function showTestingTips() {
-            showModal('🧪 Conseils de test', `
+            const content = `
                 <ul class="tips-list">
                     <li><strong>🔍 Vérification visuelle :</strong> Naviguez sur votre site et vérifiez que toutes les icônes s'affichent correctement.</li>
                     <li><strong>📱 Tests multi-appareils :</strong> Testez sur différentes tailles d'écrans (mobile, tablette, desktop).</li>
@@ -1196,7 +1196,12 @@
                     <li><strong>🎨 Cohérence design :</strong> Assurez-vous que le style et la taille des icônes restent cohérents.</li>
                     <li><strong>🔄 Cache navigateur :</strong> Videz le cache ou testez en navigation privée.</li>
                 </ul>
-            `);
+            `;
+            
+            ModalSystem.show('🧪 Conseils de test', content, { 
+                id: 'testing-tips-modal',
+                simpleHeader: false 
+            });
         }
 
         function scrollToWarnings() {
@@ -1209,64 +1214,143 @@
             }
         }
 
-        // Gestion des modales
-        function showModal(title, content) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.style.cssText = `
-                display: block;
-                position: fixed;
-                z-index: 10000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.4);
-            `;
-            modal.innerHTML = `
-                <div style="
-                    background: white;
-                    margin: 15% auto;
-                    padding: 0;
-                    border-radius: 8px;
-                    width: 80%;
-                    max-width: 600px;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                ">
-                    <div style="
+        // Système de gestion des modales unifié
+        const ModalSystem = {
+            // Styles CSS pour les modales
+            getModalStyles: function() {
+                return {
+                    overlay: `
+                        position: fixed;
+                        z-index: 1000;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0,0,0,0.6);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    `,
+                    container: `
+                        background: white;
+                        border-radius: 12px;
+                        max-width: 700px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                        position: relative;
+                    `,
+                    header: `
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        padding: 20px;
+                        padding: 20px 30px;
                         border-bottom: 1px solid #e5e7eb;
-                    ">
-                        <h3 style="margin: 0;">${title}</h3>
-                        <span onclick="closeModal(this)" style="
-                            font-size: 28px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            color: #aaa;
-                        ">&times;</span>
-                    </div>
-                    <div style="padding: 20px;">
-                        ${content}
-                    </div>
-                </div>
-            `;
+                    `,
+                    closeButton: `
+                        position: absolute;
+                        top: 15px;
+                        right: 20px;
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        color: var(--gray-500);
+                        cursor: pointer;
+                        padding: 0;
+                        line-height: 1;
+                    `,
+                    content: `
+                        padding: 20px 30px;
+                    `
+                };
+            },
 
-            document.body.appendChild(modal);
+            // Créer et afficher une modal
+            show: function(title, content, options = {}) {
+                const modalId = options.id || 'modal-' + Date.now();
+                const styles = this.getModalStyles();
+                
+                const modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal';
+                modal.style.cssText = styles.overlay;
 
-            modal.onclick = function(event) {
-                if (event.target === modal) {
-                    closeModal(modal.querySelector('span'));
+                const useSimpleHeader = options.simpleHeader !== false;
+
+                modal.innerHTML = `
+                    <div style="${styles.container}">
+                        ${useSimpleHeader ? `
+                            <button onclick="ModalSystem.hide('${modalId}')" style="${styles.closeButton}">
+                                ×
+                            </button>
+                            <div style="${styles.content}">
+                                <h3 style="margin: 0 0 20px 0; color: var(--gray-700); font-size: 24px;">${title}</h3>
+                                ${content}
+                            </div>
+                        ` : `
+                            <div style="${styles.header}">
+                                <h3 style="margin: 0;">${title}</h3>
+                                <span onclick="ModalSystem.hide('${modalId}')" style="
+                                    font-size: 28px;
+                                    font-weight: bold;
+                                    cursor: pointer;
+                                    color: #6b7280;
+                                ">&times;</span>
+                            </div>
+                            <div style="${styles.content}">
+                                ${content}
+                            </div>
+                        `}
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+
+                // Gestion des événements
+                modal.onclick = (event) => {
+                    if (event.target === modal) {
+                        this.hide(modalId);
+                    }
+                };
+
+                // Fermeture avec Escape
+                const escapeHandler = (event) => {
+                    if (event.key === 'Escape') {
+                        this.hide(modalId);
+                    }
+                };
+                document.addEventListener('keydown', escapeHandler);
+                modal._escapeHandler = escapeHandler;
+
+                return modalId;
+            },
+
+            // Fermer une modal
+            hide: function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    if (modal._escapeHandler) {
+                        document.removeEventListener('keydown', modal._escapeHandler);
+                    }
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = 'auto';
                 }
-            };
-        }
+            },
 
-        function closeModal(closeBtn) {
-            const modal = closeBtn.closest('div[class="modal"]') || closeBtn.parentElement.parentElement.parentElement;
-            document.body.removeChild(modal);
-        }
+            // Fermer toutes les modales
+            hideAll: function() {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (modal._escapeHandler) {
+                        document.removeEventListener('keydown', modal._escapeHandler);
+                    }
+                    document.body.removeChild(modal);
+                });
+                document.body.style.overflow = 'auto';
+            }
+        };
 
         // Initialisation du graphique Chart.js
         function initializeChart(chartData, hasChanges) {
@@ -1469,119 +1553,92 @@
             initializeChart(chartData, true);
         @endif
 
-        // Fonctions pour la modal d'aide
+        // Fonction pour la modal d'aide des types de changements
         window.showChartHelpModal = function() {
-            document.getElementById('chartHelpModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+            const content = `
+                <p style="color: var(--gray-600); margin-bottom: 25px; line-height: 1.6;">
+                    Le graphique montre la répartition des différents types de modifications effectuées lors de la migration Font Awesome 5 vers 6 :
+                </p>
 
-        window.hideChartHelpModal = function() {
-            document.getElementById('chartHelpModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+                <div style="display: grid; gap: 16px;">
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Mise à jour de style</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Conversion automatique des styles FA5 vers FA6.<br>
+                            <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fas fa-home</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-solid fa-house</code>
+                        </p>
+                    </div>
 
-        // Fermer la modal en cliquant à l'extérieur
-        window.onclick = function(event) {
-            const modal = document.getElementById('chartHelpModal');
-            if (event.target === modal) {
-                hideChartHelpModal();
-            }
-        }
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--secondary-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Icône renommée</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Icônes qui ont changé de nom entre Font Awesome 5 et 6.<br>
+                            <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-times</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-xmark</code>
+                        </p>
+                    </div>
 
-        // Fermer avec Escape
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                hideChartHelpModal();
-            }
-        });
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--warning-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Fallback Pro→Free</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Conversion automatique des styles Pro vers Free quand vous avez une licence Free.<br>
+                            <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fal fa-star</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">far fa-star</code>
+                        </p>
+                    </div>
+
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Asset migré</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Migration des ressources externes (CDN, imports, packages).<br>
+                            <strong>Exemple :</strong> URLs CDN v5 → v6, imports JavaScript, package.json
+                        </p>
+                    </div>
+
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: var(--error-color); border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Icône dépréciée</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Icônes qui n'existent plus en Font Awesome 6 et nécessitent une révision manuelle.
+                        </p>
+                    </div>
+
+                    <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <div style="width: 12px; height: 12px; background: #8b5cf6; border-radius: 50%; margin-right: 12px;"></div>
+                            <strong style="color: var(--gray-700); font-size: 16px;">Révision manuelle</strong>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
+                            Changements qui nécessitent une vérification et une intervention manuelle.
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center;">
+                    <button onclick="ModalSystem.hide('chartHelpModal')" style="background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">
+                        Compris !
+                    </button>
+                </div>
+            `;
+            
+            ModalSystem.show('📋 Comprendre les types de changements', content, { 
+                id: 'chartHelpModal', 
+                simpleHeader: true 
+            });
+        };
     </script>
 
-    <!-- Modal d'aide pour les types de changements -->
-    <div id="chartHelpModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <!-- Bouton fermer -->
-            <button onclick="hideChartHelpModal()" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; color: var(--gray-500); cursor: pointer; padding: 0; line-height: 1;">
-                ×
-            </button>
-
-            <h3 style="margin: 0 0 20px 0; color: var(--gray-700); font-size: 24px;">📋 Comprendre les types de changements</h3>
-            
-            <p style="color: var(--gray-600); margin-bottom: 25px; line-height: 1.6;">
-                Le graphique montre la répartition des différents types de modifications effectuées lors de la migration Font Awesome 5 vers 6 :
-            </p>
-
-            <div style="display: grid; gap: 16px;">
-                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%; margin-right: 12px;"></div>
-                        <strong style="color: var(--gray-700); font-size: 16px;">Mise à jour de style</strong>
-                    </div>
-                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
-                        Conversion automatique des styles FA5 vers FA6.<br>
-                        <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fas fa-home</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-solid fa-house</code>
-                    </p>
-                </div>
-
-                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--secondary-color); border-radius: 50%; margin-right: 12px;"></div>
-                        <strong style="color: var(--gray-700); font-size: 16px;">Icône renommée</strong>
-                    </div>
-                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
-                        Icônes qui ont changé de nom entre Font Awesome 5 et 6.<br>
-                        <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-times</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fa-xmark</code>
-                    </p>
-                </div>
-
-                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--warning-color); border-radius: 50%; margin-right: 12px;"></div>
-                        <strong style="color: var(--gray-700); font-size: 16px;">Fallback Pro→Free</strong>
-                    </div>
-                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
-                        Conversion automatique des styles Pro vers Free quand vous avez une licence Free.<br>
-                        <strong>Exemple :</strong> <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">fal fa-star</code> → <code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">far fa-star</code>
-                    </p>
-                </div>
-
-                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 50%; margin-right: 12px;"></div>
-                        <strong style="color: var(--gray-700); font-size: 16px;">Asset migré</strong>
-                    </div>
-                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
-                        Migration des ressources externes (CDN, imports, packages).<br>
-                        <strong>Exemple :</strong> URLs CDN v5 → v6, imports JavaScript, package.json
-                    </p>
-                </div>
-
-                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 12px; height: 12px; background: var(--error-color); border-radius: 50%; margin-right: 12px;"></div>
-                        <strong style="color: var(--gray-700); font-size: 16px;">Icône dépréciée</strong>
-                    </div>
-                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
-                        Icônes qui n'existent plus en Font Awesome 6 et nécessitent une révision manuelle.
-                    </p>
-                </div>
-
-                <div style="padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200); background: var(--gray-50);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 12px; height: 12px; background: #8b5cf6; border-radius: 50%; margin-right: 12px;"></div>
-                        <strong style="color: var(--gray-700); font-size: 16px;">Révision manuelle</strong>
-                    </div>
-                    <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
-                        Changements qui nécessitent une vérification et une intervention manuelle.
-                    </p>
-                </div>
-            </div>
-
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--gray-200); text-align: center;">
-                <button onclick="hideChartHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">
-                    Compris !
-                </button>
-            </div>
-        </div>
-    </div>
 
 @endsection
