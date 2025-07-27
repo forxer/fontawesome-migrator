@@ -290,7 +290,7 @@ class MigrationReporter
                                 }
 
                                 // Fallback : recherche avec le texte complet
-                                if (! $warningMessage && str_contains((string) $warning, $from)) {
+                                if (str_contains((string) $warning, $from)) {
                                     $warningMessage = $warning;
                                     break;
                                 }
