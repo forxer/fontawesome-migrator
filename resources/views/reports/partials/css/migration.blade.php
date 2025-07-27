@@ -1,42 +1,13 @@
 <style>
-    /* Variables CSS */
-    :root {
-        --primary-color: #4299e1;
-        --primary-hover: #3182ce;
-        --secondary-color: #667eea;
-        --success-color: #48bb78;
-        --error-color: #e53e3e;
-        --warning-color: #ed8936;
-        --gray-50: #f9fafb;
-        --gray-100: #f3f4f6;
-        --gray-200: #e5e7eb;
-        --gray-300: #d1d5db;
-        --gray-500: #6b7280;
-        --gray-700: #374151;
-        --blue-500: #3b82f6;
-    }
+    /* Variables spécifiques à la migration (déjà définies dans common.blade.php) */
 
-    /* Sections améliorées */
-    .enhanced-section {
-        position: relative;
-        overflow: hidden;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        border: 1px solid var(--gray-200);
-        border-radius: 8px;
-        margin-bottom: 20px;
-        padding: 20px;
-    }
+    /* Enhanced sections (déjà définies dans common.blade.php) */
 
-    .enhanced-section h2 {
-        color: var(--gray-700);
-        margin-bottom: 20px;
-    }
-
-    /* Boîte de recherche */
+    /* Boîte de recherche spécifique à la migration */
     .search-box {
         padding: 12px;
         border: 2px solid var(--gray-200);
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         width: 100%;
         font-size: 16px;
         transition: border-color 0.2s;
@@ -48,7 +19,7 @@
         box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
     }
 
-    /* Statistiques */
+    /* Override stats-grid pour la migration */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -58,23 +29,11 @@
 
     .stat-card {
         background: white;
-        border-radius: 8px;
-        padding: 20px;
+        border-radius: var(--radius-md);
+        padding: var(--spacing-lg);
         text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow-md);
         border-left: 4px solid var(--primary-color);
-    }
-
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: var(--primary-color);
-        margin-bottom: 10px;
-    }
-
-    .stat-label {
-        color: var(--gray-700);
-        font-weight: 500;
     }
 
     .metric-improvement {
@@ -83,54 +42,14 @@
         color: var(--success-color);
     }
 
-    /* Boutons */
-    .btn {
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 0.9em;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .btn-primary {
-        background: var(--primary-color);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-hover);
-    }
-
-    .btn-warning {
-        background: var(--warning-color);
-        color: white;
-    }
-
-    .btn-sm {
-        padding: 6px 12px;
-        font-size: 0.8em;
-    }
+    /* Boutons (définis dans common.blade.php) */
 
     .export-buttons {
         display: flex;
         gap: 10px;
     }
 
-    /* Graphiques */
-    .chart-container {
-        position: relative;
-        height: 300px;
-        margin: 20px 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: white;
-        border-radius: 8px;
-        padding: 20px;
-    }
+    /* Graphiques (déjà définis dans common.blade.php) */
 
     /* Timeline */
     .timeline-container {
@@ -250,37 +169,9 @@
         color: var(--error-color);
     }
 
-    /* Tables */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+    /* Tables (héritent du style commun) */
 
-    th, td {
-        padding: 12px 15px;
-        text-align: left;
-        border-bottom: 1px solid var(--gray-200);
-    }
-
-    th {
-        background: var(--gray-50);
-        font-weight: 600;
-        color: var(--gray-700);
-    }
-
-    .badge {
-        background: var(--primary-color);
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.8em;
-    }
-
+    /* Badges spécifiques par type de changement */
     .badge-style {
         background: var(--secondary-color);
     }
@@ -289,23 +180,7 @@
         background: var(--success-color);
     }
 
-    .badge-asset {
-        background: var(--warning-color);
-    }
-
-    /* Alertes */
-    .alert {
-        padding: 15px;
-        border-radius: 8px;
-        margin: 15px 0;
-    }
-
-    .alert-success {
-        background: #f0fdf4;
-        border: 1px solid #86efac;
-        color: #166534;
-    }
-
+    /* Alertes spécifiques à la migration avec couleurs solides */
     .alert-warning {
         background: #fefce8;
         border: 1px solid #fde047;
@@ -318,18 +193,7 @@
         color: #1e40af;
     }
 
-    /* Contenu pliable */
-    .collapsible-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-    }
-
-    .collapsible-content.active {
-        max-height: 2000px !important;
-        overflow: visible !important;
-        transition: max-height 0.3s ease-in;
-    }
+    /* Contenu pliable (déjà défini dans common.blade.php) */
 
     /* Fichiers et changements */
     .file-item {
@@ -346,12 +210,13 @@
         border-bottom: 1px solid var(--gray-200);
     }
 
+    /* Toggle button spécifique à la migration */
     .toggle-btn {
         background: var(--primary-color);
         color: white;
         border: none;
-        padding: 8px 15px;
-        border-radius: 6px;
+        padding: var(--spacing-sm) 15px;
+        border-radius: var(--radius-sm);
         cursor: pointer;
         font-size: 0.9em;
         transition: background-color 0.2s;
@@ -412,13 +277,7 @@
         box-shadow: 0 2px 8px rgba(66, 153, 225, 0.1);
     }
 
-    /* Surlignage de recherche */
-    .highlight-match {
-        background: #fef3c7;
-        color: #92400e;
-        padding: 2px 4px;
-        border-radius: 3px;
-    }
+    /* Surlignage de recherche (déjà défini dans common.blade.php) */
 
     /* Animations */
     @keyframes fadeInUp {
@@ -463,34 +322,12 @@
         }
     }
 
-    /* Section générale */
-    .section {
-        background: white;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
+    /* Override section pour les rapports migration avec bordure */
     .section h2 {
         margin-top: 0;
         color: var(--gray-700);
         border-bottom: 2px solid var(--gray-200);
         padding-bottom: 10px;
-    }
-
-    .header {
-        text-align: center;
-        margin-bottom: 30px;
-        padding: 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .header h1 {
-        margin: 0;
-        color: var(--gray-700);
     }
 
     /* Tips list */
@@ -507,52 +344,7 @@
         border-left: 4px solid var(--primary-color);
     }
 
-    /* Bouton retour en haut */
-    .back-to-top {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 50px;
-        height: 50px;
-        background: #4299e1; /* Couleur fixe pour éviter les problèmes de variable */
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        transition: all 0.3s ease;
-        z-index: 1001; /* Z-index plus élevé que les modales */
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    .back-to-top:hover {
-        background: #3182ce;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    }
-
-    .back-to-top.show {
-        display: flex;
-        opacity: 1;
-        transform: translateY(0);
-        animation: fadeInUp 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
-        .back-to-top {
-            bottom: 20px;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            font-size: 18px;
-        }
-    }
+    /* Bouton retour en haut (défini dans common.blade.php) */
 
     /* Table des matières */
     .table-of-contents {

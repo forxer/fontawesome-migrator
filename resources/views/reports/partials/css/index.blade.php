@@ -1,47 +1,7 @@
 <style>
-    /* Variables CSS unifiées - Design System FontAwesome Migrator */
-    :root {
-        --primary-color: #4299e1;
-        --primary-hover: #3182ce;
-        --secondary-color: #667eea;
-        --success-color: #48bb78;
-        --error-color: #e53e3e;
-        --warning-color: #ed8936;
-        --danger-color: #e53e3e;
-        --gray-50: #f9fafb;
-        --gray-100: #f3f4f6;
-        --gray-200: #e5e7eb;
-        --gray-300: #d1d5db;
-        --gray-400: #9ca3af;
-        --gray-500: #6b7280;
-        --gray-600: #4b5563;
-        --gray-700: #374151;
-        --gray-800: #1f2937;
-        --gray-900: #111827;
-        --blue-500: #3b82f6;
+    /* Variables spécifiques à l'index (déjà définies dans common.blade.php) */
 
-        /* Spacing system */
-        --spacing-xs: 4px;
-        --spacing-sm: 8px;
-        --spacing-md: 16px;
-        --spacing-lg: 24px;
-        --spacing-xl: 32px;
-        --spacing-2xl: 48px;
-
-        /* Border radius */
-        --radius-sm: 6px;
-        --radius-md: 8px;
-        --radius-lg: 12px;
-        --radius-xl: 16px;
-
-        /* Shadows */
-        --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-        --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
-        --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
-        --shadow-colored: 0 8px 32px rgba(66, 153, 225, 0.3);
-    }
-
-    /* Header unifié */
+    /* Header spécifique à l'index avec gradient */
     .header {
         text-align: center;
         margin-bottom: var(--spacing-xl);
@@ -78,7 +38,7 @@
         font-weight: 500;
     }
 
-    /* Sections améliorées */
+    /* Sections spécifiques à l'index avec hover effects */
     .section {
         background: white;
         padding: var(--spacing-lg);
@@ -116,6 +76,7 @@
     }
 
     /* Stats summary */
+    /* Stats summary spécifique à l'index */
     .stats-summary {
         background: white;
         padding: var(--spacing-lg);
@@ -144,6 +105,7 @@
         border-color: var(--success-color);
     }
 
+    /* Override stats-grid pour l'index */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -154,19 +116,7 @@
         text-align: center;
         padding: 15px;
         background: var(--gray-50);
-        border-radius: 8px;
-    }
-
-    .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: var(--primary-color);
-        margin-bottom: 5px;
-    }
-
-    .stat-label {
-        color: var(--gray-600);
-        font-size: 0.9em;
+        border-radius: var(--radius-md);
     }
 
     /* Titres de section */
@@ -275,72 +225,7 @@
         flex-wrap: wrap;
     }
 
-    /* Système de boutons unifié */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-sm) var(--spacing-md);
-        border-radius: var(--radius-md);
-        text-decoration: none;
-        font-size: 0.9em;
-        font-weight: 500;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-transform: none;
-        white-space: nowrap;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s;
-    }
-
-    .btn:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary {
-        background: var(--primary-color);
-        color: white;
-        box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
-        border: 1px solid var(--primary-color);
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
-        border-color: var(--primary-hover);
-    }
-
-    .btn-danger {
-        background: var(--danger-color);
-        color: white;
-        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
-        border: 1px solid var(--danger-color);
-    }
-
-    .btn-danger:hover {
-        background: #dc2626;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
-        border-color: #dc2626;
-    }
-
-    .btn-sm {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        font-size: 0.85em;
-    }
+    /* Boutons spécifiques à l'index (héritent du système commun) */
 
     /* Empty state */
     .empty-state {
@@ -384,7 +269,7 @@
         display: inline-block;
     }
 
-    /* Alertes modernisées */
+    /* Alertes avec gradients spécifiques à l'index */
     .alert {
         padding: var(--spacing-md) var(--spacing-lg);
         border-radius: var(--radius-md);
@@ -442,15 +327,7 @@
         50% { opacity: 0.8; }
     }
 
-    .spinner {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        border: 2px solid transparent;
-        border-top: 2px solid currentColor;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
+    /* Spinner (défini dans common.blade.php) */
 
     /* Animation de cartes */
     .report-card {
@@ -465,39 +342,7 @@
         animation-delay: 0.2s;
     }
 
-    /* Bouton retour en haut */
-    .back-to-top {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 50px;
-        height: 50px;
-        background: #4299e1; /* Couleur fixe pour éviter les problèmes de variable */
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1001; /* Z-index plus élevé que les modales */
-    }
-
-    .back-to-top.visible {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .back-to-top:hover {
-        background: #3182ce;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
-    }
+    /* Bouton retour en haut (défini dans common.blade.php) */
 
     /* Responsive */
     @media (max-width: 768px) {
