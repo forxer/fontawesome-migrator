@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Http\Controllers;
 
+use FontAwesome\Migrator\Services\MigrationReporter;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
@@ -99,7 +100,7 @@ class ReportsController extends Controller
 
         // Enrichir les données avec les avertissements formatés
         $results = $jsonData['files'] ?? [];
-        $migrationReporter = app(\FontAwesome\Migrator\Services\MigrationReporter::class);
+        $migrationReporter = app(MigrationReporter::class);
         $enrichedWarnings = $migrationReporter->extractWarnings($results);
 
         $viewData = [

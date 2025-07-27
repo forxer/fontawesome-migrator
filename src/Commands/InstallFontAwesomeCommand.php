@@ -246,7 +246,7 @@ class InstallFontAwesomeCommand extends Command
         }
 
         // N'écrire scan_paths que s'il y a vraiment des chemins personnalisés (non vides et différents des défauts)
-        if (! empty($scanPaths) && $scanPaths !== $defaultConfig['scan_paths']) {
+        if ($scanPaths !== [] && $scanPaths !== $defaultConfig['scan_paths']) {
             $customConfig['scan_paths'] = $scanPaths;
         }
 

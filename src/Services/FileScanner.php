@@ -3,6 +3,7 @@
 namespace FontAwesome\Migrator\Services;
 
 use Illuminate\Support\Facades\File;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class FileScanner
@@ -61,7 +62,7 @@ class FileScanner
             }
 
             $fullPath = base_path($path);
-            $fileInfo = new \SplFileInfo($fullPath);
+            $fileInfo = new SplFileInfo($fullPath);
 
             // Vérifier si l'extension est acceptée
             if ($this->isFileExtensionAllowed($fileInfo->getExtension())) {

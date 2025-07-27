@@ -279,7 +279,7 @@ class MigrationReporter
                             foreach ($result['warnings'] ?? [] as $warning) {
                                 $from = $change['from'] ?? '';
 
-                                if (str_contains($warning, $from)) {
+                                if (str_contains((string) $warning, $from)) {
                                     $warningMessage = $warning;
                                     break;
                                 }
