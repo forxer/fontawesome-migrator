@@ -1169,7 +1169,7 @@
                                             
                                             <div style="text-align: right; color: var(--gray-500); font-size: 0.8em; min-width: 120px;">
                                                 @if (isset($change['line']))
-                                                    <div style="background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-bottom: 6px; display: inline-block;">
+                                                    <div style="background: var(--primary-color); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-bottom: 6px; display: inline-block; min-width: 35px; text-align: center; white-space: nowrap;">
                                                         📍 L.{{ $change['line'] }}
                                                     </div><br>
                                                 @endif
@@ -1186,7 +1186,7 @@
                                                         ];
                                                         $typeInfo = $typeLabels[$change['type']] ?? ['label' => ucfirst($change['type']), 'color' => 'var(--gray-500)'];
                                                     @endphp
-                                                    <span style="background: {{ $typeInfo['color'] }}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase;">
+                                                    <span style="background: {{ $typeInfo['color'] }}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; white-space: nowrap; display: inline-block;">
                                                         {{ $typeInfo['label'] }}
                                                     </span>
                                                 @endif
@@ -1511,7 +1511,7 @@
                     <div style="margin-bottom: 20px; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden;">
                         <div style="background: var(--gray-100); padding: 12px; border-bottom: 1px solid var(--gray-200);">
                             <strong style="color: var(--gray-700);">📁 ${fileName}</strong>
-                            <span style="background: var(--warning-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 10px;">
+                            <span style="background: var(--warning-color); color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: bold; margin-left: 10px; white-space: nowrap; display: inline-block; min-width: 20px; text-align: center;">
                                 ${fileWarnings.length} avertissement(s)
                             </span>
                         </div>
@@ -1526,7 +1526,7 @@
                                     ${warning.message}
                                 </div>
                                 ${warning.line && warning.line !== 'N/A' && warning.line !== null ? `
-                                    <div style="background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 10px; white-space: nowrap;">
+                                    <div style="background: var(--primary-color); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 10px; white-space: nowrap; display: inline-block; min-width: 30px; text-align: center;">
                                         L.${warning.line}
                                     </div>
                                 ` : ''}

@@ -278,8 +278,18 @@ class MigrationReporter
                             // Fallback si pas de correspondance exacte
                             foreach ($result['warnings'] ?? [] as $warning) {
                                 $from = $change['from'] ?? '';
-
-                                if (str_contains((string) $warning, $from)) {
+                                
+                                // Extraire juste le nom de l'icône (fa-xxx) du changement complet
+                                if (preg_match('/fa-[a-z0-9-]+/', $from, $matches)) {
+                                    $iconName = $matches[0];
+                                    if (str_contains((string) $warning, $iconName)) {
+                                        $warningMessage = $warning;
+                                        break;
+                                    }
+                                }
+                                
+                                // Fallback : recherche avec le texte complet
+                                if (!$warningMessage && str_contains((string) $warning, $from)) {
                                     $warningMessage = $warning;
                                     break;
                                 }
