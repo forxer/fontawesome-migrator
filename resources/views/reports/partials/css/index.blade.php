@@ -120,6 +120,7 @@
     }
 
     /* Titres de section */
+    /* Section title avec effet de ligne */
     .section-title {
         margin: 0 0 var(--spacing-lg) 0;
         color: var(--gray-800);
@@ -225,7 +226,6 @@
         flex-wrap: wrap;
     }
 
-    /* Boutons spécifiques à l'index (héritent du système commun) */
 
     /* Empty state */
     .empty-state {
@@ -294,23 +294,7 @@
         color: #991b1b;
     }
 
-    /* Animations */
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
+    /* Animations spécifiques à l'index */
     @keyframes slideInDown {
         from {
             opacity: 0;
@@ -322,14 +306,8 @@
         }
     }
 
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-    }
 
-    /* Spinner (défini dans common.blade.php) */
-
-    /* Animation de cartes */
+    /* Animation échelonnée des cartes */
     .report-card {
         animation: fadeInUp 0.6s ease forwards;
     }
@@ -342,7 +320,6 @@
         animation-delay: 0.2s;
     }
 
-    /* Bouton retour en haut (défini dans common.blade.php) */
 
     /* Responsive */
     @media (max-width: 768px) {

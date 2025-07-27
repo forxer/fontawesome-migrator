@@ -1,7 +1,6 @@
 <style>
     /* Variables spécifiques à la migration (déjà définies dans common.blade.php) */
 
-    /* Enhanced sections (déjà définies dans common.blade.php) */
 
     /* Boîte de recherche spécifique à la migration */
     .search-box {
@@ -42,14 +41,12 @@
         color: var(--success-color);
     }
 
-    /* Boutons (définis dans common.blade.php) */
 
     .export-buttons {
         display: flex;
         gap: 10px;
     }
 
-    /* Graphiques (déjà définis dans common.blade.php) */
 
     /* Timeline */
     .timeline-container {
@@ -169,7 +166,6 @@
         color: var(--error-color);
     }
 
-    /* Tables (héritent du style commun) */
 
     /* Badges spécifiques par type de changement */
     .badge-style {
@@ -193,7 +189,6 @@
         color: #1e40af;
     }
 
-    /* Contenu pliable (déjà défini dans common.blade.php) */
 
     /* Fichiers et changements */
     .file-item {
@@ -277,20 +272,8 @@
         box-shadow: 0 2px 8px rgba(66, 153, 225, 0.1);
     }
 
-    /* Surlignage de recherche (déjà défini dans common.blade.php) */
 
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
+    /* Animations spécifiques à la migration */
     @keyframes slideIn {
         from {
             transform: translateX(100%);
@@ -344,7 +327,6 @@
         border-left: 4px solid var(--primary-color);
     }
 
-    /* Bouton retour en haut (défini dans common.blade.php) */
 
     /* Table des matières */
     .table-of-contents {
