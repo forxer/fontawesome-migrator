@@ -18,9 +18,14 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
-class ConfigureFontAwesomeCommand extends Command
+class ConfigureCommand extends Command
 {
     use ConfigurationHelpers;
+
+    /**
+     * Configuration temporaire en cours de modification
+     */
+    private array $tempConfig = [];
 
     /**
      * The name and signature of the console command.
@@ -65,26 +70,43 @@ class ConfigureFontAwesomeCommand extends Command
             return Command::FAILURE;
         }
 
-        // Menu principal
-        $action = select(
-            'Que souhaitez-vous faire ?',
-            [
-                'show' => '👁️ Afficher la configuration actuelle',
-                'edit' => '✏️ Modifier la configuration',
-                'reset' => '🔄 Réinitialiser aux valeurs par défaut',
-                'validate' => '🔍 Valider la configuration',
-                'backup' => '💾 Sauvegarder la configuration',
-            ]
-        );
+        // Initialiser la configuration temporaire
+        $this->tempConfig = config('fontawesome-migrator');
 
-        return match ($action) {
-            'show' => $this->showConfiguration(),
-            'edit' => $this->editConfiguration(),
-            'reset' => $this->resetConfiguration(),
-            'validate' => $this->validateConfiguration(),
-            'backup' => $this->backupConfiguration(),
-            default => Command::SUCCESS
-        };
+        // Boucle du menu principal
+        do {
+            $action = select(
+                'Que souhaitez-vous faire ?',
+                [
+                    'show' => '👁️ Afficher la configuration actuelle',
+                    'edit' => '✏️ Modifier la configuration',
+                    'reset' => '🔄 Réinitialiser aux valeurs par défaut',
+                    'validate' => '🔍 Valider la configuration',
+                    'backup' => '💾 Sauvegarder la configuration',
+                    'exit' => '🚪 Quitter',
+                ]
+            );
+
+            $result = match ($action) {
+                'show' => $this->showConfiguration(),
+                'edit' => $this->editConfiguration(),
+                'reset' => $this->resetConfiguration(),
+                'validate' => $this->validateConfiguration(),
+                'backup' => $this->backupConfiguration(),
+                'exit' => Command::SUCCESS,
+                default => Command::SUCCESS
+            };
+
+            // Si une action a échoué, on peut continuer quand même
+            if ($result === Command::FAILURE && $action !== 'reset') {
+                warning('Action échouée, mais vous pouvez continuer.');
+            }
+
+        } while ($action !== 'exit');
+
+        outro('Configuration terminée');
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -110,7 +132,6 @@ class ConfigureFontAwesomeCommand extends Command
      */
     protected function showConfiguration(): int
     {
-        $config = config('fontawesome-migrator');
         $configPath = config_path('fontawesome-migrator.php');
 
         if ($this->option('no-interactive')) {
@@ -123,32 +144,32 @@ class ConfigureFontAwesomeCommand extends Command
         // Informations générales
         $this->displayConfigSection('📝 Informations générales', [
             'Fichier de configuration' => $configPath,
-            'Type de licence' => $config['license_type'] ?? 'free',
-            'Génération de rapports' => ($config['generate_report'] ?? true) ? '✅ Activée' : '❌ Désactivée',
-            'Sauvegardes automatiques' => ($config['backup_files'] ?? true) ? '✅ Activées' : '❌ Désactivées',
+            'Type de licence' => $this->tempConfig['license_type'] ?? 'free',
+            'Génération de rapports' => ($this->tempConfig['generate_report'] ?? true) ? '✅ Activée' : '❌ Désactivée',
+            'Sauvegardes automatiques' => ($this->tempConfig['backup_files'] ?? true) ? '✅ Activées' : '❌ Désactivées',
         ]);
 
         // Chemins de scan
         $this->displayConfigSection('📂 Chemins de scan', [
-            'Chemins configurés' => collect($config['scan_paths'] ?? [])->join(', ') ?: 'Aucun',
-            'Nombre de chemins' => \count($config['scan_paths'] ?? []),
+            'Chemins configurés' => collect($this->tempConfig['scan_paths'] ?? [])->join(', ') ?: 'Aucun',
+            'Nombre de chemins' => \count($this->tempConfig['scan_paths'] ?? []),
         ]);
 
         // Extensions de fichiers
         $this->displayConfigSection('📄 Extensions de fichiers', [
-            'Extensions supportées' => collect($config['file_extensions'] ?? [])->join(', ') ?: 'Aucune',
-            "Nombre d'extensions" => \count($config['file_extensions'] ?? []),
+            'Extensions supportées' => collect($this->tempConfig['file_extensions'] ?? [])->join(', ') ?: 'Aucune',
+            "Nombre d'extensions" => \count($this->tempConfig['file_extensions'] ?? []),
         ]);
 
         // Patterns d'exclusion
         $this->displayConfigSection('🚫 Patterns d\'exclusion', [
-            'Patterns configurés' => collect($config['exclude_patterns'] ?? [])->join(', ') ?: 'Aucun',
-            'Nombre de patterns' => \count($config['exclude_patterns'] ?? []),
+            'Patterns configurés' => collect($this->tempConfig['exclude_patterns'] ?? [])->join(', ') ?: 'Aucun',
+            'Nombre de patterns' => \count($this->tempConfig['exclude_patterns'] ?? []),
         ]);
 
         // Styles Pro (si applicable)
-        if (($config['license_type'] ?? 'free') === 'pro') {
-            $proStyles = $config['pro_styles'] ?? [];
+        if (($this->tempConfig['license_type'] ?? 'free') === 'pro') {
+            $proStyles = $this->tempConfig['pro_styles'] ?? [];
             $enabledStyles = collect($proStyles)->filter()->keys()->join(', ');
 
             $this->displayConfigSection('⭐ Styles Pro', [
@@ -172,8 +193,6 @@ class ConfigureFontAwesomeCommand extends Command
      */
     protected function editConfiguration(): int
     {
-        $config = config('fontawesome-migrator');
-
         $section = select(
             'Quelle section souhaitez-vous modifier ?',
             [
@@ -187,12 +206,12 @@ class ConfigureFontAwesomeCommand extends Command
         );
 
         return match ($section) {
-            'license' => $this->editLicenseType($config),
-            'paths' => $this->editScanPaths($config),
-            'extensions' => $this->editFileExtensions($config),
-            'exclusions' => $this->editExcludePatterns($config),
-            'options' => $this->editGeneralOptions($config),
-            'pro_styles' => $this->editProStyles($config),
+            'license' => $this->editLicenseType(),
+            'paths' => $this->editScanPaths(),
+            'extensions' => $this->editFileExtensions(),
+            'exclusions' => $this->editExcludePatterns(),
+            'options' => $this->editGeneralOptions(),
+            'pro_styles' => $this->editProStyles(),
             default => Command::SUCCESS
         };
     }
@@ -200,9 +219,9 @@ class ConfigureFontAwesomeCommand extends Command
     /**
      * Modifier le type de licence
      */
-    protected function editLicenseType(array $config): int
+    protected function editLicenseType(): int
     {
-        $currentLicense = $config['license_type'] ?? 'free';
+        $currentLicense = $this->tempConfig['license_type'] ?? 'free';
 
         note('Type de licence actuel: '.($currentLicense === 'pro' ? '⭐ Pro' : '🆓 Free'));
 
@@ -216,13 +235,13 @@ class ConfigureFontAwesomeCommand extends Command
         );
 
         if ($newLicense !== $currentLicense) {
-            $this->updateConfigValue('license_type', $newLicense);
+            $this->updateTempConfigValue('license_type', $newLicense);
 
             if ($newLicense === 'pro') {
                 info('✅ Licence Pro configurée. Vous pouvez maintenant configurer les styles Pro.');
 
                 if (confirm('Configurer les styles Pro maintenant ?', true)) {
-                    return $this->editProStyles(array_merge($config, ['license_type' => $newLicense]));
+                    return $this->editProStyles();
                 }
             } else {
                 info('✅ Licence Free configurée.');
@@ -237,9 +256,9 @@ class ConfigureFontAwesomeCommand extends Command
     /**
      * Modifier les chemins de scan
      */
-    protected function editScanPaths(array $config): int
+    protected function editScanPaths(): int
     {
-        $currentPaths = $config['scan_paths'] ?? [];
+        $currentPaths = $this->tempConfig['scan_paths'] ?? [];
 
         note("Chemins actuels:\n".collect($currentPaths)->map(fn ($path): string => '  • '.$path)->join("\n"));
 
@@ -295,10 +314,16 @@ class ConfigureFontAwesomeCommand extends Command
 
         if ($newPaths !== []) {
             $updatedPaths = array_merge($currentPaths, $newPaths);
-            $this->updateConfigValue('scan_paths', $updatedPaths);
+            $this->updateTempConfigValue('scan_paths', $updatedPaths);
             info('✅ '.\count($newPaths).' chemin(s) ajouté(s) avec succès.');
+
+            // Afficher la configuration mise à jour
+            note(
+                "📂 Chemins de scan actuels :\n".
+                collect($updatedPaths)->map(fn ($path): string => '  • '.$path)->join("\n")
+            );
         } else {
-            info('Aucun chemin ajouté.');
+            info('Aucun nouveau chemin ajouté.');
         }
 
         return Command::SUCCESS;
@@ -315,6 +340,8 @@ class ConfigureFontAwesomeCommand extends Command
             return Command::SUCCESS;
         }
 
+        $this->showMultiselectInstructions();
+
         $pathsToRemove = multiselect(
             'Chemins à supprimer',
             collect($currentPaths)->mapWithKeys(fn ($path) => [$path => $path])->toArray()
@@ -322,10 +349,17 @@ class ConfigureFontAwesomeCommand extends Command
 
         if ($pathsToRemove !== []) {
             $updatedPaths = array_diff($currentPaths, $pathsToRemove);
-            $this->updateConfigValue('scan_paths', array_values($updatedPaths));
+            $this->updateTempConfigValue('scan_paths', array_values($updatedPaths));
             info('✅ '.\count($pathsToRemove).' chemin(s) supprimé(s) avec succès.');
+
+            // Afficher la configuration mise à jour
+            note(
+                "📂 Chemins de scan actuels :\n".
+                ($updatedPaths === [] ? '  • Aucun chemin personnalisé (valeurs par défaut utilisées)' :
+                collect($updatedPaths)->map(fn ($path): string => '  • '.$path)->join("\n"))
+            );
         } else {
-            info('Aucun chemin supprimé.');
+            info('Aucun chemin sélectionné pour suppression.');
         }
 
         return Command::SUCCESS;
@@ -361,7 +395,7 @@ class ConfigureFontAwesomeCommand extends Command
         } while ($continue);
 
         if ($newPaths !== []) {
-            $this->updateConfigValue('scan_paths', $newPaths);
+            $this->updateTempConfigValue('scan_paths', $newPaths);
             info('✅ Chemins remplacés avec succès.');
         } else {
             warning('Aucun chemin configuré. Configuration inchangée.');
@@ -380,7 +414,7 @@ class ConfigureFontAwesomeCommand extends Command
         note("Chemins par défaut:\n".collect($defaultPaths)->map(fn ($path): string => '  • '.$path)->join("\n"));
 
         if (confirm('Réinitialiser aux chemins par défaut ?', true)) {
-            $this->updateConfigValue('scan_paths', $defaultPaths);
+            $this->updateTempConfigValue('scan_paths', $defaultPaths);
             info('✅ Chemins réinitialisés aux valeurs par défaut.');
         }
 
@@ -390,9 +424,9 @@ class ConfigureFontAwesomeCommand extends Command
     /**
      * Modifier les extensions de fichiers
      */
-    protected function editFileExtensions(array $config): int
+    protected function editFileExtensions(): int
     {
-        $currentExtensions = $config['file_extensions'] ?? [];
+        $currentExtensions = $this->tempConfig['file_extensions'] ?? [];
 
         note("Extensions actuelles:\n".collect($currentExtensions)->map(fn ($ext): string => '  • '.$ext)->join("\n"));
 
@@ -452,10 +486,16 @@ class ConfigureFontAwesomeCommand extends Command
         if ($newExtensions !== []) {
             $updatedExtensions = array_merge($currentExtensions, $newExtensions);
             sort($updatedExtensions); // Tri alphabétique
-            $this->updateConfigValue('file_extensions', $updatedExtensions);
+            $this->updateTempConfigValue('file_extensions', $updatedExtensions);
             info('✅ '.\count($newExtensions).' extension(s) ajoutée(s) avec succès.');
+
+            // Afficher la configuration mise à jour
+            note(
+                "📄 Extensions de fichiers actuelles :\n".
+                collect($updatedExtensions)->map(fn ($ext): string => '  • .'.$ext)->join("\n")
+            );
         } else {
-            info('Aucune extension ajoutée.');
+            info('Aucune nouvelle extension ajoutée.');
         }
 
         return Command::SUCCESS;
@@ -472,6 +512,8 @@ class ConfigureFontAwesomeCommand extends Command
             return Command::SUCCESS;
         }
 
+        $this->showMultiselectInstructions();
+
         $extensionsToRemove = multiselect(
             'Extensions à supprimer',
             collect($currentExtensions)->mapWithKeys(fn ($ext) => [$ext => '.'.$ext])->toArray()
@@ -479,10 +521,17 @@ class ConfigureFontAwesomeCommand extends Command
 
         if ($extensionsToRemove !== []) {
             $updatedExtensions = array_diff($currentExtensions, $extensionsToRemove);
-            $this->updateConfigValue('file_extensions', array_values($updatedExtensions));
+            $this->updateTempConfigValue('file_extensions', array_values($updatedExtensions));
             info('✅ '.\count($extensionsToRemove).' extension(s) supprimée(s) avec succès.');
+
+            // Afficher la configuration mise à jour
+            note(
+                "📄 Extensions de fichiers actuelles :\n".
+                ($updatedExtensions === [] ? '  • Aucune extension personnalisée (valeurs par défaut utilisées)' :
+                collect($updatedExtensions)->map(fn ($ext): string => '  • .'.$ext)->join("\n"))
+            );
         } else {
-            info('Aucune extension supprimée.');
+            info('Aucune extension sélectionnée pour suppression.');
         }
 
         return Command::SUCCESS;
@@ -498,7 +547,7 @@ class ConfigureFontAwesomeCommand extends Command
         note("Extensions par défaut:\n".collect($defaultExtensions)->map(fn ($ext): string => '  • .'.$ext)->join("\n"));
 
         if (confirm('Réinitialiser aux extensions par défaut ?', true)) {
-            $this->updateConfigValue('file_extensions', $defaultExtensions);
+            $this->updateTempConfigValue('file_extensions', $defaultExtensions);
             info('✅ Extensions réinitialisées aux valeurs par défaut.');
         }
 
@@ -508,9 +557,9 @@ class ConfigureFontAwesomeCommand extends Command
     /**
      * Modifier les patterns d'exclusion
      */
-    protected function editExcludePatterns(array $config): int
+    protected function editExcludePatterns(): int
     {
-        $currentPatterns = $config['exclude_patterns'] ?? [];
+        $currentPatterns = $this->tempConfig['exclude_patterns'] ?? [];
 
         note("Patterns actuels:\n".collect($currentPatterns)->map(fn ($pattern): string => '  • '.$pattern)->join("\n"));
 
@@ -564,10 +613,16 @@ class ConfigureFontAwesomeCommand extends Command
 
         if ($newPatterns !== []) {
             $updatedPatterns = array_merge($currentPatterns, $newPatterns);
-            $this->updateConfigValue('exclude_patterns', $updatedPatterns);
+            $this->updateTempConfigValue('exclude_patterns', $updatedPatterns);
             info('✅ '.\count($newPatterns).' pattern(s) ajouté(s) avec succès.');
+
+            // Afficher la configuration mise à jour
+            note(
+                "🚫 Patterns d'exclusion actuels :\n".
+                collect($updatedPatterns)->map(fn ($pattern): string => '  • '.$pattern)->join("\n")
+            );
         } else {
-            info('Aucun pattern ajouté.');
+            info('Aucun nouveau pattern ajouté.');
         }
 
         return Command::SUCCESS;
@@ -584,6 +639,8 @@ class ConfigureFontAwesomeCommand extends Command
             return Command::SUCCESS;
         }
 
+        $this->showMultiselectInstructions();
+
         $patternsToRemove = multiselect(
             'Patterns à supprimer',
             collect($currentPatterns)->mapWithKeys(fn ($pattern) => [$pattern => $pattern])->toArray()
@@ -591,7 +648,7 @@ class ConfigureFontAwesomeCommand extends Command
 
         if ($patternsToRemove !== []) {
             $updatedPatterns = array_diff($currentPatterns, $patternsToRemove);
-            $this->updateConfigValue('exclude_patterns', array_values($updatedPatterns));
+            $this->updateTempConfigValue('exclude_patterns', array_values($updatedPatterns));
             info('✅ '.\count($patternsToRemove).' pattern(s) supprimé(s) avec succès.');
         } else {
             info('Aucun pattern supprimé.');
@@ -610,7 +667,7 @@ class ConfigureFontAwesomeCommand extends Command
         note("Patterns par défaut:\n".collect($defaultPatterns)->map(fn ($pattern): string => '  • '.$pattern)->join("\n"));
 
         if (confirm('Réinitialiser aux patterns par défaut ?', true)) {
-            $this->updateConfigValue('exclude_patterns', $defaultPatterns);
+            $this->updateTempConfigValue('exclude_patterns', $defaultPatterns);
             info('✅ Patterns réinitialisés aux valeurs par défaut.');
         }
 
@@ -620,10 +677,10 @@ class ConfigureFontAwesomeCommand extends Command
     /**
      * Modifier les options générales
      */
-    protected function editGeneralOptions(array $config): int
+    protected function editGeneralOptions(): int
     {
-        $generateReport = $config['generate_report'] ?? true;
-        $backupFiles = $config['backup_files'] ?? true;
+        $generateReport = $this->tempConfig['generate_report'] ?? true;
+        $backupFiles = $this->tempConfig['backup_files'] ?? true;
 
         note("Options actuelles:\n  • Génération de rapports: ".($generateReport ? '✅' : '❌')."\n  • Sauvegardes automatiques: ".($backupFiles ? '✅' : '❌'));
 
@@ -633,12 +690,12 @@ class ConfigureFontAwesomeCommand extends Command
         $changes = [];
 
         if ($newGenerateReport !== $generateReport) {
-            $this->updateConfigValue('generate_report', $newGenerateReport);
+            $this->updateTempConfigValue('generate_report', $newGenerateReport);
             $changes[] = 'generate_report';
         }
 
         if ($newBackupFiles !== $backupFiles) {
-            $this->updateConfigValue('backup_files', $newBackupFiles);
+            $this->updateTempConfigValue('backup_files', $newBackupFiles);
             $changes[] = 'backup_files';
         }
 
@@ -654,27 +711,29 @@ class ConfigureFontAwesomeCommand extends Command
     /**
      * Modifier les styles Pro
      */
-    protected function editProStyles(array $config): int
+    protected function editProStyles(): int
     {
-        $licenseType = $config['license_type'] ?? 'free';
+        $licenseType = $this->tempConfig['license_type'] ?? 'free';
 
         if ($licenseType !== 'pro') {
             warning("Les styles Pro ne sont disponibles qu'avec une licence Pro.");
 
             if (confirm('Configurer une licence Pro maintenant ?', false)) {
-                return $this->editLicenseType($config);
+                return $this->editLicenseType();
             }
 
             return Command::SUCCESS;
         }
 
-        $currentStyles = $config['pro_styles'] ?? [];
+        $currentStyles = $this->tempConfig['pro_styles'] ?? [];
 
         note("Styles Pro actuels:\n".
              '  • Light: '.(($currentStyles['light'] ?? false) ? '✅' : '❌')."\n".
              '  • Duotone: '.(($currentStyles['duotone'] ?? false) ? '✅' : '❌')."\n".
              '  • Thin: '.(($currentStyles['thin'] ?? false) ? '✅' : '❌')."\n".
              '  • Sharp: '.(($currentStyles['sharp'] ?? false) ? '✅' : '❌'));
+
+        $this->showMultiselectInstructions();
 
         $stylesToEnable = multiselect(
             'Styles Pro à activer',
@@ -694,7 +753,7 @@ class ConfigureFontAwesomeCommand extends Command
             'sharp' => \in_array('sharp', $stylesToEnable),
         ];
 
-        $this->updateConfigValue('pro_styles', $newStyles);
+        $this->updateTempConfigValue('pro_styles', $newStyles);
 
         $enabledCount = \count(array_filter($newStyles));
         info(\sprintf('✅ Styles Pro configurés: %d/4 activés.', $enabledCount));
@@ -755,19 +814,19 @@ class ConfigureFontAwesomeCommand extends Command
      */
     protected function validateConfiguration(): int
     {
-        $config = config('fontawesome-migrator');
+        config('fontawesome-migrator');
         $errors = [];
         $warnings = [];
 
         // Validation du type de licence
-        $licenseType = $config['license_type'] ?? 'free';
+        $licenseType = $this->tempConfig['license_type'] ?? 'free';
 
         if (! \in_array($licenseType, ['free', 'pro'])) {
             $errors[] = 'Type de licence invalide: '.$licenseType;
         }
 
         // Validation des chemins de scan
-        $scanPaths = $config['scan_paths'] ?? [];
+        $scanPaths = $this->tempConfig['scan_paths'] ?? [];
 
         if (empty($scanPaths)) {
             $warnings[] = 'Aucun chemin de scan configuré';
@@ -780,7 +839,7 @@ class ConfigureFontAwesomeCommand extends Command
         }
 
         // Validation des extensions
-        $extensions = $config['file_extensions'] ?? [];
+        $extensions = $this->tempConfig['file_extensions'] ?? [];
 
         if (empty($extensions)) {
             $warnings[] = 'Aucune extension de fichier configurée';
@@ -788,7 +847,7 @@ class ConfigureFontAwesomeCommand extends Command
 
         // Validation des styles Pro
         if ($licenseType === 'pro') {
-            $proStyles = $config['pro_styles'] ?? [];
+            $proStyles = $this->tempConfig['pro_styles'] ?? [];
             $enabledStyles = array_filter($proStyles);
 
             if ($enabledStyles === []) {
@@ -846,6 +905,74 @@ class ConfigureFontAwesomeCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Mettre à jour une valeur dans la configuration temporaire
+     */
+    protected function updateTempConfigValue(string $key, mixed $value): void
+    {
+        $this->tempConfig[$key] = $value;
+
+        // Sauvegarder automatiquement après chaque modification
+        $this->saveConfigurationSilent();
+    }
+
+    /**
+     * Afficher les instructions pour multiselect
+     */
+    protected function showMultiselectInstructions(): void
+    {
+        note('💡 Utilisez les flèches ↑/↓ pour naviguer, ESPACE pour sélectionner/désélectionner (✓), puis ENTRÉE pour valider');
+    }
+
+    /**
+     * Sauvegarder la configuration temporaire sur disque
+     */
+    protected function saveConfiguration(): int
+    {
+        $this->saveConfigurationSilent();
+        info('✅ Configuration sauvegardée avec succès !');
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Sauvegarder la configuration temporaire sur disque (sans message)
+     */
+    protected function saveConfigurationSilent(): void
+    {
+        $configPath = config_path('fontawesome-migrator.php');
+
+        // Charger la configuration par défaut pour comparer
+        $defaultConfigPath = __DIR__.'/../../config/fontawesome-migrator.php';
+
+        if (! file_exists($defaultConfigPath)) {
+            // Fallback si le fichier par défaut n'existe pas
+            $content = "<?php\n\nreturn [\n    /*\n    | Configuration FontAwesome Migrator\n    | Valeurs personnalisées\n    */\n\n";
+            $content .= $this->arrayToString($this->tempConfig, 1)."\n];\n";
+            File::put($configPath, $content);
+            config(['fontawesome-migrator' => $this->tempConfig]);
+
+            return;
+        }
+
+        $defaultConfig = include $defaultConfigPath;
+
+        // Créer seulement les valeurs modifiées
+        $customConfig = [];
+
+        foreach ($this->tempConfig as $key => $value) {
+            if (! isset($defaultConfig[$key]) || $defaultConfig[$key] !== $value) {
+                $customConfig[$key] = $value;
+            }
+        }
+
+        // Utiliser la méthode optimisée pour écrire seulement les différences
+        $this->writeCustomConfigFile($configPath, $customConfig);
+
+        // Recharger la configuration dans Laravel
+        config(['fontawesome-migrator' => $this->tempConfig]);
     }
 
     // Configuration helper methods moved to ConfigurationHelpers trait

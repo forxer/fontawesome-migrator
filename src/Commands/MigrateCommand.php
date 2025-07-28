@@ -17,7 +17,7 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
-class MigrateFontAwesomeCommand extends Command
+class MigrateCommand extends Command
 {
     /**
      * The name and signature of the console command.

@@ -18,7 +18,7 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\warning;
 
-class InstallFontAwesomeCommand extends Command
+class InstallCommand extends Command
 {
     use ConfigurationHelpers;
 

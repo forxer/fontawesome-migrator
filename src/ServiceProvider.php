@@ -2,9 +2,9 @@
 
 namespace FontAwesome\Migrator;
 
-use FontAwesome\Migrator\Commands\ConfigureFontAwesomeCommand;
-use FontAwesome\Migrator\Commands\InstallFontAwesomeCommand;
-use FontAwesome\Migrator\Commands\MigrateFontAwesomeCommand;
+use FontAwesome\Migrator\Commands\ConfigureCommand;
+use FontAwesome\Migrator\Commands\InstallCommand;
+use FontAwesome\Migrator\Commands\MigrateCommand;
 use FontAwesome\Migrator\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -45,9 +45,9 @@ class ServiceProvider extends BaseServiceProvider
         // Enregistrer les commandes
         if ($this->app->runningInConsole()) {
             $this->commands([
-                ConfigureFontAwesomeCommand::class,
-                InstallFontAwesomeCommand::class,
-                MigrateFontAwesomeCommand::class,
+                ConfigureCommand::class,
+                InstallCommand::class,
+                MigrateCommand::class,
             ]);
         }
     }

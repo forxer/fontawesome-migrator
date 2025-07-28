@@ -155,8 +155,11 @@ trait ConfigurationHelpers
         $config = include $configPath;
         $config[$key] = $value;
 
-        // Utiliser notre méthode de formatage personnalisée au lieu de var_export
-        $this->writeCustomConfigFile($configPath, $config);
+        // Écrire directement la configuration complète avec formatage propre
+        $content = "<?php\n\nreturn [\n    /*\n    | Configuration FontAwesome Migrator\n    | Valeurs personnalisées\n    */\n\n";
+        $content .= $this->arrayToString($config, 1)."\n];\n";
+
+        File::put($configPath, $content);
 
         // Recharger la configuration
         config(['fontawesome-migrator' => $config]);
