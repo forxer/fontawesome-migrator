@@ -8,6 +8,19 @@ use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MigrationReporter;
 use Illuminate\Console\Command;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\intro;
+use function Laravel\Prompts\outro;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\warning;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\spin;
+use function Laravel\Prompts\progress;
+
 class MigrateFontAwesomeCommand extends Command
 {
     /**
@@ -20,7 +33,8 @@ class MigrateFontAwesomeCommand extends Command
                             {--no-backup : Désactiver les sauvegardes}
                             {--report : Générer un rapport détaillé}
                             {--icons-only : Migrer uniquement les classes d\'icônes}
-                            {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}';
+                            {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}
+                            {--no-interactive : Désactiver le mode interactif}';
 
     /**
      * The console command description.
@@ -41,6 +55,87 @@ class MigrateFontAwesomeCommand extends Command
      */
     public function handle(): int
     {
+        // Mode interactif par défaut, sauf si --no-interactive est spécifié
+        if (! $this->option('no-interactive')) {
+            return $this->handleInteractive();
+        }
+
+        // Mode classique avec options de ligne de commande
+        return $this->handleClassic();
+    }
+
+    /**
+     * Mode interactif avec Laravel Prompts
+     */
+    protected function handleInteractive(): int
+    {
+        intro('🚀 FontAwesome Migrator - Mode Interactif');
+
+        // Validation de la configuration
+        if (! $this->validateConfiguration()) {
+            return Command::FAILURE;
+        }
+
+        // Sélection du mode de migration
+        $migrationMode = select(
+            'Quel type de migration souhaitez-vous effectuer ?',
+            [
+                'complete' => '🔄 Complète (icônes + assets)',
+                'icons' => '🎯 Icônes uniquement',
+                'assets' => '🎨 Assets uniquement (CSS, JS, CDN)'
+            ],
+            default: 'complete'
+        );
+
+        // Mode dry-run
+        $isDryRun = confirm('Mode prévisualisation (dry-run) ?', false);
+
+        if ($isDryRun) {
+            warning('Mode DRY-RUN activé - Aucune modification ne sera appliquée');
+        }
+
+        // Chemin personnalisé
+        $useCustomPath = confirm('Analyser un chemin spécifique ?', false);
+        $customPath = null;
+
+        if ($useCustomPath) {
+            $customPath = text(
+                'Chemin à analyser',
+                placeholder: 'ex: resources/views, public/css/app.css'
+            );
+        }
+
+        // Génération de rapport
+        $generateReport = confirm('Générer un rapport détaillé ?', true);
+
+        // Configuration des sauvegardes
+        $backupOption = $this->configureBackups();
+
+        // Résumé de la configuration
+        $this->displayMigrationSummary($migrationMode, $isDryRun, $customPath, $generateReport, $backupOption);
+
+        if (! confirm('Confirmer la migration avec ces paramètres ?', true)) {
+            outro('❌ Migration annulée par l\'utilisateur');
+            return Command::SUCCESS;
+        }
+
+        // Exécution de la migration
+        return $this->executeMigration([
+            'dry-run' => $isDryRun,
+            'path' => $customPath,
+            'icons-only' => $migrationMode === 'icons',
+            'assets-only' => $migrationMode === 'assets',
+            'report' => $generateReport,
+            'backup' => $backupOption === 'force',
+            'no-backup' => $backupOption === 'disable'
+        ]);
+    }
+
+    /**
+     * Mode classique avec options de ligne de commande
+     */
+    protected function handleClassic(): int
+    {
         $this->info('🚀 Démarrage de la migration Font Awesome 5 → 6');
 
         // Validation de la configuration
@@ -59,6 +154,27 @@ class MigrateFontAwesomeCommand extends Command
 
             return Command::FAILURE;
         }
+
+        return $this->executeMigration([
+            'dry-run' => $isDryRun,
+            'path' => $customPath,
+            'icons-only' => $iconsOnly,
+            'assets-only' => $assetsOnly,
+            'report' => $this->option('report'),
+            'backup' => $this->option('backup'),
+            'no-backup' => $this->option('no-backup')
+        ]);
+    }
+
+    /**
+     * Exécuter la migration avec les options données
+     */
+    protected function executeMigration(array $options): int
+    {
+        $isDryRun = $options['dry-run'] ?? false;
+        $customPath = $options['path'] ?? null;
+        $iconsOnly = $options['icons-only'] ?? false; 
+        $assetsOnly = $options['assets-only'] ?? false;
 
         // Par défaut : migration complète (icônes + assets)
         $migrateIcons = ! $assetsOnly;
@@ -156,6 +272,60 @@ class MigrateFontAwesomeCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Configurer les options de sauvegarde
+     */
+    protected function configureBackups(): string
+    {
+        $backupDefault = config('fontawesome-migrator.backup_files', true);
+        
+        $backupChoice = select(
+            'Configuration des sauvegardes',
+            [
+                'default' => $backupDefault ? '📦 Par défaut (activées)' : '📦 Par défaut (désactivées)',
+                'force' => '✅ Forcer les sauvegardes',
+                'disable' => '❌ Désactiver les sauvegardes'
+            ],
+            default: 'default'
+        );
+
+        if ($backupChoice === 'force') {
+            info('✅ Sauvegardes forcées - Les fichiers seront sauvegardés avant modification');
+        } elseif ($backupChoice === 'disable') {
+            warning('⚠️ Sauvegardes désactivées - Aucune sauvegarde ne sera créée');
+        }
+
+        return $backupChoice;
+    }
+
+    /**
+     * Afficher le résumé de la migration
+     */
+    protected function displayMigrationSummary(string $mode, bool $isDryRun, ?string $customPath, bool $generateReport, string $backupOption): void
+    {
+        $modeLabels = [
+            'complete' => '🔄 Migration complète (icônes + assets)',
+            'icons' => '🎯 Migration des icônes uniquement',
+            'assets' => '🎨 Migration des assets uniquement'
+        ];
+
+        $summary = [
+            "📋 Résumé de la configuration :",
+            "",
+            "• Mode : " . $modeLabels[$mode],
+            "• Prévisualisation : " . ($isDryRun ? "✅ Activée (dry-run)" : "❌ Désactivée"),
+            "• Chemin : " . ($customPath ?: "📂 Chemins par défaut"),
+            "• Rapport : " . ($generateReport ? "✅ Généré" : "❌ Non généré"),
+            "• Sauvegardes : " . match($backupOption) {
+                'force' => "✅ Forcées",
+                'disable' => "❌ Désactivées", 
+                default => "📦 Par défaut"
+            }
+        ];
+
+        note(implode("\n", $summary));
     }
 
     protected function validateConfiguration(): bool
