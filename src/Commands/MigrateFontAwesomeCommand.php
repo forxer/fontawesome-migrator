@@ -9,17 +9,13 @@ use FontAwesome\Migrator\Services\MigrationReporter;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
+use function Laravel\Prompts\note;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\text;
-use function Laravel\Prompts\note;
-use function Laravel\Prompts\info;
 use function Laravel\Prompts\warning;
-use function Laravel\Prompts\error;
-use function Laravel\Prompts\spin;
-use function Laravel\Prompts\progress;
 
 class MigrateFontAwesomeCommand extends Command
 {
@@ -82,7 +78,7 @@ class MigrateFontAwesomeCommand extends Command
             [
                 'complete' => '🔄 Complète (icônes + assets)',
                 'icons' => '🎯 Icônes uniquement',
-                'assets' => '🎨 Assets uniquement (CSS, JS, CDN)'
+                'assets' => '🎨 Assets uniquement (CSS, JS, CDN)',
             ],
             default: 'complete'
         );
@@ -116,6 +112,7 @@ class MigrateFontAwesomeCommand extends Command
 
         if (! confirm('Confirmer la migration avec ces paramètres ?', true)) {
             outro('❌ Migration annulée par l\'utilisateur');
+
             return Command::SUCCESS;
         }
 
@@ -127,7 +124,7 @@ class MigrateFontAwesomeCommand extends Command
             'assets-only' => $migrationMode === 'assets',
             'report' => $generateReport,
             'backup' => $backupOption === 'force',
-            'no-backup' => $backupOption === 'disable'
+            'no-backup' => $backupOption === 'disable',
         ]);
     }
 
@@ -162,7 +159,7 @@ class MigrateFontAwesomeCommand extends Command
             'assets-only' => $assetsOnly,
             'report' => $this->option('report'),
             'backup' => $this->option('backup'),
-            'no-backup' => $this->option('no-backup')
+            'no-backup' => $this->option('no-backup'),
         ]);
     }
 
@@ -173,7 +170,7 @@ class MigrateFontAwesomeCommand extends Command
     {
         $isDryRun = $options['dry-run'] ?? false;
         $customPath = $options['path'] ?? null;
-        $iconsOnly = $options['icons-only'] ?? false; 
+        $iconsOnly = $options['icons-only'] ?? false;
         $assetsOnly = $options['assets-only'] ?? false;
 
         // Par défaut : migration complète (icônes + assets)
@@ -280,13 +277,13 @@ class MigrateFontAwesomeCommand extends Command
     protected function configureBackups(): string
     {
         $backupDefault = config('fontawesome-migrator.backup_files', true);
-        
+
         $backupChoice = select(
             'Configuration des sauvegardes',
             [
                 'default' => $backupDefault ? '📦 Par défaut (activées)' : '📦 Par défaut (désactivées)',
                 'force' => '✅ Forcer les sauvegardes',
-                'disable' => '❌ Désactiver les sauvegardes'
+                'disable' => '❌ Désactiver les sauvegardes',
             ],
             default: 'default'
         );
@@ -308,21 +305,21 @@ class MigrateFontAwesomeCommand extends Command
         $modeLabels = [
             'complete' => '🔄 Migration complète (icônes + assets)',
             'icons' => '🎯 Migration des icônes uniquement',
-            'assets' => '🎨 Migration des assets uniquement'
+            'assets' => '🎨 Migration des assets uniquement',
         ];
 
         $summary = [
-            "📋 Résumé de la configuration :",
-            "",
-            "• Mode : " . $modeLabels[$mode],
-            "• Prévisualisation : " . ($isDryRun ? "✅ Activée (dry-run)" : "❌ Désactivée"),
-            "• Chemin : " . ($customPath ?: "📂 Chemins par défaut"),
-            "• Rapport : " . ($generateReport ? "✅ Généré" : "❌ Non généré"),
-            "• Sauvegardes : " . match($backupOption) {
-                'force' => "✅ Forcées",
-                'disable' => "❌ Désactivées", 
-                default => "📦 Par défaut"
-            }
+            '📋 Résumé de la configuration :',
+            '',
+            '• Mode : '.$modeLabels[$mode],
+            '• Prévisualisation : '.($isDryRun ? '✅ Activée (dry-run)' : '❌ Désactivée'),
+            '• Chemin : '.($customPath !== null && $customPath !== '' && $customPath !== '0' ? $customPath : '📂 Chemins par défaut'),
+            '• Rapport : '.($generateReport ? '✅ Généré' : '❌ Non généré'),
+            '• Sauvegardes : '.match ($backupOption) {
+                'force' => '✅ Forcées',
+                'disable' => '❌ Désactivées',
+                default => '📦 Par défaut'
+            },
         ];
 
         note(implode("\n", $summary));
