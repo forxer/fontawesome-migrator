@@ -8,16 +8,15 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
+use function Laravel\Prompts\note;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\multiselect;
-use function Laravel\Prompts\text;
-use function Laravel\Prompts\note;
-use function Laravel\Prompts\info;
-use function Laravel\Prompts\warning;
-use function Laravel\Prompts\error;
 use function Laravel\Prompts\spin;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
 
 class InstallFontAwesomeCommand extends Command
 {
@@ -71,9 +70,9 @@ class InstallFontAwesomeCommand extends Command
     protected function displayWelcome(): void
     {
         intro('🚀 FontAwesome Migrator - Installation Interactive');
-        
+
         note(
-            'Migration automatique Font Awesome 5 → 6\n' .
+            "Migration automatique Font Awesome 5 → 6\n".
             'Support Free & Pro • Assets & Icônes • Interface Web'
         );
     }
@@ -87,9 +86,10 @@ class InstallFontAwesomeCommand extends Command
 
         if ($configExists && ! $this->option('force') && ! $this->option('non-interactive')) {
             $replace = confirm('Le fichier de configuration existe déjà. Le remplacer ?', false);
-            
+
             if (! $replace) {
                 info('Configuration existante conservée');
+
                 return;
             }
         }
@@ -137,17 +137,17 @@ class InstallFontAwesomeCommand extends Command
             'Quel type de licence FontAwesome utilisez-vous ?',
             [
                 'free' => 'Free (gratuite)',
-                'pro' => 'Pro (payante)'
+                'pro' => 'Pro (payante)',
             ],
             default: 'free'
         );
 
         // Chemins de scan personnalisés
         $defaultPaths = $this->getDefaultPaths();
-        
+
         note(
-            '📂 Chemins de scan par défaut :\n' .
-            collect($defaultPaths)->map(fn($path) => "  • {$path}")->join('\n')
+            "📂 Chemins de scan par défaut :\n".
+            collect($defaultPaths)->map(fn ($path) => "  • {$path}")->join("\n")
         );
 
         $customPaths = [];
@@ -164,7 +164,7 @@ class InstallFontAwesomeCommand extends Command
                     $customPaths[] = $path;
                     info("✅ Ajouté: {$path}");
                 }
-                
+
                 $continueAdding = $path ? confirm('Ajouter un autre chemin ?', false) : false;
             } while ($continueAdding);
         }
@@ -194,7 +194,7 @@ class InstallFontAwesomeCommand extends Command
         if (! File::exists($storageLink)) {
             if ($this->option('non-interactive') || confirm('Créer le lien symbolique storage pour l\'accès web ?', true)) {
                 spin(
-                    fn() => Artisan::call('storage:link'),
+                    fn () => Artisan::call('storage:link'),
                     'Création du lien symbolique...'
                 );
                 info('✅ Lien symbolique storage créé');
@@ -210,7 +210,7 @@ class InstallFontAwesomeCommand extends Command
 
         if (! File::exists($reportPath)) {
             spin(
-                fn() => File::makeDirectory($reportPath, 0755, true),
+                fn () => File::makeDirectory($reportPath, 0755, true),
                 'Création du répertoire des rapports...'
             );
             info('✅ Répertoire des rapports créé');
@@ -233,11 +233,12 @@ class InstallFontAwesomeCommand extends Command
         ];
 
         $results = [];
+
         foreach ($checks as $check => $passed) {
-            $results[] = ($passed ? '✅' : '❌') . ' ' . $check;
+            $results[] = ($passed ? '✅' : '❌').' '.$check;
         }
-        
-        note(implode('\n', $results));
+
+        note(implode("\n", $results));
 
         if (\in_array(false, $checks, true)) {
             warning('Certaines vérifications ont échoué');
@@ -361,23 +362,23 @@ class InstallFontAwesomeCommand extends Command
     protected function displayCompletion(): void
     {
         outro('🎉 Installation terminée avec succès !');
-        
+
         note(
-            '📋 Prochaines étapes :\n\n' .
-            '1️⃣  Tester la migration :\n' .
-            '    php artisan fontawesome:migrate --dry-run\n\n' .
-            '2️⃣  Effectuer la migration :\n' .
-            '    php artisan fontawesome:migrate\n\n' .
-            '3️⃣  Accéder aux rapports :\n' .
-            '    ' . url('/fontawesome-migrator/reports')
+            "📋 Prochaines étapes :\n\n".
+            "1️⃣  Tester la migration :\n".
+            "    php artisan fontawesome:migrate --dry-run\n\n".
+            "2️⃣  Effectuer la migration :\n".
+            "    php artisan fontawesome:migrate\n\n".
+            "3️⃣  Accéder aux rapports :\n".
+            '    '.url('/fontawesome-migrator/reports')
         );
-        
+
         note(
-            '📖 Documentation complète :\n' .
-            '  • README.md du package\n' .
-            '  • config/fontawesome-migrator.php\n\n' .
-            '🆘 Support :\n' .
-            '  • php artisan fontawesome:migrate --help\n' .
+            "📖 Documentation complète :\n".
+            "  • README.md du package\n".
+            "  • config/fontawesome-migrator.php\n\n".
+            "🆘 Support :\n".
+            "  • php artisan fontawesome:migrate --help\n".
             '  • GitHub Issues pour les problèmes'
         );
     }
@@ -388,9 +389,9 @@ class InstallFontAwesomeCommand extends Command
     protected function step(string $title, callable $callback): void
     {
         try {
-            spin($callback, '🔧 ' . $title);
+            spin($callback, '🔧 '.$title);
         } catch (Exception $exception) {
-            error('❌ Erreur: ' . $exception->getMessage());
+            error('❌ Erreur: '.$exception->getMessage());
             warning('Vous pouvez réessayer avec --force si nécessaire');
         }
     }
