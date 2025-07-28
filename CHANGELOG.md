@@ -1,6 +1,28 @@
 CHANGELOG
 =========
 
+1.5.0 (2025-07-28)
+------------------
+
+### Added
+- **Configuration Management**: Nouvelle commande `php artisan fontawesome:config`
+- **Interactive Config Menu**: Affichage, édition, validation et sauvegarde de configuration
+- **Granular Editing**: Modification des licences, chemins, extensions et patterns d'exclusion
+- **Config Validation**: Vérification automatique des chemins et cohérence
+- **Config Backup**: Sauvegarde avant modifications importantes
+- **Pro Styles Management**: Gestion styles Pro avec validation de licence
+- **Large Project UX**: Optimisé pour les gros projets avec configurations multiples
+
+### Enhanced
+- **Developer Experience**: UX améliorée pour configuration de gros projets
+- **Command Architecture**: Modes interactif/non-interactif unifiés
+- **Error Handling**: Messages d'aide contextuels et validation temps réel
+
+### Technical
+- **ConfigureFontAwesomeCommand**: Nouvelle commande avec architecture modulaire
+- **Service Provider**: Enregistrement automatique de la commande
+- **Smart Persistence**: Sauvegarde intelligente des valeurs modifiées uniquement
+
 1.4.0 (2025-07-28)
 ------------------
 

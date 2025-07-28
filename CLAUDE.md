@@ -56,8 +56,11 @@ composer quality
 # Interactive installation (recommended for first setup)
 php artisan fontawesome:install
 
-# Main migration command (icons + assets)
+# Main migration command (icons + assets) - Interactive by default
 php artisan fontawesome:migrate
+
+# Non-interactive mode (classic)
+php artisan fontawesome:migrate --no-interactive
 
 # Dry-run mode (preview changes)
 php artisan fontawesome:migrate --dry-run
@@ -71,6 +74,14 @@ php artisan fontawesome:migrate --path=resources/views
 
 # Generate detailed report
 php artisan fontawesome:migrate --report --verbose
+
+# Configuration management (interactive by default)
+php artisan fontawesome:config
+
+# Configuration commands
+php artisan fontawesome:config --show          # Display current configuration
+php artisan fontawesome:config --reset         # Reset to defaults
+php artisan fontawesome:config --no-interactive # Non-interactive mode
 ```
 
 ## Architecture
@@ -88,8 +99,9 @@ The package follows a service-oriented architecture with clear separation of con
 
 ### Command Structure
 
-- **MigrateFontAwesomeCommand** (`src/Commands/MigrateFontAwesomeCommand.php`): Main Artisan command that coordinates the migration process
+- **MigrateFontAwesomeCommand** (`src/Commands/MigrateFontAwesomeCommand.php`): Main Artisan command that coordinates the migration process with interactive mode by default
 - **InstallFontAwesomeCommand** (`src/Commands/InstallFontAwesomeCommand.php`): Interactive installation command with configuration wizard
+- **ConfigureFontAwesomeCommand** (`src/Commands/ConfigureFontAwesomeCommand.php`): Advanced configuration management command for large projects
 - **ServiceProvider** (`src/ServiceProvider.php`): Laravel service provider for package registration and configuration publishing
 
 ### Web Interface Architecture
@@ -186,6 +198,12 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 - Fallback strategies for Pro → Free migration
 - Customizable scan paths and file extensions
 - Backup and reporting options
+- Advanced configuration management via `fontawesome:config` command with:
+  - Interactive menu system for configuration editing
+  - Granular control over scan paths, file extensions, exclusion patterns
+  - Pro styles management with license validation
+  - Configuration validation and backup capabilities
+  - Optimized UX for large projects with multiple configuration changes
 
 ### Key Features
 
@@ -213,6 +231,7 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 12. **Configuration Traceability**: Comprehensive migration context tracking with dynamic versioning and reproducible audit trails
 13. **Navigation System**: Seamless navigation between reports index and individual report views
 14. **Accessibility**: WCAG-compliant design with semantic HTML and ARIA support
+15. **Advanced Configuration Management**: Interactive configuration command (`fontawesome:config`) optimized for large projects with granular editing capabilities
 
 ### Package Status
 🎉 **PRODUCTION READY** - All tests passing, fully functional, ready for:

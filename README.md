@@ -157,12 +157,23 @@ return [
 
 ## Utilisation
 
-### Migration complète (par défaut)
+### 🚀 Migration complète (par défaut)
 
 ```bash
-# Migration complète : icônes + assets
+# Migration complète : icônes + assets (mode interactif)
 php artisan fontawesome:migrate
+
+# Mode classique (non-interactif)
+php artisan fontawesome:migrate --no-interactive
 ```
+
+**Le mode interactif** vous guide à travers :
+- **🎯 Sélection du type** : Complète, icônes uniquement, assets uniquement
+- **👁️ Mode prévisualisation** : Dry-run avec confirmation
+- **📂 Chemins personnalisés** : Analyse de dossiers spécifiques
+- **📊 Génération de rapports** : Rapports détaillés optionnels
+- **💾 Configuration des sauvegardes** : Forcées, désactivées ou par défaut
+- **📋 Résumé de configuration** : Validation avant exécution
 
 Cette commande migre automatiquement :
 - **Classes d'icônes** : `fas fa-home` → `fa-solid fa-house`
@@ -171,7 +182,7 @@ Cette commande migre automatiquement :
 - **Imports JS** : ES6, CommonJS, dynamic imports
 - **Feuilles de style** : SCSS @import, CSS URLs
 
-### Modes de migration
+### 🎛️ Modes de migration
 
 ```bash
 # Prévisualisation sans modification (dry-run)
@@ -182,6 +193,33 @@ php artisan fontawesome:migrate --icons-only
 
 # Migration assets uniquement (CSS, JS, CDN)
 php artisan fontawesome:migrate --assets-only
+```
+
+### 🔧 Gestion avancée de la configuration
+
+```bash
+# Commande de configuration interactive
+php artisan fontawesome:config
+
+# Afficher la configuration actuelle
+php artisan fontawesome:config --show
+
+# Réinitialiser aux valeurs par défaut
+php artisan fontawesome:config --reset
+```
+
+**Fonctionnalités de la gestion de configuration :**
+- **👁️ Affichage structuré** : Vue claire de toute la configuration
+- **✏️ Modification granulaire** : Licence, chemins, extensions, exclusions
+- **🔍 Validation** : Vérification automatique des chemins et cohérence
+- **💾 Sauvegarde** : Backup automatique avant modifications importantes
+- **🔄 Réinitialisation** : Retour aux valeurs par défaut avec confirmation
+
+**Avantages pour les gros projets :**
+- Configuration rapide de chemins personnalisés multiples
+- Gestion simplifiée des extensions de fichiers
+- Patterns d'exclusion avancés (tests, legacy, backups)
+- Configuration Pro granulaire (Light, Duotone, Thin, Sharp)
 ```
 
 ```bash
