@@ -1,10 +1,59 @@
 CHANGELOG
 =========
 
-1.4.0 (2025-07-26)
+1.4.0 (2025-07-28)
 ------------------
 
+### Added
+- **Laravel Prompts Integration**: Mode interactif par défaut pour toutes les commandes
+- **Enhanced Install Command**: Configuration des patterns d'exclusion et chemins de scan personnalisés
+- **Interactive Migration Command**: Interface guidée avec résumé de configuration et confirmation
+- **Modular CSS Architecture**: Système de partials Blade pour une meilleure maintenabilité
+- **Enhanced Web Interface**: Design system unifié avec CSS inline pour maximum de fiabilité
+- **Advanced Modal System**: Système de modales unifié avec JavaScript modulaire
+- **Performance Metrics Dashboard**: Métriques calculées avec taux de succès et densité des changements
+- **Table of Contents Navigation**: Navigation améliorée dans les rapports avec ancres
+- **Search and Filtering**: Recherche temps réel avec surlignage des correspondances
+- **Back-to-Top Button**: Bouton de retour en haut avec animations fluides
+- **Warning Enhancement**: Affichage des avertissements avec numéros de ligne et détails enrichis
+- **French Number Formatting**: Formatage des nombres selon les conventions françaises
+- **Copy-to-Clipboard**: Fonctionnalité de copie des rapports formatés
+- **Responsive Design**: Interface mobile-first avec breakpoints optimisés
 
+### Enhanced
+- **Install Command UX**: Prompts interactifs avec exemples contextuels et aide intégrée
+- **Migration Command UX**: Sélection du mode de migration, configuration des sauvegardes, et résumé détaillé
+- **CSS Architecture**: Factorisation et mutualization des styles dans un système de partials Blade modulaire
+- **Web Reports Interface**: Design moderne avec gradients, animations et indicateurs visuels améliorés
+- **Modal System**: Migration vers un système unifié avec meilleure gestion des événements
+- **Help System**: Modales d'aide avec tips de test et explications détaillées des métriques
+
+### Fixed
+- **String Interpolation**: Correction des guillemets simples vers doubles pour les caractères d'échappement
+- **Icon Display**: Correction de l'affichage des emojis dans les interfaces (suppression des dégradés CSS masquants)
+- **CSS Conflicts**: Résolution des doublons et conflits entre fichiers de styles
+- **Warning Correlation**: Amélioration de la corrélation entre warnings et changements avec extraction serveur
+- **Badge Truncation**: Correction du tronquage des badges de nombre d'avertissements
+- **Number Formatting**: Formatage cohérent des nombres en français dans toute l'interface
+
+### Changed
+- **Default Behavior**: Mode interactif activé par défaut (utiliser `--no-interactive` pour le mode classique)
+- **CSS Organization**: Architecture modulaire avec common.blade.php, index.blade.php, et migration.blade.php
+- **Dependencies**: Ajout de `laravel/prompts: ^0.3.0` pour l'interface interactive
+- **Command Options**: Remplacement de `--interactive` par `--no-interactive` (logique inversée)
+- **Warning Processing**: Migration du traitement client-side vers server-side pour plus de fiabilité
+
+### Technical
+- **Laravel Prompts**: Intégration complète avec intro/outro, select/confirm, text input et progress indicators
+- **Blade Partials**: Système de partials CSS pour une architecture maintenable et DRY
+- **JavaScript Modularity**: Refactoring vers des modules JavaScript réutilisables et scoped
+- **Server-Side Processing**: Migration du parsing DOM vers traitement PHP pour les warnings
+- **CSS Custom Properties**: Utilisation extensive des variables CSS pour cohérence du design system
+- **Animation System**: Animations CSS3 avec keyframes et transitions fluides
+
+### Breaking Changes
+- **Minimum Requirements**: Laravel Prompts requis (ajouté automatiquement via composer)
+- **Command Behavior**: Mode interactif par défaut peut affecter les scripts automatisés (utiliser `--no-interactive`)
 
 1.3.1 (2025-07-26)
 ------------------
