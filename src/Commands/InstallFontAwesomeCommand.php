@@ -147,7 +147,7 @@ class InstallFontAwesomeCommand extends Command
 
         note(
             "📂 Chemins de scan par défaut :\n".
-            collect($defaultPaths)->map(fn ($path) => "  • {$path}")->join("\n")
+            collect($defaultPaths)->map(fn ($path): string => '  • '.$path)->join("\n")
         );
 
         $customPaths = [];
@@ -160,12 +160,12 @@ class InstallFontAwesomeCommand extends Command
                     placeholder: 'ex: app/Views, resources/components'
                 );
 
-                if ($path) {
+                if ($path !== '' && $path !== '0') {
                     $customPaths[] = $path;
-                    info("✅ Ajouté: {$path}");
+                    info('✅ Ajouté: '.$path);
                 }
 
-                $continueAdding = $path ? confirm('Ajouter un autre chemin ?', false) : false;
+                $continueAdding = $path && confirm('Ajouter un autre chemin ?', false);
             } while ($continueAdding);
         }
 
