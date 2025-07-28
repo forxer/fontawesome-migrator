@@ -42,6 +42,8 @@ CHANGELOG
 - **Dependencies**: Ajout de `laravel/prompts: ^0.3.0` pour l'interface interactive
 - **Command Options**: Remplacement de `--interactive` par `--no-interactive` (logique inversée)
 - **Warning Processing**: Migration du traitement client-side vers server-side pour plus de fiabilité
+- **Minimum Requirements**: Laravel Prompts requis (ajouté automatiquement via composer)
+- **Command Behavior**: Mode interactif par défaut peut affecter les scripts automatisés (utiliser `--no-interactive`)
 
 ### Technical
 - **Laravel Prompts**: Intégration complète avec intro/outro, select/confirm, text input et progress indicators
@@ -51,9 +53,6 @@ CHANGELOG
 - **CSS Custom Properties**: Utilisation extensive des variables CSS pour cohérence du design system
 - **Animation System**: Animations CSS3 avec keyframes et transitions fluides
 
-### Breaking Changes
-- **Minimum Requirements**: Laravel Prompts requis (ajouté automatiquement via composer)
-- **Command Behavior**: Mode interactif par défaut peut affecter les scripts automatisés (utiliser `--no-interactive`)
 
 1.3.1 (2025-07-26)
 ------------------
@@ -74,6 +73,7 @@ CHANGELOG
 - Résolution des conflits entre configuration par défaut et mode test non-interactif
 - Amélioration de la robustesse des tests avec mocks appropriés pour l'environnement Blade
 - Suppression du package.json des chemins par défaut pour éviter conflits de configuration
+
 
 1.3.0 (2025-07-26)
 ------------------
@@ -103,6 +103,7 @@ CHANGELOG
 ### Fixed
 - Section configuration visible dans tous les rapports HTML (anciens et nouveaux)
 - Version du package extraite automatiquement du CHANGELOG.md (plus de valeurs en dur)
+
 
 1.1.0 (2025-07-25)
 ------------------
