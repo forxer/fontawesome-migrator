@@ -3,13 +3,10 @@
 namespace FontAwesome\Migrator\Commands;
 
 use Exception;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\File;
-
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
+
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\outro;
@@ -17,6 +14,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class InstallFontAwesomeCommand extends Command
 {
@@ -126,8 +126,9 @@ class InstallFontAwesomeCommand extends Command
             $enableBackups = true;
 
             info('✅ Configuration par défaut appliquée (mode non-interactif)');
+
             // En mode non-interactif, utiliser seulement les chemins personnalisés (vides = valeurs par défaut du package)
-            $this->writeConfiguration($licenseType, $customPaths, $generateReports, $enableBackups);
+            $this->writeConfiguration($licenseType, $customPaths, $generateReports, $enableBackups, []);
 
             return;
         }
@@ -143,31 +144,10 @@ class InstallFontAwesomeCommand extends Command
         );
 
         // Chemins de scan personnalisés
-        $defaultPaths = $this->getDefaultPaths();
+        $customPaths = $this->configureScanPaths();
 
-        note(
-            "📂 Chemins de scan par défaut :\n".
-            collect($defaultPaths)->map(fn ($path): string => '  • '.$path)->join("\n")
-        );
-
-        $customPaths = [];
-        $addCustomPaths = confirm('Voulez-vous ajouter des chemins personnalisés ?', false);
-
-        if ($addCustomPaths) {
-            do {
-                $path = text(
-                    'Chemin supplémentaire',
-                    placeholder: 'ex: app/Views, resources/components'
-                );
-
-                if ($path !== '' && $path !== '0') {
-                    $customPaths[] = $path;
-                    info('✅ Ajouté: '.$path);
-                }
-
-                $continueAdding = $path && confirm('Ajouter un autre chemin ?', false);
-            } while ($continueAdding);
-        }
+        // Fichiers à exclure
+        $excludePatterns = $this->configureExcludePatterns();
 
         // Génération de rapports
         $generateReports = confirm('Générer automatiquement des rapports ?', true);
@@ -176,7 +156,13 @@ class InstallFontAwesomeCommand extends Command
         $enableBackups = confirm('Créer des sauvegardes avant modification ?', true);
 
         // Écrire la configuration
-        $this->writeConfiguration($licenseType, array_merge($defaultPaths, $customPaths), $generateReports, $enableBackups);
+        $this->writeConfiguration(
+            $licenseType,
+            $customPaths,
+            $generateReports,
+            $enableBackups,
+            $excludePatterns
+        );
 
         info('✅ Configuration personnalisée sauvegardée');
     }
@@ -250,7 +236,7 @@ class InstallFontAwesomeCommand extends Command
     /**
      * Écrire la configuration personnalisée
      */
-    protected function writeConfiguration(string $licenseType, array $scanPaths, bool $generateReports, bool $enableBackups): void
+    protected function writeConfiguration(string $licenseType, array $scanPaths, bool $generateReports, bool $enableBackups, array $excludePatterns = []): void
     {
         $configPath = config_path('fontawesome-migrator.php');
 
@@ -282,6 +268,11 @@ class InstallFontAwesomeCommand extends Command
 
         if ($enableBackups !== $defaultConfig['backup_files']) {
             $customConfig['backup_files'] = $enableBackups;
+        }
+
+        // N'écrire exclude_patterns que s'ils sont différents des défauts
+        if ($excludePatterns !== [] && $excludePatterns !== $defaultConfig['exclude_patterns']) {
+            $customConfig['exclude_patterns'] = $excludePatterns;
         }
 
         // Si Pro, activer tous les styles seulement si différent du défaut
@@ -397,6 +388,91 @@ class InstallFontAwesomeCommand extends Command
     }
 
     /**
+     * Configurer les chemins de scan personnalisés
+     */
+    protected function configureScanPaths(): array
+    {
+        $defaultPaths = $this->getDefaultPaths();
+
+        note(
+            "📂 Chemins de scan par défaut :\n".
+            collect($defaultPaths)->map(fn ($path): string => '  • '.$path)->join("\n")
+        );
+
+        $customPaths = [];
+        $addCustomPaths = confirm('Voulez-vous ajouter des chemins personnalisés ?', false);
+
+        if ($addCustomPaths) {
+            note(
+                "💡 Exemples de chemins :\n".
+                "  • app/Views (dossier Views custom)\n".
+                "  • resources/components (composants)\n".
+                "  • public/assets/css (assets publics)\n".
+                "  • resources/views/emails (templates emails)\n".
+                '  • package.json (fichier spécifique)'
+            );
+
+            do {
+                $path = text(
+                    'Chemin supplémentaire',
+                    placeholder: 'ex: app/Views, resources/components, package.json'
+                );
+
+                if ($path !== '' && $path !== '0') {
+                    $customPaths[] = $path;
+                    info('✅ Ajouté: '.$path);
+                }
+
+                $continueAdding = $path && confirm('Ajouter un autre chemin ?', false);
+            } while ($continueAdding);
+        }
+
+        return array_merge($defaultPaths, $customPaths);
+    }
+
+    /**
+     * Configurer les patterns d'exclusion
+     */
+    protected function configureExcludePatterns(): array
+    {
+        $defaultExcludes = $this->getDefaultExcludePatterns();
+
+        note(
+            "🚫 Patterns d'exclusion par défaut :\n".
+            collect($defaultExcludes)->map(fn ($pattern): string => '  • '.$pattern)->join("\n")
+        );
+
+        $customExcludes = [];
+        $addCustomExcludes = confirm('Voulez-vous ajouter des patterns d\'exclusion personnalisés ?', false);
+
+        if ($addCustomExcludes) {
+            note(
+                "💡 Exemples de patterns :\n".
+                "  • *.backup (fichiers de sauvegarde)\n".
+                "  • tests/ (dossier de tests)\n".
+                "  • legacy-* (fichiers legacy)\n".
+                '  • temp (dossiers temporaires)'
+            );
+
+            do {
+                $pattern = text(
+                    "Pattern d'exclusion",
+                    placeholder: 'ex: *.backup, tests/, legacy-*'
+                );
+
+                if ($pattern !== '' && $pattern !== '0') {
+                    $customExcludes[] = $pattern;
+                    info('✅ Ajouté: '.$pattern);
+                }
+
+                $continueAdding = $pattern && confirm('Ajouter un autre pattern ?', false);
+            } while ($continueAdding);
+        }
+
+        return array_merge($defaultExcludes, $customExcludes);
+    }
+
+    /**
      * Obtenir les chemins de scan par défaut
      */
     protected function getDefaultPaths(): array
@@ -409,6 +485,22 @@ class InstallFontAwesomeCommand extends Command
             'resources/sass',
             'public/css',
             'public/js',
+        ];
+    }
+
+    /**
+     * Obtenir les patterns d'exclusion par défaut
+     */
+    protected function getDefaultExcludePatterns(): array
+    {
+        return [
+            'node_modules',
+            'vendor',
+            '.git',
+            'storage',
+            'bootstrap/cache',
+            '*.min.js',
+            '*.min.css',
         ];
     }
 }
