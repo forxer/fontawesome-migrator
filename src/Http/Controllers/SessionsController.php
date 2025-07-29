@@ -19,7 +19,7 @@ class SessionsController extends Controller
     {
         $sessions = MetadataManager::getAvailableSessions();
         $stats = $this->getSessionStats($sessions);
-        
+
         return view('fontawesome-migrator::sessions.index', [
             'sessions' => $sessions,
             'stats' => $stats,
@@ -32,21 +32,22 @@ class SessionsController extends Controller
     public function show(string $sessionId)
     {
         $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
-        $sessionDir = $baseBackupDir . '/session-' . $sessionId;
-        
-        if (!File::exists($sessionDir)) {
+        $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+
+        if (! File::exists($sessionDir)) {
             abort(404, 'Session non trouvée');
         }
-        
-        $metadataPath = $sessionDir . '/metadata.json';
+
+        $metadataPath = $sessionDir.'/metadata.json';
         $metadata = [];
+
         if (File::exists($metadataPath)) {
             $metadata = json_decode(File::get($metadataPath), true);
         }
-        
+
         $files = File::files($sessionDir);
         $backupFiles = [];
-        
+
         foreach ($files as $file) {
             if ($file->getFilename() !== 'metadata.json' && $file->getFilename() !== '.gitignore') {
                 $backupFiles[] = [
@@ -56,7 +57,7 @@ class SessionsController extends Controller
                 ];
             }
         }
-        
+
         return view('fontawesome-migrator::sessions.show', [
             'sessionId' => $sessionId,
             'sessionDir' => $sessionDir,
@@ -71,16 +72,16 @@ class SessionsController extends Controller
     public function destroy(string $sessionId)
     {
         $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
-        $sessionDir = $baseBackupDir . '/session-' . $sessionId;
-        
-        if (!File::exists($sessionDir)) {
+        $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+
+        if (! File::exists($sessionDir)) {
             return response()->json(['error' => 'Session non trouvée'], 404);
         }
-        
+
         if (File::deleteDirectory($sessionDir)) {
             return response()->json(['message' => 'Session supprimée avec succès']);
         }
-        
+
         return response()->json(['error' => 'Erreur lors de la suppression'], 500);
     }
 
@@ -91,7 +92,7 @@ class SessionsController extends Controller
     {
         $days = $request->input('days', 30);
         $deleted = MetadataManager::cleanOldSessions($days);
-        
+
         return response()->json([
             'message' => 'Nettoyage des sessions terminé',
             'deleted' => $deleted,
@@ -106,19 +107,20 @@ class SessionsController extends Controller
     {
         $totalBackups = 0;
         $totalSize = 0;
-        
+
         foreach ($sessions as $session) {
             $totalBackups += $session['backup_count'];
-            
+
             // Calculer la taille totale des fichiers
             $files = File::files($session['directory']);
+
             foreach ($files as $file) {
                 $totalSize += $file->getSize();
             }
         }
-        
+
         return [
-            'total_sessions' => count($sessions),
+            'total_sessions' => \count($sessions),
             'total_backups' => $totalBackups,
             'total_size' => $totalSize,
             'last_session' => $sessions[0] ?? null,

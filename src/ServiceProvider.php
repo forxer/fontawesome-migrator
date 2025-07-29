@@ -59,6 +59,6 @@ class ServiceProvider extends BaseServiceProvider
         Route::middleware(['web'])
             ->prefix('fontawesome-migrator')
             ->name('fontawesome-migrator.')
-            ->group(__DIR__ . '/Http/routes/web.php');
+            ->group(__DIR__.'/../routes/web.php');
     }
 }

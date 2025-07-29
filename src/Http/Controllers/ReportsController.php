@@ -22,14 +22,14 @@ class ReportsController extends Controller
         foreach ($sessions as $session) {
             $sessionDir = $session['directory'];
             $sessionId = $session['session_id'];
-            
+
             // Chercher les fichiers HTML de rapport dans la session
             $files = File::files($sessionDir);
-            
+
             foreach ($files as $file) {
                 if ($file->getExtension() === 'html' && $file->getFilename() !== 'metadata.json') {
                     $jsonPath = str_replace('.html', '.json', $file->getRealPath());
-                    
+
                     $reports[] = [
                         'name' => $file->getFilenameWithoutExtension(),
                         'filename' => $file->getFilename(),
@@ -58,16 +58,17 @@ class ReportsController extends Controller
         // Chercher le fichier dans toutes les sessions
         $sessions = MetadataManager::getAvailableSessions();
         $filePath = null;
-        
+
         foreach ($sessions as $session) {
-            $possiblePath = $session['directory'] . '/' . $filename;
+            $possiblePath = $session['directory'].'/'.$filename;
+
             if (File::exists($possiblePath)) {
                 $filePath = $possiblePath;
                 break;
             }
         }
 
-        if (!$filePath) {
+        if (! $filePath) {
             abort(404, 'Rapport non trouvé');
         }
 
@@ -138,16 +139,17 @@ class ReportsController extends Controller
         // Chercher le fichier dans toutes les sessions
         $sessions = MetadataManager::getAvailableSessions();
         $htmlPath = null;
-        
+
         foreach ($sessions as $session) {
-            $possiblePath = $session['directory'] . '/' . $filename;
+            $possiblePath = $session['directory'].'/'.$filename;
+
             if (File::exists($possiblePath)) {
                 $htmlPath = $possiblePath;
                 break;
             }
         }
 
-        if (!$htmlPath) {
+        if (! $htmlPath) {
             return response()->json(['error' => 'Rapport non trouvé'], 404);
         }
 
@@ -178,15 +180,15 @@ class ReportsController extends Controller
 
         // Parcourir toutes les sessions
         $sessions = MetadataManager::getAvailableSessions();
-        
+
         foreach ($sessions as $session) {
             $sessionDir = $session['directory'];
             $files = File::files($sessionDir);
-            
+
             foreach ($files as $file) {
                 // Ne supprimer que les fichiers de rapport (HTML/JSON), pas les métadonnées
-                if (in_array($file->getExtension(), ['html', 'json']) && 
-                    $file->getFilename() !== 'metadata.json' && 
+                if (\in_array($file->getExtension(), ['html', 'json']) &&
+                    $file->getFilename() !== 'metadata.json' &&
                     $file->getMTime() < $cutoffTime) {
                     File::delete($file->getRealPath());
                     $deleted++;
@@ -200,5 +202,4 @@ class ReportsController extends Controller
             'days' => $days,
         ]);
     }
-
 }

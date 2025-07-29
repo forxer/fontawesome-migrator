@@ -20,7 +20,7 @@ class TestController extends Controller
     {
         $sessions = MetadataManager::getAvailableSessions();
         $backupStats = $this->getBackupStats();
-        
+
         return view('fontawesome-migrator::test.panel', [
             'sessions' => $sessions,
             'backupStats' => $backupStats,
@@ -33,10 +33,10 @@ class TestController extends Controller
     public function runMigration(Request $request)
     {
         $type = $request->input('type', 'dry-run');
-        
+
         try {
             $exitCode = 0;
-            
+
             switch ($type) {
                 case 'dry-run':
                     $exitCode = Artisan::call('fontawesome:migrate', [
@@ -45,14 +45,14 @@ class TestController extends Controller
                         '--no-interactive' => true,
                     ]);
                     break;
-                    
+
                 case 'real':
                     $exitCode = Artisan::call('fontawesome:migrate', [
                         '--report' => true,
                         '--no-interactive' => true,
                     ]);
                     break;
-                    
+
                 case 'icons-only':
                     $exitCode = Artisan::call('fontawesome:migrate', [
                         '--icons-only' => true,
@@ -61,7 +61,7 @@ class TestController extends Controller
                         '--no-interactive' => true,
                     ]);
                     break;
-                    
+
                 case 'assets-only':
                     $exitCode = Artisan::call('fontawesome:migrate', [
                         '--assets-only' => true,
@@ -71,9 +71,9 @@ class TestController extends Controller
                     ]);
                     break;
             }
-            
+
             $output = Artisan::output();
-            
+
             return response()->json([
                 'success' => $exitCode === 0,
                 'exit_code' => $exitCode,
@@ -82,7 +82,7 @@ class TestController extends Controller
                 'sessions' => MetadataManager::getAvailableSessions(),
                 'timestamp' => date('Y-m-d H:i:s'),
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -99,21 +99,22 @@ class TestController extends Controller
     public function inspectSession(string $sessionId)
     {
         $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
-        $sessionDir = $baseBackupDir . '/session-' . $sessionId;
-        
-        if (!File::exists($sessionDir)) {
+        $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+
+        if (! File::exists($sessionDir)) {
             return response()->json(['error' => 'Session non trouvée'], 404);
         }
-        
-        $metadataPath = $sessionDir . '/metadata.json';
+
+        $metadataPath = $sessionDir.'/metadata.json';
         $metadata = [];
+
         if (File::exists($metadataPath)) {
             $metadata = json_decode(File::get($metadataPath), true);
         }
-        
+
         $files = File::files($sessionDir);
         $backupFiles = [];
-        
+
         foreach ($files as $file) {
             if ($file->getFilename() !== 'metadata.json' && $file->getFilename() !== '.gitignore') {
                 $backupFiles[] = [
@@ -123,13 +124,13 @@ class TestController extends Controller
                 ];
             }
         }
-        
+
         return response()->json([
             'session_id' => $sessionId,
             'session_dir' => $sessionDir,
             'metadata' => $metadata,
             'backup_files' => $backupFiles,
-            'files_count' => count($backupFiles),
+            'files_count' => \count($backupFiles),
         ]);
     }
 
@@ -140,7 +141,7 @@ class TestController extends Controller
     {
         $days = $request->input('days', 7);
         $deleted = MetadataManager::cleanOldSessions($days);
-        
+
         return response()->json([
             'message' => 'Nettoyage des sessions terminé',
             'deleted' => $deleted,
@@ -154,8 +155,8 @@ class TestController extends Controller
     protected function getBackupStats(): array
     {
         $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
-        
-        if (!File::exists($baseBackupDir)) {
+
+        if (! File::exists($baseBackupDir)) {
             return [
                 'total_sessions' => 0,
                 'total_backups' => 0,
@@ -163,23 +164,24 @@ class TestController extends Controller
                 'last_session' => null,
             ];
         }
-        
+
         $sessions = MetadataManager::getAvailableSessions();
         $totalBackups = 0;
         $totalSize = 0;
-        
+
         foreach ($sessions as $session) {
             $totalBackups += $session['backup_count'];
-            
+
             // Calculer la taille totale des fichiers
             $files = File::files($session['directory']);
+
             foreach ($files as $file) {
                 $totalSize += $file->getSize();
             }
         }
-        
+
         return [
-            'total_sessions' => count($sessions),
+            'total_sessions' => \count($sessions),
             'total_backups' => $totalBackups,
             'total_size' => $totalSize,
             'last_session' => $sessions[0] ?? null,
