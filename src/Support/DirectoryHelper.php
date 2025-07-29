@@ -4,26 +4,22 @@ namespace FontAwesome\Migrator\Support;
 
 use Illuminate\Support\Facades\File;
 
-class GitignoreHelper
+class DirectoryHelper
 {
     /**
-     * S'assurer qu'un répertoire existe avec son .gitignore
+     * S'assurer qu'un répertoire existe
      */
-    public static function ensureDirectoryWithGitignore(string $directory): void
+    public static function ensureExists(string $directory): void
     {
-        // Créer le répertoire s'il n'existe pas
         if (! File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
-
-        // S'assurer que le .gitignore existe
-        self::ensureExists($directory);
     }
 
     /**
      * S'assurer qu'un fichier .gitignore existe dans le répertoire
      */
-    public static function ensureExists(string $directory): void
+    public static function ensureGitignoreExists(string $directory): void
     {
         $gitignorePath = $directory.'/.gitignore';
 
@@ -35,5 +31,14 @@ class GitignoreHelper
 
             File::put($gitignorePath, $content);
         }
+    }
+
+    /**
+     * S'assurer qu'un répertoire existe avec son .gitignore
+     */
+    public static function ensureExistsWithGitignore(string $directory): void
+    {
+        self::ensureExists($directory);
+        self::ensureGitignoreExists($directory);
     }
 }

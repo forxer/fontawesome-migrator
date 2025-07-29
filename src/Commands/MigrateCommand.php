@@ -6,7 +6,7 @@ use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MigrationReporter;
-use FontAwesome\Migrator\Support\GitignoreHelper;
+use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\confirm;
@@ -549,7 +549,7 @@ class MigrateCommand extends Command
         $backupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
 
         // S'assurer que le répertoire et le .gitignore existent
-        GitignoreHelper::ensureDirectoryWithGitignore($backupDir);
+        DirectoryHelper::ensureExistsWithGitignore($backupDir);
 
         $timestamp = date('Y-m-d_H-i-s');
         $relativePath = str_replace(base_path().'/', '', $filePath);

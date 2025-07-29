@@ -3,7 +3,7 @@
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
-use FontAwesome\Migrator\Support\GitignoreHelper;
+use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Support\Facades\File;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -240,7 +240,7 @@ class IconReplacer
         $backupDir = $this->config['backup_path'];
 
         // S'assurer que le répertoire et le .gitignore existent
-        GitignoreHelper::ensureDirectoryWithGitignore($backupDir);
+        DirectoryHelper::ensureExistsWithGitignore($backupDir);
 
         $relativePath = str_replace(base_path().'/', '', $filePath);
         $timestamp = date('Y-m-d_H-i-s');
