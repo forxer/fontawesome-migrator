@@ -101,7 +101,7 @@ class MetadataManager
         $this->metadata['runtime']['completed_at'] = date('c');
 
         if ($this->metadata['runtime']['started_at']) {
-            $start = strtotime($this->metadata['runtime']['started_at']);
+            $start = strtotime((string) $this->metadata['runtime']['started_at']);
             $end = strtotime($this->metadata['runtime']['completed_at']);
             $this->metadata['runtime']['duration'] = $end - $start;
         }
@@ -183,7 +183,7 @@ class MetadataManager
      */
     public function saveToFile(?string $filePath = null): string
     {
-        if (! $filePath) {
+        if ($filePath === null || $filePath === '' || $filePath === '0') {
             // Déterminer le répertoire de session pour les métadonnées
             $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
             $sessionId = $this->metadata['session']['id'] ?? 'unknown';
@@ -252,7 +252,7 @@ class MetadataManager
 
         foreach ($requiredSections as $section) {
             if (! isset($this->metadata[$section])) {
-                $errors[] = "Section manquante: {$section}";
+                $errors[] = 'Section manquante: '.$section;
             }
         }
 
@@ -262,7 +262,7 @@ class MetadataManager
 
             foreach ($requiredFields as $field) {
                 if (! isset($this->metadata['session'][$field])) {
-                    $errors[] = "Champ manquant dans session: {$field}";
+                    $errors[] = 'Champ manquant dans session: '.$field;
                 }
             }
         }
@@ -342,7 +342,7 @@ class MetadataManager
 
         foreach ($directories as $directory) {
             // Vérifier si c'est un répertoire de session
-            if (! preg_match('/\/session-/', $directory)) {
+            if (\in_array(preg_match('/\/session-/', (string) $directory), [0, false], true)) {
                 continue;
             }
 
@@ -375,7 +375,7 @@ class MetadataManager
         $directories = File::directories($baseBackupDir);
 
         foreach ($directories as $directory) {
-            if (! preg_match('/\/session-(.+)$/', $directory, $matches)) {
+            if (\in_array(preg_match('/\/session-(.+)$/', (string) $directory, $matches), [0, false], true)) {
                 continue;
             }
 
@@ -405,7 +405,7 @@ class MetadataManager
         }
 
         // Trier par date de création décroissante
-        usort($sessions, fn ($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
+        usort($sessions, fn ($a, $b): int => strtotime((string) $b['created_at']) - strtotime((string) $a['created_at']));
 
         return $sessions;
     }

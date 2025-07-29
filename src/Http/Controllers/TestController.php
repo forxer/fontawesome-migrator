@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Http\Controllers;
 
+use Exception;
 use FontAwesome\Migrator\Services\MetadataManager;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -83,10 +84,10 @@ class TestController extends Controller
                 'timestamp' => date('Y-m-d H:i:s'),
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => $exception->getMessage(),
                 'type' => $type,
                 'timestamp' => date('Y-m-d H:i:s'),
             ], 500);

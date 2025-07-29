@@ -68,7 +68,7 @@ class ReportsController extends Controller
             }
         }
 
-        if (! $filePath) {
+        if ($filePath === null || $filePath === '' || $filePath === '0') {
             abort(404, 'Rapport non trouvé');
         }
 
@@ -149,7 +149,7 @@ class ReportsController extends Controller
             }
         }
 
-        if (! $htmlPath) {
+        if ($htmlPath === null || $htmlPath === '' || $htmlPath === '0') {
             return response()->json(['error' => 'Rapport non trouvé'], 404);
         }
 

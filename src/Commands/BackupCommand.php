@@ -229,8 +229,8 @@ class BackupCommand extends Command
             'Sélectionnez le fichier à restaurer',
             fn ($value): array => array_filter(
                 $fileOptions,
-                fn ($label, $file): bool => str_contains(strtolower((string) $file), strtolower((string) $value)) ||
-                                      str_contains(strtolower((string) $label), strtolower((string) $value)),
+                fn ($label, $file): bool => str_contains(strtolower((string) $file), strtolower($value)) ||
+                                      str_contains(strtolower($label), strtolower($value)),
                 ARRAY_FILTER_USE_BOTH
             )
         );
@@ -412,6 +412,7 @@ class BackupCommand extends Command
             if (! str_contains((string) $file->getFilename(), '.backup.')) {
                 continue;
             }
+
             $filepath = $file->getRealPath();
             $filename = $file->getFilename();
 
@@ -431,7 +432,7 @@ class BackupCommand extends Command
         }
 
         // Trier par date de création décroissante
-        usort($backups, fn ($a, $b): int => strcmp((string) $b['timestamp'], (string) $a['timestamp']));
+        usort($backups, fn ($a, $b): int => strcmp($b['timestamp'], $a['timestamp']));
 
         return $backups;
     }
