@@ -1,6 +1,31 @@
 CHANGELOG
 =========
 
+1.6.0 (2025-07-XX)
+------------------
+
+### Added
+- **Backup Tracking**: Suivi des sauvegardes créées pendant la migration
+- **Enhanced Reports**: Affichage des sauvegardes dans les rapports HTML/JSON avec détails complets
+- **Backup Section**: Nouvelle section dédiée dans les rapports avec navigation
+- **Storage Protection**: Création automatique de fichiers `.gitignore` dans les répertoires de storage
+- **Backup Statistics**: Compteur de sauvegardes dans le résumé de configuration
+- **Backup Details Display**: Affichage du nom, date, taille et chemin de chaque sauvegarde
+
+### Enhanced
+- **Migration Traceability**: Traçabilité complète des fichiers sauvegardés
+- **Report Completeness**: Rapports enrichis avec informations de sauvegarde
+- **Git Safety**: Protection automatique contre le versioning des fichiers générés
+- **User Experience**: Interface utilisateur enrichie avec guidance pour exploitation des sauvegardes
+
+### Technical
+- **GitignoreHelper**: Classe utilitaire mutualisée pour création de `.gitignore`
+- **Backup Data Structure**: Structure de données unifiée pour les informations de sauvegarde
+- **Reporter Enhancement**: Extension du `MigrationReporter` avec support des sauvegardes
+- **Command Architecture**: Collecte et transmission des données de sauvegarde entre services
+- **CSS Styling**: Nouveaux styles pour la section des sauvegardes avec design responsive
+
+
 1.5.0 (2025-07-29)
 ------------------
 

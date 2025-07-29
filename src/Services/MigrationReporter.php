@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use FontAwesome\Migrator\Support\GitignoreHelper;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -45,9 +46,8 @@ class MigrationReporter
     {
         $reportPath = $this->config['report_path'];
 
-        if (! File::exists($reportPath)) {
-            File::makeDirectory($reportPath, 0755, true);
-        }
+        // S'assurer que le répertoire et le .gitignore existent
+        GitignoreHelper::ensureDirectoryWithGitignore($reportPath);
 
         $timestamp = date('Y-m-d_H-i-s');
         $filename = \sprintf('fontawesome-migration-report-%s.html', $timestamp);

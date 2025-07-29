@@ -6,6 +6,7 @@ use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MigrationReporter;
+use FontAwesome\Migrator\Support\GitignoreHelper;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\confirm;
@@ -19,6 +20,11 @@ use function Laravel\Prompts\warning;
 
 class MigrateCommand extends Command
 {
+    /**
+     * Liste des sauvegardes créées pendant la migration
+     */
+    protected array $createdBackups = [];
+
     /**
      * The name and signature of the console command.
      */
@@ -219,6 +225,9 @@ class MigrateCommand extends Command
             $this->info('🔍 Recherche des icônes Font Awesome 5...');
             $iconResults = $this->replacer->processFiles($files, $isDryRun);
             $results = $iconResults;
+
+            // Collecter les sauvegardes créées par IconReplacer
+            $this->collectBackupsFromResults($iconResults);
         }
 
         if ($migrateAssets) {
@@ -249,6 +258,8 @@ class MigrateCommand extends Command
                 'backup' => $this->option('backup'),
                 'no_backup' => $this->option('no-backup'),
                 'report' => $this->option('report'),
+                'created_backups' => $this->createdBackups,
+                'backups_count' => \count($this->createdBackups),
             ];
 
             $reportInfo = $this->reporter
@@ -537,14 +548,35 @@ class MigrateCommand extends Command
     {
         $backupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
 
-        if (! is_dir($backupDir)) {
-            mkdir($backupDir, 0755, true);
-        }
+        // S'assurer que le répertoire et le .gitignore existent
+        GitignoreHelper::ensureDirectoryWithGitignore($backupDir);
 
         $timestamp = date('Y-m-d_H-i-s');
         $relativePath = str_replace(base_path().'/', '', $filePath);
         $backupPath = $backupDir.'/'.$timestamp.'_'.str_replace('/', '_', $relativePath);
 
         copy($filePath, $backupPath);
+
+        // Enregistrer la sauvegarde créée
+        $this->createdBackups[] = [
+            'original_file' => $filePath,
+            'relative_path' => $relativePath,
+            'backup_path' => $backupPath,
+            'timestamp' => $timestamp,
+            'created_at' => date('Y-m-d H:i:s'),
+            'size' => filesize($backupPath),
+        ];
+    }
+
+    /**
+     * Collecter les sauvegardes depuis les résultats de migration
+     */
+    protected function collectBackupsFromResults(array $results): void
+    {
+        foreach ($results as $result) {
+            if (isset($result['backup']) && $result['backup'] !== null) {
+                $this->createdBackups[] = $result['backup'];
+            }
+        }
     }
 }

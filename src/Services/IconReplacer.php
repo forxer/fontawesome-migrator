@@ -3,6 +3,7 @@
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
+use FontAwesome\Migrator\Support\GitignoreHelper;
 use Illuminate\Support\Facades\File;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -102,9 +103,12 @@ class IconReplacer
                 }
             }
 
+            $backupInfo = null;
+
             // Sauvegarder le fichier si ce n'est pas un dry-run
             if (! $isDryRun && $changes !== []) {
-                $this->saveFile($filePath, $modifiedContent);
+                $saveResult = $this->saveFile($filePath, $modifiedContent);
+                $backupInfo = $saveResult['backup'];
             }
 
             return [
@@ -112,6 +116,7 @@ class IconReplacer
                 'changes' => $changes,
                 'warnings' => $warnings,
                 'content' => $modifiedContent,
+                'backup' => $backupInfo,
             ];
         } catch (Exception $exception) {
             return [
@@ -119,6 +124,7 @@ class IconReplacer
                 'error' => $exception->getMessage(),
                 'changes' => [],
                 'warnings' => [],
+                'backup' => null,
             ];
         }
     }
@@ -205,29 +211,40 @@ class IconReplacer
     /**
      * Sauvegarder un fichier avec sauvegarde optionnelle
      */
-    protected function saveFile(string $filePath, string $content): bool
+    protected function saveFile(string $filePath, string $content): array
     {
+        $backupInfo = null;
+
         // Créer une sauvegarde si configuré
         if ($this->config['backup_files']) {
-            $this->createBackup($filePath);
+            $backupResult = $this->createBackup($filePath);
+
+            if (\is_array($backupResult)) {
+                $backupInfo = $backupResult;
+            }
         }
 
-        return File::put($filePath, $content) !== false;
+        $success = File::put($filePath, $content) !== false;
+
+        return [
+            'success' => $success,
+            'backup' => $backupInfo,
+        ];
     }
 
     /**
      * Créer une sauvegarde d'un fichier
      */
-    protected function createBackup(string $filePath): bool
+    protected function createBackup(string $filePath): array|bool
     {
         $backupDir = $this->config['backup_path'];
 
-        if (! File::exists($backupDir)) {
-            File::makeDirectory($backupDir, 0755, true);
-        }
+        // S'assurer que le répertoire et le .gitignore existent
+        GitignoreHelper::ensureDirectoryWithGitignore($backupDir);
 
         $relativePath = str_replace(base_path().'/', '', $filePath);
-        $backupPath = $backupDir.'/'.$relativePath.'.backup.'.date('Y-m-d_H-i-s');
+        $timestamp = date('Y-m-d_H-i-s');
+        $backupPath = $backupDir.'/'.$relativePath.'.backup.'.$timestamp;
 
         // Créer les dossiers nécessaires
         $backupDirectory = \dirname($backupPath);
@@ -236,7 +253,20 @@ class IconReplacer
             File::makeDirectory($backupDirectory, 0755, true);
         }
 
-        return File::copy($filePath, $backupPath);
+        $success = File::copy($filePath, $backupPath);
+
+        if ($success) {
+            return [
+                'original_file' => $filePath,
+                'relative_path' => $relativePath,
+                'backup_path' => $backupPath,
+                'timestamp' => $timestamp,
+                'created_at' => date('Y-m-d H:i:s'),
+                'size' => File::size($backupPath),
+            ];
+        }
+
+        return false;
     }
 
     /**

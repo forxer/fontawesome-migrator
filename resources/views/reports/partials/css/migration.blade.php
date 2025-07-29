@@ -387,4 +387,84 @@
             grid-template-columns: 1fr;
         }
     }
+
+    /* Section des sauvegardes */
+    .backups-list {
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin-top: 15px;
+    }
+
+    .backup-item {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        padding: 15px;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .backup-item:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.1);
+    }
+
+    .backup-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .backup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .backup-file {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 14px;
+    }
+
+    .backup-date {
+        color: var(--gray-600);
+        font-size: 12px;
+        background: var(--gray-100);
+        padding: 4px 8px;
+        border-radius: var(--radius-sm);
+    }
+
+    .backup-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--gray-600);
+    }
+
+    .backup-size {
+        color: var(--success-color);
+        font-weight: 500;
+    }
+
+    .backup-path {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        background: var(--gray-100);
+        padding: 2px 6px;
+        border-radius: var(--radius-sm);
+    }
+
+    @media (max-width: 768px) {
+        .backup-header, .backup-details {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .backup-date, .backup-path {
+            align-self: flex-end;
+        }
+    }
 </style>

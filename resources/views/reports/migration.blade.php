@@ -56,6 +56,14 @@
                     Configuration
                 </a>
             </li>
+            @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
+            <li class="toc-item">
+                <a href="#backups-section" class="toc-link">
+                    <span class="toc-icon">💾</span>
+                    Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})
+                </a>
+            </li>
+            @endif
             <li class="toc-item">
                 <a href="#info-section" class="toc-link">
                     <span class="toc-icon">ℹ️</span>
@@ -341,6 +349,13 @@
                             {{ ($configuration['backup_enabled'] ?? true) ? 'Activée' : 'Désactivée' }}
                         @endif
                     </td></tr>
+                    @if (isset($migrationOptions['backups_count']) && $migrationOptions['backups_count'] > 0)
+                    <tr><td><strong>Sauvegardes créées</strong></td><td>
+                        <span style="color: var(--success-color); font-weight: bold;">
+                            {{ number_format($migrationOptions['backups_count'], 0, ',', ' ') }} fichier(s) sauvegardé(s)
+                        </span>
+                    </td></tr>
+                    @endif
                 </table>
             </div>
 
@@ -370,6 +385,34 @@
             </div>
         </div>
     </div>
+
+    @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
+    <!-- Section des sauvegardes créées -->
+    <div id="backups-section" class="section enhanced-section">
+        <h2>💾 Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})</h2>
+        <p>Liste des fichiers sauvegardés avant modification :</p>
+        
+        <div class="backups-list">
+            @foreach ($migrationOptions['created_backups'] as $backup)
+            <div class="backup-item">
+                <div class="backup-header">
+                    <span class="backup-file">📄 {{ $backup['relative_path'] }}</span>
+                    <span class="backup-date">{{ $backup['created_at'] }}</span>
+                </div>
+                <div class="backup-details">
+                    <span class="backup-size">Taille: {{ number_format($backup['size']/1024, 1, ',', ' ') }} Ko</span>
+                    <span class="backup-path">Sauvegarde: {{ basename($backup['backup_path']) }}</span>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        <div class="alert alert-info" style="margin-top: 20px;">
+            💡 <strong>Note :</strong> Ces sauvegardes peuvent être utilisées pour restaurer les fichiers originaux en cas de besoin.
+            Utilisez la commande <code>php artisan fontawesome:backup</code> pour gérer les sauvegardes.
+        </div>
+    </div>
+    @endif
 
     <!-- Informations de fin -->
     <div id="info-section" class="section">
