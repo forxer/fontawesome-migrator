@@ -10,33 +10,10 @@ class MigrationReporter
 {
     protected array $config;
 
-    protected bool $isDryRun = false;
-
-    protected array $migrationOptions = [];
-
-    public function __construct()
-    {
+    public function __construct(
+        protected MetadataManager $metadata
+    ) {
         $this->config = config('fontawesome-migrator');
-    }
-
-    /**
-     * Définir le mode dry-run
-     */
-    public function setDryRun(bool $isDryRun): self
-    {
-        $this->isDryRun = $isDryRun;
-
-        return $this;
-    }
-
-    /**
-     * Définir les options de migration utilisées
-     */
-    public function setMigrationOptions(array $options): self
-    {
-        $this->migrationOptions = $options;
-
-        return $this;
     }
 
     /**
@@ -82,22 +59,24 @@ class MigrationReporter
     protected function generateHtmlReport(array $results): string
     {
         $stats = $this->calculateStats($results);
-        $timestamp = date('Y-m-d H:i:s');
+        $metadataForReport = $this->metadata->getForReport();
+
+        // Préparer les options avec les sauvegardes pour compatibilité avec la vue
+        $migrationOptions = $metadataForReport['meta']['migration_options'] ?? [];
+        $migrationOptions['created_backups'] = $metadataForReport['backups']['created'] ?? [];
+        $migrationOptions['backups_count'] = $metadataForReport['backups']['count'] ?? 0;
 
         // Préparer les données pour la vue
         $viewData = [
             'results' => $results,
             'stats' => $stats,
-            'timestamp' => $timestamp,
-            'isDryRun' => $this->isDryRun ?? false,
-            'migrationOptions' => $this->migrationOptions,
-            'configuration' => [
-                'license_type' => $this->config['license_type'],
-                'scan_paths' => $this->config['scan_paths'] ?? [],
-                'file_extensions' => $this->config['file_extensions'] ?? [],
-                'backup_enabled' => $this->config['backup']['enabled'] ?? true,
-            ],
-            'packageVersion' => $this->getPackageVersion(),
+            'timestamp' => date('Y-m-d H:i:s'),
+            'isDryRun' => $metadataForReport['meta']['dry_run'] ?? false,
+            'migrationOptions' => $migrationOptions,
+            'configuration' => $metadataForReport['meta']['configuration'] ?? [],
+            'packageVersion' => $metadataForReport['meta']['package_version'] ?? '2.0.0-dev',
+            'backups' => $metadataForReport['backups'] ?? [],
+            'metadata' => $metadataForReport,
         ];
 
         return view('fontawesome-migrator::reports.migration', $viewData)->render();
@@ -109,20 +88,12 @@ class MigrationReporter
     protected function generateJsonReport(array $results): array
     {
         $stats = $this->calculateStats($results);
+        $metadataForReport = $this->metadata->getForReport();
 
         return [
-            'meta' => [
-                'generated_at' => date('c'),
-                'license_type' => $this->config['license_type'],
-                'package_version' => $this->getPackageVersion(),
-                'dry_run' => $this->isDryRun,
-                'migration_options' => $this->migrationOptions,
-                'configuration' => [
-                    'scan_paths' => $this->config['scan_paths'] ?? [],
-                    'file_extensions' => $this->config['file_extensions'] ?? [],
-                    'backup_enabled' => $this->config['backup']['enabled'] ?? true,
-                ],
-            ],
+            'meta' => $metadataForReport['meta'],
+            'backups' => $metadataForReport['backups'],
+            'statistics' => $metadataForReport['statistics'],
             'summary' => $stats,
             'files' => array_map(fn ($result): array => [
                 'file' => $result['file'],
@@ -371,26 +342,5 @@ class MigrationReporter
         }
 
         return $deleted;
-    }
-
-    /**
-     * Obtenir la version du package depuis le CHANGELOG.md
-     */
-    protected function getPackageVersion(): string
-    {
-        $changelogPath = __DIR__.'/../../CHANGELOG.md';
-
-        if (file_exists($changelogPath)) {
-            $content = file_get_contents($changelogPath);
-
-            // Chercher le premier titre de niveau 2 : format ## ou souligné avec ---
-            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) ||
-                preg_match('/^## (\d+\.\d+\.\d+)/m', $content, $matches)) {
-                return $matches[1];
-            }
-        }
-
-        // Fallback version
-        return '?';
     }
 }

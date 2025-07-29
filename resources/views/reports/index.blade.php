@@ -42,6 +42,10 @@
     @endif
 
     <div class="actions">
+        <a href="{{ route('fontawesome-migrator.test.panel') }}" class="btn btn-secondary">
+            🧪 Panneau de Tests
+        </a>
+        
         <button onclick="refreshReports()" class="btn btn-primary">
             <span id="refresh-icon">🔄</span> Actualiser les rapports
         </button>

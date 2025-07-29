@@ -43,15 +43,13 @@ class ServiceProvider extends BaseServiceProvider
         // Enregistrer les routes web
         $this->registerRoutes();
 
-        // Enregistrer les commandes
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                BackupCommand::class,
-                ConfigureCommand::class,
-                InstallCommand::class,
-                MigrateCommand::class,
-            ]);
-        }
+        // Enregistrer les commandes (toujours disponibles pour Artisan::call)
+        $this->commands([
+            BackupCommand::class,
+            ConfigureCommand::class,
+            InstallCommand::class,
+            MigrateCommand::class,
+        ]);
     }
 
     /**
@@ -73,6 +71,19 @@ class ServiceProvider extends BaseServiceProvider
 
                 Route::post('/reports/cleanup', [ReportsController::class, 'cleanup'])
                     ->name('fontawesome-migrator.reports.cleanup');
+
+                // Routes de test pour déboguer
+                Route::get('/test-panel', [ReportsController::class, 'testPanel'])
+                    ->name('fontawesome-migrator.test.panel');
+
+                Route::post('/test/migration', [ReportsController::class, 'testMigration'])
+                    ->name('fontawesome-migrator.test.migration');
+
+                Route::get('/test/session/{sessionId}', [ReportsController::class, 'inspectSession'])
+                    ->name('fontawesome-migrator.test.session');
+
+                Route::post('/test/cleanup-sessions', [ReportsController::class, 'cleanupSessions'])
+                    ->name('fontawesome-migrator.test.cleanup');
             });
     }
 }

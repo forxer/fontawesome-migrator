@@ -5,6 +5,7 @@ namespace FontAwesome\Migrator\Commands;
 use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\IconReplacer;
+use FontAwesome\Migrator\Services\MetadataManager;
 use FontAwesome\Migrator\Services\MigrationReporter;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Console\Command;
@@ -25,6 +26,16 @@ class MigrateCommand extends Command
      */
     protected array $createdBackups = [];
 
+    protected FileScanner $scanner;
+
+    protected IconReplacer $replacer;
+
+    protected MigrationReporter $reporter;
+
+    protected AssetMigrator $assetMigrator;
+
+    protected MetadataManager $metadata;
+
     /**
      * The name and signature of the console command.
      */
@@ -43,20 +54,26 @@ class MigrateCommand extends Command
      */
     protected $description = 'Migrer Font Awesome 5 vers Font Awesome 6 (icônes et assets) dans votre application Laravel';
 
-    public function __construct(
-        protected FileScanner $scanner,
-        protected IconReplacer $replacer,
-        protected MigrationReporter $reporter,
-        protected AssetMigrator $assetMigrator,
-    ) {
-        parent::__construct();
-    }
-
     /**
      * Execute the console command.
      */
-    public function handle(): int
-    {
+    public function handle(
+        FileScanner $scanner,
+        IconReplacer $replacer,
+        MigrationReporter $reporter,
+        AssetMigrator $assetMigrator,
+        MetadataManager $metadata
+    ): int {
+        // Assigner les services aux propriétés de classe
+        $this->scanner = $scanner;
+        $this->replacer = $replacer;
+        $this->reporter = $reporter;
+        $this->assetMigrator = $assetMigrator;
+        $this->metadata = $metadata;
+
+        // Initialiser les métadonnées
+        $this->metadata->initialize();
+
         // Mode interactif par défaut, sauf si --no-interactive est spécifié
         if (! $this->option('no-interactive')) {
             return $this->handleInteractive();
@@ -183,6 +200,17 @@ class MigrateCommand extends Command
         $migrateIcons = ! $assetsOnly;
         $migrateAssets = ! $iconsOnly;
 
+        // Configurer les métadonnées avec les options analysées
+        $this->metadata
+            ->setMigrationOptions($options)
+            ->setDryRun($isDryRun)
+            ->addCustomData('migration_scope', [
+                'migrate_icons' => $migrateIcons,
+                'migrate_assets' => $migrateAssets,
+                'custom_path' => $customPath,
+            ])
+            ->startMigration();
+
         if ($isDryRun) {
             $this->warn('Mode DRY-RUN activé - Aucune modification ne sera appliquée');
         }
@@ -245,27 +273,31 @@ class MigrateCommand extends Command
         // Afficher les résultats
         $this->displayResults($results, $isDryRun);
 
+        // Finaliser les métadonnées avec les statistiques
+        $totalFiles = \count($results);
+        $modifiedFiles = collect($results)->filter(fn ($result): bool => ! empty($result['changes']))->count();
+        $totalChanges = collect($results)->sum(fn ($result): int => \count($result['changes']));
+        $totalWarnings = collect($results)->sum(fn ($result): int => \count($result['warnings'] ?? []));
+
+        $this->metadata
+            ->updateStatistics([
+                'files_scanned' => $totalFiles,
+                'files_modified' => $modifiedFiles,
+                'changes_made' => $totalChanges,
+                'warnings_generated' => $totalWarnings,
+            ])
+            ->completeMigration();
+
+        // Sauvegarder les métadonnées dans le répertoire de session
+        $this->metadata->saveToFile();
+        $sessionDir = $this->metadata->getSessionDirectory();
+        $this->line('📋 Session sauvegardée : '.basename($sessionDir));
+
         // Générer le rapport si demandé
         if ($this->option('report') || config('fontawesome-migrator.generate_report')) {
-            // Préparer les options de migration pour le rapport
-            $migrationOptions = [
-                'dry_run' => $isDryRun,
-                'custom_path' => $customPath,
-                'icons_only' => $iconsOnly,
-                'assets_only' => $assetsOnly,
-                'migrate_icons' => $migrateIcons,
-                'migrate_assets' => $migrateAssets,
-                'backup' => $this->option('backup'),
-                'no_backup' => $this->option('no-backup'),
-                'report' => $this->option('report'),
-                'created_backups' => $this->createdBackups,
-                'backups_count' => \count($this->createdBackups),
-            ];
-
-            $reportInfo = $this->reporter
-                ->setDryRun($isDryRun)
-                ->setMigrationOptions($migrationOptions)
-                ->generateReport($results);
+            // Créer le reporter avec les bonnes métadonnées
+            $reporterWithMetadata = new MigrationReporter($this->metadata);
+            $reportInfo = $reporterWithMetadata->generateReport($results);
             $this->info('📊 Rapport généré :');
             $this->line('   • Fichier : '.$reportInfo['filename']);
             $this->line('   • HTML : '.$reportInfo['html_url']);
@@ -530,42 +562,53 @@ class MigrateCommand extends Command
      */
     protected function shouldCreateBackup(): bool
     {
+        $result = false;
+
         if ($this->option('backup')) {
-            return true;
+            $result = true;
+        } elseif ($this->option('no-backup')) {
+            $result = false;
+        } else {
+            $result = config('fontawesome-migrator.backup.enabled', true);
         }
 
-        if ($this->option('no-backup')) {
-            return false;
-        }
-
-        return config('fontawesome-migrator.backup.enabled', true);
+        return $result;
     }
 
     /**
-     * Créer une sauvegarde d'un fichier
+     * Créer une sauvegarde d'un fichier dans le répertoire de session
      */
     protected function createBackup(string $filePath): void
     {
-        $backupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
 
-        // S'assurer que le répertoire et le .gitignore existent
-        DirectoryHelper::ensureExistsWithGitignore($backupDir);
+        // Créer le répertoire de session basé sur l'ID de session des métadonnées
+        $sessionId = $this->metadata->get('session')['id'] ?? 'unknown';
+        $sessionDir = $baseBackupDir.'/session-'.$sessionId;
 
-        $timestamp = date('Y-m-d_H-i-s');
+        // S'assurer que le répertoire de session et le .gitignore existent
+        DirectoryHelper::ensureExistsWithGitignore($sessionDir);
+
         $relativePath = str_replace(base_path().'/', '', $filePath);
-        $backupPath = $backupDir.'/'.$timestamp.'_'.str_replace('/', '_', $relativePath);
+        $backupFilename = str_replace('/', '_', $relativePath);
+        $backupPath = $sessionDir.'/'.$backupFilename;
 
         copy($filePath, $backupPath);
 
         // Enregistrer la sauvegarde créée
-        $this->createdBackups[] = [
+        $backupInfo = [
             'original_file' => $filePath,
             'relative_path' => $relativePath,
             'backup_path' => $backupPath,
-            'timestamp' => $timestamp,
+            'backup_filename' => $backupFilename,
+            'session_dir' => $sessionDir,
+            'session_id' => $sessionId,
             'created_at' => date('Y-m-d H:i:s'),
             'size' => filesize($backupPath),
         ];
+
+        $this->createdBackups[] = $backupInfo;
+        $this->metadata->addBackup($backupInfo);
     }
 
     /**
@@ -576,6 +619,7 @@ class MigrateCommand extends Command
         foreach ($results as $result) {
             if (isset($result['backup']) && $result['backup'] !== null) {
                 $this->createdBackups[] = $result['backup'];
+                $this->metadata->addBackup($result['backup']);
             }
         }
     }

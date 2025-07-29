@@ -1,6 +1,42 @@
 CHANGELOG
 =========
 
+2.0.0 (2025-07-XX)
+------------------
+
+### Breaking Changes
+- **Command Architecture**: Suppression des constructors avec injection de dépendances dans les commandes Artisan
+- **Dependency Injection**: Migration vers l'injection de dépendances dans la méthode `handle()`
+- **Metadata Architecture**: Refonte complète de la gestion des métadonnées avec séparation du reporting
+- **MigrationReporter API**: Suppression des méthodes `setDryRun()` et `setMigrationOptions()` - remplacées par injection de `MetadataManager`
+
+### Added
+- **MetadataManager Service**: Nouveau service centralisé pour la gestion des métadonnées de migration
+- **Separated Metadata Files**: Sauvegarde automatique des métadonnées dans des fichiers JSON séparés
+- **Enhanced Metadata Structure**: Métadonnées enrichies avec session, environment, runtime, backups, statistics
+- **Real-time Data Collection**: Collecte des sauvegardes et statistiques en temps réel pendant la migration
+- **Metadata Persistence**: Sauvegarde automatique des métadonnées avec session ID unique
+
+### Changed
+- **MigrateCommand**: Services injectés via `handle(FileScanner, IconReplacer, MigrationReporter, AssetMigrator, MetadataManager)`
+- **BackupCommand**: Service IconReplacer injecté via `handle(IconReplacer)` et assigné à la propriété de classe
+- **MigrationReporter**: Constructor injection du `MetadataManager` pour consommer les métadonnées séparées
+- **Report Generation**: Rapports HTML/JSON enrichis avec métadonnées complètes (environment, session, backups)
+
+### Enhanced
+- **Metadata Traceability**: Traçabilité complète avec session ID, timestamps, durée de migration
+- **Backup Integration**: Collecte automatique des informations de sauvegarde en temps réel
+- **Statistics Calculation**: Calcul et stockage automatique des statistiques de migration
+- **Report Enrichment**: Rapports enrichis avec métadonnées séparées et données d'environnement
+
+### Technical
+- **Service Management**: Gestion des services via propriétés de classe assignées dans `handle()`
+- **Laravel Pattern**: Adoption du pattern d'injection Laravel dans les méthodes plutôt que constructors
+- **Metadata Architecture**: Architecture séparée MetadataManager → MigrationReporter
+- **Data Structure**: Structure de métadonnées unifiée avec session, environment, runtime, backups, statistics
+- **File Organization**: Fichiers séparés : rapport HTML + rapport JSON + métadonnées JSON
+
+
 1.6.0 (2025-07-29)
 ------------------
 

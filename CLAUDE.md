@@ -552,3 +552,9 @@ The package implements a unified design system using Laravel Blade views:
 - **Rector**: `rector.php` with Laravel-specific modernization rules
 - **Composer Scripts**: Automated workflows for development tasks
 ```
+
+## My Memories
+
+- Claude Code remembers to always test PHP code thoroughly before deployment
+- Claude Code prefers comprehensive test coverage for each code modification
+- Claude Code emphasizes clear, readable, and maintainable code

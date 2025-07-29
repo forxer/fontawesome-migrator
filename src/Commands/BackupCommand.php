@@ -21,6 +21,8 @@ use function Laravel\Prompts\warning;
 
 class BackupCommand extends Command
 {
+    protected IconReplacer $iconReplacer;
+
     /**
      * The name and signature of the console command.
      */
@@ -37,17 +39,14 @@ class BackupCommand extends Command
      */
     protected $description = 'Gérer les sauvegardes créées par FontAwesome Migrator (lister, restaurer, nettoyer)';
 
-    public function __construct(
-        protected IconReplacer $iconReplacer,
-    ) {
-        parent::__construct();
-    }
-
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(IconReplacer $iconReplacer): int
     {
+        // Assigner le service à la propriété de classe
+        $this->iconReplacer = $iconReplacer;
+
         // Mode interactif par défaut, sauf si --no-interactive est spécifié
         if (! $this->option('no-interactive')) {
             return $this->handleInteractive();

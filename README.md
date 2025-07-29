@@ -44,7 +44,7 @@
 ## Installation
 
 ```bash
-composer require forxer/fontawesome-migrator
+composer require forxer/fontawesome-migrator --dev
 ```
 
 Le package sera automatiquement enregistré grâce à la découverte automatique de Laravel.
@@ -90,7 +90,7 @@ return [
     'license_type' => 'pro',
     'scan_paths' => [
         'resources/views',
-        'resources/js', 
+        'resources/js',
         'resources/css',
         'public/css',
         'public/js',
@@ -441,7 +441,7 @@ Les rapports sont automatiquement sauvegardés dans `storage/app/public/fontawes
 Le package inclut une **interface web complète** accessible à `/fontawesome-migrator/reports` :
 
 - **📊 Vue d'ensemble** : Liste de tous les rapports avec métadonnées
-- **🔍 Accès direct** : Liens vers HTML et JSON de chaque rapport  
+- **🔍 Accès direct** : Liens vers HTML et JSON de chaque rapport
 - **🗑️ Gestion** : Suppression individuelle ou nettoyage automatique
 - **🔄 Temps réel** : Actualisation et notifications AJAX
 - **📱 Responsive** : Interface adaptée mobile et desktop
@@ -460,7 +460,7 @@ L'interface de gestion des rapports offre :
 - Tri automatique par date (plus récent en premier)
 - Compteur total des rapports disponibles
 
-**🔗 Accès direct**  
+**🔗 Accès direct**
 - Boutons "Voir HTML" et "Voir JSON" pour chaque rapport
 - Ouverture dans de nouveaux onglets pour consultation facile
 - URLs directes pour partage et intégration

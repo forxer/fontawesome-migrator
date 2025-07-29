@@ -1,0 +1,412 @@
+<?php
+
+namespace FontAwesome\Migrator\Services;
+
+use Illuminate\Support\Facades\File;
+
+class MetadataManager
+{
+    protected array $config;
+
+    protected array $metadata = [];
+
+    public function __construct()
+    {
+        $this->config = config('fontawesome-migrator');
+    }
+
+    /**
+     * Initialiser les métadonnées de base
+     */
+    public function initialize(): self
+    {
+        $this->metadata = [
+            'session' => [
+                'id' => uniqid('migration_', true),
+                'started_at' => date('c'),
+                'package_version' => $this->getPackageVersion(),
+            ],
+            'environment' => [
+                'php_version' => PHP_VERSION,
+                'laravel_version' => app()->version(),
+                'timezone' => date_default_timezone_get(),
+            ],
+            'configuration' => [
+                'license_type' => $this->config['license_type'],
+                'scan_paths' => $this->config['scan_paths'] ?? [],
+                'file_extensions' => $this->config['file_extensions'] ?? [],
+                'backup_enabled' => $this->config['backup']['enabled'] ?? true,
+                'backup_path' => $this->config['backup']['path'] ?? null,
+                'report_path' => $this->config['report_path'] ?? null,
+            ],
+            'migration_options' => [],
+            'runtime' => [
+                'dry_run' => false,
+                'started_at' => null,
+                'completed_at' => null,
+                'duration' => null,
+            ],
+            'backups' => [
+                'created' => [],
+                'count' => 0,
+                'total_size' => 0,
+            ],
+            'statistics' => [
+                'files_scanned' => 0,
+                'files_modified' => 0,
+                'changes_made' => 0,
+                'warnings_generated' => 0,
+                'errors_encountered' => 0,
+            ],
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Définir les options de migration
+     */
+    public function setMigrationOptions(array $options): self
+    {
+        $this->metadata['migration_options'] = $options;
+
+        return $this;
+    }
+
+    /**
+     * Définir le mode dry-run
+     */
+    public function setDryRun(bool $isDryRun): self
+    {
+        $this->metadata['runtime']['dry_run'] = $isDryRun;
+
+        return $this;
+    }
+
+    /**
+     * Marquer le début de la migration
+     */
+    public function startMigration(): self
+    {
+        $this->metadata['runtime']['started_at'] = date('c');
+
+        return $this;
+    }
+
+    /**
+     * Marquer la fin de la migration
+     */
+    public function completeMigration(): self
+    {
+        $this->metadata['runtime']['completed_at'] = date('c');
+
+        if ($this->metadata['runtime']['started_at']) {
+            $start = strtotime($this->metadata['runtime']['started_at']);
+            $end = strtotime($this->metadata['runtime']['completed_at']);
+            $this->metadata['runtime']['duration'] = $end - $start;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Ajouter une sauvegarde
+     */
+    public function addBackup(array $backupInfo): self
+    {
+        $this->metadata['backups']['created'][] = $backupInfo;
+        $this->metadata['backups']['count'] = \count($this->metadata['backups']['created']);
+        $this->metadata['backups']['total_size'] += $backupInfo['size'] ?? 0;
+
+        return $this;
+    }
+
+    /**
+     * Mettre à jour les statistiques
+     */
+    public function updateStatistics(array $stats): self
+    {
+        $this->metadata['statistics'] = array_merge($this->metadata['statistics'], $stats);
+
+        return $this;
+    }
+
+    /**
+     * Ajouter des données personnalisées
+     */
+    public function addCustomData(string $key, mixed $value): self
+    {
+        $this->metadata['custom'][$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Obtenir toutes les métadonnées
+     */
+    public function getAll(): array
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Obtenir une section spécifique des métadonnées
+     */
+    public function get(string $section): mixed
+    {
+        return $this->metadata[$section] ?? null;
+    }
+
+    /**
+     * Obtenir les métadonnées formatées pour les rapports
+     */
+    public function getForReport(): array
+    {
+        return [
+            'meta' => [
+                'session_id' => $this->metadata['session']['id'],
+                'generated_at' => $this->metadata['session']['started_at'],
+                'package_version' => $this->metadata['session']['package_version'],
+                'dry_run' => $this->metadata['runtime']['dry_run'],
+                'duration' => $this->metadata['runtime']['duration'],
+                'migration_options' => $this->metadata['migration_options'],
+                'configuration' => $this->metadata['configuration'],
+                'environment' => $this->metadata['environment'],
+            ],
+            'backups' => $this->metadata['backups'],
+            'statistics' => $this->metadata['statistics'],
+        ];
+    }
+
+    /**
+     * Sauvegarder les métadonnées dans le répertoire de session
+     */
+    public function saveToFile(?string $filePath = null): string
+    {
+        if (! $filePath) {
+            // Déterminer le répertoire de session pour les métadonnées
+            $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+            $sessionId = $this->metadata['session']['id'] ?? 'unknown';
+            $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+
+            // S'assurer que le répertoire de session existe avec .gitignore
+            $this->ensureSessionDirectoryExists($sessionDir);
+
+            $filePath = $sessionDir.'/metadata.json';
+        }
+
+        $directory = \dirname($filePath);
+
+        if (! File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        File::put($filePath, json_encode($this->metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        return $filePath;
+    }
+
+    /**
+     * Charger les métadonnées depuis un fichier JSON
+     */
+    public function loadFromFile(string $filePath): self
+    {
+        if (File::exists($filePath)) {
+            $content = File::get($filePath);
+            $this->metadata = json_decode($content, true) ?? [];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Obtenir la version du package depuis le CHANGELOG.md
+     */
+    protected function getPackageVersion(): string
+    {
+        $changelogPath = __DIR__.'/../../CHANGELOG.md';
+
+        if (file_exists($changelogPath)) {
+            $content = file_get_contents($changelogPath);
+
+            // Chercher le premier titre de niveau 2 : format ## ou souligné avec ---
+            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) ||
+                preg_match('/^## (\d+\.\d+\.\d+)/m', $content, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        // Fallback version
+        return '2.0.0-dev';
+    }
+
+    /**
+     * Valider la structure des métadonnées
+     */
+    public function validate(): array
+    {
+        $errors = [];
+
+        // Vérifier les sections obligatoires
+        $requiredSections = ['session', 'configuration', 'runtime'];
+
+        foreach ($requiredSections as $section) {
+            if (! isset($this->metadata[$section])) {
+                $errors[] = "Section manquante: {$section}";
+            }
+        }
+
+        // Vérifier les champs obligatoires
+        if (isset($this->metadata['session'])) {
+            $requiredFields = ['id', 'started_at', 'package_version'];
+
+            foreach ($requiredFields as $field) {
+                if (! isset($this->metadata['session'][$field])) {
+                    $errors[] = "Champ manquant dans session: {$field}";
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Réinitialiser les métadonnées
+     */
+    public function reset(): self
+    {
+        $this->metadata = [];
+
+        return $this->initialize();
+    }
+
+    /**
+     * Obtenir un résumé des métadonnées
+     */
+    public function getSummary(): array
+    {
+        return [
+            'session_id' => $this->metadata['session']['id'] ?? null,
+            'version' => $this->metadata['session']['package_version'] ?? null,
+            'dry_run' => $this->metadata['runtime']['dry_run'] ?? false,
+            'backups_count' => $this->metadata['backups']['count'] ?? 0,
+            'files_modified' => $this->metadata['statistics']['files_modified'] ?? 0,
+            'changes_made' => $this->metadata['statistics']['changes_made'] ?? 0,
+            'duration' => $this->metadata['runtime']['duration'] ?? null,
+        ];
+    }
+
+    /**
+     * S'assurer que le répertoire de session existe avec .gitignore
+     */
+    protected function ensureSessionDirectoryExists(string $sessionDir): void
+    {
+        if (! File::exists($sessionDir)) {
+            File::makeDirectory($sessionDir, 0755, true);
+        }
+
+        $gitignorePath = $sessionDir.'/.gitignore';
+
+        if (! File::exists($gitignorePath)) {
+            $gitignoreContent = "# FontAwesome Migrator - Session Backups\n*\n!.gitignore\n!metadata.json\n";
+            File::put($gitignorePath, $gitignoreContent);
+        }
+    }
+
+    /**
+     * Obtenir le chemin du répertoire de session
+     */
+    public function getSessionDirectory(): string
+    {
+        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $sessionId = $this->metadata['session']['id'] ?? 'unknown';
+
+        return $baseBackupDir.'/session-'.$sessionId;
+    }
+
+    /**
+     * Nettoyer les anciens répertoires de session
+     */
+    public static function cleanOldSessions(int $daysToKeep = 30): int
+    {
+        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+
+        if (! File::exists($baseBackupDir)) {
+            return 0;
+        }
+
+        $cutoffTime = time() - ($daysToKeep * 24 * 60 * 60);
+        $deleted = 0;
+
+        $directories = File::directories($baseBackupDir);
+
+        foreach ($directories as $directory) {
+            // Vérifier si c'est un répertoire de session
+            if (! preg_match('/\/session-/', $directory)) {
+                continue;
+            }
+
+            // Vérifier la date de modification du répertoire
+            if (filemtime($directory) >= $cutoffTime) {
+                continue;
+            }
+
+            // Supprimer le répertoire de session complet
+            if (File::deleteDirectory($directory)) {
+                $deleted++;
+            }
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Lister tous les répertoires de session disponibles
+     */
+    public static function getAvailableSessions(): array
+    {
+        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $sessions = [];
+
+        if (! File::exists($baseBackupDir)) {
+            return $sessions;
+        }
+
+        $directories = File::directories($baseBackupDir);
+
+        foreach ($directories as $directory) {
+            if (! preg_match('/\/session-(.+)$/', $directory, $matches)) {
+                continue;
+            }
+
+            $sessionId = $matches[1];
+            $metadataPath = $directory.'/metadata.json';
+
+            $sessionInfo = [
+                'session_id' => $sessionId,
+                'directory' => $directory,
+                'created_at' => date('Y-m-d H:i:s', filemtime($directory)),
+                'has_metadata' => File::exists($metadataPath),
+                'backup_count' => \count(File::files($directory)) - 1, // -1 pour exclure metadata.json
+                'package_version' => 'unknown',
+                'dry_run' => false,
+                'duration' => null,
+            ];
+
+            // Charger les métadonnées si disponibles
+            if ($sessionInfo['has_metadata']) {
+                $metadata = json_decode(File::get($metadataPath), true);
+                $sessionInfo['package_version'] = $metadata['session']['package_version'] ?? 'unknown';
+                $sessionInfo['dry_run'] = $metadata['runtime']['dry_run'] ?? false;
+                $sessionInfo['duration'] = $metadata['runtime']['duration'] ?? null;
+            }
+
+            $sessions[] = $sessionInfo;
+        }
+
+        // Trier par date de création décroissante
+        usort($sessions, fn ($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
+
+        return $sessions;
+    }
+}

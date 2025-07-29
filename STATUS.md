@@ -144,4 +144,44 @@ Le package `fontawesome-migrator` est **prêt pour la production** et peut être
 
 ---
 
+## 🔄 Version 2.0.0 - En développement
+
+### Phase 1: Architecture des commandes ✅
+- [x] Suppression des constructors avec injection de dépendances 
+- [x] Migration vers injection dans la méthode `handle()`
+- [x] MigrateCommand refactorisé avec propriétés de classe
+- [x] BackupCommand refactorisé avec propriété de classe
+
+### Phase 2: Métadonnées et rapports ✅
+- [x] **MetadataManager Service**: Création du service centralisé de gestion des métadonnées
+- [x] **Architecture séparée**: Dissociation complète des métadonnées et du reporting
+- [x] **MigrateCommand Integration**: Collecte en temps réel des sauvegardes et statistiques
+- [x] **MigrationReporter Refactoring**: Consommation des métadonnées séparées
+- [x] **Fichiers séparés**: Sauvegarde automatique des métadonnées en JSON
+- [x] **Tests complets**: Validation de l'architecture avec migrations réelles
+
+### Phase 3: Fonctionnalités avancées (Planifié)
+- [ ] Amélioration de l'affichage des métadonnées dans les rapports HTML
+- [ ] Interface de gestion des métadonnées sauvegardées
+- [ ] Comparaison entre sessions de migration
+- [ ] Export des métadonnées vers différents formats
+- [ ] API de consultation des métadonnées
+
+### Objectifs 2.0.0
+- **Breaking Changes acceptés**: Version majeure sans rétrocompatibilité ✅
+- **Architecture modernisée**: Commands avec injection Laravel recommandée ✅
+- **Metadata Management**: Gestion centralisée et séparée des métadonnées ✅
+- **Real-time Collection**: Collecte en temps réel des données de migration ✅
+- **Enhanced Reporting**: Rapports enrichis avec métadonnées complètes ✅
+- **Innovation**: Liberté d'innover sans contraintes de compatibilité ✅
+
+### Prochaines fonctionnalités (Phase 3)
+- **Interface métadonnées**: Gestion web des métadonnées sauvegardées
+- **Comparaison de sessions**: Analyse comparative entre migrations
+- **Export avancé**: Formats multiples pour les métadonnées
+- **API métadonnées**: Interface programmatique pour consultation
+- **Analytics**: Tableaux de bord et métriques avancées
+
+---
+
 **🎉 Félicitations ! Package Laravel professionnel, robuste et prêt à l'emploi !**
