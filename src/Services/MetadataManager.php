@@ -405,7 +405,7 @@ class MetadataManager
         }
 
         // Trier par date de création décroissante
-        usort($sessions, fn ($a, $b): int => strtotime((string) $b['created_at']) - strtotime((string) $a['created_at']));
+        usort($sessions, fn ($a, $b): int => strtotime($b['created_at']) - strtotime($a['created_at']));
 
         return $sessions;
     }

@@ -4,11 +4,11 @@
 
 ## 🎉 Statut du package
 
-**✅ PRODUCTION READY** - Tous les tests passent (78 tests, 243 assertions)
+**🚧 VERSION 2.0.0 EN DÉVELOPPEMENT** - Architecture modernisée
 - ✅ Compatible Laravel 12.0+ et PHP 8.4+
-- ✅ Fonctionnellement complet et testé
+- ✅ Fonctionnellement complet avec améliorations architecturales
 - ✅ Compatible avec les environnements Docker
-- ✅ Prêt pour la publication et l'utilisation en production
+- 🚧 Tests en cours de refonte pour la nouvelle architecture
 
 ## Prérequis
 
@@ -37,12 +37,12 @@
 ### 🛠️ Outils
 - ✅ **Sauvegarde par session** avec nouvelle organisation v2.0
 - ✅ **Rapports détaillés** HTML et JSON avec métadonnées intégrées
-- ✅ **Interface web complète** de gestion des rapports et tests
-- ✅ **Panneau de test interactif** pour déboguer et valider (nouveau v2.0)
+- ✅ **Interface web complète** de gestion des rapports et sessions
+- ✅ **Contrôleurs organisés** et navigation moderne (nouveau v2.0)
 - ✅ **Mode dry-run** pour prévisualiser les changements
 - ✅ **Modes de migration** : complet, icônes uniquement, assets uniquement
 - ✅ **Gestion des sessions** : inspection, nettoyage, statistiques
-- ✅ **Tests web** : exécution des migrations directement depuis l'interface
+- ✅ **Interface de debug** : exécution des migrations directement depuis l'interface web
 
 ## Installation
 
@@ -407,7 +407,7 @@ Le package **reconnaît et convertit TOUS les styles FontAwesome** (solid, regul
 ### Configuration du fallback
 
 ```bash
-# Exemple de test avant migration
+# Exemple avant migration
 FONTAWESOME_LICENSE=free php artisan fontawesome:migrate --dry-run
 ```
 
@@ -486,13 +486,13 @@ L'interface utilise un design moderne avec :
 - Icons et couleurs cohérentes avec l'identité FontAwesome
 - États vides informatifs quand aucun rapport n'existe
 
-## 🧪 Panneau de Test (Nouveau v2.0)
+## 🧪 Panneau de Debug (Nouveau v2.0)
 
-Le package inclut un **panneau de test interactif** pour faciliter les tests et le débogage :
+Le package inclut un **panneau de debug interactif** pour faciliter la validation et le débogage :
 
 ### 🚀 Accès au panneau
 
-Accessible à `/fontawesome-migrator/test-panel` depuis l'interface de gestion des rapports.
+Accessible à `/fontawesome-migrator/test/panel` depuis l'interface de gestion des rapports.
 
 ### 🎯 Fonctionnalités du panneau
 
@@ -502,13 +502,13 @@ Accessible à `/fontawesome-migrator/test-panel` depuis l'interface de gestion d
 - Taille totale utilisée et dernière activité
 - Aperçu visuel de l'activité de migration
 
-**🔬 Tests interactifs**
+**🔬 Exécution interactive**
 ```bash
-# Types de tests disponibles via l'interface :
-🔍 Test Dry-Run       # Migration de prévisualisation
-🎯 Test Icônes        # Test des icônes uniquement  
-🎨 Test Assets        # Test des assets uniquement
-⚡ Test Réel          # Migration réelle (attention !)
+# Types de migrations disponibles via l'interface :
+🔍 Dry-Run           # Migration de prévisualisation
+🎯 Icônes seulement  # Migration des icônes uniquement  
+🎨 Assets seulement  # Migration des assets uniquement
+⚡ Migration réelle  # Migration complète (attention !)
 ```
 
 **📋 Gestion des sessions**
@@ -549,19 +549,19 @@ storage/app/fontawesome-backups/
 ### 💡 Cas d'usage
 
 **🧑‍💻 Pour les développeurs :**
-- Test rapide sans ligne de commande
+- Exécution rapide sans ligne de commande
 - Débogage visuel des problèmes de migration
 - Validation des configurations avant production
 
 **👥 Pour les équipes :**
 - Formation et démonstration des migrations
 - Validation collaborative des résultats
-- Partage des sessions de test
+- Partage des sessions de migration
 
 **🏢 Pour la production :**
-- Tests de validation avant déploiement
+- Validation avant déploiement
 - Audit des migrations effectuées
-- Nettoyage automatique des données de test
+- Nettoyage automatique des données temporaires
 
 ## Sauvegardes
 
@@ -655,10 +655,7 @@ cd fontawesome-migrator
 # 2. Installer les dépendances
 composer install
 
-# 3. Exécuter les tests
-composer test
-
-# 4. Vérifier la qualité du code
+# 3. Vérifier la qualité du code
 composer quality
 ```
 
@@ -673,65 +670,36 @@ Si vous utilisez Docker avec `d-packages-exec php84` :
 git clone https://github.com/forxer/fontawesome-migrator.git
 cd fontawesome-migrator
 
-# 2. Utiliser le script de test automatisé
-./test.sh
-
-# 3. Ou exécuter les commandes manuellement
+# 2. Exécuter les commandes manuellement
 d-packages-exec php84 composer install
-d-packages-exec php84 composer test
 d-packages-exec php84 composer quality
-```
-
-Le script `test.sh` effectue automatiquement :
-- ✅ Installation des dépendances
-- ✅ Tests unitaires complets
-- ✅ Vérification du style de code
-- ✅ Vérification de modernisation du code
-- ✅ Test d'intégration avec Laravel
-- ✅ Test des commandes Artisan
 
 ### Scripts Composer disponibles
 
 #### Environnement standard
 ```bash
-# Tests
-composer test              # Exécuter tous les tests
-composer test-coverage     # Tests avec couverture HTML
-
 # Qualité de code
 composer pint             # Formatter le code (Laravel Pint)
 composer pint-test        # Vérifier le style sans corriger
 composer rector           # Moderniser le code (Rector)
 composer rector-dry       # Prévisualiser les modernisations
-composer quality          # Contrôle qualité complet (style + rector + tests)
+composer quality          # Contrôle qualité complet (style + rector)
 ```
 
 #### Environnement Docker
 ```bash
-# Tests
-d-packages-exec php84 composer test              # Exécuter tous les tests
-d-packages-exec php84 composer test-coverage     # Tests avec couverture HTML
-
 # Qualité de code
 d-packages-exec php84 composer pint             # Formatter le code
 d-packages-exec php84 composer pint-test        # Vérifier le style sans corriger
 d-packages-exec php84 composer rector           # Moderniser le code
 d-packages-exec php84 composer rector-dry       # Prévisualiser les modernisations
 d-packages-exec php84 composer quality          # Contrôle qualité complet
-
-# Script automatisé (recommandé)
-./test.sh                                        # Test complet automatisé
 ```
 
 ### Avant de soumettre une PR
 
 #### Environnement standard
-1. **Tests** : Assurez-vous que tous les tests passent
-```bash
-composer test
-```
-
-2. **Style de code** : Formatez le code avec Pint
+1. **Style de code** : Formatez le code avec Pint
 ```bash
 composer pint
 ```
@@ -747,14 +715,8 @@ composer quality
 ```
 
 #### Environnement Docker
-**Méthode simple** : Utilisez le script automatisé
+**Méthodes disponibles** :
 ```bash
-./test.sh
-```
-
-**Méthode manuelle** :
-```bash
-d-packages-exec php84 composer test     # Tests
 d-packages-exec php84 composer pint     # Style
 d-packages-exec php84 composer rector   # Modernisation
 d-packages-exec php84 composer quality  # Contrôle complet
@@ -771,69 +733,17 @@ Les contributions sont les bienvenues ! Veuillez :
 5. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
 6. Créer une Pull Request
 
-## Tests
+## Version 2.0.0 - Développement
 
-### Tests automatisés
+La version 2.0.0 est actuellement en développement avec des améliorations architecturales majeures :
 
-Le package utilise PHPUnit avec Orchestra Testbench pour les tests Laravel :
+- ✅ **Injection de dépendances modernisée** dans les commandes Laravel
+- ✅ **Système de métadonnées centralisé** avec gestion des sessions
+- ✅ **Interface web reorganisée** avec contrôleurs spécialisés
+- ✅ **Navigation fluide** entre rapports, sessions et tests
+- 🚧 **Tests automatisés** en cours de refonte pour la nouvelle architecture
 
-```bash
-# Exécuter tous les tests
-composer test
-
-# Tests avec couverture de code HTML
-composer test-coverage
-
-# Exécuter une suite spécifique
-./vendor/bin/phpunit --testsuite=Unit
-./vendor/bin/phpunit --testsuite=Feature
-
-# Test d'un fichier spécifique
-./vendor/bin/phpunit tests/Unit/Services/IconMapperTest.php
-```
-
-### Structure des tests
-
-```
-tests/
-├── TestCase.php                           # Classe de base avec configuration Laravel
-├── Unit/                                  # Tests unitaires
-│   └── Services/
-│       ├── IconMapperTest.php            # Test des mappings d'icônes FA5→FA6
-│       ├── StyleMapperTest.php           # Test des conversions de styles
-│       └── FileScannerTest.php           # Test du scanner de fichiers
-├── Feature/                              # Tests d'intégration
-│   └── MigrateFontAwesomeCommandTest.php # Test complet de la commande Artisan
-└── Fixtures/                             # Fichiers d'exemple pour les tests
-    ├── sample-blade.php                  # Exemple Blade avec icônes FA5
-    └── sample-vue.vue                    # Exemple Vue avec icônes FA5
-```
-
-### Types de tests
-
-- **Tests unitaires** : Services individuels (IconMapper, StyleMapper, FileScanner)
-- **Tests d'intégration** : Commande Artisan complète avec toutes les options
-- **Tests de régression** : Validation des mappings d'icônes FA5 → FA6
-- **Tests de configuration** : Validation des paramètres et gestion d'erreurs
-
-### Couverture de code
-
-### Résultats des tests
-
-**🎉 TOUS LES TESTS PASSENT** (dernière exécution)
-- **52 tests** exécutés avec succès
-- **126 assertions** validées
-- **0 erreur, 0 échec**
-
-Les tests couvrent :
-- ✅ Mappings d'icônes renommées et dépréciées
-- ✅ Conversions de styles FA5 → FA6 (fas → fa-solid, etc.)
-- ✅ Gestion des licences Free/Pro avec fallbacks
-- ✅ Scanner de fichiers avec filtres et exclusions
-- ✅ Commande Artisan (dry-run, chemins spécifiques, rapports)
-- ✅ Validation de configuration et gestion d'erreurs
-
-Les tests utilisent Orchestra Testbench pour simuler un environnement Laravel complet.
+Cette version majeure accepte les breaking changes pour une architecture plus moderne et maintenable.
 
 ## Licence
 

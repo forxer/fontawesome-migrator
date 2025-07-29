@@ -21,28 +21,13 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 
 ## Development Commands
 
-### Testing
-```bash
-# Run all tests
-composer test
+### Version 2.0.0 Development Status
+**🚧 En développement actif** - Version majeure avec améliorations architecturales
 
-# Run tests with coverage report
-composer test-coverage
-
-# Run specific test suite
-./vendor/bin/phpunit --testsuite=Unit
-./vendor/bin/phpunit --testsuite=Feature
-
-# Docker environment (with d-packages-exec)
-d-packages-exec php84 composer test
-./test.sh  # Automated full test suite
-```
-
-### Test Status
-✅ **All tests passing**: 78 tests, 243 assertions, 0 failures, 0 errors
-- Unit tests: IconMapper, StyleMapper, FileScanner, IconReplacer, AssetMigrator, MigrationReporter
-- Feature tests: Complete Artisan command functionality including install wizard and web interface
-- Integration tests: Laravel environment simulation with comprehensive asset migration support
+- **Architecture des commandes** : Injection de dépendances modernisée ✅
+- **Système de métadonnées** : Gestion centralisée des sessions ✅  
+- **Interface web** : Contrôleurs organisés et navigation améliorée ✅
+- **Tests automatisés** : En cours de refonte pour la v2.0.0 🚧
 
 ### Code Quality
 ```bash
@@ -245,11 +230,11 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 15. **Advanced Configuration Management**: Interactive configuration command (`fontawesome:config`) optimized for large projects with granular editing capabilities
 
 ### Package Status
-🎉 **PRODUCTION READY** - All tests passing, fully functional, ready for:
-- ✅ Production use in Laravel applications
-- ✅ Publication on Packagist
-- ✅ Team collaboration and contributions
-- ✅ CI/CD integration
+🚧 **VERSION 2.0.0 EN DÉVELOPPEMENT** - Architecture modernisée en cours :
+- ✅ Injection de dépendances refactorisée dans les commandes
+- ✅ Système de métadonnées centralisé avec sessions
+- ✅ Interface web organisée avec contrôleurs spécialisés
+- 🚧 Tests automatisés en cours de refonte pour la v2.0.0
 
 ## Améliorations de l'Interface Web
 
@@ -554,10 +539,10 @@ The package implements a unified design system using Laravel Blade views:
 - **Accessibility**: Proper semantic HTML and ARIA attributes
 
 ### Configuration
-- **PHPUnit**: `phpunit.xml` with testsuites and coverage configuration
 - **Pint**: `pint.json` with Laravel preset and custom rules
 - **Rector**: `rector.php` with Laravel-specific modernization rules
 - **Composer Scripts**: Automated workflows for development tasks
+- **Tests**: Test suite en cours de refonte pour la version 2.0.0
 ```
 
 ## My Memories
