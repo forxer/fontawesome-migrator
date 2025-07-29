@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important Development Constraints
+
+**⚠️ PHP Execution Limitation**: Claude Code cannot execute PHP commands or any language interpreters (php, node, python, etc.). Only use Bash tool for basic system commands. Never attempt to run `php artisan`, `composer`, `npm`, or similar commands.
+
 ## Project Overview
 
 This is a Laravel package called `fontawesome-migrator` that automates the migration from Font Awesome 5 to Font Awesome 6 (both Free and Pro versions). The package scans Laravel applications for Font Awesome classes and automatically converts them to the new FA6 syntax.

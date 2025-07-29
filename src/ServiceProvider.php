@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator;
 
+use FontAwesome\Migrator\Commands\BackupCommand;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
@@ -45,6 +46,7 @@ class ServiceProvider extends BaseServiceProvider
         // Enregistrer les commandes
         if ($this->app->runningInConsole()) {
             $this->commands([
+                BackupCommand::class,
                 ConfigureCommand::class,
                 InstallCommand::class,
                 MigrateCommand::class,

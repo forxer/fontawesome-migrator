@@ -5,6 +5,11 @@ CHANGELOG
 ------------------
 
 ### Added
+- **Backup Management Command**: Nouvelle commande `php artisan fontawesome:backup` pour gérer les sauvegardes
+- **Interactive Backup Operations**: Interface interactive pour lister, restaurer, nettoyer et analyser les sauvegardes
+- **Backup Restore Functionality**: Restauration de fichiers depuis leurs sauvegardes avec sélection de timestamp
+- **Automated Backup Cleanup**: Nettoyage automatique des anciennes sauvegardes avec paramétrage du nombre de jours
+- **Backup Statistics Dashboard**: Informations détaillées sur les sauvegardes (nombre, taille, fichiers)
 - **Backup Tracking**: Suivi des sauvegardes créées pendant la migration
 - **Enhanced Reports**: Affichage des sauvegardes dans les rapports HTML/JSON avec détails complets
 - **Backup Section**: Nouvelle section dédiée dans les rapports avec navigation
@@ -19,7 +24,10 @@ CHANGELOG
 - **User Experience**: Interface utilisateur enrichie avec guidance pour exploitation des sauvegardes
 
 ### Technical
-- **GitignoreHelper**: Classe utilitaire mutualisée pour création de `.gitignore`
+- **BackupCommand**: Nouvelle commande Artisan avec architecture modulaire et mode interactif
+- **DirectoryHelper**: Classe utilitaire refactorisée pour gestion unifiée des répertoires et `.gitignore`
+- **Code Refactoring**: Élimination de la duplication dans la création de répertoires
+- **Service Integration**: Intégration complète avec `IconReplacer` pour les opérations de backup
 - **Backup Data Structure**: Structure de données unifiée pour les informations de sauvegarde
 - **Reporter Enhancement**: Extension du `MigrationReporter` avec support des sauvegardes
 - **Command Architecture**: Collecte et transmission des données de sauvegarde entre services
