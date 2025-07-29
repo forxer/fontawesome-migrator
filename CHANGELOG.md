@@ -69,6 +69,12 @@ CHANGELOG
 - **ServiceProvider Fix**: Correction de l'enregistrement des commandes pour `Artisan::call()` depuis le web
 
 
+1.7.0 (2025-07-29)
+------------------
+
+- Version fonctionnelle de démonstration (v2 en cours de développement...)
+
+
 1.6.0 (2025-07-29)
 ------------------
 
