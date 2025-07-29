@@ -2,10 +2,9 @@
 
 @section('title', 'Rapport de Migration Font Awesome 5 → 6')
 
-@section('body-background', 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)')
-
 @section('head-extra')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @include('fontawesome-migrator::reports.partials.css.common')
     @include('fontawesome-migrator::reports.partials.css.migration')
 @endsection
 

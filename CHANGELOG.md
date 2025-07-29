@@ -29,12 +29,44 @@ CHANGELOG
 - **Statistics Calculation**: Calcul et stockage automatique des statistiques de migration
 - **Report Enrichment**: Rapports enrichis avec métadonnées séparées et données d'environnement
 
+### New Features
+- **Session-Based Backup Architecture**: Nouvelle organisation des sauvegardes par session
+- **Session Directories**: Chaque migration crée son propre répertoire `session-migration_xxxxx/`
+- **Metadata Integration**: Fichier `metadata.json` intégré dans chaque répertoire de session
+- **Web Testing Panel**: Interface web complète pour tester et déboguer les migrations (`/fontawesome-migrator/test-panel`)
+- **Session Management**: API complète pour lister, inspecter et nettoyer les sessions de migration
+- **Advanced Session Inspection**: Inspection détaillée des sessions avec métadonnées et fichiers de sauvegarde
+- **Session Cleanup**: Nettoyage automatique des sessions anciennes avec seuils configurables
+
+### Web Interface Enhancements
+- **Test Panel Interface**: Panneau de test interactif avec boutons pour tous les types de migration
+- **Real-time Testing**: Exécution des commandes Artisan directement depuis l'interface web
+- **Session Statistics**: Dashboard complet des statistiques de sessions et sauvegardes
+- **Session Inspector**: Modal d'inspection détaillée des sessions avec JSON viewer
+- **Interactive Cleanup**: Boutons de nettoyage pour les sessions avec confirmation
+- **Session Navigation**: Navigation fluide entre liste des sessions et inspection détaillée
+
+### Architecture Improvements
+- **Session-Directory Structure**: `storage/app/fontawesome-backups/session-migration_xxxxx/`
+- **Integrated Metadata**: Métadonnées sauvegardées dans le répertoire de session
+- **Git Integration**: Fichiers `.gitignore` automatiques dans chaque session
+- **Session Traceability**: Traçabilité parfaite entre métadonnées et sauvegardes
+- **API Enhancement**: Nouvelles méthodes `getAvailableSessions()`, `cleanOldSessions()`, `getSessionDirectory()`
+
+### Testing Infrastructure
+- **Web-based Testing**: Tests complets via interface web sans ligne de commande
+- **Multiple Test Types**: Dry-run, icons-only, assets-only, migrations réelles
+- **Real-time Feedback**: Sortie des commandes en temps réel dans l'interface
+- **Session Creation**: Création automatique de sessions lors des tests
+- **Debug Capabilities**: Outils de débogage intégrés pour diagnostiquer les problèmes
+
 ### Technical
 - **Service Management**: Gestion des services via propriétés de classe assignées dans `handle()`
 - **Laravel Pattern**: Adoption du pattern d'injection Laravel dans les méthodes plutôt que constructors
 - **Metadata Architecture**: Architecture séparée MetadataManager → MigrationReporter
 - **Data Structure**: Structure de métadonnées unifiée avec session, environment, runtime, backups, statistics
-- **File Organization**: Fichiers séparés : rapport HTML + rapport JSON + métadonnées JSON
+- **File Organization**: Organisation par session avec métadonnées intégrées
+- **ServiceProvider Fix**: Correction de l'enregistrement des commandes pour `Artisan::call()` depuis le web
 
 
 1.6.0 (2025-07-29)

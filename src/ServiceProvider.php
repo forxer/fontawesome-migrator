@@ -6,7 +6,6 @@ use FontAwesome\Migrator\Commands\BackupCommand;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
-use FontAwesome\Migrator\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -59,31 +58,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         Route::middleware(['web'])
             ->prefix('fontawesome-migrator')
-            ->group(function (): void {
-                Route::get('/reports', [ReportsController::class, 'index'])
-                    ->name('fontawesome-migrator.reports.index');
-
-                Route::get('/reports/{filename}', [ReportsController::class, 'show'])
-                    ->name('fontawesome-migrator.reports.show');
-
-                Route::delete('/reports/{filename}', [ReportsController::class, 'destroy'])
-                    ->name('fontawesome-migrator.reports.destroy');
-
-                Route::post('/reports/cleanup', [ReportsController::class, 'cleanup'])
-                    ->name('fontawesome-migrator.reports.cleanup');
-
-                // Routes de test pour déboguer
-                Route::get('/test-panel', [ReportsController::class, 'testPanel'])
-                    ->name('fontawesome-migrator.test.panel');
-
-                Route::post('/test/migration', [ReportsController::class, 'testMigration'])
-                    ->name('fontawesome-migrator.test.migration');
-
-                Route::get('/test/session/{sessionId}', [ReportsController::class, 'inspectSession'])
-                    ->name('fontawesome-migrator.test.session');
-
-                Route::post('/test/cleanup-sessions', [ReportsController::class, 'cleanupSessions'])
-                    ->name('fontawesome-migrator.test.cleanup');
-            });
+            ->name('fontawesome-migrator.')
+            ->group(__DIR__ . '/Http/routes/web.php');
     }
 }

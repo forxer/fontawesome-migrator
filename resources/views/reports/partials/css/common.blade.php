@@ -54,7 +54,7 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         margin: 0;
         padding: 20px;
-        background: @yield('body-background', 'linear-gradient(135deg, var(--secondary-color) 0%, #764ba2 100%)');
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         min-height: 100vh;
         color: var(--gray-800);
         line-height: 1.6;
@@ -514,6 +514,89 @@
         background: white;
         border-radius: var(--radius-md);
         padding: var(--spacing-lg);
+    }
+
+    /* Modal styles communes */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        padding: var(--spacing-xl);
+        border-radius: var(--radius-lg);
+        max-width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-lg);
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: var(--spacing-md);
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: var(--gray-800);
+        font-size: 1.25rem;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--gray-400);
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+        color: var(--gray-600);
+        background: var(--gray-100);
+    }
+
+    .modal-body {
+        color: var(--gray-700);
+    }
+
+    .modal-body pre {
+        background: var(--gray-50);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-sm);
+        overflow-x: auto;
+        font-size: 0.9rem;
+        border: 1px solid var(--gray-200);
+    }
+
+    .modal-body ul {
+        padding-left: var(--spacing-lg);
+        margin: var(--spacing-md) 0;
+    }
+
+    .modal-body li {
+        margin: var(--spacing-sm) 0;
     }
 
     @yield('additional-styles')

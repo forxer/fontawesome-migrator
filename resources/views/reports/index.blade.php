@@ -2,9 +2,8 @@
 
 @section('title', 'Rapports FontAwesome Migrator')
 
-@section('body-background', 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)')
-
 @section('head-extra')
+    @include('fontawesome-migrator::reports.partials.css.common')
     @include('fontawesome-migrator::reports.partials.css.index')
 @endsection
 
@@ -46,6 +45,10 @@
             🧪 Panneau de Tests
         </a>
         
+        <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary">
+            🗂️ Sessions
+        </a>
+        
         <button onclick="refreshReports()" class="btn btn-primary">
             <span id="refresh-icon">🔄</span> Actualiser les rapports
         </button>
@@ -85,6 +88,10 @@
                             <div class="meta-label">🕒 Heure</div>
                         </div>
                         <div class="meta-item">
+                            <div class="meta-value">{{ $report['session_id'] }}</div>
+                            <div class="meta-label">🗂️ Session</div>
+                        </div>
+                        <div class="meta-item">
                             <div class="meta-value">
                                 @php
                                     $age = time() - $report['created_at'];
@@ -102,11 +109,15 @@
                             📄 Voir Rapport
                         </a>
 
-                        @if ($report['json_url'])
-                            <a href="{{ $report['json_url'] }}" target="_blank" class="btn btn-primary btn-sm">
+                        @if ($report['has_json'])
+                            <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-primary btn-sm">
                                 📋 Voir JSON
                             </a>
                         @endif
+                        
+                        <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-secondary btn-sm">
+                            🗂️ Session
+                        </a>
 
                         <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-danger btn-sm">
                             🗑️ Supprimer
