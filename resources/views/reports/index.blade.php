@@ -128,11 +128,6 @@
             </div>
         </div>
     @endif
-
-    <!-- Bouton retour en haut -->
-    <button class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
-        ↑
-    </button>
 @endsection
 
 @section('scripts')
@@ -225,26 +220,5 @@
             showAlert('Erreur de connexion', 'error');
         }
     }
-
-    // Fonction retour en haut
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
-
-    // Gestion de la visibilité du bouton retour en haut
-    document.addEventListener('DOMContentLoaded', function() {
-        const backToTopButton = document.querySelector('.back-to-top');
-
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.add('visible');
-            } else {
-                backToTopButton.classList.remove('visible');
-            }
-        });
-    });
 </script>
 @endsection

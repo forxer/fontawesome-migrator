@@ -1441,8 +1441,8 @@
                         </div>
                         <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
                             Pourcentage de fichiers modifiés par rapport au total scanné.<br>
-                            <strong>↗ Excellent :</strong> > 50% des fichiers migrés<br>
-                            <strong>→ Partiel :</strong> ≤ 50% des fichiers migrés
+                            <span class="metric-trend trend-up">↗ Excellent</span> > 50% des fichiers migrés<br>
+                            <span class="metric-trend trend-down">→ Partiel</span> ≤ 50% des fichiers migrés
                         </p>
                     </div>
 
@@ -1453,8 +1453,8 @@
                         </div>
                         <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
                             Densité moyenne des modifications par fichier.<br>
-                            <strong>↗ Léger :</strong> < 5 changements par fichier (peu d'icônes FA)<br>
-                            <strong>↗ Intensif :</strong> ≥ 5 changements par fichier (beaucoup d'icônes FA)
+                            <span class="metric-trend trend-up">↗ Léger</span> < 5 changements par fichier (peu d'icônes FA)<br>
+                            <span class="metric-trend trend-down">↗ Intensif</span> ≥ 5 changements par fichier (beaucoup d'icônes FA)
                         </p>
                     </div>
 
@@ -1465,9 +1465,9 @@
                         </div>
                         <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
                             Pourcentage de changements réussis sans avertissement.<br>
-                            <strong>↗ Parfait :</strong> > 95% sans avertissement<br>
-                            <strong>↗ Bon :</strong> 80-95% sans avertissement<br>
-                            <strong>→ À améliorer :</strong> < 80% sans avertissement
+                            <span class="metric-trend trend-up">↗ Parfait</span> > 95% sans avertissement<br>
+                            <span class="metric-trend trend-up">↗ Bon</span> 80-95% sans avertissement<br>
+                            <span class="metric-trend trend-down">→ À améliorer</span> < 80% sans avertissement
                         </p>
                     </div>
 
@@ -1478,7 +1478,7 @@
                         </div>
                         <p style="margin: 0; color: var(--gray-600); line-height: 1.5;">
                             Nombre total de changements appliqués (icônes + assets).<br>
-                            <strong>↗ Modernisé :</strong> Votre code utilise maintenant Font Awesome 6
+                            <span class="metric-trend trend-up">↗ Modernisé</span> Votre code utilise maintenant Font Awesome 6
                         </p>
                     </div>
                 </div>

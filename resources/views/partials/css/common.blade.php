@@ -128,9 +128,8 @@
 
     /* Fil d'ariane */
     .breadcrumb {
-        background: white;
-        border-bottom: 1px solid var(--gray-200);
-        padding: 12px 0;
+        background: transparent;
+        padding: 16px 0 8px 0;
     }
 
     .breadcrumb-container {
@@ -142,11 +141,11 @@
     .breadcrumb-list {
         list-style: none;
         margin: 0;
-        padding: 0;
+        padding: 12px 0;
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 0.9em;
+        gap: 12px;
+        font-size: 1em;
     }
 
     .breadcrumb-item {
@@ -154,27 +153,33 @@
     }
 
     .breadcrumb-separator {
-        color: var(--gray-400);
-        margin: 0;
+        color: var(--gray-600);
+        margin: 0 4px;
+        font-weight: 500;
+        font-size: 1.1em;
     }
 
     .breadcrumb-link {
-        color: var(--primary-color);
+        color: var(--gray-600);
         text-decoration: none;
         display: flex;
         align-items: center;
         gap: 4px;
-        transition: color 0.2s;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        font-weight: 500;
     }
 
     .breadcrumb-link:hover {
-        color: var(--primary-hover);
-        text-decoration: underline;
+        color: var(--primary-color);
+        background: rgba(66, 153, 225, 0.1);
+        transform: translateY(-1px);
     }
 
     .breadcrumb-current {
-        color: var(--gray-600);
-        font-weight: 500;
+        color: var(--gray-800);
+        font-weight: 600;
     }
 
     /* Container */
@@ -722,6 +727,147 @@
 
     .modal-body li {
         margin: var(--spacing-sm) 0;
+    }
+
+    /* Table des matières / Navigation rapide */
+    .table-of-contents {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+    }
+
+    .table-of-contents:hover {
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-color);
+    }
+
+    .toc-title {
+        margin: 0 0 var(--spacing-md) 0;
+        color: var(--gray-800);
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .toc-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-sm);
+    }
+
+    .toc-item {
+        margin: 0;
+    }
+
+    .toc-link {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        color: var(--gray-700);
+        transition: all 0.2s ease;
+        font-weight: 500;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    .toc-link:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateX(4px);
+        border-color: var(--primary-hover);
+        box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+    }
+
+    .toc-icon {
+        font-size: 1.1em;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    /* Métriques de performance */
+    .performance-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+        margin-top: var(--spacing-md);
+    }
+
+    .metric-card {
+        background: white;
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-lg);
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-color);
+    }
+
+    .metric-value {
+        font-size: 2.2em;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-xs);
+        line-height: 1.2;
+    }
+
+    .metric-label {
+        color: var(--gray-600);
+        font-size: 0.9em;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .metric-trend {
+        font-size: 0.8em;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 16px;
+        display: inline-block;
+        margin-top: var(--spacing-xs);
+    }
+
+    .trend-up {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+
+    .trend-down {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
     }
 
     /* Classes communes partagées par les vues reports et sessions */

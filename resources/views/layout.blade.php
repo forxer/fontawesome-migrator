@@ -73,6 +73,35 @@
         @yield('content')
     </div>
 
+    <!-- Bouton retour en haut -->
+    <button class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
+        ↑
+    </button>
+
     @yield('scripts')
+    
+    <!-- Script commun pour le bouton retour en haut -->
+    <script>
+        // Fonction retour en haut
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Gestion de la visibilité du bouton retour en haut
+        document.addEventListener('DOMContentLoaded', function() {
+            const backToTopButton = document.querySelector('.back-to-top');
+
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
