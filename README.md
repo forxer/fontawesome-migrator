@@ -1,5 +1,7 @@
 # Font Awesome Migrator pour Laravel
 
+> ⚠️ **Disclaimer**: Ce code a été largement généré avec Claude Code (claude.ai/code). Bien que fonctionnel, **je n'ai pas entièrement confiance en l'IA** - j'ai dû corriger de nombreuses erreurs et imprécisions tout au long du développement. Utilisez ce package avec prudence et testez soigneusement avant usage en production.
+
 🚀 Package Laravel pour automatiser la migration de Font Awesome 5 vers Font Awesome 7 (versions Free et Pro).
 
 ## 🎉 Statut du package
