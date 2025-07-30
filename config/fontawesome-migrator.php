@@ -126,14 +126,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Répertoire de sauvegarde
+    | Répertoire des sessions de migration
     |--------------------------------------------------------------------------
     |
-    | Où stocker les sauvegardes des fichiers modifiés
+    | Où stocker les sessions de migration (rapports, métadonnées, sauvegardes)
     |
     */
 
-    'backup_path' => storage_path('fontawesome-migrator/backups'),
+    'sessions_path' => storage_path('app/fontawesome-migrator'),
 
     /*
     |--------------------------------------------------------------------------

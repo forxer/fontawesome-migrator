@@ -22,6 +22,7 @@ class ReportsController extends Controller
         foreach ($sessions as $session) {
             $sessionDir = $session['directory'];
             $sessionId = $session['session_id'];
+            $shortId = $session['short_id'];
 
             // Chercher les fichiers HTML de rapport dans la session
             $files = File::files($sessionDir);
@@ -34,6 +35,7 @@ class ReportsController extends Controller
                         'name' => $file->getFilenameWithoutExtension(),
                         'filename' => $file->getFilename(),
                         'session_id' => $sessionId,
+                        'short_id' => $shortId,
                         'created_at' => $file->getMTime(),
                         'size' => $file->getSize(),
                         'html_path' => $file->getRealPath(),

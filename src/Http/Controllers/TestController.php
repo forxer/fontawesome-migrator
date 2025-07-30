@@ -99,7 +99,7 @@ class TestController extends Controller
      */
     public function inspectSession(string $sessionId)
     {
-        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.sessions_path');
         $sessionDir = $baseBackupDir.'/session-'.$sessionId;
 
         if (! File::exists($sessionDir)) {
@@ -155,7 +155,7 @@ class TestController extends Controller
      */
     protected function getBackupStats(): array
     {
-        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.sessions_path');
 
         if (! File::exists($baseBackupDir)) {
             return [

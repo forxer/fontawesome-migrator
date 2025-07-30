@@ -3,7 +3,6 @@
 @section('title', 'Panneau de Tests - FontAwesome Migrator')
 
 @section('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.common')
     @include('fontawesome-migrator::reports.partials.css.test-panel')
 @endsection
 
@@ -73,7 +72,7 @@
                 ⚡ Test Réel (Attention!)
             </button>
         </div>
-        
+
         <div id="test-output" class="test-output" style="display: none;">
             <h3>Résultat du test :</h3>
             <pre id="test-result"></pre>

@@ -20,9 +20,14 @@ class MetadataManager
      */
     public function initialize(): self
     {
+        $sessionId = uniqid('migration_', true);
+        // Extraire les 8 premiers caractères après 'migration_' pour le short_id
+        $shortId = substr($sessionId, strpos($sessionId, '_') + 1, 8);
+
         $this->metadata = [
             'session' => [
-                'id' => uniqid('migration_', true),
+                'id' => $sessionId,
+                'short_id' => $shortId,
                 'started_at' => date('c'),
                 'package_version' => $this->getPackageVersion(),
             ],
@@ -185,7 +190,7 @@ class MetadataManager
     {
         if ($filePath === null || $filePath === '' || $filePath === '0') {
             // Déterminer le répertoire de session pour les métadonnées
-            $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+            $baseBackupDir = config('fontawesome-migrator.sessions_path');
             $sessionId = $this->metadata['session']['id'] ?? 'unknown';
             $sessionDir = $baseBackupDir.'/session-'.$sessionId;
 
@@ -318,10 +323,28 @@ class MetadataManager
      */
     public function getSessionDirectory(): string
     {
-        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.sessions_path');
         $sessionId = $this->metadata['session']['id'] ?? 'unknown';
 
         return $baseBackupDir.'/session-'.$sessionId;
+    }
+
+    /**
+     * Ajouter les chemins des rapports aux métadonnées
+     */
+    public function addReportPaths(string $htmlPath, string $jsonPath): self
+    {
+        if (! isset($this->metadata['reports'])) {
+            $this->metadata['reports'] = [];
+        }
+
+        $this->metadata['reports'][] = [
+            'html_path' => $htmlPath,
+            'json_path' => $jsonPath,
+            'created_at' => date('c'),
+        ];
+
+        return $this;
     }
 
     /**
@@ -329,7 +352,7 @@ class MetadataManager
      */
     public static function cleanOldSessions(int $daysToKeep = 30): int
     {
-        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.sessions_path');
 
         if (! File::exists($baseBackupDir)) {
             return 0;
@@ -365,7 +388,7 @@ class MetadataManager
      */
     public static function getAvailableSessions(): array
     {
-        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.sessions_path');
         $sessions = [];
 
         if (! File::exists($baseBackupDir)) {
@@ -382,8 +405,12 @@ class MetadataManager
             $sessionId = $matches[1];
             $metadataPath = $directory.'/metadata.json';
 
+            // Calculer le short_id à partir du session_id
+            $shortId = substr($sessionId, strpos($sessionId, '_') + 1, 8);
+
             $sessionInfo = [
                 'session_id' => $sessionId,
+                'short_id' => $shortId,
                 'directory' => $directory,
                 'created_at' => date('Y-m-d H:i:s', filemtime($directory)),
                 'has_metadata' => File::exists($metadataPath),
@@ -399,6 +426,11 @@ class MetadataManager
                 $sessionInfo['package_version'] = $metadata['session']['package_version'] ?? 'unknown';
                 $sessionInfo['dry_run'] = $metadata['runtime']['dry_run'] ?? false;
                 $sessionInfo['duration'] = $metadata['runtime']['duration'] ?? null;
+
+                // Utiliser le short_id des métadonnées s'il existe
+                if (isset($metadata['session']['short_id'])) {
+                    $sessionInfo['short_id'] = $metadata['session']['short_id'];
+                }
             }
 
             $sessions[] = $sessionInfo;

@@ -2,10 +2,6 @@
 
 @section('title', 'Sessions de Migration')
 
-@section('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.common')
-@endsection
-
 @section('content')
     <div class="header">
         <h1>🗂️ Sessions de Migration</h1>
@@ -47,11 +43,11 @@
         <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-secondary">
             📊 Voir Rapports
         </a>
-        
+
         <a href="{{ route('fontawesome-migrator.test.panel') }}" class="btn btn-secondary">
             🧪 Tests
         </a>
-        
+
         <button onclick="refreshSessions()" class="btn btn-primary">
             <span id="refresh-icon">🔄</span> Actualiser
         </button>
@@ -74,7 +70,7 @@
                     <div class="report-header">
                         <div class="report-icon">🗂️</div>
                         <div class="report-title">
-                            <h3>Session {{ $session['session_id'] }}</h3>
+                            <h3 title="ID complet : {{ $session['session_id'] }}">Session {{ $session['short_id'] }}</h3>
                             <div class="report-date">
                                 🕒 {{ $session['created_at'] }}
                             </div>

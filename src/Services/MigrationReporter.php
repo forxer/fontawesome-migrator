@@ -21,13 +21,21 @@ class MigrationReporter
      */
     public function generateReport(array $results): array
     {
-        $reportPath = $this->config['report_path'];
+        // Obtenir le dossier de session actuel
+        $sessionDir = $this->metadata->getSessionDirectory();
 
-        // S'assurer que le répertoire et le .gitignore existent
-        DirectoryHelper::ensureExistsWithGitignore($reportPath);
+        // Si pas de session, utiliser le chemin par défaut
+        if (! $sessionDir) {
+            $reportPath = $this->config['report_path'];
+            // S'assurer que le répertoire et le .gitignore existent
+            DirectoryHelper::ensureExistsWithGitignore($reportPath);
+        } else {
+            // Sauvegarder dans le dossier de session
+            $reportPath = $sessionDir;
+        }
 
-        $timestamp = date('Y-m-d_H-i-s');
-        $filename = \sprintf('fontawesome-migration-report-%s.html', $timestamp);
+        // Nom de fichier simple sans timestamp (l'unicité vient du dossier de session)
+        $filename = 'fontawesome-migration-report.html';
         $fullPath = $reportPath.'/'.$filename;
 
         $htmlContent = $this->generateHtmlReport($results);
@@ -35,9 +43,12 @@ class MigrationReporter
         File::put($fullPath, $htmlContent);
 
         // Générer aussi un rapport JSON pour l'automatisation
-        $jsonFilename = \sprintf('fontawesome-migration-report-%s.json', $timestamp);
+        $jsonFilename = 'fontawesome-migration-report.json';
         $jsonPath = $reportPath.'/'.$jsonFilename;
         File::put($jsonPath, json_encode($this->generateJsonReport($results), JSON_PRETTY_PRINT));
+
+        // Ajouter les chemins des rapports aux métadonnées
+        $this->metadata->addReportPaths($fullPath, $jsonPath);
 
         // Générer les URLs d'accès web
         $relativePath = str_replace(storage_path('app/public'), '', $fullPath);
@@ -49,7 +60,6 @@ class MigrationReporter
             'html_url' => Storage::url($relativePath),
             'json_url' => Storage::url($jsonRelativePath),
             'filename' => $filename,
-            'timestamp' => $timestamp,
         ];
     }
 

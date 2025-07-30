@@ -298,6 +298,10 @@ class MigrateCommand extends Command
             // Créer le reporter avec les bonnes métadonnées
             $reporterWithMetadata = new MigrationReporter($this->metadata);
             $reportInfo = $reporterWithMetadata->generateReport($results);
+
+            // Sauvegarder les métadonnées mises à jour avec les chemins des rapports
+            $this->metadata->saveToFile();
+
             $this->info('📊 Rapport généré :');
             $this->line('   • Fichier : '.$reportInfo['filename']);
             $this->line('   • HTML : '.$reportInfo['html_url']);
@@ -580,7 +584,7 @@ class MigrateCommand extends Command
      */
     protected function createBackup(string $filePath): void
     {
-        $baseBackupDir = config('fontawesome-migrator.backup.path', storage_path('app/fontawesome-backups'));
+        $baseBackupDir = config('fontawesome-migrator.sessions_path');
 
         // Créer le répertoire de session basé sur l'ID de session des métadonnées
         $sessionId = $this->metadata->get('session')['id'] ?? 'unknown';

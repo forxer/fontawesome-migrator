@@ -3,7 +3,6 @@
 @section('title', 'Rapports FontAwesome Migrator')
 
 @section('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.common')
     @include('fontawesome-migrator::reports.partials.css.index')
 @endsection
 
@@ -44,11 +43,11 @@
         <a href="{{ route('fontawesome-migrator.test.panel') }}" class="btn btn-secondary">
             🧪 Panneau de Tests
         </a>
-        
+
         <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary">
             🗂️ Sessions
         </a>
-        
+
         <button onclick="refreshReports()" class="btn btn-primary">
             <span id="refresh-icon">🔄</span> Actualiser les rapports
         </button>
@@ -88,7 +87,9 @@
                             <div class="meta-label">🕒 Heure</div>
                         </div>
                         <div class="meta-item">
-                            <div class="meta-value">{{ $report['session_id'] }}</div>
+                            <div class="meta-value" title="ID complet : {{ $report['session_id'] }}">
+                                {{ $report['short_id'] }}
+                            </div>
                             <div class="meta-label">🗂️ Session</div>
                         </div>
                         <div class="meta-item">
@@ -114,7 +115,7 @@
                                 📋 Voir JSON
                             </a>
                         @endif
-                        
+
                         <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-secondary btn-sm">
                             🗂️ Session
                         </a>

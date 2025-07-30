@@ -2,10 +2,6 @@
 
 @section('title', 'Session ' . $sessionId)
 
-@section('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.common')
-@endsection
-
 @section('content')
     <div class="header">
         <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary" style="float: right;">
@@ -145,11 +141,11 @@
         <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary">
             ← Retour aux sessions
         </a>
-        
+
         <button onclick="deleteCurrentSession()" class="btn btn-danger">
             🗑️ Supprimer cette session
         </button>
-        
+
         <div style="margin-left: auto;">
             <button onclick="copySessionInfo()" class="btn btn-primary">
                 📋 Copier les infos
