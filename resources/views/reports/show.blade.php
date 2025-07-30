@@ -1,6 +1,6 @@
 @extends('fontawesome-migrator::layout')
 
-@section('title', 'Rapport de Migration Font Awesome 5 → 6')
+@section('title', 'Rapport de migration')
 
 @section('head-extra')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -9,12 +9,7 @@
 
 @section('content')
     <div class="header">
-        <div style="margin-bottom: 15px;">
-            <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
-                ← Retour aux rapports
-            </a>
-        </div>
-        <h1>📊 Rapport de Migration Font Awesome 5 → 6</h1>
+        <h1>📊 Rapport de migration</h1>
         <p>Généré le {{ $timestamp }}</p>
     </div>
 
@@ -389,7 +384,7 @@
     <div id="backups-section" class="section enhanced-section">
         <h2>💾 Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})</h2>
         <p>Liste des fichiers sauvegardés avant modification :</p>
-        
+
         <div class="backups-list">
             @foreach ($migrationOptions['created_backups'] as $backup)
             <div class="backup-item">
@@ -404,7 +399,7 @@
             </div>
             @endforeach
         </div>
-        
+
         <div class="alert alert-info" style="margin-top: 20px;">
             💡 <strong>Note :</strong> Ces sauvegardes peuvent être utilisées pour restaurer les fichiers originaux en cas de besoin.
             Utilisez la commande <code>php artisan fontawesome:backup</code> pour gérer les sauvegardes.
@@ -810,7 +805,7 @@
 
         // Génération du rapport texte
         function generateTextReport(data) {
-            let report = `📊 RAPPORT DE MIGRATION FONT AWESOME 5 → 6\n`;
+            let report = `📊 RAPPORT DE MIGRATION FONT AWESOME\n`;
             report += `${'='.repeat(50)}\n\n`;
             report += `📅 Généré le: ${data.timestamp}\n`;
             report += `📦 Version: FontAwesome Migrator ${data.packageVersion}\n`;

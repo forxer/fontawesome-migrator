@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="header">
-        <h1>🚀 FontAwesome Migrator</h1>
+        <h1>📊 Rapports</h1>
         <p>Gestion des rapports de migration</p>
     </div>
 

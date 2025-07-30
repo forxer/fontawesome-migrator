@@ -24,7 +24,7 @@
         --blue-100: #dbeafe;
         --blue-500: #3b82f6;
         --blue-600: #2563eb;
-        
+
         /* Spacing system */
         --spacing-xs: 4px;
         --spacing-sm: 8px;
@@ -32,13 +32,13 @@
         --spacing-lg: 24px;
         --spacing-xl: 32px;
         --spacing-2xl: 48px;
-        
+
         /* Border radius */
         --radius-sm: 6px;
         --radius-md: 8px;
         --radius-lg: 12px;
         --radius-xl: 16px;
-        
+
         /* Shadows */
         --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
         --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
@@ -267,47 +267,6 @@
         font-weight: 500;
     }
 
-    .btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s;
-        font-size: 0.95em;
-    }
-
-    .btn:hover {
-        transform: translateY(-1px);
-    }
-
-    .btn-primary {
-        background: var(--primary-color);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-dark);
-    }
-
-    .btn-danger {
-        background: var(--danger-color);
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: var(--danger-dark);
-    }
-
-    .btn-sm {
-        padding: 8px 15px;
-        font-size: 0.9em;
-    }
 
     /* Tables */
     table {
@@ -576,6 +535,26 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(237, 137, 54, 0.4);
         border-color: #dd7f2b;
+    }
+
+    .btn-danger {
+        background: var(--danger-color);
+        color: white;
+        box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+        border: 1px solid var(--danger-color);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+        border-color: var(--danger-dark);
+    }
+
+
+    .btn-sm {
+        padding: 3px 8px !important;
+        font-size: 0.9em !important;
     }
 
     /* Bouton retour en haut unifié */
@@ -868,6 +847,82 @@
         background: #fee2e2;
         color: #991b1b;
         border: 1px solid #fecaca;
+    }
+
+    /* Section Recommandations */
+    .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+        margin-top: var(--spacing-lg);
+    }
+
+    .recommendation-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .recommendation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+    }
+
+    .recommendation-card.priority-high::before {
+        background: var(--error-color);
+    }
+
+    .recommendation-card.priority-medium::before {
+        background: var(--warning-color);
+    }
+
+    .recommendation-card.priority-success::before {
+        background: var(--success-color);
+    }
+
+    .recommendation-card.priority-info::before {
+        background: var(--primary-color);
+    }
+
+    .recommendation-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .rec-icon {
+        font-size: 2.5em;
+        margin-bottom: var(--spacing-sm);
+        text-align: center;
+    }
+
+    .rec-content h4 {
+        margin: 0 0 var(--spacing-sm) 0;
+        color: var(--gray-800);
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+
+    .rec-content p {
+        color: var(--gray-600);
+        line-height: 1.5;
+        margin: 0 0 var(--spacing-md) 0;
+    }
+
+    .rec-content code {
+        background: var(--gray-100);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: var(--gray-800);
     }
 
     /* Classes communes partagées par les vues reports et sessions */
