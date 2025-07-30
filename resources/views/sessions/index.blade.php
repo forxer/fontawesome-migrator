@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="header">
-        <h1>🗂️ Sessions de Migration</h1>
+        <h1>🗂️ Sessions</h1>
         <p>Gestion des sessions et métadonnées</p>
     </div>
 

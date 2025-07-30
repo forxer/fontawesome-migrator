@@ -9,7 +9,8 @@
 @section('content')
 <div class="container">
     <div class="header">
-        <h1>🧪 Panneau de Tests</h1>
+        <h1>🧪 Tests</h1>
+        <p>Utilitaires de tests en ligne</p>
     </div>
 
     <!-- Statistiques des sauvegardes -->
