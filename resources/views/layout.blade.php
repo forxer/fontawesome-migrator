@@ -18,7 +18,7 @@
         <div class="navbar-container">
             <div class="navbar-brand">
                 <a href="{{ route('fontawesome-migrator.home') }}" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
-                    <span class="navbar-logo"><i class="fa-regular fa-house"></i></span>
+                    <span class="navbar-logo"><i class="fa-solid fa-house"></i></span>
                     <span class="navbar-title">FontAwesome Migrator</span>
                 </a>
             </div>
@@ -49,10 +49,10 @@
                 <li class="breadcrumb-item">
                     @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
                         <a href="{{ route('fontawesome-migrator.home') }}" class="breadcrumb-link">
-                            <i class="fa-regular fa-house"></i> Accueil
+                            <i class="fa-solid fa-house"></i> Accueil
                         </a>
                     @else
-                        <span class="breadcrumb-current"><i class="fa-regular fa-house"></i> Accueil</span>
+                        <span class="breadcrumb-current"><i class="fa-solid fa-house"></i> Accueil</span>
                     @endif
                 </li>
                 @if(isset($breadcrumbs))
