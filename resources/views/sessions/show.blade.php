@@ -1,14 +1,11 @@
 @extends('fontawesome-migrator::layout')
 
-@section('title', 'Session ' . $sessionId)
+@section('title', 'Session ' . $shortId)
 
 @section('content')
     <div class="header">
-        <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary" style="float: right;">
-            ← Retour aux sessions
-        </a>
-        <h1>🗂️ Session {{ $sessionId }}</h1>
-        <p>Détails de la session de migration</p>
+        <h1>🗂️ Session {{ $shortId }}</h1>
+        <p>Détails de la session de migration {{ $sessionId }}</p>
     </div>
 
     @if($metadata)
@@ -17,7 +14,13 @@
             <h2 class="section-title">📋 Métadonnées de la session</h2>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-number">{{ $metadata['meta']['generated_at'] ?? 'N/A' }}</div>
+                    <div class="stat-number">
+                        @if(isset($metadata['meta']['generated_at']))
+                            {{ \Carbon\Carbon::parse($metadata['meta']['generated_at'])->format('d/m/Y') }}
+                        @else
+                            N/A
+                        @endif
+                    </div>
                     <div class="stat-label">🕒 Créée le</div>
                 </div>
                 <div class="stat-item">
@@ -110,7 +113,7 @@
                             <tr style="border-bottom: 1px solid var(--gray-200);">
                                 <td style="padding: 12px; font-family: monospace;">{{ $file['name'] }}</td>
                                 <td style="padding: 12px; text-align: right;">{{ number_format($file['size'] / 1024, 1, ',', ' ') }} KB</td>
-                                <td style="padding: 12px; text-align: center;">{{ $file['modified'] }}</td>
+                                <td style="padding: 12px; text-align: center;">{{ $file['modified']->format('d/m/Y H:i') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

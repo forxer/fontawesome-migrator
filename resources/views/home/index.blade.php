@@ -166,7 +166,7 @@
 
     @if($stats['last_activity'])
         <div class="last-activity">
-            <p>Dernière activité : {{ $stats['last_activity']->format('d/m/Y à H:i') }}</p>
+            <p>Dernière activité : {{ $stats['last_activity']->diffForHumans() }}</p>
         </div>
     @endif
 @endsection

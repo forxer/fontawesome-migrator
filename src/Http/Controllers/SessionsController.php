@@ -57,7 +57,7 @@ class SessionsController extends Controller
                 $backupFiles[] = [
                     'name' => $file->getFilename(),
                     'size' => $file->getSize(),
-                    'modified' => Carbon::createFromTimestamp($file->getMTime())->format('Y-m-d H:i:s'),
+                    'modified' => Carbon::createFromTimestamp($file->getMTime()),
                 ];
             }
         }

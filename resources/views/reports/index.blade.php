@@ -29,7 +29,7 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
-                    <div class="stat-label">Dernier</div>
+                    <div class="stat-label">Dernier rapport</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">{{ collect($reports)->filter(fn($r) => $r['created_at']->isAfter(now()->subWeek()))->count() }}</div>

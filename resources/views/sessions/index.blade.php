@@ -28,12 +28,12 @@
                 <div class="stat-item">
                     <div class="stat-number">
                         @if($stats['last_session'])
-                            {{ date('d/m', strtotime($stats['last_session']['created_at'])) }}
+                            {{ $stats['last_session']['created_at']->format('d/m') }}
                         @else
                             -
                         @endif
                     </div>
-                    <div class="stat-label">Dernière</div>
+                    <div class="stat-label">Dernière session</div>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
                         <div class="report-title">
                             <h3>Session <span data-tooltip="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h3>
                             <div class="report-date">
-                                🕒 {{ $session['created_at'] }}
+                                🕒 {{ $session['created_at']->format('d/m/Y à H:i') }}
                             </div>
                         </div>
                     </div>
@@ -87,6 +87,10 @@
                         <div class="meta-item">
                             <div class="meta-value">{{ $session['package_version'] ?? '?' }}</div>
                             <div class="meta-label">📦 Version</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-value">{{ $session['created_at']->diffForHumans(['short' => true]) }}</div>
+                            <div class="meta-label">⏰ Âge</div>
                         </div>
                     </div>
 

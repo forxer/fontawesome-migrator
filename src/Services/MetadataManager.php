@@ -413,7 +413,7 @@ class MetadataManager
                 'session_id' => $sessionId,
                 'short_id' => $shortId,
                 'directory' => $directory,
-                'created_at' => Carbon::createFromTimestamp(filemtime($directory))->format('Y-m-d H:i:s'),
+                'created_at' => Carbon::createFromTimestamp(filemtime($directory)),
                 'has_metadata' => File::exists($metadataPath),
                 'backup_count' => \count(File::files($directory)) - 1, // -1 pour exclure metadata.json
                 'package_version' => 'unknown',
