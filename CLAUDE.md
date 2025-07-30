@@ -98,6 +98,7 @@ The package follows a service-oriented architecture with clear separation of con
 4. **IconReplacer** (`src/Services/IconReplacer.php`): Orchestrates the replacement process using the mappers
 5. **AssetMigrator** (`src/Services/AssetMigrator.php`): Migrates FontAwesome assets (CSS, JS, CDN, package.json) with Pro/Free support
 6. **MigrationReporter** (`src/Services/MigrationReporter.php`): Generates HTML and JSON reports using Blade views with shared layout system and comprehensive metadata tracking
+7. **MetadataManager** (`src/Services/MetadataManager.php`): Centralized service for session-based metadata management with real-time data collection
 
 ### Command Structure
 
@@ -108,10 +109,12 @@ The package follows a service-oriented architecture with clear separation of con
 
 ### Web Interface Architecture
 
+- **HomeController** (`src/Http/Controllers/HomeController.php`): Page d'accueil avec dashboard statistiques et actions rapides
 - **ReportsController** (`src/Http/Controllers/ReportsController.php`): REST API for reports management with CRUD operations, uses Blade views for HTML display
-- **Layout View** (`resources/views/layout.blade.php`): Shared HTML layout with unified CSS design system using CSS custom properties
-- **Index View** (`resources/views/reports/index.blade.php`): Modern reports listing interface with enhanced design, statistics overview, and responsive grid layout
-- **Migration View** (`resources/views/reports/migration.blade.php`): Individual report display with interactive features, detailed statistics, change tracking, and comprehensive data visualization
+- **SessionsController** (`src/Http/Controllers/SessionsController.php`): Gestion des sessions de migration avec interface web complète
+- **TestsController** (`src/Http/Controllers/TestsController.php`): Interface de test et debug pour les migrations
+- **Layout View** (`resources/views/layout.blade.php`): Shared HTML layout with navigation menu, breadcrumbs, and unified CSS design system
+- **RESTful Views**: Toutes les sections suivent le pattern `index`/`show` (home, reports, sessions, tests)
 
 ### View Architecture & Design System
 
@@ -132,7 +135,7 @@ The package implements a **modern, unified design system** with complete inline 
    - **French number formatting** with proper locale conventions
    - **Enhanced empty state** with helpful guidance and command examples
 
-2. **Interactive Migration Reports** (`resources/views/reports/migration.blade.php`):
+2. **Interactive Migration Reports** (`resources/views/reports/show.blade.php`):
    - **Complete inline CSS and JavaScript** for full functionality
    - **Chart.js integration** for data visualization (doughnut charts)
    - **Interactive collapsible sections** with smooth animations
@@ -194,18 +197,13 @@ The package provides comprehensive **migration context tracking** in reports:
 
 ### Configuration System
 
-The package uses a comprehensive configuration file (`config/fontawesome-migrator.php`) that supports:
-- License type detection (free/pro)
-- Pro styles configuration (light, duotone, thin, sharp)
-- Fallback strategies for Pro → Free migration
-- Customizable scan paths and file extensions
-- Backup and reporting options
-- Advanced configuration management via `fontawesome:config` command with:
-  - Interactive menu system for configuration editing
-  - Granular control over scan paths, file extensions, exclusion patterns
-  - Pro styles management with license validation
-  - Configuration validation and backup capabilities
-  - Optimized UX for large projects with multiple configuration changes
+The package uses a comprehensive configuration file (`config/fontawesome-migrator.php`) with session-based architecture:
+- **Session-based storage**: `sessions_path` → `storage/app/fontawesome-migrator` (anciennement `backup_path`)
+- **License type detection**: free/pro avec validation automatique
+- **Pro styles configuration**: light, duotone, thin, sharp avec gestion des fallbacks
+- **Scan paths et file extensions**: Personnalisables avec validation
+- **Session management**: Chaque migration crée un répertoire unique avec métadonnées
+- **Advanced configuration management**: Command `fontawesome:config` avec interface interactive complète
 
 ### Key Features
 
@@ -216,30 +214,33 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 5. **Package Manager Support**: Complete NPM, Yarn, pnpm package.json migration with .json extension support
 6. **Multi-Format Support**: CSS, SCSS, JS, TS, Vue, HTML, Blade, JSON (including package.json and webpack.mix.js)
 7. **Modern Web Interface**: 
-   - **Enhanced reports management UI** at `/fontawesome-migrator/reports`
-   - **Interactive data visualization** with Chart.js integration
-   - **Real-time search and filtering** with syntax highlighting
-   - **Performance metrics dashboard** with success rate calculations
-   - **Responsive design** with mobile-first approach
+   - **Homepage with dashboard** at `/fontawesome-migrator/` avec statistiques et actions rapides
+   - **Reports management UI** at `/fontawesome-migrator/reports` avec visualisations interactives
+   - **Sessions management** at `/fontawesome-migrator/sessions` avec inspection détaillée
+   - **Tests interface** at `/fontawesome-migrator/tests` pour debug et testing
+   - **Navigation unifiée** avec menu et fil d'ariane sur toutes les pages
 8. **Backup System**: Creates timestamped backups before modifications
 9. **Progress Reporting**: Real-time progress bars and detailed interactive reports
 10. **Migration Modes**: Complete, icons-only, assets-only options
 11. **Advanced UI/UX Design**: 
-    - **Complete inline CSS/JS architecture** for maximum reliability
-    - **French localization** with proper number formatting conventions
-    - **Modern gradient design** with smooth animations and hover effects
-    - **Contextual recommendations** with actionable guidance
-    - **Copy-to-clipboard functionality** for reports and commands
-12. **Configuration Traceability**: Comprehensive migration context tracking with dynamic versioning and reproducible audit trails
-13. **Navigation System**: Seamless navigation between reports index and individual report views
-14. **Accessibility**: WCAG-compliant design with semantic HTML and ARIA support
-15. **Advanced Configuration Management**: Interactive configuration command (`fontawesome:config`) optimized for large projects with granular editing capabilities
+    - **Complete inline CSS/JS architecture** for maximum reliability and performance
+    - **Unified design system** with CSS variables, consistent spacing, and responsive design
+    - **RESTful architecture** avec pattern `index`/`show` cohérent sur toutes les sections
+    - **French localization** with proper number formatting and contextual labels
+    - **Modern animations** with smooth transitions, hover effects, and progressive disclosure
+12. **Session-based Architecture**: 
+    - **Unique session management** avec short IDs (8 caractères) pour l'interface utilisateur
+    - **Metadata persistence** avec fichiers JSON séparés pour chaque session
+    - **Report organization** sans suffixes temporels, organisés par session unique
+    - **Centralized storage** dans `storage/app/fontawesome-migrator` avec structure hiérarchique
 
 ### Package Status
-🚧 **VERSION 2.0.0 EN DÉVELOPPEMENT** - Architecture modernisée en cours :
+🚧 **VERSION 2.0.0 EN DÉVELOPPEMENT** - Architecture modernisée et interface complète :
 - ✅ Injection de dépendances refactorisée dans les commandes
 - ✅ Système de métadonnées centralisé avec sessions
-- ✅ Interface web organisée avec contrôleurs spécialisés
+- ✅ Interface web complète avec navigation, homepage et architecture RESTful
+- ✅ Design system unifié avec CSS variables et partials organisés
+- ✅ Session management avec short IDs et organisation cohérente
 - 🚧 Tests automatisés en cours de refonte pour la v2.0.0
 
 ## Améliorations de l'Interface Web

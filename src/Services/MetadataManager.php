@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 
 class MetadataManager
@@ -28,13 +29,13 @@ class MetadataManager
             'session' => [
                 'id' => $sessionId,
                 'short_id' => $shortId,
-                'started_at' => date('c'),
+                'started_at' => Carbon::now()->toIso8601String(),
                 'package_version' => $this->getPackageVersion(),
             ],
             'environment' => [
                 'php_version' => PHP_VERSION,
                 'laravel_version' => app()->version(),
-                'timezone' => date_default_timezone_get(),
+                'timezone' => Carbon::now()->timezoneName,
             ],
             'configuration' => [
                 'license_type' => $this->config['license_type'],
@@ -93,7 +94,7 @@ class MetadataManager
      */
     public function startMigration(): self
     {
-        $this->metadata['runtime']['started_at'] = date('c');
+        $this->metadata['runtime']['started_at'] = Carbon::now()->toIso8601String();
 
         return $this;
     }
@@ -103,12 +104,12 @@ class MetadataManager
      */
     public function completeMigration(): self
     {
-        $this->metadata['runtime']['completed_at'] = date('c');
+        $this->metadata['runtime']['completed_at'] = Carbon::now()->toIso8601String();
 
         if ($this->metadata['runtime']['started_at']) {
-            $start = strtotime((string) $this->metadata['runtime']['started_at']);
-            $end = strtotime($this->metadata['runtime']['completed_at']);
-            $this->metadata['runtime']['duration'] = $end - $start;
+            $start = Carbon::parse($this->metadata['runtime']['started_at']);
+            $end = Carbon::parse($this->metadata['runtime']['completed_at']);
+            $this->metadata['runtime']['duration'] = $start->diffInSeconds($end);
         }
 
         return $this;
@@ -341,7 +342,7 @@ class MetadataManager
         $this->metadata['reports'][] = [
             'html_path' => $htmlPath,
             'json_path' => $jsonPath,
-            'created_at' => date('c'),
+            'created_at' => Carbon::now()->toIso8601String(),
         ];
 
         return $this;
@@ -412,7 +413,7 @@ class MetadataManager
                 'session_id' => $sessionId,
                 'short_id' => $shortId,
                 'directory' => $directory,
-                'created_at' => date('Y-m-d H:i:s', filemtime($directory)),
+                'created_at' => Carbon::createFromTimestamp(filemtime($directory))->format('Y-m-d H:i:s'),
                 'has_metadata' => File::exists($metadataPath),
                 'backup_count' => \count(File::files($directory)) - 1, // -1 pour exclure metadata.json
                 'package_version' => 'unknown',
@@ -437,7 +438,7 @@ class MetadataManager
         }
 
         // Trier par date de création décroissante
-        usort($sessions, fn ($a, $b): int => strtotime($b['created_at']) - strtotime($a['created_at']));
+        usort($sessions, fn ($a, $b): int => Carbon::parse($b['created_at'])->timestamp - Carbon::parse($a['created_at'])->timestamp);
 
         return $sessions;
     }

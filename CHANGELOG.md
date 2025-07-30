@@ -16,12 +16,20 @@ CHANGELOG
 - **Enhanced Metadata Structure**: Métadonnées enrichies avec session, environment, runtime, backups, statistics
 - **Real-time Data Collection**: Collecte des sauvegardes et statistiques en temps réel pendant la migration
 - **Metadata Persistence**: Sauvegarde automatique des métadonnées avec session ID unique
+- **Homepage**: Page d'accueil avec dashboard statistiques et actions rapides
+- **Navigation System**: Menu de navigation et fil d'ariane sur toutes les pages
+- **Short Session IDs**: Affichage simplifié des IDs de session (8 caractères)
+- **Unified Architecture**: Organisation cohérente des partials CSS/JS à la racine
 
 ### Changed
 - **MigrateCommand**: Services injectés via `handle(FileScanner, IconReplacer, MigrationReporter, AssetMigrator, MetadataManager)`
 - **BackupCommand**: Service IconReplacer injecté via `handle(IconReplacer)` et assigné à la propriété de classe
 - **MigrationReporter**: Constructor injection du `MetadataManager` pour consommer les métadonnées séparées
 - **Report Generation**: Rapports HTML/JSON enrichis avec métadonnées complètes (environment, session, backups)
+- **Storage Path**: `backup_path` → `sessions_path` (`storage/app/fontawesome-migrator`)
+- **Report Naming**: Fichiers sans suffixe date/heure pour organisation par session
+- **RESTful Routes**: Toutes les sections utilisent le pattern `index`/`show` cohérent
+- **CSS Architecture**: Partials réorganisés avec séparation commun/spécifique
 
 ### Enhanced
 - **Metadata Traceability**: Traçabilité complète avec session ID, timestamps, durée de migration
@@ -33,7 +41,7 @@ CHANGELOG
 - **Session-Based Backup Architecture**: Nouvelle organisation des sauvegardes par session
 - **Session Directories**: Chaque migration crée son propre répertoire `session-migration_xxxxx/`
 - **Metadata Integration**: Fichier `metadata.json` intégré dans chaque répertoire de session
-- **Web Testing Panel**: Interface web complète pour tester et déboguer les migrations (`/fontawesome-migrator/test-panel`)
+- **Web Testing Panel**: Interface web complète pour tester et déboguer les migrations (`/fontawesome-migrator/tests`)
 - **Session Management**: API complète pour lister, inspecter et nettoyer les sessions de migration
 - **Advanced Session Inspection**: Inspection détaillée des sessions avec métadonnées et fichiers de sauvegarde
 - **Session Cleanup**: Nettoyage automatique des sessions anciennes avec seuils configurables

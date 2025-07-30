@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Http\Controllers;
 
+use Carbon\Carbon;
 use FontAwesome\Migrator\Services\MetadataManager;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
@@ -48,7 +49,7 @@ class HomeController extends Controller
             'total_sessions' => \count($sessions),
             'total_reports' => $reportsCount,
             'total_size' => $totalSize,
-            'last_activity' => $lastActivity,
+            'last_activity' => $lastActivity ? Carbon::createFromTimestamp($lastActivity) : null,
             'successful_migrations' => $successfulMigrations,
             'package_version' => $this->getPackageVersion(),
         ];
@@ -67,7 +68,7 @@ class HomeController extends Controller
                         'filename' => $file->getFilename(),
                         'session_id' => $session['session_id'],
                         'short_id' => $session['short_id'],
-                        'created_at' => $file->getMTime(),
+                        'created_at' => Carbon::createFromTimestamp($file->getMTime()),
                         'size' => $file->getSize(),
                     ];
                 }

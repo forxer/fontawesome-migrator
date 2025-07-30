@@ -28,11 +28,11 @@
                     <div class="stat-label">KB Total</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">{{ date('d/m', max(array_column($reports, 'created_at'))) }}</div>
+                    <div class="stat-number">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
                     <div class="stat-label">Dernier</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">{{ count(array_filter($reports, fn($r) => $r['created_at'] > strtotime('-7 days'))) }}</div>
+                    <div class="stat-number">{{ collect($reports)->filter(fn($r) => $r['created_at']->isAfter(now()->subWeek()))->count() }}</div>
                     <div class="stat-label">Cette semaine</div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
                         <div class="report-title">
                             <h3>{{ $report['name'] }}</h3>
                             <div class="report-date">
-                                🕒 {{ date('d/m/Y à H:i', $report['created_at']) }}
+                                🕒 {{ $report['created_at']->format('d/m/Y à H:i') }}
                             </div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                             <div class="meta-label">📊 Taille (KB)</div>
                         </div>
                         <div class="meta-item">
-                            <div class="meta-value">{{ date('H:i', $report['created_at']) }}</div>
+                            <div class="meta-value">{{ $report['created_at']->format('H:i') }}</div>
                             <div class="meta-label">🕒 Heure</div>
                         </div>
                         <div class="meta-item">
@@ -85,14 +85,7 @@
                             <div class="meta-label">🗂️ Session</div>
                         </div>
                         <div class="meta-item">
-                            <div class="meta-value">
-                                @php
-                                    $age = time() - $report['created_at'];
-                                    if ($age < 3600) echo floor($age / 60) . 'm';
-                                    elseif ($age < 86400) echo floor($age / 3600) . 'h';
-                                    else echo floor($age / 86400) . 'j';
-                                @endphp
-                            </div>
+                            <div class="meta-value">{{ $report['created_at']->diffForHumans(['short' => true]) }}</div>
                             <div class="meta-label">⏰ Âge</div>
                         </div>
                     </div>

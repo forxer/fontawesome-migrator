@@ -103,17 +103,12 @@
                             </div>
                             <div class="activity-meta">
                                 Session <span data-tooltip="ID complet : {{ $report['session_id'] }}">{{ $report['short_id'] }}</span>
-                                • {{ date('d/m/Y à H:i', $report['created_at']) }}
+                                • {{ $report['created_at']->format('d/m/Y à H:i') }}
                                 • {{ number_format($report['size'] / 1024, 1, ',', ' ') }} KB
                             </div>
                         </div>
                         <div class="activity-badge">
-                            @php
-                                $age = time() - $report['created_at'];
-                                if ($age < 3600) echo floor($age / 60) . 'm';
-                                elseif ($age < 86400) echo floor($age / 3600) . 'h';
-                                else echo floor($age / 86400) . 'j';
-                            @endphp
+                            {{ $report['created_at']->diffForHumans(['short' => true]) }}
                         </div>
                     </div>
                 @endforeach
@@ -171,7 +166,7 @@
 
     @if($stats['last_activity'])
         <div class="last-activity">
-            <p>Dernière activité : {{ date('d/m/Y à H:i', $stats['last_activity']) }}</p>
+            <p>Dernière activité : {{ $stats['last_activity']->format('d/m/Y à H:i') }}</p>
         </div>
     @endif
 @endsection

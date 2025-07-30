@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Http\Controllers;
 
+use Carbon\Carbon;
 use FontAwesome\Migrator\Services\MetadataManager;
 use FontAwesome\Migrator\Services\MigrationReporter;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class ReportsController extends Controller
                         'filename' => $file->getFilename(),
                         'session_id' => $sessionId,
                         'short_id' => $shortId,
-                        'created_at' => $file->getMTime(),
+                        'created_at' => Carbon::createFromTimestamp($file->getMTime()),
                         'size' => $file->getSize(),
                         'html_path' => $file->getRealPath(),
                         'json_path' => $jsonPath,
@@ -101,7 +102,7 @@ class ReportsController extends Controller
                     'assets_migrated' => 0,
                     'migration_success' => true,
                 ],
-                'timestamp' => date('Y-m-d H:i:s', filemtime($filePath)),
+                'timestamp' => Carbon::createFromTimestamp(filemtime($filePath))->format('Y-m-d H:i:s'),
                 'isDryRun' => false,
                 'migrationOptions' => [],
                 'configuration' => [
@@ -133,8 +134,8 @@ class ReportsController extends Controller
             'results' => $results,
             'stats' => $jsonData['summary'] ?? [],
             'timestamp' => isset($jsonData['meta']['generated_at']) ?
-                date('Y-m-d H:i:s', strtotime((string) $jsonData['meta']['generated_at'])) :
-                date('Y-m-d H:i:s'),
+                Carbon::parse($jsonData['meta']['generated_at'])->format('Y-m-d H:i:s') :
+                Carbon::now()->format('Y-m-d H:i:s'),
             'isDryRun' => $jsonData['meta']['dry_run'] ?? false,
             'migrationOptions' => $jsonData['meta']['migration_options'] ?? [],
             'configuration' => $jsonData['meta']['configuration'] ?? [],

@@ -2,6 +2,7 @@
 
 namespace FontAwesome\Migrator\Http\Controllers;
 
+use Carbon\Carbon;
 use FontAwesome\Migrator\Services\MetadataManager;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -56,7 +57,7 @@ class SessionsController extends Controller
                 $backupFiles[] = [
                     'name' => $file->getFilename(),
                     'size' => $file->getSize(),
-                    'modified' => date('Y-m-d H:i:s', $file->getMTime()),
+                    'modified' => Carbon::createFromTimestamp($file->getMTime())->format('Y-m-d H:i:s'),
                 ];
             }
         }
