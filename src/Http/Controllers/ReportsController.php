@@ -49,7 +49,10 @@ class ReportsController extends Controller
         // Trier par date de création (plus récent en premier)
         usort($reports, fn ($a, $b): int => $b['created_at'] <=> $a['created_at']);
 
-        return view('fontawesome-migrator::reports.index', ['reports' => $reports]);
+        return view('fontawesome-migrator::reports.index', [
+            'reports' => $reports,
+            'breadcrumbs' => [],
+        ]);
     }
 
     /**
@@ -60,12 +63,14 @@ class ReportsController extends Controller
         // Chercher le fichier dans toutes les sessions
         $sessions = MetadataManager::getAvailableSessions();
         $filePath = null;
+        $sessionInfo = null;
 
         foreach ($sessions as $session) {
             $possiblePath = $session['directory'].'/'.$filename;
 
             if (File::exists($possiblePath)) {
                 $filePath = $possiblePath;
+                $sessionInfo = $session;
                 break;
             }
         }
@@ -106,6 +111,11 @@ class ReportsController extends Controller
                 'packageVersion' => '?',
             ];
 
+            $viewData['breadcrumbs'] = [
+                ['label' => 'Rapports', 'url' => route('fontawesome-migrator.reports.index')],
+                ['label' => 'Rapport - Session '.($sessionInfo['short_id'] ?? 'inconnue')],
+            ];
+
             return view('fontawesome-migrator::reports.migration', $viewData);
         }
 
@@ -128,6 +138,11 @@ class ReportsController extends Controller
             'configuration' => $jsonData['meta']['configuration'] ?? [],
             'packageVersion' => $jsonData['meta']['package_version'] ?? '1.1.0',
             'enrichedWarnings' => $enrichedWarnings,
+        ];
+
+        $viewData['breadcrumbs'] = [
+            ['label' => 'Rapports', 'url' => route('fontawesome-migrator.reports.index')],
+            ['label' => 'Rapport - Session '.($sessionInfo['short_id'] ?? 'inconnue')],
         ];
 
         return view('fontawesome-migrator::reports.migration', $viewData);

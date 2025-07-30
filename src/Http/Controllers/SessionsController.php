@@ -23,6 +23,7 @@ class SessionsController extends Controller
         return view('fontawesome-migrator::sessions.index', [
             'sessions' => $sessions,
             'stats' => $stats,
+            'breadcrumbs' => [],
         ]);
     }
 
@@ -60,9 +61,14 @@ class SessionsController extends Controller
 
         return view('fontawesome-migrator::sessions.show', [
             'sessionId' => $sessionId,
+            'shortId' => $metadata['session']['short_id'] ?? 'inconnue',
             'sessionDir' => $sessionDir,
             'metadata' => $metadata,
             'backupFiles' => $backupFiles,
+            'breadcrumbs' => [
+                ['label' => 'Sessions', 'url' => route('fontawesome-migrator.sessions.index')],
+                ['label' => 'Session '.($metadata['session']['short_id'] ?? 'inconnue')],
+            ],
         ]);
     }
 

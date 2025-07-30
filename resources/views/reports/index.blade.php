@@ -1,4 +1,4 @@
-@extends('fontawesome-migrator::reports.layout')
+@extends('fontawesome-migrator::layout')
 
 @section('title', 'Rapports FontAwesome Migrator')
 
@@ -40,14 +40,6 @@
     @endif
 
     <div class="actions">
-        <a href="{{ route('fontawesome-migrator.test.panel') }}" class="btn btn-secondary">
-            🧪 Panneau de Tests
-        </a>
-
-        <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary">
-            🗂️ Sessions
-        </a>
-
         <button onclick="refreshReports()" class="btn btn-primary">
             <span id="refresh-icon">🔄</span> Actualiser les rapports
         </button>
@@ -87,7 +79,7 @@
                             <div class="meta-label">🕒 Heure</div>
                         </div>
                         <div class="meta-item">
-                            <div class="meta-value" title="ID complet : {{ $report['session_id'] }}">
+                            <div class="meta-value" data-tooltip="ID complet : {{ $report['session_id'] }}">
                                 {{ $report['short_id'] }}
                             </div>
                             <div class="meta-label">🗂️ Session</div>

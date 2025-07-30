@@ -1,4 +1,4 @@
-@extends('fontawesome-migrator::reports.layout')
+@extends('fontawesome-migrator::layout')
 
 @section('title', 'Panneau de Tests - FontAwesome Migrator')
 
@@ -10,11 +10,6 @@
 <div class="container">
     <div class="header">
         <h1>🧪 Panneau de Tests</h1>
-        <div class="actions">
-            <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn-secondary">
-                ← Retour aux rapports
-            </a>
-        </div>
     </div>
 
     <!-- Statistiques des sauvegardes -->

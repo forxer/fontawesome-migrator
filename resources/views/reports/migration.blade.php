@@ -1,4 +1,4 @@
-@extends('fontawesome-migrator::reports.layout')
+@extends('fontawesome-migrator::layout')
 
 @section('title', 'Rapport de Migration Font Awesome 5 → 6')
 

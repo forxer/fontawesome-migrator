@@ -53,16 +53,139 @@
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         min-height: 100vh;
         color: var(--gray-800);
         line-height: 1.6;
     }
 
+    /* Navigation */
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .navbar-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 60px;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        font-size: 1.2em;
+        color: var(--gray-800);
+    }
+
+    .navbar-logo {
+        font-size: 1.5em;
+    }
+
+    .navbar-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 8px;
+    }
+
+    .navbar-item {
+        margin: 0;
+    }
+
+    .navbar-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        color: var(--gray-600);
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .navbar-link:hover {
+        background: var(--gray-100);
+        color: var(--gray-800);
+    }
+
+    .navbar-link.active {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    /* Fil d'ariane */
+    .breadcrumb {
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 12px 0;
+    }
+
+    .breadcrumb-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .breadcrumb-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9em;
+    }
+
+    .breadcrumb-item {
+        margin: 0;
+    }
+
+    .breadcrumb-separator {
+        color: var(--gray-400);
+        margin: 0;
+    }
+
+    .breadcrumb-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb-link:hover {
+        color: var(--primary-hover);
+        text-decoration: underline;
+    }
+
+    .breadcrumb-current {
+        color: var(--gray-600);
+        font-weight: 500;
+    }
+
+    /* Container */
     .container {
         max-width: 1200px;
         margin: 0 auto;
+        padding: 20px;
+    }
+
+    .container.with-breadcrumb {
+        padding-top: 20px;
     }
 
     .header {
@@ -422,6 +545,20 @@
         border-color: var(--primary-hover);
     }
 
+    .btn-secondary {
+        background: var(--gray-500);
+        color: white;
+        box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+        border: 1px solid var(--gray-500);
+    }
+
+    .btn-secondary:hover {
+        background: var(--gray-600);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+        border-color: var(--gray-600);
+    }
+
     .btn-warning {
         background: var(--warning-color);
         color: white;
@@ -643,6 +780,13 @@
         font-weight: 600;
     }
 
+    .report-title h3 span[data-tooltip] {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 2px;
+        color: var(--primary-color);
+    }
+
     .report-date {
         color: var(--gray-500);
         font-size: 0.95em;
@@ -678,27 +822,43 @@
         text-decoration: underline;
         text-decoration-style: dotted;
         text-underline-offset: 2px;
-    }
-
-    h3[title] {
-        cursor: help;
         position: relative;
     }
 
-    h3[title]:hover::after {
-        content: attr(title);
+    /* Tooltip simple avec CSS */
+    [data-tooltip] {
+        position: relative;
+        cursor: help;
+    }
+
+    [data-tooltip]:hover::before {
+        content: attr(data-tooltip);
         position: absolute;
         bottom: 100%;
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
         background: var(--gray-800);
         color: white;
         padding: 8px 12px;
         border-radius: 6px;
-        font-size: 0.8em;
+        font-size: 0.85em;
         white-space: nowrap;
-        z-index: 10;
-        margin-bottom: 5px;
+        z-index: 100;
+        margin-bottom: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        font-weight: normal;
+    }
+
+    [data-tooltip]:hover::after {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: var(--gray-800);
+        margin-bottom: -4px;
+        z-index: 100;
     }
 
     .meta-label {

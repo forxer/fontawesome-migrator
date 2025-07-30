@@ -25,7 +25,7 @@ class MigrationReporter
         $sessionDir = $this->metadata->getSessionDirectory();
 
         // Si pas de session, utiliser le chemin par défaut
-        if (! $sessionDir) {
+        if ($sessionDir === '' || $sessionDir === '0') {
             $reportPath = $this->config['report_path'];
             // S'assurer que le répertoire et le .gitignore existent
             DirectoryHelper::ensureExistsWithGitignore($reportPath);
