@@ -23,8 +23,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Claude Code makes errors** - The developer has corrected numerous mistakes throughout development
 - **Human validation is essential** - Never assume AI-generated code is correct without review
 - **Stay vigilant** - AI confidence doesn't equal correctness (FA7 vs FA6, semantic meaning loss, etc.)
-- **Future of humanity** - Human oversight of AI decisions is crucial for safety and reliability
-- **Question everything** - AI should be a tool, not a trusted authority
+- **Preserve human meaning** - AI can lose semantic and cultural significance (emoji → icons meaning loss)
+- **Humanisme avant tout** - Technology serves humans, not the reverse
+- **Human judgment is irreplaceable** - Values, ethics, meaning, and wisdom remain human domains
+- **Future of humanity** - Human oversight and humanistic values must guide AI development
+- **Question everything** - AI should be a tool in service of human flourishing, not a replacement
 
 ## Project Overview
 
