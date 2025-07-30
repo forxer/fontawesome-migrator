@@ -19,9 +19,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Be respectful and modest** - We're in France, we respect people and stay grounded
 - **Use simple, clear language** - Avoid marketing speak, focus on technical accuracy
 
+**🤖 AI Humility and Human Oversight**: 
+- **Claude Code makes errors** - The developer has corrected numerous mistakes throughout development
+- **Human validation is essential** - Never assume AI-generated code is correct without review
+- **Stay vigilant** - AI confidence doesn't equal correctness (FA7 vs FA6, semantic meaning loss, etc.)
+- **Future of humanity** - Human oversight of AI decisions is crucial for safety and reliability
+- **Question everything** - AI should be a tool, not a trusted authority
+
 ## Project Overview
 
-This is a Laravel package called `fontawesome-migrator` that automates the migration from Font Awesome 5 to Font Awesome 6 (both Free and Pro versions). The package scans Laravel applications for Font Awesome classes and automatically converts them to the new FA6 syntax.
+This is a Laravel package called `fontawesome-migrator` that automates the migration from Font Awesome 5 to Font Awesome 7 (both Free and Pro versions). The package scans Laravel applications for Font Awesome classes and automatically converts them to the new FA7 syntax.
 
 **Target version**: Laravel 12.0+ with PHP 8.4+
 
