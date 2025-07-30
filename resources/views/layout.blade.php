@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'FontAwesome Migrator')</title>
+    
+    <!-- FontAwesome 7 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     @yield('head-extra')
     @include('fontawesome-migrator::partials.css.common')
 </head>
@@ -14,24 +18,24 @@
         <div class="navbar-container">
             <div class="navbar-brand">
                 <a href="{{ route('fontawesome-migrator.home') }}" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
-                    <span class="navbar-logo">🔄</span>
+                    <span class="navbar-logo"><i class="fa-regular fa-house"></i></span>
                     <span class="navbar-title">FontAwesome Migrator</span>
                 </a>
             </div>
             <ul class="navbar-menu">
                 <li class="navbar-item">
                     <a href="{{ route('fontawesome-migrator.reports.index') }}" class="navbar-link {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}">
-                        📊 Rapports
+                        <i class="fa-regular fa-file"></i> Rapports
                     </a>
                 </li>
                 <li class="navbar-item">
                     <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="navbar-link {{ request()->routeIs('fontawesome-migrator.sessions.*') ? 'active' : '' }}">
-                        🗂️ Sessions
+                        <i class="fa-regular fa-folder"></i> Sessions
                     </a>
                 </li>
                 <li class="navbar-item">
                     <a href="{{ route('fontawesome-migrator.tests.index') }}" class="navbar-link {{ request()->routeIs('fontawesome-migrator.tests.*') ? 'active' : '' }}">
-                        🧪 Tests
+                        <i class="fa-solid fa-flask"></i> Tests
                     </a>
                 </li>
             </ul>
@@ -45,10 +49,10 @@
                 <li class="breadcrumb-item">
                     @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
                         <a href="{{ route('fontawesome-migrator.home') }}" class="breadcrumb-link">
-                            🏠 Accueil
+                            <i class="fa-regular fa-house"></i> Accueil
                         </a>
                     @else
-                        <span class="breadcrumb-current">🏠 Accueil</span>
+                        <span class="breadcrumb-current"><i class="fa-regular fa-house"></i> Accueil</span>
                     @endif
                 </li>
                 @if(isset($breadcrumbs))
@@ -75,7 +79,7 @@
 
     <!-- Bouton retour en haut -->
     <button class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
-        ↑
+        <i class="fa-solid fa-arrow-up"></i>
     </button>
 
     @yield('scripts')

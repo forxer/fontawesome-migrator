@@ -4,14 +4,14 @@
 
 @section('content')
     <div class="header">
-        <h1>🗂️ Session {{ $shortId }}</h1>
+        <h1><i class="fa-regular fa-folder"></i> Session {{ $shortId }}</h1>
         <p>Détails de la session de migration {{ $sessionId }}</p>
     </div>
 
     @if($metadata)
         <!-- Informations de la session -->
         <div class="stats-summary">
-            <h2 class="section-title">📋 Métadonnées de la session</h2>
+            <h2 class="section-title"><i class="fa-regular fa-chart-bar"></i> Métadonnées de la session</h2>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-number">
@@ -21,25 +21,25 @@
                             N/A
                         @endif
                     </div>
-                    <div class="stat-label">🕒 Créée le</div>
+                    <div class="stat-label"><i class="fa-regular fa-clock"></i> Créée le</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">{{ $metadata['meta']['package_version'] ?? 'N/A' }}</div>
-                    <div class="stat-label">📦 Version</div>
+                    <div class="stat-label"><i class="fa-regular fa-chart-bar"></i> Version</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">
                         @if(isset($metadata['meta']['dry_run']) && $metadata['meta']['dry_run'])
-                            🔍 Dry-run
+                            <i class="fa-regular fa-eye"></i> Dry-run
                         @else
-                            ✅ Réel
+                            <i class="fa-regular fa-square-check"></i> Réel
                         @endif
                     </div>
-                    <div class="stat-label">⚙️ Mode</div>
+                    <div class="stat-label"><i class="fa-solid fa-gear"></i> Mode</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">{{ count($backupFiles) }}</div>
-                    <div class="stat-label">📂 Fichiers</div>
+                    <div class="stat-label"><i class="fa-regular fa-folder"></i> Fichiers</div>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
         <!-- Configuration -->
         @if(isset($metadata['meta']['configuration']))
             <div class="section">
-                <h3 class="section-title">⚙️ Configuration</h3>
+                <h3 class="section-title"><i class="fa-solid fa-gear"></i> Configuration</h3>
                 <div class="config-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
                     <div class="config-item">
                         <strong>Type de licence:</strong><br>
@@ -80,7 +80,7 @@
         <!-- Options de migration -->
         @if(isset($metadata['meta']['migration_options']))
             <div class="section">
-                <h3 class="section-title">🔧 Options de migration</h3>
+                <h3 class="section-title"><i class="fa-solid fa-gear"></i> Options de migration</h3>
                 <div class="options-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0;">
                     @foreach($metadata['meta']['migration_options'] as $option => $value)
                         <div class="option-item">
@@ -98,14 +98,14 @@
     <!-- Fichiers de sauvegarde -->
     @if(count($backupFiles) > 0)
         <div class="section">
-            <h3 class="section-title">📂 Fichiers de sauvegarde</h3>
+            <h3 class="section-title"><i class="fa-regular fa-folder"></i> Fichiers de sauvegarde</h3>
             <div class="files-table" style="margin: 20px 0;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: var(--gray-100); border-bottom: 2px solid var(--gray-200);">
-                            <th style="padding: 12px; text-align: left;">📄 Nom du fichier</th>
-                            <th style="padding: 12px; text-align: right;">📊 Taille</th>
-                            <th style="padding: 12px; text-align: center;">🕒 Modifié</th>
+                            <th style="padding: 12px; text-align: left;"><i class="fa-regular fa-chart-bar"></i> Nom du fichier</th>
+                            <th style="padding: 12px; text-align: right;"><i class="fa-regular fa-chart-bar"></i> Taille</th>
+                            <th style="padding: 12px; text-align: center;"><i class="fa-regular fa-clock"></i> Modifié</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -122,7 +122,7 @@
         </div>
     @else
         <div class="empty-state">
-            <div class="empty-icon">📂</div>
+            <div class="empty-icon"><i class="fa-regular fa-folder"></i></div>
             <div class="empty-title">Aucun fichier de sauvegarde</div>
             <div class="empty-description">
                 Cette session ne contient aucun fichier de sauvegarde.
@@ -132,7 +132,7 @@
 
     <!-- Répertoire de la session -->
     <div class="section">
-        <h3 class="section-title">📁 Informations système</h3>
+        <h3 class="section-title"><i class="fa-regular fa-folder"></i> Informations système</h3>
         <div class="system-info" style="background: var(--gray-100); padding: 15px; border-radius: 8px; font-family: monospace; margin: 20px 0;">
             <strong>Répertoire:</strong> {{ $sessionDir }}<br>
             <strong>Session ID:</strong> {{ $sessionId }}
@@ -142,16 +142,16 @@
     <!-- Actions -->
     <div class="actions" style="margin-top: 30px;">
         <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary">
-            ← Retour aux sessions
+            <i class="fa-solid fa-arrow-left"></i> Retour aux sessions
         </a>
 
         <button onclick="deleteCurrentSession()" class="btn btn-danger">
-            🗑️ Supprimer cette session
+            <i class="fa-regular fa-trash-can"></i> Supprimer cette session
         </button>
 
         <div style="margin-left: auto;">
             <button onclick="copySessionInfo()" class="btn btn-primary">
-                📋 Copier les infos
+                <i class="fa-regular fa-chart-bar"></i> Copier les infos
             </button>
         </div>
     </div>

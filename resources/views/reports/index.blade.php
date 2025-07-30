@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="header">
-        <h1>📊 Rapports</h1>
+        <h1><i class="fa-regular fa-chart-bar"></i> Rapports</h1>
         <p>Gestion des rapports de migration</p>
     </div>
 
@@ -16,7 +16,7 @@
         <!-- Statistiques globales -->
         <div class="stats-summary">
             <h2 class="section-title">
-                📈 Statistiques globales
+                <i class="fa-regular fa-chart-bar"></i> Statistiques globales
             </h2>
             <div class="stats-grid">
                 <div class="stat-item">
@@ -41,15 +41,15 @@
 
     <div class="actions">
         <button onclick="refreshReports()" class="btn btn-primary">
-            <span id="refresh-icon">🔄</span> Actualiser les rapports
+            <span id="refresh-icon"><i class="fa-solid fa-arrows-rotate"></i></span> Actualiser les rapports
         </button>
 
         <button onclick="cleanupReports()" class="btn btn-danger">
-            🗑️ Nettoyer (30j+)
+            <i class="fa-regular fa-trash-can"></i> Nettoyer (30j+)
         </button>
 
         <div style="margin-left: auto; color: var(--gray-500); font-weight: 500;">
-            📊 {{ count($reports) }} rapport(s) disponible(s)
+            <i class="fa-regular fa-chart-bar"></i> {{ count($reports) }} rapport(s) disponible(s)
         </div>
     </div>
 
@@ -60,11 +60,11 @@
             @foreach ($reports as $report)
                 <div class="report-card" data-filename="{{ $report['filename'] }}">
                     <div class="report-header">
-                        <div class="report-icon">📊</div>
+                        <div class="report-icon"><i class="fa-regular fa-chart-bar"></i></div>
                         <div class="report-title">
                             <h3>{{ $report['name'] }}</h3>
                             <div class="report-date">
-                                🕒 {{ $report['created_at']->format('d/m/Y à H:i') }}
+                                <i class="fa-regular fa-clock"></i> {{ $report['created_at']->format('d/m/Y à H:i') }}
                             </div>
                         </div>
                     </div>
@@ -72,41 +72,41 @@
                     <div class="report-meta">
                         <div class="meta-item">
                             <div class="meta-value">{{ number_format($report['size'] / 1024, 1, ',', ' ') }}</div>
-                            <div class="meta-label">📊 Taille (KB)</div>
+                            <div class="meta-label"><i class="fa-regular fa-chart-bar"></i> Taille (KB)</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value">{{ $report['created_at']->format('H:i') }}</div>
-                            <div class="meta-label">🕒 Heure</div>
+                            <div class="meta-label"><i class="fa-regular fa-clock"></i> Heure</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value" data-tooltip="ID complet : {{ $report['session_id'] }}">
                                 {{ $report['short_id'] }}
                             </div>
-                            <div class="meta-label">🗂️ Session</div>
+                            <div class="meta-label"><i class="fa-regular fa-folder"></i> Session</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value">{{ $report['created_at']->diffForHumans(['short' => true]) }}</div>
-                            <div class="meta-label">⏰ Âge</div>
+                            <div class="meta-label"><i class="fa-regular fa-clock"></i> Âge</div>
                         </div>
                     </div>
 
                     <div class="report-actions">
                         <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary btn-sm">
-                            📄 Voir Rapport
+                            <i class="fa-regular fa-chart-bar"></i> Voir Rapport
                         </a>
 
                         @if ($report['has_json'])
                             <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-primary btn-sm">
-                                📋 Voir JSON
+                                <i class="fa-regular fa-chart-bar"></i> Voir JSON
                             </a>
                         @endif
 
                         <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-secondary btn-sm">
-                            🗂️ Session
+                            <i class="fa-regular fa-folder"></i> Session
                         </a>
 
                         <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-danger btn-sm">
-                            🗑️ Supprimer
+                            <i class="fa-regular fa-trash-can"></i> Supprimer
                         </button>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
         </div>
     @else
         <div class="empty-state">
-            <div class="empty-icon">📊</div>
+            <div class="empty-icon"><i class="fa-regular fa-chart-bar"></i></div>
             <div class="empty-title">Aucun rapport disponible</div>
             <div class="empty-description">
                 Commencez par générer un rapport de migration en exécutant la commande ci-dessous.
@@ -124,7 +124,7 @@
                 php artisan fontawesome:migrate --report
             </div>
             <div style="margin-top: 20px; font-size: 0.9em; color: var(--gray-400);">
-                💡 Ajoutez <code>--dry-run</code> pour prévisualiser sans modifier les fichiers
+                <i class="fa-solid fa-arrows-rotate"></i> Ajoutez <code>--dry-run</code> pour prévisualiser sans modifier les fichiers
             </div>
         </div>
     @endif

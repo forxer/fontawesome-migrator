@@ -4,14 +4,14 @@
 
 @section('content')
     <div class="header">
-        <h1>🗂️ Sessions</h1>
+        <h1><i class="fa-regular fa-folder"></i> Sessions</h1>
         <p>Gestion des sessions et métadonnées</p>
     </div>
 
     @if (count($sessions) > 0)
         <!-- Statistiques globales -->
         <div class="stats-summary">
-            <h2 class="section-title">📈 Statistiques des sessions</h2>
+            <h2 class="section-title"><i class="fa-regular fa-chart-bar"></i> Statistiques des sessions</h2>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-number">{{ $stats['total_sessions'] }}</div>
@@ -41,15 +41,15 @@
 
     <div class="actions">
         <button onclick="refreshSessions()" class="btn btn-primary">
-            <span id="refresh-icon">🔄</span> Actualiser
+            <span id="refresh-icon"><i class="fa-solid fa-arrows-rotate"></i></span> Actualiser
         </button>
 
         <button onclick="cleanupSessions()" class="btn btn-danger">
-            🗑️ Nettoyer (30j+)
+            <i class="fa-regular fa-trash-can"></i> Nettoyer (30j+)
         </button>
 
         <div style="margin-left: auto; color: var(--gray-500); font-weight: 500;">
-            🗂️ {{ count($sessions) }} session(s) disponible(s)
+            <i class="fa-regular fa-folder"></i> {{ count($sessions) }} session(s) disponible(s)
         </div>
     </div>
 
@@ -60,11 +60,11 @@
             @foreach ($sessions as $session)
                 <div class="report-card" data-session="{{ $session['session_id'] }}">
                     <div class="report-header">
-                        <div class="report-icon">🗂️</div>
+                        <div class="report-icon"><i class="fa-regular fa-folder"></i></div>
                         <div class="report-title">
                             <h3>Session <span data-tooltip="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h3>
                             <div class="report-date">
-                                🕒 {{ $session['created_at']->format('d/m/Y à H:i') }}
+                                <i class="fa-regular fa-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
                             </div>
                         </div>
                     </div>
@@ -72,35 +72,35 @@
                     <div class="report-meta">
                         <div class="meta-item">
                             <div class="meta-value">{{ $session['backup_count'] }}</div>
-                            <div class="meta-label">📂 Fichiers</div>
+                            <div class="meta-label"><i class="fa-regular fa-folder"></i> Fichiers</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value">
                                 @if(isset($session['dry_run']) && $session['dry_run'])
-                                    🔍 Dry-run
+                                    <i class="fa-regular fa-eye"></i> Dry-run
                                 @else
-                                    ✅ Réel
+                                    <i class="fa-regular fa-square-check"></i> Réel
                                 @endif
                             </div>
-                            <div class="meta-label">⚙️ Mode</div>
+                            <div class="meta-label"><i class="fa-solid fa-gear"></i> Mode</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value">{{ $session['package_version'] ?? '?' }}</div>
-                            <div class="meta-label">📦 Version</div>
+                            <div class="meta-label"><i class="fa-regular fa-chart-bar"></i> Version</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value">{{ $session['created_at']->diffForHumans(['short' => true]) }}</div>
-                            <div class="meta-label">⏰ Âge</div>
+                            <div class="meta-label"><i class="fa-regular fa-clock"></i> Âge</div>
                         </div>
                     </div>
 
                     <div class="report-actions">
                         <a href="{{ route('fontawesome-migrator.sessions.show', $session['session_id']) }}" class="btn btn-primary btn-sm">
-                            👁️ Détails
+                            <i class="fa-regular fa-eye"></i> Détails
                         </a>
 
                         <button onclick="deleteSession('{{ $session['session_id'] }}')" class="btn btn-danger btn-sm">
-                            🗑️ Supprimer
+                            <i class="fa-regular fa-trash-can"></i> Supprimer
                         </button>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
         </div>
     @else
         <div class="empty-state">
-            <div class="empty-icon">🗂️</div>
+            <div class="empty-icon"><i class="fa-regular fa-folder"></i></div>
             <div class="empty-title">Aucune session disponible</div>
             <div class="empty-description">
                 Les sessions sont créées automatiquement lors des migrations.

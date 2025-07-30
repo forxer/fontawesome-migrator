@@ -9,7 +9,7 @@ async function runTest(type) {
     button.disabled = true;
     button.classList.add('loading');
     output.style.display = 'block';
-    result.textContent = `🚀 Lancement du test ${type}...\n`;
+    result.innerHTML = `<i class="fa-solid fa-rocket"></i> Lancement du test ${type}...\n`;
     
     try {
         const response = await fetch('/fontawesome-migrator/test/migration', {
@@ -24,21 +24,21 @@ async function runTest(type) {
         const data = await response.json();
         
         if (data.success) {
-            result.textContent = `✅ Test ${type} terminé avec succès!\n\nSortie de la commande:\n${data.output}\n\nSessions disponibles: ${data.sessions.length}\n\n⏱️ Test terminé à ${data.timestamp}`;
+            result.innerHTML = `<i class="fa-regular fa-square-check"></i> Test ${type} terminé avec succès!\n\nSortie de la commande:\n${data.output}\n\nSessions disponibles: ${data.sessions.length}\n\n<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
             
             // Ne pas recharger automatiquement, laisser l'utilisateur voir le résultat
             // Ajouter un bouton pour recharger manuellement
             const reloadBtn = document.createElement('button');
-            reloadBtn.textContent = '🔄 Recharger la page pour voir les nouvelles sessions';
+            reloadBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Recharger la page pour voir les nouvelles sessions';
             reloadBtn.className = 'btn-primary';
             reloadBtn.style.marginTop = '10px';
             reloadBtn.onclick = () => location.reload();
             output.appendChild(reloadBtn);
         } else {
-            result.textContent = `❌ Erreur lors du test ${type}:\n\n${data.error || data.output}\n\n⏱️ Test terminé à ${data.timestamp}`;
+            result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur lors du test ${type}:\n\n${data.error || data.output}\n\n<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
         }
     } catch (error) {
-        result.textContent = `❌ Erreur de connexion:\n\n${error.message}`;
+        result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur de connexion:\n\n${error.message}`;
     } finally {
         button.disabled = false;
         button.classList.remove('loading');
@@ -61,10 +61,10 @@ async function inspectSession(sessionId) {
             <p><strong>Répertoire:</strong> ${data.session_dir}</p>
             <p><strong>Nombre de fichiers:</strong> ${data.files_count}</p>
             
-            <h5>📋 Métadonnées:</h5>
+            <h5><i class="fa-regular fa-clipboard"></i> Métadonnées:</h5>
             <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto;">${JSON.stringify(data.metadata, null, 2)}</pre>
             
-            <h5>📁 Fichiers de sauvegarde:</h5>
+            <h5><i class="fa-regular fa-folder"></i> Fichiers de sauvegarde:</h5>
             <ul>
                 ${data.backup_files.map(file => `
                     <li>

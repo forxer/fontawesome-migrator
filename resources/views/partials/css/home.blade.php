@@ -11,15 +11,26 @@
         overflow: hidden;
     }
 
-    .hero-section::before {
+    .hero-section::before,
+    .hero-section::after {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.05"/><circle cx="10" cy="60" r="1" fill="white" opacity="0.05"/><circle cx="90" cy="40" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
         pointer-events: none;
+    }
+
+    .hero-section::before {
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><pattern id="bubbles1" width="200" height="200" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="3" fill="white" opacity="0.2"/><circle cx="130" cy="130" r="2.5" fill="white" opacity="0.15"/><circle cx="80" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="20" cy="110" r="3.5" fill="white" opacity="0.25"/><circle cx="160" cy="60" r="2.2" fill="white" opacity="0.12"/><circle cx="60" cy="160" r="2.8" fill="white" opacity="0.18"/><circle cx="110" cy="40" r="1.8" fill="white" opacity="0.08"/><circle cx="40" cy="80" r="3.2" fill="white" opacity="0.22"/><circle cx="150" cy="25" r="2" fill="white" opacity="0.1"/><circle cx="25" cy="150" r="2.5" fill="white" opacity="0.15"/><circle cx="100" cy="100" r="2.2" fill="white" opacity="0.12"/><circle cx="180" cy="110" r="3" fill="white" opacity="0.2"/></pattern></defs><rect width="200" height="200" fill="url(%23bubbles1)"/></svg>');
+        animation: bubbleFloat 15s ease-in-out infinite;
+    }
+
+    .hero-section::after {
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150"><defs><pattern id="bubbles2" width="150" height="150" patternUnits="userSpaceOnUse"><circle cx="25" cy="50" r="2" fill="white" opacity="0.1"/><circle cx="100" cy="100" r="1.5" fill="white" opacity="0.08"/><circle cx="60" cy="15" r="1.2" fill="white" opacity="0.06"/><circle cx="15" cy="90" r="2.5" fill="white" opacity="0.12"/><circle cx="120" cy="45" r="1.8" fill="white" opacity="0.09"/><circle cx="45" cy="120" r="2.2" fill="white" opacity="0.11"/><circle cx="85" cy="30" r="1.5" fill="white" opacity="0.07"/><circle cx="30" cy="65" r="2.8" fill="white" opacity="0.14"/></pattern></defs><rect width="150" height="150" fill="url(%23bubbles2)"/></svg>');
+        animation: bubbleFloat 20s ease-in-out infinite reverse;
+        animation-delay: -4s;
     }
 
     .hero-content {
@@ -36,6 +47,48 @@
     @keyframes rotate {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
+    }
+
+    @keyframes bubbleFloat {
+        0%, 100% { 
+            transform: translate3d(0, 0, 0);
+        }
+        20% { 
+            transform: translate3d(-15px, -20px, 0);
+        }
+        40% { 
+            transform: translate3d(10px, -40px, 0);
+        }
+        60% { 
+            transform: translate3d(-8px, -25px, 0);
+        }
+        80% { 
+            transform: translate3d(12px, -10px, 0);
+        }
+    }
+
+    /* Bulles individuelles animées */
+    .bubble {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        pointer-events: none;
+        bottom: -50px;
+        animation: bubbleRise linear forwards;
+    }
+
+    @keyframes bubbleRise {
+        0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.2;
+        }
+        20% {
+            opacity: 0.25;
+        }
+        100% {
+            transform: translateY(calc(-100vh - 100px)) translateX(var(--sway, 0px));
+            opacity: 0.25;
+        }
     }
 
     .hero-title {

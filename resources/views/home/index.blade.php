@@ -10,7 +10,7 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
-            <div class="hero-icon">🔄</div>
+            <div class="hero-icon"><i class="fa-solid fa-rocket"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>
             <p class="hero-subtitle">Migrez facilement de FontAwesome 5 vers FontAwesome 6</p>
             <div class="hero-version">Version {{ $stats['package_version'] }}</div>
@@ -20,7 +20,7 @@
     <!-- Statistics Dashboard -->
     <div class="dashboard-stats">
         <div class="stat-card {{ $stats['total_sessions'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon">📁</div>
+            <div class="stat-icon"><i class="fa-regular fa-folder"></i></div>
             <div class="stat-content">
                 <div class="stat-number">{{ $stats['total_sessions'] }}</div>
                 <div class="stat-label">Sessions de migration</div>
@@ -28,7 +28,7 @@
         </div>
 
         <div class="stat-card {{ $stats['total_reports'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon">📊</div>
+            <div class="stat-icon"><i class="fa-regular fa-chart-bar"></i></div>
             <div class="stat-content">
                 <div class="stat-number">{{ $stats['total_reports'] }}</div>
                 <div class="stat-label">Rapports générés</div>
@@ -36,7 +36,7 @@
         </div>
 
         <div class="stat-card {{ $stats['successful_migrations'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon">✅</div>
+            <div class="stat-icon"><i class="fa-regular fa-square-check"></i></div>
             <div class="stat-content">
                 <div class="stat-number">{{ $stats['successful_migrations'] }}</div>
                 <div class="stat-label">Migrations réussies</div>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="stat-card {{ $stats['total_size'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon">💾</div>
+            <div class="stat-icon"><i class="fa-regular fa-folder"></i></div>
             <div class="stat-content">
                 <div class="stat-number">{{ number_format($stats['total_size'] / 1024, 1, ',', ' ') }} KB</div>
                 <div class="stat-label">Données générées</div>
@@ -54,11 +54,11 @@
 
     <!-- Quick Actions -->
     <div class="quick-actions">
-        <h2 class="section-title">🚀 Actions Rapides</h2>
+        <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h2>
         
         <div class="actions-grid">
             <div class="action-card">
-                <div class="action-icon">📊</div>
+                <div class="action-icon"><i class="fa-regular fa-chart-bar"></i></div>
                 <h3>Voir les Rapports</h3>
                 <p>Consultez tous les rapports de migration générés</p>
                 <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
@@ -67,7 +67,7 @@
             </div>
 
             <div class="action-card">
-                <div class="action-icon">🗂️</div>
+                <div class="action-icon"><i class="fa-regular fa-folder"></i></div>
                 <h3>Gérer les Sessions</h3>
                 <p>Explorez les sessions de migration et leurs métadonnées</p>
                 <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-primary">
@@ -76,7 +76,7 @@
             </div>
 
             <div class="action-card">
-                <div class="action-icon">🧪</div>
+                <div class="action-icon"><i class="fa-solid fa-flask"></i></div>
                 <h3>Tests</h3>
                 <p>Testez la migration et débugguez les problèmes</p>
                 <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
@@ -89,12 +89,12 @@
     <!-- Recent Activity -->
     @if(count($recentReports) > 0)
         <div class="recent-activity">
-            <h2 class="section-title">📈 Activité Récente</h2>
+            <h2 class="section-title"><i class="fa-regular fa-chart-bar"></i> Activité Récente</h2>
             
             <div class="activity-list">
                 @foreach($recentReports as $report)
                     <div class="activity-item">
-                        <div class="activity-icon">📄</div>
+                        <div class="activity-icon"><i class="fa-regular fa-chart-bar"></i></div>
                         <div class="activity-content">
                             <div class="activity-title">
                                 <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}">
@@ -116,7 +116,7 @@
 
             <div class="activity-footer">
                 <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-secondary">
-                    Voir tous les rapports →
+                    Voir tous les rapports <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
         </div>
@@ -125,7 +125,7 @@
     <!-- Getting Started -->
     @if($stats['total_sessions'] == 0)
         <div class="getting-started">
-            <h2 class="section-title">🎯 Premiers Pas</h2>
+            <h2 class="section-title"><i class="fa-solid fa-flask"></i> Premiers Pas</h2>
             
             <div class="steps-container">
                 <div class="step-item">
@@ -158,7 +158,7 @@
 
             <div class="getting-started-footer">
                 <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
-                    🧪 Commencer un test de migration
+                    <i class="fa-solid fa-flask"></i> Commencer un test de migration
                 </a>
             </div>
         </div>
@@ -169,4 +169,49 @@
             <p>Dernière activité : {{ $stats['last_activity']->diffForHumans() }}</p>
         </div>
     @endif
+@endsection
+
+@section('scripts')
+<script>
+    // Génération dynamique de bulles
+    function createBubble() {
+        const heroSection = document.querySelector('.hero-section');
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        // Taille aléatoire entre 10 et 40px
+        const size = Math.random() * 30 + 10;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        
+        // Position horizontale aléatoire
+        bubble.style.left = Math.random() * 90 + 5 + '%';
+        
+        // Vitesse basée sur la taille (petites bulles = plus rapides)
+        const speed = 8 + (40 - size) / 5; // Entre 8 et 14 secondes
+        bubble.style.animationDuration = speed + 's';
+        
+        // Léger mouvement horizontal pendant la montée
+        const sway = (Math.random() - 0.5) * 30;
+        bubble.style.setProperty('--sway', sway + 'px');
+        
+        heroSection.appendChild(bubble);
+        
+        // Supprimer la bulle après l'animation
+        setTimeout(() => {
+            bubble.remove();
+        }, speed * 1000);
+    }
+    
+    // Créer des bulles périodiquement
+    document.addEventListener('DOMContentLoaded', function() {
+        // Créer quelques bulles au démarrage
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createBubble, i * 800);
+        }
+        
+        // Continuer à créer des bulles à un rythme modéré
+        setInterval(createBubble, 2500);
+    });
+</script>
 @endsection
