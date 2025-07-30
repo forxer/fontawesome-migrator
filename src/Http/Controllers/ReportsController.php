@@ -51,7 +51,9 @@ class ReportsController extends Controller
 
         return view('fontawesome-migrator::reports.index', [
             'reports' => $reports,
-            'breadcrumbs' => [],
+            'breadcrumbs' => [
+                ['label' => '📊 Rapports'],
+            ],
         ]);
     }
 

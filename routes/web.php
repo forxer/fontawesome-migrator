@@ -1,5 +1,6 @@
 <?php
 
+use FontAwesome\Migrator\Http\Controllers\HomeController;
 use FontAwesome\Migrator\Http\Controllers\ReportsController;
 use FontAwesome\Migrator\Http\Controllers\SessionsController;
 use FontAwesome\Migrator\Http\Controllers\TestController;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 | Routes pour l'interface web du package FontAwesome Migrator
 |
 */
+
+// Page d'accueil
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Rapports de migration
 Route::prefix('reports')->name('reports.')->group(function () {

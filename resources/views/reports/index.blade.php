@@ -3,7 +3,7 @@
 @section('title', 'Rapports FontAwesome Migrator')
 
 @section('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.index')
+    @include('fontawesome-migrator::partials.css.reports')
 @endsection
 
 @section('content')

@@ -4,8 +4,8 @@
 
 @section('head-extra')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    @include('fontawesome-migrator::reports.partials.css.common')
-    @include('fontawesome-migrator::reports.partials.css.migration')
+    @include('fontawesome-migrator::partials.css.common')
+    @include('fontawesome-migrator::partials.css.migration')
 @endsection
 
 @section('content')

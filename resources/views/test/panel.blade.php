@@ -3,7 +3,7 @@
 @section('title', 'Panneau de Tests - FontAwesome Migrator')
 
 @section('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.test-panel')
+    @include('fontawesome-migrator::partials.css.test-panel')
 @endsection
 
 @section('content')
@@ -156,5 +156,5 @@
 @endsection
 
 @section('scripts')
-    @include('fontawesome-migrator::reports.partials.js.test-panel')
+    @include('fontawesome-migrator::partials.js.test-panel')
 @endsection

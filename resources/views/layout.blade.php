@@ -6,15 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'FontAwesome Migrator')</title>
     @yield('head-extra')
-    @include('fontawesome-migrator::reports.partials.css.common')
+    @include('fontawesome-migrator::partials.css.common')
 </head>
 <body>
     <!-- Menu de navigation -->
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-brand">
-                <span class="navbar-logo">🔄</span>
-                <span class="navbar-title">FontAwesome Migrator</span>
+                <a href="{{ route('fontawesome-migrator.home') }}" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
+                    <span class="navbar-logo">🔄</span>
+                    <span class="navbar-title">FontAwesome Migrator</span>
+                </a>
             </div>
             <ul class="navbar-menu">
                 <li class="navbar-item">
@@ -37,15 +39,19 @@
     </nav>
 
     <!-- Fil d'ariane -->
-    @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
-        <nav class="breadcrumb">
-            <div class="breadcrumb-container">
-                <ul class="breadcrumb-list">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('fontawesome-migrator.reports.index') }}" class="breadcrumb-link">
+    <nav class="breadcrumb">
+        <div class="breadcrumb-container">
+            <ul class="breadcrumb-list">
+                <li class="breadcrumb-item">
+                    @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
+                        <a href="{{ route('fontawesome-migrator.home') }}" class="breadcrumb-link">
                             🏠 Accueil
                         </a>
-                    </li>
+                    @else
+                        <span class="breadcrumb-current">🏠 Accueil</span>
+                    @endif
+                </li>
+                @if(isset($breadcrumbs))
                     @foreach($breadcrumbs as $breadcrumb)
                         <li class="breadcrumb-separator">›</li>
                         <li class="breadcrumb-item">
@@ -58,12 +64,12 @@
                             @endif
                         </li>
                     @endforeach
-                </ul>
-            </div>
-        </nav>
-    @endif
+                @endif
+            </ul>
+        </div>
+    </nav>
 
-    <div class="container {{ isset($breadcrumbs) ? 'with-breadcrumb' : '' }}">
+    <div class="container with-breadcrumb">
         @yield('content')
     </div>
 

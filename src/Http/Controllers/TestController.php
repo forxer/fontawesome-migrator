@@ -25,7 +25,9 @@ class TestController extends Controller
         return view('fontawesome-migrator::test.panel', [
             'sessions' => $sessions,
             'backupStats' => $backupStats,
-            'breadcrumbs' => [],
+            'breadcrumbs' => [
+                ['label' => '🧪 Test & Debug'],
+            ],
         ]);
     }
 

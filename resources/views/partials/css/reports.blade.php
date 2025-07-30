@@ -1,7 +1,7 @@
 <style>
-    /* Variables spécifiques à l'index (déjà définies dans common.blade.php) */
+    /* Styles spécifiques à la page index des rapports */
 
-    /* Header spécifique à l'index avec gradient */
+    /* Header avec gradient spécifique à l'index */
     .header {
         text-align: center;
         margin-bottom: var(--spacing-xl);
@@ -38,47 +38,12 @@
         font-weight: 500;
     }
 
-    /* Sections spécifiques à l'index avec hover effects */
-    .section {
-        background: white;
-        padding: var(--spacing-lg);
-        border-radius: var(--radius-lg);
-        margin-bottom: var(--spacing-xl);
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--gray-200);
-        transition: all 0.3s ease;
-    }
-
-    .section:hover {
-        box-shadow: var(--shadow-lg);
-        border-color: var(--primary-color);
-    }
-
-    /* Actions spécifiques à l'index (reste pour spécificités futures) */
-    /* Classes communes déplacées vers common.blade.php */
-
-    /* Stats summary spécifiques à l'index (reste pour spécificités futures) */
-    /* Classes communes déplacées vers common.blade.php */
-
     /* Override stats-grid pour l'index */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 20px;
     }
-
-    /* Stat item spécifique à l'index (reste pour spécificités futures) */
-    /* Classes communes déplacées vers common.blade.php */
-
-    /* Section title spécifique à l'index (reste pour spécificités futures) */
-    /* Classes communes déplacées vers common.blade.php */
-
-    /* Reports grid spécifique à l'index (reste pour spécificités futures) */
-    /* Classes communes déplacées vers common.blade.php */
-
-
-    /* Empty state spécifique à l'index (reste pour spécificités futures) */
-    /* Classes communes déplacées vers common.blade.php */
 
     /* Alertes avec gradients spécifiques à l'index */
     .alert {
@@ -117,7 +82,6 @@
         }
     }
 
-
     /* Animation échelonnée des cartes */
     .report-card {
         animation: fadeInUp 0.6s ease forwards;
@@ -131,8 +95,18 @@
         animation-delay: 0.2s;
     }
 
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    /* Responsive */
+    /* Responsive spécifique à l'index */
     @media (max-width: 768px) {
         .reports-grid {
             grid-template-columns: 1fr;

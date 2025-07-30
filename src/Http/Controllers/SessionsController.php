@@ -23,7 +23,9 @@ class SessionsController extends Controller
         return view('fontawesome-migrator::sessions.index', [
             'sessions' => $sessions,
             'stats' => $stats,
-            'breadcrumbs' => [],
+            'breadcrumbs' => [
+                ['label' => '🗂️ Sessions'],
+            ],
         ]);
     }
 

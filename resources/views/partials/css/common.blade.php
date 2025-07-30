@@ -640,18 +640,6 @@
         padding: var(--spacing-lg);
     }
 
-    /* Charts and visualizations */
-    .chart-container {
-        position: relative;
-        height: 300px;
-        margin: var(--spacing-lg) 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: white;
-        border-radius: var(--radius-md);
-        padding: var(--spacing-lg);
-    }
 
     /* Modal styles communes */
     .modal {
