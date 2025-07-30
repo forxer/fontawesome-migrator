@@ -3,7 +3,7 @@
 use FontAwesome\Migrator\Http\Controllers\HomeController;
 use FontAwesome\Migrator\Http\Controllers\ReportsController;
 use FontAwesome\Migrator\Http\Controllers\SessionsController;
-use FontAwesome\Migrator\Http\Controllers\TestController;
+use FontAwesome\Migrator\Http\Controllers\TestsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,10 +34,10 @@ Route::prefix('sessions')->name('sessions.')->group(function () {
     Route::post('/cleanup', [SessionsController::class, 'cleanup'])->name('cleanup');
 });
 
-// Panneau de test et debug
-Route::prefix('test')->name('test.')->group(function () {
-    Route::get('/panel', [TestController::class, 'panel'])->name('panel');
-    Route::post('/migration', [TestController::class, 'runMigration'])->name('migration');
-    Route::get('/session/{sessionId}', [TestController::class, 'inspectSession'])->name('session');
-    Route::post('/cleanup-sessions', [TestController::class, 'cleanupSessions'])->name('cleanup');
+// Tests et debug
+Route::prefix('tests')->name('tests.')->group(function () {
+    Route::get('/', [TestsController::class, 'index'])->name('index');
+    Route::post('/migration', [TestsController::class, 'runMigration'])->name('migration');
+    Route::get('/session/{sessionId}', [TestsController::class, 'inspectSession'])->name('session');
+    Route::post('/cleanup-sessions', [TestsController::class, 'cleanupSessions'])->name('cleanup');
 });

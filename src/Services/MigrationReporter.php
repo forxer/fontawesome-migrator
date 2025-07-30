@@ -89,7 +89,7 @@ class MigrationReporter
             'metadata' => $metadataForReport,
         ];
 
-        return view('fontawesome-migrator::reports.migration', $viewData)->render();
+        return view('fontawesome-migrator::reports.show', $viewData)->render();
     }
 
     /**

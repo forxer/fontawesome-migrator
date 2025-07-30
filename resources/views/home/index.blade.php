@@ -77,10 +77,10 @@
 
             <div class="action-card">
                 <div class="action-icon">🧪</div>
-                <h3>Test & Debug</h3>
+                <h3>Tests</h3>
                 <p>Testez la migration et débugguez les problèmes</p>
-                <a href="{{ route('fontawesome-migrator.test.panel') }}" class="btn btn-primary">
-                    Panneau de test
+                <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
+                    Accéder aux tests
                 </a>
             </div>
         </div>
@@ -162,7 +162,7 @@
             </div>
 
             <div class="getting-started-footer">
-                <a href="{{ route('fontawesome-migrator.test.panel') }}" class="btn btn-primary">
+                <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
                     🧪 Commencer un test de migration
                 </a>
             </div>

@@ -30,8 +30,8 @@
                     </a>
                 </li>
                 <li class="navbar-item">
-                    <a href="{{ route('fontawesome-migrator.test.panel') }}" class="navbar-link {{ request()->routeIs('fontawesome-migrator.test.*') ? 'active' : '' }}">
-                        🧪 Test & Debug
+                    <a href="{{ route('fontawesome-migrator.tests.index') }}" class="navbar-link {{ request()->routeIs('fontawesome-migrator.tests.*') ? 'active' : '' }}">
+                        🧪 Tests
                     </a>
                 </li>
             </ul>

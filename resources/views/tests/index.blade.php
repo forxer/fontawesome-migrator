@@ -1,9 +1,9 @@
 @extends('fontawesome-migrator::layout')
 
-@section('title', 'Panneau de Tests - FontAwesome Migrator')
+@section('title', 'Tests - FontAwesome Migrator')
 
 @section('head-extra')
-    @include('fontawesome-migrator::partials.css.test-panel')
+    @include('fontawesome-migrator::partials.css.tests')
 @endsection
 
 @section('content')
@@ -156,5 +156,5 @@
 @endsection
 
 @section('scripts')
-    @include('fontawesome-migrator::partials.js.test-panel')
+    @include('fontawesome-migrator::partials.js.tests')
 @endsection

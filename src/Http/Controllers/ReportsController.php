@@ -118,7 +118,7 @@ class ReportsController extends Controller
                 ['label' => 'Rapport - Session '.($sessionInfo['short_id'] ?? 'inconnue')],
             ];
 
-            return view('fontawesome-migrator::reports.migration', $viewData);
+            return view('fontawesome-migrator::reports.show', $viewData);
         }
 
         // Charger les données depuis le fichier JSON
@@ -147,7 +147,7 @@ class ReportsController extends Controller
             ['label' => 'Rapport - Session '.($sessionInfo['short_id'] ?? 'inconnue')],
         ];
 
-        return view('fontawesome-migrator::reports.migration', $viewData);
+        return view('fontawesome-migrator::reports.show', $viewData);
     }
 
     /**

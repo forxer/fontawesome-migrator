@@ -10,23 +10,23 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 /**
- * Contrôleur pour le panneau de test et debug
+ * Contrôleur pour les tests et debug
  */
-class TestController extends Controller
+class TestsController extends Controller
 {
     /**
-     * Afficher le panneau de test
+     * Afficher la page d'index des tests
      */
-    public function panel()
+    public function index()
     {
         $sessions = MetadataManager::getAvailableSessions();
         $backupStats = $this->getBackupStats();
 
-        return view('fontawesome-migrator::test.panel', [
+        return view('fontawesome-migrator::tests.index', [
             'sessions' => $sessions,
             'backupStats' => $backupStats,
             'breadcrumbs' => [
-                ['label' => '🧪 Test & Debug'],
+                ['label' => '🧪 Tests'],
             ],
         ]);
     }
