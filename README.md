@@ -1,6 +1,6 @@
 # Font Awesome Migrator pour Laravel
 
-🚀 Package Laravel pour automatiser la migration de Font Awesome 5 vers Font Awesome 6 (versions Free et Pro).
+🚀 Package Laravel pour automatiser la migration de Font Awesome 5 vers Font Awesome 7 (versions Free et Pro).
 
 ## 🎉 Statut du package
 
@@ -19,14 +19,14 @@
 ## Fonctionnalités
 
 ### 🎯 Migration des icônes
-- ✅ **Migration automatique** des classes CSS FA5 → FA6
+- ✅ **Migration automatique** des classes CSS FA5 → FA7
 - ✅ **Support complet Pro** (Light, Duotone, Thin, Sharp)
 - ✅ **Détection intelligente** des icônes dans tous types de fichiers
 - ✅ **Mapping des icônes renommées** et dépréciées
 - ✅ **Fallback automatique** Pro → Free si nécessaire
 
 ### 🎨 Migration des assets
-- ✅ **CDN URLs** : Migration automatique des liens CDN FA5 → FA6
+- ✅ **CDN URLs** : Migration automatique des liens CDN FA5 → FA7
 - ✅ **Package managers** : NPM, Yarn, pnpm (package.json avec extension .json)
 - ✅ **Build tools** : webpack.mix.js avec support des fichiers JS individuels
 - ✅ **Imports JavaScript** : ES6 imports, CommonJS require, dynamic imports
@@ -39,6 +39,7 @@
 - ✅ **Rapports détaillés** HTML et JSON avec métadonnées intégrées
 - ✅ **Interface web complète** de gestion des rapports et sessions
 - ✅ **Contrôleurs organisés** et navigation moderne (nouveau v2.0)
+- ✅ **Design system moderne** avec FontAwesome 7.0.0 et animations optimisées
 - ✅ **Mode dry-run** pour prévisualiser les changements
 - ✅ **Modes de migration** : complet, icônes uniquement, assets uniquement
 - ✅ **Gestion des sessions** : inspection, nettoyage, statistiques

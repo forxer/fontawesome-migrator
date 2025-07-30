@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-2.0.0 (2025-07-XX)
+2.0.0 (2025-07-30)
 ------------------
 
 ### Breaking Changes
@@ -20,6 +20,10 @@ CHANGELOG
 - **Navigation System**: Menu de navigation et fil d'ariane sur toutes les pages
 - **Short Session IDs**: Affichage simplifié des IDs de session (8 caractères)
 - **Unified Architecture**: Organisation cohérente des partials CSS/JS à la racine
+- **FontAwesome 7.0.0**: Migration complète vers FontAwesome 7.0.0 avec CDN officiel
+- **Modern UI Design**: Remplacement systématique des emojis par icônes FontAwesome sémantiquement cohérentes
+- **Bubble Animation System**: Animation de bulles optimisée avec performance GPU (translate3d)
+- **Mixed Icon Styles**: Équilibre intelligent entre fa-regular et fa-solid selon disponibilité
 
 ### Changed
 - **MigrateCommand**: Services injectés via `handle(FileScanner, IconReplacer, MigrationReporter, AssetMigrator, MetadataManager)`
