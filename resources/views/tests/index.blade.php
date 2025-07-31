@@ -41,7 +41,7 @@
             <div class="stat-content">
                 <div class="stat-value">
                     @if($backupStats['last_session'])
-                        {{ $backupStats['last_session']['created_at'] }}
+                        {{ $backupStats['last_session']['created_at']->format('d/m/Y à H:i') }}
                     @else
                         Aucune
                     @endif
@@ -86,14 +86,16 @@
                             <h3 class="section-title">Session {{ substr($session['session_id'], -8) }}</h3>
                             <div class="session-badges">
                                 @if($session['dry_run'])
-                                    <span class="badge badge-info">DRY-RUN</span>
+                                    <span class="badge badge-warning">DRY-RUN</span>
+                                @else
+                                    <span class="badge badge-success">RÉEL</span>
                                 @endif
                                 <span class="badge badge-secondary">{{ $session['package_version'] ?? 'unknown' }}</span>
                             </div>
                         </div>
                         <div class="session-details">
                             <div class="session-stat">
-                                <strong><i class="fa-regular fa-clock"></i> Créée :</strong> {{ $session['created_at'] }}
+                                <strong><i class="fa-regular fa-clock"></i> Créée :</strong> {{ $session['created_at']->format('d/m/Y à H:i') }}
                             </div>
                             <div class="session-stat">
                                 <strong><i class="fa-regular fa-floppy-disk"></i> Sauvegardes :</strong> {{ $session['backup_count'] }}

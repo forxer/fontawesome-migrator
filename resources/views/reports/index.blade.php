@@ -65,6 +65,11 @@
                             <h3 class="section-title">{{ $report['name'] }}</h3>
                             <div class="report-date">
                                 <i class="fa-regular fa-clock"></i> {{ $report['created_at']->format('d/m/Y à H:i') }}
+                                @if($report['dry_run'])
+                                    <span class="badge badge-warning" style="margin-left: 8px;">DRY-RUN</span>
+                                @else
+                                    <span class="badge badge-success" style="margin-left: 8px;">RÉEL</span>
+                                @endif
                             </div>
                         </div>
                     </div>

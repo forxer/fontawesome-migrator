@@ -34,6 +34,17 @@
         border-left: 4px solid var(--primary-color);
     }
 
+    /* Variantes colorées pour les stat-cards */
+    .stat-card-warning {
+        border-left-color: var(--warning-color);
+        background: linear-gradient(135deg, rgba(237, 137, 54, 0.05) 0%, white 100%);
+    }
+
+    .stat-card-success {
+        border-left-color: var(--success-color);
+        background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, white 100%);
+    }
+
     /* Métriques avec indicateurs de performance */
     .metric-improvement {
         margin-top: 10px;

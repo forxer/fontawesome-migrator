@@ -40,47 +40,73 @@ class TestsController extends Controller
 
         try {
             $exitCode = 0;
+            $commandOptions = [];
 
             switch ($type) {
                 case 'dry-run':
-                    $exitCode = Artisan::call('fontawesome:migrate', [
+                    $commandOptions = [
                         '--dry-run' => true,
                         '--report' => true,
                         '--no-interactive' => true,
-                    ]);
+                        '--debug' => true,
+                    ];
                     break;
 
                 case 'real':
-                    $exitCode = Artisan::call('fontawesome:migrate', [
+                    $commandOptions = [
                         '--report' => true,
                         '--no-interactive' => true,
-                    ]);
+                        '--debug' => true,
+                    ];
                     break;
 
                 case 'icons-only':
-                    $exitCode = Artisan::call('fontawesome:migrate', [
+                    $commandOptions = [
                         '--icons-only' => true,
                         '--dry-run' => true,
                         '--report' => true,
                         '--no-interactive' => true,
-                    ]);
+                        '--debug' => true,
+                    ];
                     break;
 
                 case 'assets-only':
-                    $exitCode = Artisan::call('fontawesome:migrate', [
+                    $commandOptions = [
                         '--assets-only' => true,
                         '--dry-run' => true,
                         '--report' => true,
                         '--no-interactive' => true,
-                    ]);
+                        '--debug' => true,
+                    ];
                     break;
             }
 
+            // Construire la commande complète pour affichage
+            $commandString = 'php artisan fontawesome:migrate';
+
+            foreach ($commandOptions as $option => $value) {
+                if ($value === true) {
+                    $commandString .= ' '.$option;
+                } elseif ($value !== false) {
+                    $commandString .= ' '.$option.'='.$value;
+                }
+            }
+
+            // Forcer le répertoire de travail à la racine du projet Laravel
+            $originalCwd = getcwd();
+            chdir(base_path());
+
+            $exitCode = Artisan::call('fontawesome:migrate', $commandOptions);
             $output = Artisan::output();
+
+            // Restaurer le répertoire de travail original
+            chdir($originalCwd);
 
             return response()->json([
                 'success' => $exitCode === 0,
                 'exit_code' => $exitCode,
+                'command' => $commandString,
+                'options' => $commandOptions,
                 'output' => $output,
                 'type' => $type,
                 'sessions' => MetadataManager::getAvailableSessions(),

@@ -32,6 +32,15 @@ class ReportsController extends Controller
                 if ($file->getExtension() === 'html' && $file->getFilename() !== 'metadata.json') {
                     $jsonPath = str_replace('.html', '.json', $file->getRealPath());
 
+                    // Lire l'information dry_run depuis le JSON si disponible
+                    $isDryRun = false;
+
+                    if (File::exists($jsonPath)) {
+                        $jsonContent = File::get($jsonPath);
+                        $jsonData = json_decode($jsonContent, true);
+                        $isDryRun = $jsonData['meta']['dry_run'] ?? false;
+                    }
+
                     $reports[] = [
                         'name' => $file->getFilenameWithoutExtension(),
                         'filename' => $file->getFilename(),
@@ -42,6 +51,7 @@ class ReportsController extends Controller
                         'html_path' => $file->getRealPath(),
                         'json_path' => $jsonPath,
                         'has_json' => File::exists($jsonPath),
+                        'dry_run' => $isDryRun,
                     ];
                 }
             }

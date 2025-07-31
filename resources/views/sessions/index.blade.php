@@ -65,6 +65,11 @@
                             <h3 class="section-title">Session <span data-tooltip="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h3>
                             <div class="report-date">
                                 <i class="fa-regular fa-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
+                                @if($session['dry_run'])
+                                    <span class="badge badge-warning" style="margin-left: 8px;">DRY-RUN</span>
+                                @else
+                                    <span class="badge badge-success" style="margin-left: 8px;">RÉEL</span>
+                                @endif
                             </div>
                         </div>
                     </div>

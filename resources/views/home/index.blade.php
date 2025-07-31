@@ -105,6 +105,11 @@
                                 Session <span data-tooltip="ID complet : {{ $report['session_id'] }}">{{ $report['short_id'] }}</span>
                                 • {{ $report['created_at']->format('d/m/Y à H:i') }}
                                 • {{ human_readable_bytes_size($report['size'], 2) }}
+                                @if($report['dry_run'])
+                                    • <span class="badge badge-warning" style="font-size: 0.75em;">DRY-RUN</span>
+                                @else
+                                    • <span class="badge badge-success" style="font-size: 0.75em;">RÉEL</span>
+                                @endif
                             </div>
                         </div>
                         <div class="activity-badge">

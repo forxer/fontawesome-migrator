@@ -70,6 +70,7 @@ class HomeController extends Controller
                         'short_id' => $session['short_id'],
                         'created_at' => Carbon::createFromTimestamp($file->getMTime()),
                         'size' => $file->getSize(),
+                        'dry_run' => $session['dry_run'] ?? false,
                     ];
                 }
             }

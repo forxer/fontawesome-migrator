@@ -38,7 +38,9 @@ class IconReplacer
             }
 
             $result = $this->processFile($actualPath, $isDryRun);
-            $result['file'] = $relativePath;
+            $result['file'] = $actualPath;  // Garder le chemin complet
+            $result['relative_path'] = $relativePath;  // Ajouter le chemin relatif séparément
+
             $results[] = $result;
         }
 
@@ -107,6 +109,7 @@ class IconReplacer
 
             // Sauvegarder le fichier si ce n'est pas un dry-run
             if (! $isDryRun && $changes !== []) {
+
                 $saveResult = $this->saveFile($filePath, $modifiedContent);
                 $backupInfo = $saveResult['backup'];
             }
@@ -119,6 +122,7 @@ class IconReplacer
                 'backup' => $backupInfo,
             ];
         } catch (Exception $exception) {
+
             return [
                 'success' => false,
                 'error' => $exception->getMessage(),
@@ -237,7 +241,7 @@ class IconReplacer
      */
     protected function createBackup(string $filePath): array|bool
     {
-        $backupDir = $this->config['backup_path'];
+        $backupDir = $this->config['sessions_path'];
 
         // S'assurer que le répertoire et le .gitignore existent
         DirectoryHelper::ensureExistsWithGitignore($backupDir);

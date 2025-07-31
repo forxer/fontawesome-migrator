@@ -25,7 +25,7 @@ async function runTest(type) {
     result.innerHTML = `<i class="fa-solid fa-rocket"></i> Lancement du test ${type}...\n`;
     
     try {
-        const response = await fetch('/fontawesome-migrator/test/migration', {
+        const response = await fetch('/fontawesome-migrator/tests/migration', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,7 +37,20 @@ async function runTest(type) {
         const data = await response.json();
         
         if (data.success) {
-            result.innerHTML = `<i class="fa-regular fa-square-check"></i> Test ${type} terminé avec succès!\n\nSortie de la commande:\n${data.output}\n\nSessions disponibles: ${data.sessions.length}\n\n<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
+            result.innerHTML = `<i class="fa-regular fa-square-check"></i> Test ${type} terminé avec succès!
+
+<strong>🚀 Commande exécutée :</strong>
+${data.command}
+
+<strong>📋 Options passées :</strong>
+${JSON.stringify(data.options, null, 2)}
+
+<strong>📤 Sortie de la commande (avec debug) :</strong>
+${data.output}
+
+<strong>📊 Sessions disponibles :</strong> ${data.sessions.length}
+
+<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
             
             // Ne pas recharger automatiquement, laisser l'utilisateur voir le résultat
             // Ajouter un bouton pour recharger manuellement
@@ -48,7 +61,18 @@ async function runTest(type) {
             reloadBtn.onclick = () => location.reload();
             output.appendChild(reloadBtn);
         } else {
-            result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur lors du test ${type}:\n\n${data.error || data.output}\n\n<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
+            result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur lors du test ${type}:
+
+<strong>🚀 Commande tentée :</strong>
+${data.command || 'Commande non disponible'}
+
+<strong>📋 Options passées :</strong>
+${data.options ? JSON.stringify(data.options, null, 2) : 'Options non disponibles'}
+
+<strong>❌ Sortie/Erreur :</strong>
+${data.error || data.output}
+
+<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
         }
     } catch (error) {
         result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur de connexion:\n\n${error.message}`;
@@ -60,7 +84,7 @@ async function runTest(type) {
 
 async function inspectSession(sessionId) {
     try {
-        const response = await fetch(`/fontawesome-migrator/test/session/${sessionId}`);
+        const response = await fetch(`/fontawesome-migrator/tests/session/${sessionId}`);
         const data = await response.json();
         
         if (data.error) {
@@ -100,7 +124,7 @@ async function cleanupSessions(days) {
     }
     
     try {
-        const response = await fetch('/fontawesome-migrator/test/cleanup-sessions', {
+        const response = await fetch('/fontawesome-migrator/tests/cleanup-sessions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

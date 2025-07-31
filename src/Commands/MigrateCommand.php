@@ -47,7 +47,8 @@ class MigrateCommand extends Command
                             {--report : Générer un rapport détaillé}
                             {--icons-only : Migrer uniquement les classes d\'icônes}
                             {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}
-                            {--no-interactive : Désactiver le mode interactif}';
+                            {--no-interactive : Désactiver le mode interactif}
+                            {--debug : Afficher les informations de debug de l\'environnement}';
 
     /**
      * The console command description.
@@ -157,6 +158,11 @@ class MigrateCommand extends Command
     protected function handleClassic(): int
     {
         $this->info('🚀 Démarrage de la migration Font Awesome 5 → 6');
+
+        // Afficher les informations de debug si demandé
+        if ($this->option('debug')) {
+            $this->displayDebugInfo();
+        }
 
         // Validation de la configuration
         if (! $this->validateConfiguration()) {
@@ -626,5 +632,41 @@ class MigrateCommand extends Command
                 $this->metadata->addBackup($result['backup']);
             }
         }
+    }
+
+    /**
+     * Afficher les informations de debug de l'environnement
+     */
+    protected function displayDebugInfo(): void
+    {
+        $this->info('🔧 Informations de debug de l\'environnement :');
+        $this->newLine();
+
+        $debugInfo = [
+            'Répertoire de travail' => getcwd(),
+            'Utilisateur' => get_current_user(),
+            'PHP SAPI' => php_sapi_name(),
+            'Environnement Laravel' => app()->environment(),
+            'Cache config' => app()->getCachedConfigPath() ?: 'Non mis en cache',
+            'Cache routes' => app()->getCachedRoutesPath() ?: 'Non mis en cache',
+            'Sessions path' => config('fontawesome-migrator.sessions_path'),
+            'License type' => config('fontawesome-migrator.license_type'),
+            'Backup enabled' => config('fontawesome-migrator.backup.enabled') ? 'Oui' : 'Non',
+        ];
+
+        // Afficher les chemins de scan
+        $scanPaths = config('fontawesome-migrator.scan_paths', []);
+        $debugInfo['Chemins de scan'] = \count($scanPaths) > 0 ? implode(', ', $scanPaths) : 'Aucun configuré';
+
+        // Afficher les extensions de fichiers
+        $fileExtensions = config('fontawesome-migrator.file_extensions', []);
+        $debugInfo['Extensions fichiers'] = \count($fileExtensions) > 0 ? implode(', ', $fileExtensions) : 'Aucune configurée';
+
+        // Affichage formaté
+        foreach ($debugInfo as $key => $value) {
+            $this->line("  <fg=cyan>{$key}:</> <fg=white>{$value}</>");
+        }
+
+        $this->newLine();
     }
 }

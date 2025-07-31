@@ -90,6 +90,35 @@
 
     <!-- Statistiques générales -->
     <div id="statistics" class="stats-grid">
+        <!-- Indicateur DRY-RUN / RÉEL en premier -->
+        <div class="stat-card {{ $isDryRun ? 'stat-card-warning' : 'stat-card-success' }}">
+            <div class="stat-number">
+                @if ($isDryRun)
+                    <i class="fa-regular fa-eye"></i>
+                @else
+                    <i class="fa-solid fa-check-circle"></i>
+                @endif
+            </div>
+            <div class="stat-label">Mode d'exécution</div>
+            <div style="margin-top: 10px; font-size: 1.1em; font-weight: bold;">
+                @if ($isDryRun)
+                    <span style="color: var(--warning-color);">
+                        <i class="fa-solid fa-eye"></i> DRY-RUN
+                    </span>
+                    <div style="font-size: 0.8em; margin-top: 5px; color: var(--text-secondary);">
+                        Prévisualisation uniquement
+                    </div>
+                @else
+                    <span style="color: var(--success-color);">
+                        <i class="fa-solid fa-bolt"></i> MIGRATION RÉELLE
+                    </span>
+                    <div style="font-size: 0.8em; margin-top: 5px; color: var(--text-secondary);">
+                        Fichiers modifiés
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <div class="stat-card">
             <div class="stat-number">{{ number_format($stats['total_files'], 0, ',', ' ') }}</div>
             <div class="stat-label">Fichiers analysés</div>
