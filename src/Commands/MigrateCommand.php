@@ -645,7 +645,7 @@ class MigrateCommand extends Command
         $debugInfo = [
             'Répertoire de travail' => getcwd(),
             'Utilisateur' => get_current_user(),
-            'PHP SAPI' => php_sapi_name(),
+            'PHP SAPI' => PHP_SAPI,
             'Environnement Laravel' => app()->environment(),
             'Cache config' => app()->getCachedConfigPath() ?: 'Non mis en cache',
             'Cache routes' => app()->getCachedRoutesPath() ?: 'Non mis en cache',
@@ -664,7 +664,7 @@ class MigrateCommand extends Command
 
         // Affichage formaté
         foreach ($debugInfo as $key => $value) {
-            $this->line("  <fg=cyan>{$key}:</> <fg=white>{$value}</>");
+            $this->line(\sprintf('  <fg=cyan>%s:</> <fg=white>%s</>', $key, $value));
         }
 
         $this->newLine();

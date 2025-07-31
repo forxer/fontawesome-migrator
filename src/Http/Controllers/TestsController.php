@@ -85,7 +85,7 @@ class TestsController extends Controller
             $commandString = 'php artisan fontawesome:migrate';
 
             foreach ($commandOptions as $option => $value) {
-                if ($value === true) {
+                if ($value) {
                     $commandString .= ' '.$option;
                 } elseif ($value !== false) {
                     $commandString .= ' '.$option.'='.$value;
