@@ -1074,6 +1074,10 @@
         font-weight: 600;
     }
 
+    .section-title i {
+        color: var(--primary-color);
+    }
+
     .section-title::after {
         content: '';
         flex: 1;

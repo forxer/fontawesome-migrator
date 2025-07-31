@@ -62,7 +62,7 @@
                     <div class="report-header">
                         <div class="report-icon"><i class="fa-regular fa-chart-bar"></i></div>
                         <div class="report-title">
-                            <h3>{{ $report['name'] }}</h3>
+                            <h3 class="section-title">{{ $report['name'] }}</h3>
                             <div class="report-date">
                                 <i class="fa-regular fa-clock"></i> {{ $report['created_at']->format('d/m/Y à H:i') }}
                             </div>

@@ -133,7 +133,7 @@
                         @foreach($backupFiles as $file)
                             <tr style="border-bottom: 1px solid var(--gray-200);">
                                 <td style="padding: 12px; font-family: monospace;">{{ $file['name'] }}</td>
-                                <td style="padding: 12px; text-align: right;">{{ number_format($file['size'] / 1024, 1, ',', ' ') }} KB</td>
+                                <td style="padding: 12px; text-align: right;">{{ human_readable_bytes_size($file['size'], 2) }}</td>
                                 <td style="padding: 12px; text-align: center;">{{ $file['modified']->format('d/m/Y H:i') }}</td>
                             </tr>
                         @endforeach

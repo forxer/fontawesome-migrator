@@ -32,7 +32,7 @@
         <div class="stat-card">
             <div class="stat-icon"><i class="fa-regular fa-chart-bar"></i></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($backupStats['total_size'] / 1024, 1, ',', ' ') }} KB</div>
+                <div class="stat-value">{{ human_readable_bytes_size($backupStats['total_size'], 2) }}</div>
                 <div class="stat-label">Taille totale</div>
             </div>
         </div>
@@ -53,7 +53,7 @@
 
     <!-- Boutons de test -->
     <div class="section">
-        <h2><i class="fa-solid fa-rocket"></i> Tests de Migration</h2>
+        <h2 class="section-title"><i class="fa-solid fa-rocket"></i> Tests de Migration</h2>
         <div class="test-buttons">
             <button onclick="runTest('dry-run')" class="btn btn-primary test-btn" data-type="dry-run">
                 <i class="fa-solid fa-bullseye"></i> Test Dry-Run
@@ -70,20 +70,20 @@
         </div>
 
         <div id="test-output" class="test-output" style="display: none;">
-            <h3>Résultat du test :</h3>
+            <h3 class="section-title">Résultat du test :</h3>
             <pre id="test-result"></pre>
         </div>
     </div>
 
     <!-- Sessions disponibles -->
     <div class="section">
-        <h2><i class="fa-solid fa-chart-line"></i> Sessions Disponibles</h2>
+        <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Sessions Disponibles</h2>
         @if(count($sessions) > 0)
             <div class="sessions-grid">
                 @foreach($sessions as $session)
                     <div class="session-card" data-session-id="{{ $session['session_id'] }}">
                         <div class="session-header">
-                            <h3>Session {{ substr($session['session_id'], -8) }}</h3>
+                            <h3 class="section-title">Session {{ substr($session['session_id'], -8) }}</h3>
                             <div class="session-badges">
                                 @if($session['dry_run'])
                                     <span class="badge badge-info">DRY-RUN</span>
@@ -120,7 +120,7 @@
         @else
             <div class="empty-state">
                 <div class="empty-icon"><i class="fa-regular fa-folder"></i></div>
-                <h3>Aucune session trouvée</h3>
+                <h3 class="section-title">Aucune session trouvée</h3>
                 <p>Lancez un test de migration pour créer votre première session.</p>
             </div>
         @endif
@@ -130,7 +130,7 @@
     <div id="session-modal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-bullseye"></i> Inspection de Session</h3>
+                <h3 class="section-title"><i class="fa-solid fa-bullseye"></i> Inspection de Session</h3>
                 <button onclick="closeModal('session-modal')" class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
@@ -143,7 +143,7 @@
 
     <!-- Actions de nettoyage -->
     <div class="section">
-        <h2><i class="fa-regular fa-trash-can"></i> Nettoyage</h2>
+        <h2 class="section-title"><i class="fa-regular fa-trash-can"></i> Nettoyage</h2>
         <div class="cleanup-buttons">
             <button onclick="cleanupSessions(7)" class="btn btn-secondary">
                 <i class="fa-regular fa-trash-can"></i> Nettoyer sessions > 7 jours

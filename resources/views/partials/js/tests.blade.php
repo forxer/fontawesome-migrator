@@ -1,5 +1,18 @@
 <script>
 // Fonctions JavaScript pour les tests
+
+// Format des tailles de fichiers (équivalent PHP human_readable_bytes_size)
+function formatFileSize(bytes, decimals = 2) {
+    if (bytes === 0) return '0 B';
+    
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 async function runTest(type) {
     const button = document.querySelector(`[data-type="${type}"]`);
     const output = document.getElementById('test-output');
@@ -57,19 +70,19 @@ async function inspectSession(sessionId) {
         
         const details = document.getElementById('session-details');
         details.innerHTML = `
-            <h4>Session: ${data.session_id}</h4>
+            <h4 class="section-title">Session: ${data.session_id}</h4>
             <p><strong>Répertoire:</strong> ${data.session_dir}</p>
             <p><strong>Nombre de fichiers:</strong> ${data.files_count}</p>
             
-            <h5><i class="fa-regular fa-clipboard"></i> Métadonnées:</h5>
+            <h5 class="section-title"><i class="fa-regular fa-clipboard"></i> Métadonnées:</h5>
             <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto;">${JSON.stringify(data.metadata, null, 2)}</pre>
             
-            <h5><i class="fa-regular fa-folder"></i> Fichiers de sauvegarde:</h5>
+            <h5 class="section-title"><i class="fa-regular fa-folder"></i> Fichiers de sauvegarde:</h5>
             <ul>
                 ${data.backup_files.map(file => `
                     <li>
                         <strong>${file.name}</strong> 
-                        (${(file.size / 1024).toFixed(1)} KB, ${file.modified})
+                        (${formatFileSize(file.size)}, ${file.modified})
                     </li>
                 `).join('')}
             </ul>

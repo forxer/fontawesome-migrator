@@ -59,7 +59,7 @@
         <div class="actions-grid">
             <div class="action-card">
                 <div class="action-icon"><i class="fa-regular fa-chart-bar"></i></div>
-                <h3>Voir les Rapports</h3>
+                <h3 class="section-title">Voir les Rapports</h3>
                 <p>Consultez tous les rapports de migration générés</p>
                 <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
                     Accéder aux rapports
@@ -68,7 +68,7 @@
 
             <div class="action-card">
                 <div class="action-icon"><i class="fa-regular fa-folder"></i></div>
-                <h3>Gérer les Sessions</h3>
+                <h3 class="section-title">Gérer les Sessions</h3>
                 <p>Explorez les sessions de migration et leurs métadonnées</p>
                 <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-primary">
                     Voir les sessions
@@ -77,7 +77,7 @@
 
             <div class="action-card">
                 <div class="action-icon"><i class="fa-solid fa-flask"></i></div>
-                <h3>Tests</h3>
+                <h3 class="section-title">Tests</h3>
                 <p>Testez la migration et débugguez les problèmes</p>
                 <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
                     Accéder aux tests
@@ -104,7 +104,7 @@
                             <div class="activity-meta">
                                 Session <span data-tooltip="ID complet : {{ $report['session_id'] }}">{{ $report['short_id'] }}</span>
                                 • {{ $report['created_at']->format('d/m/Y à H:i') }}
-                                • {{ number_format($report['size'] / 1024, 1, ',', ' ') }} KB
+                                • {{ human_readable_bytes_size($report['size'], 2) }}
                             </div>
                         </div>
                         <div class="activity-badge">
@@ -131,7 +131,7 @@
                 <div class="step-item">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <h3>Installation</h3>
+                        <h3 class="section-title">Installation</h3>
                         <p>Configurez le package dans votre projet Laravel</p>
                         <code class="step-code">php artisan fontawesome:install</code>
                     </div>
@@ -140,7 +140,7 @@
                 <div class="step-item">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h3>Test de Migration</h3>
+                        <h3 class="section-title">Test de Migration</h3>
                         <p>Testez la migration en mode dry-run pour voir les changements</p>
                         <code class="step-code">php artisan fontawesome:migrate --dry-run --report</code>
                     </div>
@@ -149,7 +149,7 @@
                 <div class="step-item">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h3>Migration Réelle</h3>
+                        <h3 class="section-title">Migration Réelle</h3>
                         <p>Appliquez les changements définitivement</p>
                         <code class="step-code">php artisan fontawesome:migrate --report</code>
                     </div>

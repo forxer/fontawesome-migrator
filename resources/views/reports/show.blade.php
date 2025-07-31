@@ -172,7 +172,7 @@
         <div class="timeline-container">
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-solid fa-magnifying-glass"></i> Analyse effectuée</h4>
+                    <h4 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> Analyse effectuée</h4>
                     <p>{{ number_format($stats['total_files'], 0, ',', ' ') }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
                     <small>{{ $timestamp }}</small>
                 </div>
@@ -181,7 +181,7 @@
             @if ($stats['modified_files'] > 0)
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-solid fa-crosshairs"></i> Fichiers ciblés</h4>
+                    <h4 class="section-title"><i class="fa-solid fa-crosshairs"></i> Fichiers ciblés</h4>
                     <p>{{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) contenant du code Font Awesome 5</p>
                     <small>Détection automatique</small>
                 </div>
@@ -189,7 +189,7 @@
 
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-solid fa-arrow-right-arrow-left"></i> Migration appliquée</h4>
+                    <h4 class="section-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Migration appliquée</h4>
                     <p>{{ number_format($stats['total_changes'], 0, ',', ' ') }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
                     <small>{{ $isDryRun ? 'Mode prévisualisation' : 'Modifications effectives' }}</small>
                 </div>
@@ -199,7 +199,7 @@
             @if (($stats['assets_migrated'] ?? 0) > 0)
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-solid fa-cubes"></i> Assets migrés</h4>
+                    <h4 class="section-title"><i class="fa-solid fa-cubes"></i> Assets migrés</h4>
                     <p>{{ number_format($stats['assets_migrated'], 0, ',', ' ') }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
                     <small>Packages et liens modernisés</small>
                 </div>
@@ -209,10 +209,10 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     @if ($stats['migration_success'] ?? true)
-                        <h4><i class="fa-regular fa-square-check"></i> Migration {{ $isDryRun ? 'planifiée' : 'terminée' }}</h4>
+                        <h4 class="section-title"><i class="fa-regular fa-square-check"></i> Migration {{ $isDryRun ? 'planifiée' : 'terminée' }}</h4>
                         <p>Votre code est {{ $isDryRun ? 'prêt pour' : 'maintenant compatible avec' }} Font Awesome 6</p>
                     @else
-                        <h4><i class="fa-solid fa-magnifying-glass"></i> Migration partielle</h4>
+                        <h4 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> Migration partielle</h4>
                         <p>Certains éléments nécessitent une vérification manuelle</p>
                     @endif
                     <small>{{ $timestamp }}</small>
@@ -229,7 +229,7 @@
                 <div class="recommendation-card priority-high">
                     <div class="rec-icon"><i class="fa-solid fa-play"></i></div>
                     <div class="rec-content">
-                        <h4>Prêt pour la migration</h4>
+                        <h4 class="section-title">Prêt pour la migration</h4>
                         <p>Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ number_format($stats['total_changes'], 0, ',', ' ') }} changements.</p>
                         <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')"><i class="fa-regular fa-copy"></i> Copier la commande</button>
                     </div>
@@ -240,7 +240,7 @@
                 <div class="recommendation-card priority-medium">
                     <div class="rec-icon"><i class="fa-solid fa-flask"></i></div>
                     <div class="rec-content">
-                        <h4>Tests recommandés</h4>
+                        <h4 class="section-title">Tests recommandés</h4>
                         <p>Testez votre application pour vérifier que les icônes s'affichent correctement.</p>
                         <button class="btn btn-primary btn-sm" onclick="showTestingTips()"><i class="fa-solid fa-flask"></i> Conseils de test</button>
                     </div>
@@ -251,7 +251,7 @@
                 <div class="recommendation-card priority-high">
                     <div class="rec-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                     <div class="rec-content">
-                        <h4>Icônes à vérifier</h4>
+                        <h4 class="section-title">Icônes à vérifier</h4>
                         <p>{{ number_format($stats['warnings'], 0, ',', ' ') }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
                         <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()"><i class="fa-solid fa-triangle-exclamation"></i> Voir les avertissements</button>
                     </div>
@@ -262,7 +262,7 @@
                 <div class="recommendation-card priority-medium">
                     <div class="rec-icon"><i class="fa-solid fa-download"></i></div>
                     <div class="rec-content">
-                        <h4>Mise à jour des dépendances</h4>
+                        <h4 class="section-title">Mise à jour des dépendances</h4>
                         <p>N'oubliez pas d'exécuter <code>npm install</code> pour installer les nouvelles versions.</p>
                         <button class="btn btn-primary btn-sm" onclick="copyCommand('npm install')"><i class="fa-regular fa-copy"></i> Copier npm install</button>
                     </div>
@@ -280,7 +280,7 @@
                 <div class="recommendation-card priority-success">
                     <div class="rec-icon"><i class="fa-solid fa-trophy"></i></div>
                     <div class="rec-content">
-                        <h4>Excellent score de migration</h4>
+                        <h4 class="section-title">Excellent score de migration</h4>
                         <p>{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code a été optimisé pour Font Awesome 6 !</p>
                     </div>
                 </div>
@@ -288,7 +288,7 @@
                 <div class="recommendation-card priority-medium">
                     <div class="rec-icon"><i class="fa-regular fa-square-check"></i></div>
                     <div class="rec-content">
-                        <h4>Bonne migration</h4>
+                        <h4 class="section-title">Bonne migration</h4>
                         <p>{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code utilise maintenant Font Awesome 6.</p>
                     </div>
                 </div>
@@ -296,7 +296,7 @@
                 <div class="recommendation-card priority-success">
                     <div class="rec-icon"><i class="fa-solid fa-check-circle"></i></div>
                     <div class="rec-content">
-                        <h4>Code déjà optimisé</h4>
+                        <h4 class="section-title">Code déjà optimisé</h4>
                         <p>Votre code semble déjà compatible avec Font Awesome 6 !</p>
                     </div>
                 </div>
@@ -305,7 +305,7 @@
             <div class="recommendation-card priority-info">
                 <div class="rec-icon"><i class="fa-solid fa-book"></i></div>
                 <div class="rec-content">
-                    <h4>Documentation officielle</h4>
+                    <h4 class="section-title">Documentation officielle</h4>
                     <p>Consultez le guide de migration Font Awesome 6 pour plus d'informations.</p>
                     <a href="https://fontawesome.com/v6/docs/web/setup/upgrade/" target="_blank" class="btn btn-primary btn-sm"><i class="fa-solid fa-external-link"></i> Guide officiel</a>
                 </div>
@@ -320,7 +320,7 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div>
-                <h3 style="margin: 0 0 10px 0; color: var(--gray-700);">Options utilisées</h3>
+                <h3 class="section-title" style="margin: 0 0 10px 0; color: var(--gray-700);">Options utilisées</h3>
                 <table style="margin-top: 0;">
                     <tr><td><strong>Mode</strong></td><td>{{ $isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète' }}</td></tr>
                     @if (!empty($migrationOptions['custom_path']))
@@ -353,7 +353,7 @@
             </div>
 
             <div>
-                <h3 style="margin: 0 0 10px 0; color: var(--gray-700);">Configuration</h3>
+                <h3 class="section-title" style="margin: 0 0 10px 0; color: var(--gray-700);">Configuration</h3>
                 <table style="margin-top: 0;">
                     <tr><td><strong>Type de licence</strong></td><td>{{ ucfirst($configuration['license_type'] ?? 'free') }}</td></tr>
                     <tr><td><strong>Chemins scannés</strong></td><td>
@@ -393,7 +393,7 @@
                     <span class="backup-date">{{ $backup['created_at'] }}</span>
                 </div>
                 <div class="backup-details">
-                    <span class="backup-size">Taille: {{ number_format($backup['size']/1024, 1, ',', ' ') }} Ko</span>
+                    <span class="backup-size">Taille: {{ human_readable_bytes_size($backup['size'], 2) }}</span>
                     <span class="backup-path">Sauvegarde: {{ basename($backup['backup_path']) }}</span>
                 </div>
             </div>
@@ -1061,12 +1061,12 @@
                                 ×
                             </button>
                             <div style="${styles.content}">
-                                <h3 style="margin: 0 0 20px 0; color: var(--gray-700); font-size: 24px;">${title}</h3>
+                                <h3 class="section-title" style="margin: 0 0 20px 0; color: var(--gray-700); font-size: 24px;">${title}</h3>
                                 ${content}
                             </div>
                         ` : `
                             <div style="${styles.header}">
-                                <h3 style="margin: 0;">${title}</h3>
+                                <h3 class="section-title" style="margin: 0;">${title}</h3>
                                 <span onclick="ModalSystem.hide('${modalId}')" style="
                                     font-size: 28px;
                                     font-weight: bold;

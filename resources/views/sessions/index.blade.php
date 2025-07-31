@@ -22,8 +22,8 @@
                     <div class="stat-label">Fichiers</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">{{ number_format($stats['total_size'] / 1024, 1, ',', ' ') }}</div>
-                    <div class="stat-label">KB Total</div>
+                    <div class="stat-number">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
+                    <div class="stat-label">Taille totale</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">
@@ -62,7 +62,7 @@
                     <div class="report-header">
                         <div class="report-icon"><i class="fa-regular fa-folder"></i></div>
                         <div class="report-title">
-                            <h3>Session <span data-tooltip="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h3>
+                            <h3 class="section-title">Session <span data-tooltip="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h3>
                             <div class="report-date">
                                 <i class="fa-regular fa-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
                             </div>
