@@ -7,129 +7,169 @@
 @endsection
 
 @section('content')
-    <div class="header">
-        <h1><i class="fa-regular fa-chart-bar"></i> Rapports</h1>
-        <p>Gestion des rapports de migration</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="section-title section-title-lg">
+                <i class="bi bi-file-text text-primary"></i> Rapports
+            </h1>
+            <p class="text-muted mb-0">Gestion des rapports de migration</p>
+        </div>
     </div>
 
     @if (count($reports) > 0)
-        <!-- Statistiques globales -->
-        <div class="stats-summary">
+        <!-- Statistiques globales Bootstrap -->
+        <div class="mb-4">
             <h2 class="section-title">
-                <i class="fa-regular fa-chart-bar"></i> Statistiques globales
+                <i class="bi bi-file-text text-primary"></i> Statistiques globales
             </h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">{{ count($reports) }}</div>
-                    <div class="stat-label">Rapports</div>
+            <div class="row g-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="fs-3 fw-bold text-primary">{{ count($reports) }}</div>
+                            <div class="text-muted small">Rapports</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ human_readable_bytes_size(array_sum(array_column($reports, 'size')), 2) }}</div>
-                    <div class="stat-label">Total</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size(array_sum(array_column($reports, 'size')), 2) }}</div>
+                            <div class="text-muted small">Total</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
-                    <div class="stat-label">Dernier rapport</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="fs-3 fw-bold text-primary">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
+                            <div class="text-muted small">Dernier rapport</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ collect($reports)->filter(fn($r) => $r['created_at']->isAfter(now()->subWeek()))->count() }}</div>
-                    <div class="stat-label">Cette semaine</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="fs-3 fw-bold text-primary">{{ collect($reports)->filter(fn($r) => $r['created_at']->isAfter(now()->subWeek()))->count() }}</div>
+                            <div class="text-muted small">Cette semaine</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     @endif
 
-    <div class="actions">
-        <button onclick="refreshReports()" class="btn btn-primary">
-            <span id="refresh-icon"><i class="fa-solid fa-arrows-rotate"></i></span> Actualiser les rapports
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex gap-2">
+            <button onclick="refreshReports()" class="btn btn-primary">
+                <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser les rapports
+            </button>
 
-        <button onclick="cleanupReports()" class="btn btn-danger">
-            <i class="fa-regular fa-trash-can"></i> Nettoyer (30j+)
-        </button>
+            <button onclick="cleanupReports()" class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i> Nettoyer (30j+)
+            </button>
+        </div>
 
-        <div style="margin-left: auto; color: var(--gray-500); font-weight: 500;">
-            <i class="fa-regular fa-chart-bar"></i> {{ count($reports) }} rapport(s) disponible(s)
+        <div class="text-muted fw-medium">
+            <i class="bi bi-file-text"></i> {{ count($reports) }} rapport(s) disponible(s)
         </div>
     </div>
 
     <div id="alerts"></div>
 
     @if (count($reports) > 0)
-        <div class="reports-grid">
+        <div class="row g-4">
             @foreach ($reports as $report)
-                <div class="report-card" data-filename="{{ $report['filename'] }}">
-                    <div class="report-header">
-                        <div class="report-icon"><i class="fa-regular fa-chart-bar"></i></div>
-                        <div class="report-title">
-                            <h3 class="section-title">{{ $report['name'] }}</h3>
-                            <div class="report-date">
-                                <i class="fa-regular fa-clock"></i> {{ $report['created_at']->format('d/m/Y à H:i') }}
-                                @if($report['dry_run'])
-                                    <span class="badge badge-warning" style="margin-left: 8px;">DRY-RUN</span>
-                                @else
-                                    <span class="badge badge-success" style="margin-left: 8px;">RÉEL</span>
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card h-100 shadow-sm" data-filename="{{ $report['filename'] }}">
+                        <div class="card-header d-flex align-items-center gap-3">
+                            <i class="bi bi-file-text text-primary fs-4"></i>
+                            <div class="flex-grow-1 min-w-0">
+                                <h5 class="card-title mb-1 text-truncate">{{ $report['name'] }}</h5>
+                                <div class="text-muted small d-flex align-items-center gap-2">
+                                    <i class="bi bi-clock"></i> {{ $report['created_at']->format('d/m/Y à H:i') }}
+                                    @if($report['dry_run'])
+                                        <span class="badge bg-warning text-dark">DRY-RUN</span>
+                                    @else
+                                        <span class="badge bg-success">RÉEL</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row g-2 text-center">
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-semibold">{{ human_readable_bytes_size($report['size'], 2) }}</div>
+                                        <div class="text-muted small"><i class="bi bi-hdd"></i> Taille</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-semibold">{{ $report['created_at']->format('H:i') }}</div>
+                                        <div class="text-muted small"><i class="bi bi-clock"></i> Heure</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">
+                                            {{ $report['short_id'] }}
+                                        </div>
+                                        <div class="text-muted small"><i class="bi bi-folder"></i> Session</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-semibold">{{ $report['created_at']->diffForHumans(['short' => true]) }}</div>
+                                        <div class="text-muted small"><i class="bi bi-clock"></i> Âge</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light">
+                            <div class="d-flex flex-wrap gap-1">
+                                <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-file-text"></i> Rapport
+                                </a>
+
+                                @if ($report['has_json'])
+                                    <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-filetype-json"></i> JSON
+                                    </a>
                                 @endif
+
+                                <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-folder"></i> Session
+                                </a>
+
+                                <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="report-meta">
-                        <div class="meta-item">
-                            <div class="meta-value">{{ human_readable_bytes_size($report['size'], 2) }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-chart-bar"></i> Taille</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-value">{{ $report['created_at']->format('H:i') }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-clock"></i> Heure</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-value" data-tooltip="ID complet : {{ $report['session_id'] }}">
-                                {{ $report['short_id'] }}
-                            </div>
-                            <div class="meta-label"><i class="fa-regular fa-folder"></i> Session</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-value">{{ $report['created_at']->diffForHumans(['short' => true]) }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-clock"></i> Âge</div>
-                        </div>
-                    </div>
-
-                    <div class="report-actions">
-                        <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary btn-sm">
-                            <i class="fa-regular fa-chart-bar"></i> Voir Rapport
-                        </a>
-
-                        @if ($report['has_json'])
-                            <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-primary btn-sm">
-                                <i class="fa-regular fa-chart-bar"></i> Voir JSON
-                            </a>
-                        @endif
-
-                        <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-secondary btn-sm">
-                            <i class="fa-regular fa-folder"></i> Session
-                        </a>
-
-                        <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-danger btn-sm">
-                            <i class="fa-regular fa-trash-can"></i> Supprimer
-                        </button>
                     </div>
                 </div>
             @endforeach
         </div>
     @else
         <div class="empty-state">
-            <div class="empty-icon"><i class="fa-regular fa-chart-bar"></i></div>
-            <div class="empty-title">Aucun rapport disponible</div>
-            <div class="empty-description">
+            <div class="empty-icon">
+                <i class="bi bi-file-text"></i>
+            </div>
+            <h3 class="empty-title">Aucun rapport disponible</h3>
+            <p class="empty-description">
                 Commencez par générer un rapport de migration en exécutant la commande ci-dessous.
                 Les rapports vous permettront de visualiser les changements effectués lors de la migration Font Awesome 5 → 6.
+            </p>
+            <div class="mb-4">
+                <code class="empty-command">
+                    php artisan fontawesome:migrate --report
+                </code>
             </div>
-            <div class="empty-code">
-                php artisan fontawesome:migrate --report
-            </div>
-            <div style="margin-top: 20px; font-size: 0.9em; color: var(--gray-400);">
-                <i class="fa-solid fa-arrows-rotate"></i> Ajoutez <code>--dry-run</code> pour prévisualiser sans modifier les fichiers
+            <div class="empty-hint">
+                <i class="bi bi-arrow-repeat"></i> Ajoutez <code class="text-body">--dry-run</code> pour prévisualiser sans modifier les fichiers
             </div>
         </div>
     @endif
@@ -137,25 +177,13 @@
 
 @section('scripts')
 <script>
-    // Configuration CSRF pour les requêtes AJAX
-    window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
     function showAlert(message, type = 'success') {
-        const alertsContainer = document.getElementById('alerts');
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type}`;
-        alert.textContent = message;
-
-        alertsContainer.appendChild(alert);
-
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
+        showBootstrapAlert(message, type, 'alerts');
     }
 
     function refreshReports() {
-        const icon = document.getElementById('refresh-icon');
-        icon.innerHTML = '<span class="spinner"></span>';
+        const button = document.querySelector('button[onclick="refreshReports()"]');
+        toggleButtonSpinner(button, true);
 
         // Recharger la page après un court délai
         setTimeout(() => {

@@ -10,160 +10,212 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
-            <div class="hero-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+            <div class="hero-icon"><i class="bi bi-arrow-repeat"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>
             <p class="hero-subtitle">Migrez facilement de FontAwesome 5 vers FontAwesome 6</p>
             <div class="hero-version">Version {{ $stats['package_version'] }}</div>
         </div>
     </div>
 
-    <!-- Statistics Dashboard -->
-    <div class="dashboard-stats">
-        <div class="stat-card {{ $stats['total_sessions'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon"><i class="fa-regular fa-folder"></i></div>
-            <div class="stat-content">
-                <div class="stat-number">{{ $stats['total_sessions'] }}</div>
-                <div class="stat-label">Sessions de migration</div>
+    <!-- Statistics Dashboard Bootstrap -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 shadow-sm {{ $stats['total_sessions'] > 0 ? 'border-primary' : '' }}">
+                <div class="card-body text-center">
+                    <i class="bi bi-folder fs-1 {{ $stats['total_sessions'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
+                    <h3 class="card-title {{ $stats['total_sessions'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_sessions'] }}</h3>
+                    <p class="card-text text-muted">Sessions de migration</p>
+                </div>
+                @if($stats['total_sessions'] > 0)
+                    <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
+                @endif
             </div>
         </div>
 
-        <div class="stat-card {{ $stats['total_reports'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon"><i class="fa-regular fa-chart-bar"></i></div>
-            <div class="stat-content">
-                <div class="stat-number">{{ $stats['total_reports'] }}</div>
-                <div class="stat-label">Rapports générés</div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 shadow-sm {{ $stats['total_reports'] > 0 ? 'border-primary' : '' }}">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-text fs-1 {{ $stats['total_reports'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
+                    <h3 class="card-title {{ $stats['total_reports'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_reports'] }}</h3>
+                    <p class="card-text text-muted">Rapports générés</p>
+                </div>
+                @if($stats['total_reports'] > 0)
+                    <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
+                @endif
             </div>
         </div>
 
-        <div class="stat-card {{ $stats['successful_migrations'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon"><i class="fa-regular fa-square-check"></i></div>
-            <div class="stat-content">
-                <div class="stat-number">{{ $stats['successful_migrations'] }}</div>
-                <div class="stat-label">Migrations réussies</div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 shadow-sm {{ $stats['successful_migrations'] > 0 ? 'border-primary' : '' }}">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-square fs-1 {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
+                    <h3 class="card-title {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['successful_migrations'] }}</h3>
+                    <p class="card-text text-muted">Migrations réussies</p>
+                </div>
+                @if($stats['successful_migrations'] > 0)
+                    <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
+                @endif
             </div>
         </div>
 
-        <div class="stat-card {{ $stats['total_size'] > 0 ? 'has-data' : '' }}">
-            <div class="stat-icon"><i class="fa-regular fa-folder"></i></div>
-            <div class="stat-content">
-                <div class="stat-number">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
-                <div class="stat-label">Données générées</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-        <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h2>
-
-        <div class="actions-grid">
-            <div class="action-card">
-                <div class="action-icon"><i class="fa-regular fa-chart-bar"></i></div>
-                <h3 class="section-title">Voir les Rapports</h3>
-                <p>Consultez tous les rapports de migration générés</p>
-                <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
-                    Accéder aux rapports
-                </a>
-            </div>
-
-            <div class="action-card">
-                <div class="action-icon"><i class="fa-regular fa-folder"></i></div>
-                <h3 class="section-title">Gérer les Sessions</h3>
-                <p>Explorez les sessions de migration et leurs métadonnées</p>
-                <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-primary">
-                    Voir les sessions
-                </a>
-            </div>
-
-            <div class="action-card">
-                <div class="action-icon"><i class="fa-solid fa-flask"></i></div>
-                <h3 class="section-title">Tests</h3>
-                <p>Testez la migration et débugguez les problèmes</p>
-                <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
-                    Accéder aux tests
-                </a>
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 shadow-sm {{ $stats['total_size'] > 0 ? 'border-primary' : '' }}">
+                <div class="card-body text-center">
+                    <i class="bi bi-hdd fs-1 {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
+                    <h3 class="card-title {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-muted' }}">{{ human_readable_bytes_size($stats['total_size'], 2) }}</h3>
+                    <p class="card-text text-muted">Données générées</p>
+                </div>
+                @if($stats['total_size'] > 0)
+                    <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
+                @endif
             </div>
         </div>
     </div>
 
-    <!-- Recent Activity -->
-    @if(count($recentReports) > 0)
-        <div class="recent-activity">
-            <h2 class="section-title"><i class="fa-regular fa-chart-bar"></i> Activité Récente</h2>
+    <!-- Quick Actions Bootstrap -->
+    <div class="mb-5">
+        <h2 class="section-title section-title-lg">
+            <i class="bi bi-lightning-fill text-primary"></i> Actions Rapides
+        </h2>
 
-            <div class="activity-list">
-                @foreach($recentReports as $report)
-                    <div class="activity-item">
-                        <div class="activity-icon"><i class="fa-regular fa-chart-bar"></i></div>
-                        <div class="activity-content">
-                            <div class="activity-title">
-                                <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}">
-                                    {{ $report['name'] }}
-                                </a>
-                            </div>
-                            <div class="activity-meta">
-                                Session <span data-tooltip="ID complet : {{ $report['session_id'] }}">{{ $report['short_id'] }}</span>
-                                • {{ $report['created_at']->format('d/m/Y à H:i') }}
-                                • {{ human_readable_bytes_size($report['size'], 2) }}
-                                @if($report['dry_run'])
-                                    • <span class="badge badge-warning" style="font-size: 0.75em;">DRY-RUN</span>
-                                @else
-                                    • <span class="badge badge-success" style="font-size: 0.75em;">RÉEL</span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="activity-badge">
-                            {{ $report['created_at']->diffForHumans(['short' => true]) }}
-                        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card action-card-bootstrap">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-file-text action-icon"></i>
+                        <h5 class="card-title">Voir les Rapports</h5>
+                        <p class="card-text text-muted">Consultez tous les rapports de migration générés</p>
+                        <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
+                            Accéder aux rapports
+                        </a>
                     </div>
-                @endforeach
+                </div>
             </div>
 
-            <div class="activity-footer">
-                <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-secondary">
-                    Voir tous les rapports <i class="fa-solid fa-arrow-right"></i>
+            <div class="col-lg-4 col-md-6">
+                <div class="card action-card-bootstrap">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-folder action-icon"></i>
+                        <h5 class="card-title">Gérer les Sessions</h5>
+                        <p class="card-text text-muted">Explorez les sessions de migration et leurs métadonnées</p>
+                        <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-primary">
+                            Voir les sessions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card action-card-bootstrap">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-flask action-icon"></i>
+                        <h5 class="card-title">Tests</h5>
+                        <p class="card-text text-muted">Testez la migration et débugguez les problèmes</p>
+                        <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
+                            Accéder aux tests
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Bootstrap -->
+    @if(count($recentReports) > 0)
+        <div class="mb-5">
+            <h2 class="section-title section-title-lg">
+                <i class="bi bi-file-text text-primary"></i> Activité Récente
+            </h2>
+
+            <div class="card shadow-sm activity-list">
+                <div class="list-group list-group-flush">
+                    @foreach($recentReports as $report)
+                        <div class="list-group-item activity-item">
+                            <i class="bi bi-file-text activity-icon"></i>
+                            <div class="activity-content">
+                                <div class="activity-title">
+                                    <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" 
+                                       class="text-decoration-none text-dark">
+                                        {{ $report['name'] }}
+                                    </a>
+                                </div>
+                                <div class="activity-meta">
+                                    Session <span data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">{{ $report['short_id'] }}</span>
+                                    • {{ $report['created_at']->format('d/m/Y à H:i') }}
+                                    • {{ human_readable_bytes_size($report['size'], 2) }}
+                                    @if($report['dry_run'])
+                                        • <span class="badge bg-warning text-dark">DRY-RUN</span>
+                                    @else
+                                        • <span class="badge bg-success">RÉEL</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <span class="badge activity-badge">
+                                {{ $report['created_at']->diffForHumans(['short' => true]) }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-outline-primary">
+                    Voir tous les rapports <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
         </div>
     @endif
 
-    <!-- Getting Started -->
+    <!-- Getting Started Bootstrap -->
     @if($stats['total_sessions'] == 0)
-        <div class="getting-started">
-            <h2 class="section-title"><i class="fa-solid fa-flask"></i> Premiers Pas</h2>
-
-            <div class="steps-container">
-                <div class="step-item">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3 class="section-title">Installation</h3>
-                        <p>Configurez le package dans votre projet Laravel</p>
-                        <code class="step-code">php artisan fontawesome:install</code>
+        <div class="card shadow-sm mb-5">
+            <div class="card-header bg-primary text-white">
+                <h2 class="section-title">
+                    <i class="bi bi-flask"></i> Premiers Pas
+                </h2>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="d-flex align-items-start bg-light p-3 rounded">
+                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                  style="width: 40px; height: 40px; font-size: 1.2rem;">1</span>
+                            <div class="activity-content">
+                                <h5 class="mb-2">Installation</h5>
+                                <p class="text-muted mb-3">Configurez le package dans votre projet Laravel</p>
+                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:install</code>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="step-item">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3 class="section-title">Test de Migration</h3>
-                        <p>Testez la migration en mode dry-run pour voir les changements</p>
-                        <code class="step-code">php artisan fontawesome:migrate --dry-run --report</code>
+                    <div class="col-12">
+                        <div class="d-flex align-items-start bg-light p-3 rounded">
+                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                  style="width: 40px; height: 40px; font-size: 1.2rem;">2</span>
+                            <div class="activity-content">
+                                <h5 class="mb-2">Test de Migration</h5>
+                                <p class="text-muted mb-3">Testez la migration en mode dry-run pour voir les changements</p>
+                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:migrate --dry-run --report</code>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="step-item">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3 class="section-title">Migration Réelle</h3>
-                        <p>Appliquez les changements définitivement</p>
-                        <code class="step-code">php artisan fontawesome:migrate --report</code>
+                    <div class="col-12">
+                        <div class="d-flex align-items-start bg-light p-3 rounded">
+                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                  style="width: 40px; height: 40px; font-size: 1.2rem;">3</span>
+                            <div class="activity-content">
+                                <h5 class="mb-2">Migration Réelle</h5>
+                                <p class="text-muted mb-3">Appliquez les changements définitivement</p>
+                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:migrate --report</code>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="getting-started-footer">
+            <div class="card-footer text-center bg-light">
                 <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
-                    <i class="fa-solid fa-flask"></i> Commencer un test de migration
+                    <i class="bi bi-flask"></i> Commencer un test de migration
                 </a>
             </div>
         </div>
