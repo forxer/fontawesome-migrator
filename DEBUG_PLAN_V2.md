@@ -201,90 +201,11 @@ chdir($originalCwd);
 
 ## 🚧 ROADMAP V2.0.0 - PROCHAINES PHASES
 
-### 📋 Phase 4 : Qualité du code PHP métier 🔴 PRIORITÉ HAUTE
-
-**🎯 Objectif :** Refactoring complet de la logique métier pour un code PHP 8.4+ de qualité professionnelle dans un contexte Laravel.
-
-#### 🔍 Audit et refactoring des fichiers métier :
-
-**Services principaux à revoir :**
-- [ ] `src/Services/IconMapper.php`
-  - [ ] Types stricts et return types
-  - [ ] Utilisation des enums PHP 8.1+
-  - [ ] Immutabilité des objets de données
-  - [ ] Pattern Repository si nécessaire
-  
-- [ ] `src/Services/StyleMapper.php`
-  - [ ] Refactoring en classe avec constantes typées
-  - [ ] Validation des entrées avec Laravel Validation
-  - [ ] Cache intelligent des mappings
-  
-- [ ] `src/Services/IconReplacer.php`
-  - [ ] Séparation des responsabilités (SRP)
-  - [ ] Injection de dépendances propre
-  - [ ] Gestion d'erreurs robuste avec exceptions métier
-  - [ ] Tests unitaires intégrés
-  
-- [ ] `src/Services/FileScanner.php`
-  - [ ] Utilisation des interfaces Laravel
-  - [ ] Générateurs PHP pour gros volumes
-  - [ ] Pattern Strategy pour différents types de scan
-  
-- [ ] `src/Services/AssetMigrator.php`
-  - [ ] Architecture modulaire par type d'asset
-  - [ ] Validation des transformations
-  - [ ] Rollback capabilities
-  
-- [ ] `src/Services/MetadataManager.php`
-  - [ ] Pattern Builder pour construction des métadonnées
-  - [ ] Sérialisation/désérialisation robuste
-  - [ ] Versioning du format de métadonnées
-
-#### 🏗️ Bonnes pratiques Laravel à appliquer :
-
-**Architecture & Design Patterns :**
-- [ ] Service Providers personnalisés
-- [ ] Form Requests pour validation
-- [ ] Resources pour transformation des données
-- [ ] Events & Listeners pour découplage
-- [ ] Jobs pour tâches asynchrones
-- [ ] Policies pour autorisation
-
-**Code Quality Standards :**
-- [ ] PSR-12 compliant (Laravel Pint)
-- [ ] PHPStan level 8 compatible
-- [ ] Doctrine annotations
-- [ ] Type hints strict partout
-- [ ] Nullable types appropriés
-- [ ] Collections Laravel au lieu d'arrays
-
-**Performance & Sécurité :**
-- [ ] Query optimization
-- [ ] Eager loading
-- [ ] Input sanitization
-- [ ] CSRF protection
-- [ ] Rate limiting sur APIs
-
-#### 🧪 Tests & Qualité :
-
-- [ ] Tests unitaires pour chaque service
-- [ ] Tests d'intégration Laravel
-- [ ] Mocking des dépendances
-- [ ] Coverage > 80%
-- [ ] Mutation testing
-
-**📋 Critères d'acceptation :**
-- Code 100% PHP 8.4 compatible
-- Toutes les méthodes typées avec return types
-- Zéro warning PHPStan level 8
-- Architecture respectant les principes SOLID
-- Documentation inline complète
-
----
-
-### 📋 Phase 5 : Refonte complète des interfaces web 🔴 PRIORITÉ HAUTE
+### 📋 Phase 4 : Refonte complète des interfaces web 🔴 PRIORITÉ HAUTE
 
 **🎯 Objectif :** Réécriture complète des vues Blade/CSS/JS avec Bootstrap et migration vers les icônes Bootstrap.
+
+**🚀 Justification de priorité :** Cette phase est prioritaire car elle offre un impact utilisateur immédiat avec moins de risques que le refactoring complet de la logique métier. L'interface Bootstrap peut être testée avec le code actuel qui fonctionne.
 
 #### 🎨 Migration vers Bootstrap :
 
@@ -394,7 +315,7 @@ chdir($originalCwd);
 - [ ] CSS optimisé et minifié
 - [ ] JavaScript Bootstrap modulaire
 
-**📋 Critères d'acceptation :**
+**📋 Critères d'acceptation Phase 4 :**
 - Toutes les interfaces utilisent Bootstrap 5.3+
 - Zéro classe CSS custom restante  
 - 100% des icônes converties vers Bootstrap Icons
@@ -404,13 +325,349 @@ chdir($originalCwd);
 
 ---
 
+### 📋 Phase 5 : Qualité du code PHP métier + Support multi-versions FontAwesome 🔴 PRIORITÉ HAUTE
+
+**🎯 Objectif :** Refactoring complet de la logique métier pour un code PHP 8.4+ de qualité professionnelle dans un contexte Laravel, avec extension du support pour toutes les migrations FontAwesome (4→5, 5→6, 6→7).
+
+#### 🔄 Extension du périmètre FontAwesome :
+
+**Problématique actuelle :**
+- **Support limité** : Uniquement migration FontAwesome 5 → 6
+- **Architecture rigide** : Mappings codés en dur pour une seule version
+- **Évolution bloquée** : Impossible d'ajouter facilement d'autres versions
+
+**Objectif étendu :**
+- **Support complet** : FontAwesome 4→5, 5→6, 6→7
+- **Architecture modulaire** : Système de mappings par version extensible
+- **Évolutivité** : Facilité d'ajout de nouvelles versions futures
+
+#### 📚 Recherche et mappings multi-versions :
+
+**Analyse des changements par version :**
+- [ ] **FontAwesome 4 → 5**
+  - [ ] Recherche exhaustive des changements (noms, classes, syntaxe)
+  - [ ] Création des mappings d'icônes renommées/supprimées
+  - [ ] Gestion des changements de structure CSS
+  - [ ] Documentation des breaking changes
+
+- [ ] **FontAwesome 5 → 6** (existant à étendre)
+  - [ ] Révision et completion des mappings actuels
+  - [ ] Ajout des icônes manquantes découvertes
+  - [ ] Optimisation des transformations existantes
+
+- [ ] **FontAwesome 6 → 7** 
+  - [ ] Analyse complète des nouveautés FA7
+  - [ ] Mappings des icônes renommées/dépréciées
+  - [ ] Support des nouvelles fonctionnalités
+  - [ ] Gestion des changements CSS/JS
+
+#### 🏗️ Architecture modulaire pour multi-versions :
+
+**Refactoring complet des services de mapping :**
+
+- [ ] **MigrationVersionManager** (nouveau service central)
+  - [ ] Détection automatique de la version source (FA4/5/6)
+  - [ ] Sélection de la version cible (FA5/6/7)
+  - [ ] Configuration des chemins de migration supportés
+  - [ ] Validation des combinaisons version source/cible
+
+- [ ] **VersionSpecificMappers** (architecture modulaire)
+  ```php
+  interface VersionMapperInterface {
+      public function getIconMappings(): array;
+      public function getStyleMappings(): array;
+      public function getAssetMappings(): array;
+      public function getDeprecations(): array;
+  }
+  
+  // Implémentations spécifiques
+  - FontAwesome4To5Mapper
+  - FontAwesome5To6Mapper  
+  - FontAwesome6To7Mapper
+  ```
+
+- [ ] **Configuration multi-versions**
+  - [ ] Fichiers de config séparés par version
+  - [ ] `config/fontawesome-migrator/fa4-to-5.php`
+  - [ ] `config/fontawesome-migrator/fa5-to-6.php`
+  - [ ] `config/fontawesome-migrator/fa6-to-7.php`
+  - [ ] Validation et test de chaque configuration
+
+**Commandes Artisan étendues :**
+- [ ] `php artisan fontawesome:migrate --from=4 --to=5`
+- [ ] `php artisan fontawesome:migrate --from=5 --to=6` (existant)
+- [ ] `php artisan fontawesome:migrate --from=6 --to=7`
+- [ ] `php artisan fontawesome:detect` - Détection version actuelle
+- [ ] `php artisan fontawesome:compare 4 5` - Comparaison entre versions
+
+**Interface web multi-versions :**
+- [ ] **Sélecteur de version** dans l'interface tests
+- [ ] **Configuration par projet** (version source/cible)
+- [ ] **Rapports spécifiques** selon le type de migration
+- [ ] **Documentation intégrée** des différences par version
+
+#### 📊 Données de migration étendues :
+
+**FontAwesome 4 → 5 (recherche nécessaire) :**
+- [ ] **Changements majeurs FA4→5** 
+  - [ ] `fa-*` → `fas fa-*` (introduction des styles)
+  - [ ] Suppression de certaines icônes
+  - [ ] Renommage massif d'icônes
+  - [ ] Changements de structure HTML/CSS
+
+**FontAwesome 6 → 7 (nouveauté) :**
+- [ ] **Analyse FA7** (version récente)
+  - [ ] Nouvelles icônes ajoutées
+  - [ ] Icônes dépréciées ou renommées
+  - [ ] Changements dans les styles Sharp/Duotone
+  - [ ] Évolutions CSS et intégration
+
+**Base de données de migration :**
+- [ ] **Système unifié** pour tous les mappings
+- [ ] **Versionning des mappings** (évolution dans le temps)
+- [ ] **Tests automatisés** pour chaque combinaison de version
+- [ ] **Documentation générée** des changements par version
+
+#### 🔍 Audit et refactoring des fichiers métier :
+
+**Services principaux à revoir avec support multi-versions :**
+
+- [ ] `src/Services/IconMapper.php` → **Architecture multi-versions**
+  - [ ] **Interface VersionMapperInterface** pour polymorphisme  
+  - [ ] **Factory pattern** pour créer le mapper selon version
+  - [ ] **Types stricts** et return types PHP 8.4
+  - [ ] **Enums** pour versions FontAwesome (FA4, FA5, FA6, FA7)
+  - [ ] **Immutabilité** des objets de données de mapping
+  - [ ] **Repository pattern** pour persistence des mappings
+
+- [ ] `src/Services/StyleMapper.php` → **Mapper modulaire par version**
+  - [ ] **Classes spécialisées** par version (StyleMapper4To5, etc.)
+  - [ ] **Configuration par version** avec validation Laravel
+  - [ ] **Cache intelligent** des mappings par version
+  - [ ] **Fallbacks configurables** pour styles non disponibles
+
+- [ ] `src/Services/IconReplacer.php` → **Moteur de remplacement générique**
+  - [ ] **Séparation des responsabilités** (SRP strict)
+  - [ ] **Strategy pattern** pour différents types de remplacement
+  - [ ] **Chain of responsibility** pour appliquer multiple versions
+  - [ ] **Injection de dépendances** avec service container Laravel
+  - [ ] **Exceptions métier** spécifiques par version
+  - [ ] **Tests unitaires** pour chaque combinaison version
+
+- [ ] `src/Services/FileScanner.php` → **Scanner multi-versions**
+  - [ ] **Détection automatique** version FontAwesome en cours
+  - [ ] **Pattern Strategy** pour scan spécifique par version  
+  - [ ] **Générateurs PHP** pour gros volumes
+  - [ ] **Interfaces Laravel** (Filesystem, etc.)
+  - [ ] **Regex optimisées** par version
+
+- [ ] `src/Services/AssetMigrator.php` → **Migration assets multi-versions**  
+  - [ ] **Architecture modulaire** par type d'asset ET version
+  - [ ] **Validation** des transformations par version
+  - [ ] **Rollback capabilities** avec backup versionné
+  - [ ] **Support CDN** pour toutes versions (4, 5, 6, 7)
+
+- [ ] `src/Services/MetadataManager.php` → **Métadonnées enrichies**
+  - [ ] **Version source/cible** dans métadonnées
+  - [ ] **Pattern Builder** pour construction des métadonnées
+  - [ ] **Sérialisation robuste** avec versioning format
+  - [ ] **Historique** des migrations multi-étapes (4→5→6)
+
+**Nouveaux services multi-versions :**
+
+- [ ] `src/Services/MigrationVersionManager.php` (nouveau)
+  - [ ] **Détection automatique** version FontAwesome actuelle
+  - [ ] **Validation** combinaisons source/cible supportées
+  - [ ] **Orchestration** des migrations en cascade (4→5→6→7)
+  - [ ] **Rapport de compatibilité** par version
+
+- [ ] `src/Services/VersionDetector.php` (nouveau)
+  - [ ] **Analyse des fichiers** CSS/JS/HTML pour détection version
+  - [ ] **Heuristiques** basées sur classes/patterns spécifiques
+  - [ ] **Rapport de détection** avec niveau de confiance
+  - [ ] **Support mixte** (multiple versions dans même projet)
+
+#### 🏗️ Bonnes pratiques Laravel à appliquer :
+
+**Architecture & Design Patterns :**
+- [ ] Service Providers personnalisés
+- [ ] Form Requests pour validation
+- [ ] Resources pour transformation des données
+- [ ] Events & Listeners pour découplage
+- [ ] Jobs pour tâches asynchrones
+- [ ] Policies pour autorisation
+
+**Code Quality Standards :**
+- [ ] PSR-12 compliant (Laravel Pint)
+- [ ] PHPStan level 8 compatible
+- [ ] Doctrine annotations
+- [ ] Type hints strict partout
+- [ ] Nullable types appropriés
+- [ ] Collections Laravel au lieu d'arrays
+
+**Performance & Sécurité :**
+- [ ] Query optimization
+- [ ] Eager loading
+- [ ] Input sanitization
+- [ ] CSRF protection
+- [ ] Rate limiting sur APIs
+
+#### 🧪 Tests & Qualité :
+
+- [ ] Tests unitaires pour chaque service
+- [ ] Tests d'intégration Laravel
+- [ ] Mocking des dépendances
+- [ ] Coverage > 80%
+- [ ] Mutation testing
+
+**📋 Critères d'acceptation Phase 5 :**
+- **Code 100% PHP 8.4** compatible avec types stricts
+- **Support complet** FontAwesome 4→5, 5→6, 6→7
+- **Architecture modulaire** avec interfaces et design patterns
+- **Détection automatique** de version source
+- **Zéro warning PHPStan** level 8 sur tous les services
+- **Tests unitaires** pour chaque combinaison de version
+- **Documentation complète** inline et utilisateur
+- **Interface web** avec sélecteur de versions
+- **Commandes Artisan** étendues (--from, --to)
+- **Configuration** par fichiers séparés par version
+
+---
+
+### 📋 Phase 6 : Exploitation des sauvegardes 🔴 PRIORITÉ HAUTE
+
+**🎯 Objectif :** Développer un système complet d'exploitation et de gestion des sauvegardes générées lors des migrations.
+
+#### 🗄️ Problématique actuelle :
+Actuellement, les sauvegardes sont créées automatiquement mais ne sont pas exploitables :
+- **Création automatique** : Sauvegardes générées avant chaque migration réelle
+- **Stockage passif** : Fichiers sauvegardés mais aucune interface de gestion
+- **Pas de visibilité** : Impossible de voir ce qui a été sauvegardé
+- **Pas de restauration** : Aucun moyen de revenir en arrière facilement
+- **Pas de nettoyage** : Accumulation sans gestion de l'espace disque
+
+#### 🔍 Fonctionnalités à développer :
+
+**Interface de gestion des sauvegardes :**
+- [ ] **Page dédiée** `/fontawesome-migrator/backups`
+  - [ ] Liste de toutes les sauvegardes par session
+  - [ ] Taille, date, nombre de fichiers sauvegardés
+  - [ ] Statut de la migration associée (réussie/échouée)
+  - [ ] Actions : Visualiser, Restaurer, Supprimer
+
+**Visualisation des sauvegardes :**
+- [ ] **Explorateur de fichiers** sauvegardés
+  - [ ] Arborescence des fichiers dans chaque sauvegarde
+  - [ ] Prévisualisation du contenu des fichiers
+  - [ ] Comparaison avant/après migration
+  - [ ] Diff visuel des changements appliqués
+
+**Système de restauration :**
+- [ ] **Restauration sélective**
+  - [ ] Restaurer un fichier spécifique
+  - [ ] Restaurer un dossier complet
+  - [ ] Restauration complète de la session
+  - [ ] Confirmation avec prévisualisation des changements
+
+- [ ] **Validation pré-restauration**
+  - [ ] Vérification que les fichiers de destination existent encore
+  - [ ] Détection des conflits avec des modifications ultérieures
+  - [ ] Sauvegarde avant restauration (backup du backup)
+
+**Commandes Artisan pour les sauvegardes :**
+- [ ] `php artisan fontawesome:backup:list` - Lister les sauvegardes
+- [ ] `php artisan fontawesome:backup:show {session-id}` - Détails d'une sauvegarde
+- [ ] `php artisan fontawesome:backup:restore {session-id}` - Restauration interactive
+- [ ] `php artisan fontawesome:backup:clean` - Nettoyage des anciennes sauvegardes
+- [ ] `php artisan fontawesome:backup:verify` - Vérification intégrité
+
+#### 🏗️ Architecture technique :
+
+**Service BackupManager :**
+- [ ] `src/Services/BackupManager.php`
+  - [ ] Listage et indexation des sauvegardes existantes
+  - [ ] Métadonnées étendues (taille, checksums, fichiers)
+  - [ ] Validation de l'intégrité des sauvegardes
+  - [ ] API de restauration avec rollback
+
+**Contrôleur BackupsController :**
+- [ ] `src/Http/Controllers/BackupsController.php`
+  - [ ] Interface web complète (index, show, restore)
+  - [ ] API REST pour actions AJAX
+  - [ ] Gestion des permissions et sécurité
+  - [ ] Streaming des gros fichiers pour téléchargement
+
+**Vues et interface utilisateur :**
+- [ ] `resources/views/backups/*`
+  - [ ] Liste des sauvegardes avec statistiques
+  - [ ] Explorateur de fichiers avec prévisualisation
+  - [ ] Interface de restauration avec confirmations
+  - [ ] Différentiel visuel avant/après
+
+#### 📊 Fonctionnalités avancées :
+
+**Gestion intelligente de l'espace :**
+- [ ] **Politique de rétention** configurable
+  - [ ] Suppression automatique après X jours
+  - [ ] Compression des anciennes sauvegardes
+  - [ ] Archivage vers stockage externe (S3, etc.)
+
+**Comparaison et analyse :**
+- [ ] **Diff interactif** entre versions
+  - [ ] Highlighting des changements ligne par ligne
+  - [ ] Statistiques des modifications par fichier
+  - [ ] Export des rapports de différences
+
+**Intégration avec les rapports :**
+- [ ] **Liens bidirectionnels**
+  - [ ] Depuis un rapport → accès à la sauvegarde associée
+  - [ ] Depuis une sauvegarde → rapport de migration
+  - [ ] Timeline unifiée migrations/sauvegardes
+
+#### 🔒 Sécurité et validation :
+
+**Contrôles de sécurité :**
+- [ ] **Validation des chemins** (pas d'accès système)
+- [ ] **Permissions Laravel** pour les actions sensibles
+- [ ] **Audit trail** des restaurations effectuées
+- [ ] **Backup avant restauration** (safety net)
+
+**Intégrité des données :**
+- [ ] **Checksums MD5/SHA256** pour chaque fichier sauvegardé
+- [ ] **Vérification automatique** à l'affichage
+- [ ] **Alerte en cas de corruption** détectée
+- [ ] **Réparation automatique** si possible
+
+#### 📱 Interface utilisateur :
+
+**Design cohérent avec l'existant :**
+- [ ] **Intégration Bootstrap** (Phase 4 en prérequis)
+- [ ] **Navigation unifiée** avec menu principal
+- [ ] **Icônes Bootstrap** pour toutes les actions
+- [ ] **Responsive design** pour mobile
+
+**UX optimisée :**
+- [ ] **Actions batch** (sélection multiple)
+- [ ] **Recherche et filtrage** dans les sauvegardes
+- [ ] **Progress bars** pour restaurations longues
+- [ ] **Notifications toast** pour feedback utilisateur
+
+#### 📋 Critères d'acceptation :
+- Interface web complète de gestion des sauvegardes
+- Possibilité de restaurer n'importe quel fichier sauvegardé
+- Commandes Artisan pour gestion CLI des backups
+- Système de validation et de sécurité robuste
+- Intégration parfaite avec l'interface existante
+- Documentation complète pour les utilisateurs
+
+---
+
 ## 🎯 STATUT PROJET V2.0.0
 
 **Phase actuelle :** 🚧 EN DÉVELOPPEMENT ACTIF  
-**Prochaines étapes :** Phases 4 et 5 définies, en attente d'objectifs supplémentaires du développeur
+**Ordre des phases réorganisé :** Phase 4 (UI) → Phase 5 (Code métier) → Phase 6 (Sauvegardes)
 
 ### 📋 Phases suivantes à définir :
-- [ ] **Phase 6** : À définir selon les besoins du projet
 - [ ] **Phase 7** : À définir selon les besoins du projet  
 - [ ] **Phase 8** : À définir selon les besoins du projet
 
