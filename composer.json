@@ -19,6 +19,7 @@
     ],
     "require": {
         "php": "^8.4",
+        "axn/tool-kit-for-laravel": "^11.0",
         "laravel/framework": "^12.0",
         "laravel/prompts": "^0.3.0",
         "symfony/finder": "^7.0"

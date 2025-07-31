@@ -3,14 +3,14 @@
 ## 📋 Phase 1 : Diagnostic rapide (inspection visuelle)
 
 **🔍 Vérifications de base :**
-1. **Fichiers manquants** : Vérifier que tous les fichiers critiques existent ✅ 
+1. **Fichiers manquants** : Vérifier que tous les fichiers critiques existent ✅
 2. **Syntaxe PHP** : DEMANDER À L'UTILISATEUR de lancer `composer pint-test`
 3. **Imports/Namespaces** : Inspection visuelle des `use` statements et classes
 4. **Configuration** : S'assurer que les configs sont cohérentes
 
 ### Fichiers critiques à vérifier :
 - [x] `src/ServiceProvider.php` ✅ Imports corrects
-- [x] `routes/web.php` ✅ Imports corrects  
+- [x] `routes/web.php` ✅ Imports corrects
 - [x] `src/Commands/MigrateCommand.php` ✅ Structure OK
 - [x] `src/Services/MetadataManager.php` ✅ Imports corrects
 - [x] `src/Http/Controllers/` ✅ Tous les contrôleurs OK
@@ -22,7 +22,7 @@
 ## 📋 Phase 2 : Test des routes web
 
 **🌐 Interface web :**
-1. Tester `/fontawesome-migrator/reports` 
+1. Tester `/fontawesome-migrator/reports`
 2. Tester `/fontawesome-migrator/sessions`
 3. Tester `/fontawesome-migrator/test/panel`
 4. Vérifier les liens entre les pages
@@ -44,7 +44,9 @@
 3. Tester la génération de métadonnées et sessions
 
 ### Vérifications :
-- [ ] Commandes listées dans `php artisan list`
+- [x] Commandes listées dans `php artisan list`
+- [ ] Utiliser les mêmes style class="section-title" partout
+- [ ] Utiliser la fonction helper human_readable_bytes_size() pour l'affichage des tailles en B/KB/MB/etc.
 - [ ] Injection de dépendances fonctionne
 - [ ] MetadataManager opérationnel
 - [ ] Sessions créées correctement
@@ -91,6 +93,6 @@
 
 Version 2.0.0 stable avec :
 - ✅ Architecture modernisée fonctionnelle
-- ✅ Interface web complètement opérationnelle  
+- ✅ Interface web complètement opérationnelle
 - ✅ Commandes Artisan robustes
 - ✅ Système de sessions et métadonnées fiable

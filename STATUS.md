@@ -113,8 +113,8 @@
 ## 📋 Prochaines étapes (optionnelles)
 
 ### Publication
-- [ ] Création de tags Git (versionning sémantique)
-- [ ] Publication sur Packagist
+- ✅ Création de tags Git (versionning sémantique)
+- ✅ Publication sur Packagist
 - [ ] GitHub Actions pour CI/CD
 - [ ] Badges de statut (tests, couverture, version)
 
@@ -153,7 +153,7 @@ Le package `fontawesome-migrator` **version 2.0.0** est en développement actif 
 ## 🔄 Version 2.0.0 - En développement
 
 ### Phase 1: Architecture des commandes ✅
-- [x] Suppression des constructors avec injection de dépendances 
+- [x] Suppression des constructors avec injection de dépendances
 - [x] Migration vers injection dans la méthode `handle()`
 - [x] MigrateCommand refactorisé avec propriétés de classe
 - [x] BackupCommand refactorisé avec propriété de classe

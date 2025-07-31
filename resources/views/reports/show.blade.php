@@ -9,24 +9,24 @@
 
 @section('content')
     <div class="header">
-        <h1><i class="fa-regular fa-chart-bar"></i> Rapport de migration</h1>
+        <h1><i class="fa-solid fa-file-lines"></i> Rapport de migration</h1>
         <p>Généré le {{ $timestamp }}</p>
     </div>
 
     <!-- Table des matières -->
     <div class="table-of-contents">
-        <h3 class="toc-title"><i class="fa-regular fa-chart-bar"></i> Navigation rapide</h3>
+        <h3 class="toc-title"><i class="fa-solid fa-list"></i> Navigation rapide</h3>
         <ul class="toc-list">
             <li class="toc-item">
                 <a href="#statistics" class="toc-link">
-                    <span class="toc-icon"><i class="fa-regular fa-chart-bar"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-chart-simple"></i></span>
                     Statistiques générales
                 </a>
             </li>
             @if ($stats['total_changes'] > 0)
             <li class="toc-item">
                 <a href="#chart-section" class="toc-link">
-                    <span class="toc-icon"><i class="fa-regular fa-chart-bar"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-chart-pie"></i></span>
                     Répartition des changements
                 </a>
             </li>
@@ -39,7 +39,7 @@
             </li>
             <li class="toc-item">
                 <a href="#recommendations-section" class="toc-link">
-                    <span class="toc-icon"><i class="fa-solid fa-bullseye"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-lightbulb"></i></span>
                     Recommandations
                 </a>
             </li>
@@ -59,28 +59,28 @@
             @endif
             <li class="toc-item">
                 <a href="#info-section" class="toc-link">
-                    <span class="toc-icon"><i class="fa-solid fa-bullseye"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-circle-info"></i></span>
                     Informations supplémentaires
                 </a>
             </li>
             @if ($stats['total_changes'] > 0)
             <li class="toc-item">
                 <a href="#summary-section" class="toc-link">
-                    <span class="toc-icon"><i class="fa-regular fa-chart-bar"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-clipboard-check"></i></span>
                     Résumé de migration
                 </a>
             </li>
             @if (!empty($stats['asset_types']))
             <li class="toc-item">
                 <a href="#assets-section" class="toc-link">
-                    <span class="toc-icon"><i class="fa-solid fa-gear"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-cubes"></i></span>
                     Assets détectés
                 </a>
             </li>
             @endif
             <li class="toc-item">
                 <a href="#details-section" class="toc-link">
-                    <span class="toc-icon"><i class="fa-regular fa-chart-bar"></i></span>
+                    <span class="toc-icon"><i class="fa-solid fa-code-compare"></i></span>
                     Détail des modifications
                 </a>
             </li>
@@ -95,7 +95,7 @@
             <div class="stat-label">Fichiers analysés</div>
             @if ($stats['total_files'] > 0)
                 <div style="margin-top: 10px; color: var(--blue-500); font-size: 0.9em;">
-                    <i class="fa-regular fa-eye"></i> Scan terminé
+                    <i class="fa-solid fa-magnifying-glass"></i> Scan terminé
                 </div>
             @endif
         </div>
@@ -105,7 +105,7 @@
             <div class="stat-label">Fichiers modifiés</div>
             @if ($stats['modified_files'] > 0)
                 <div class="metric-improvement">
-                    <span><i class="fa-solid fa-bullseye"></i></span>
+                    <span><i class="fa-solid fa-file-pen"></i></span>
                     <span>{{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) optimisé(s)</span>
                 </div>
             @endif
@@ -116,7 +116,7 @@
             <div class="stat-label">Total des changements</div>
             @if ($stats['total_changes'] > 0)
                 <div style="margin-top: 10px; font-size: 0.9em; color: var(--success-color);">
-                    <i class="fa-solid fa-bolt"></i> Prêt pour Font Awesome 6
+                    <i class="fa-solid fa-check-circle"></i> Prêt pour Font Awesome 6
                 </div>
             @endif
         </div>
@@ -126,7 +126,7 @@
             <div class="stat-label">Icônes migrées</div>
             @if (($stats['icons_migrated'] ?? 0) > 0)
                 <div style="margin-top: 10px; color: var(--primary-color); font-size: 0.9em;">
-                    <i class="fa-solid fa-gear"></i> FA5 → FA6
+                    <i class="fa-solid fa-arrow-right"></i> FA5 → FA6
                 </div>
             @endif
         </div>
@@ -136,7 +136,7 @@
             <div class="stat-number">{{ number_format($stats['assets_migrated'], 0, ',', ' ') }}</div>
             <div class="stat-label">Assets migrés</div>
             <div style="margin-top: 10px; color: var(--secondary-color); font-size: 0.9em;">
-                <i class="fa-regular fa-chart-bar"></i> CDN + NPM
+                <i class="fa-solid fa-cubes"></i> CDN + NPM
             </div>
         </div>
         @endif
@@ -146,7 +146,7 @@
             <div class="stat-number" style="color: var(--warning-color);">{{ number_format($stats['warnings'], 0, ',', ' ') }}</div>
             <div class="stat-label">Avertissements</div>
             <div style="margin-top: 10px; color: var(--warning-color); font-size: 0.9em;">
-                <i class="fa-solid fa-magnifying-glass"></i> Icônes renommées/dépréciées
+                <i class="fa-solid fa-triangle-exclamation"></i> Icônes renommées/dépréciées
             </div>
         </div>
         @endif
@@ -156,9 +156,9 @@
     <!-- Graphique des types de changements -->
     <div id="chart-section" class="section enhanced-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="margin: 0;"><i class="fa-regular fa-chart-bar"></i> Répartition par type de changement</h2>
+            <h2 class="section-title" style="margin: 0;"><i class="fa-solid fa-chart-pie"></i> Répartition par type de changement</h2>
             <button onclick="showChartHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.2s;">
-                <i class="fa-solid fa-palette"></i> Comprendre les types
+                <i class="fa-solid fa-circle-question"></i> Comprendre les types
             </button>
         </div>
         <div class="chart-container">
@@ -168,11 +168,11 @@
 
     <!-- Chronologie de migration -->
     <div id="timeline-section" class="section enhanced-section">
-        <h2><i class="fa-regular fa-clock"></i> Chronologie de migration</h2>
+        <h2 class="section-title"><i class="fa-regular fa-clock"></i> Chronologie de migration</h2>
         <div class="timeline-container">
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-regular fa-eye"></i> Analyse effectuée</h4>
+                    <h4><i class="fa-solid fa-magnifying-glass"></i> Analyse effectuée</h4>
                     <p>{{ number_format($stats['total_files'], 0, ',', ' ') }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
                     <small>{{ $timestamp }}</small>
                 </div>
@@ -181,7 +181,7 @@
             @if ($stats['modified_files'] > 0)
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-solid fa-bullseye"></i> Fichiers ciblés</h4>
+                    <h4><i class="fa-solid fa-crosshairs"></i> Fichiers ciblés</h4>
                     <p>{{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) contenant du code Font Awesome 5</p>
                     <small>Détection automatique</small>
                 </div>
@@ -189,7 +189,7 @@
 
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-solid fa-bolt"></i> Migration appliquée</h4>
+                    <h4><i class="fa-solid fa-arrow-right-arrow-left"></i> Migration appliquée</h4>
                     <p>{{ number_format($stats['total_changes'], 0, ',', ' ') }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
                     <small>{{ $isDryRun ? 'Mode prévisualisation' : 'Modifications effectives' }}</small>
                 </div>
@@ -199,7 +199,7 @@
             @if (($stats['assets_migrated'] ?? 0) > 0)
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <h4><i class="fa-regular fa-chart-bar"></i> Assets migrés</h4>
+                    <h4><i class="fa-solid fa-cubes"></i> Assets migrés</h4>
                     <p>{{ number_format($stats['assets_migrated'], 0, ',', ' ') }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
                     <small>Packages et liens modernisés</small>
                 </div>
@@ -223,48 +223,48 @@
 
     <!-- Recommandations intelligentes -->
     <div id="recommendations-section" class="section enhanced-section">
-        <h2><i class="fa-solid fa-bullseye"></i> Recommandations</h2>
+        <h2 class="section-title"><i class="fa-solid fa-lightbulb"></i> Recommandations</h2>
         <div class="recommendations-grid">
             @if ($isDryRun && $stats['total_changes'] > 0)
                 <div class="recommendation-card priority-high">
-                    <div class="rec-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <div class="rec-icon"><i class="fa-solid fa-play"></i></div>
                     <div class="rec-content">
                         <h4>Prêt pour la migration</h4>
                         <p>Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ number_format($stats['total_changes'], 0, ',', ' ') }} changements.</p>
-                        <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')"><i class="fa-regular fa-chart-bar"></i> Copier la commande</button>
+                        <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')"><i class="fa-regular fa-copy"></i> Copier la commande</button>
                     </div>
                 </div>
             @endif
 
             @if (!$isDryRun && $stats['total_changes'] > 0)
                 <div class="recommendation-card priority-medium">
-                    <div class="rec-icon"><i class="fa-solid fa-bullseye"></i></div>
+                    <div class="rec-icon"><i class="fa-solid fa-flask"></i></div>
                     <div class="rec-content">
                         <h4>Tests recommandés</h4>
                         <p>Testez votre application pour vérifier que les icônes s'affichent correctement.</p>
-                        <button class="btn btn-primary btn-sm" onclick="showTestingTips()"><i class="fa-solid fa-gear"></i> Conseils de test</button>
+                        <button class="btn btn-primary btn-sm" onclick="showTestingTips()"><i class="fa-solid fa-flask"></i> Conseils de test</button>
                     </div>
                 </div>
             @endif
 
             @if (($stats['warnings'] ?? 0) > 0)
                 <div class="recommendation-card priority-high">
-                    <div class="rec-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="rec-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                     <div class="rec-content">
                         <h4>Icônes à vérifier</h4>
                         <p>{{ number_format($stats['warnings'], 0, ',', ' ') }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
-                        <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()"><i class="fa-regular fa-eye"></i> Voir les avertissements</button>
+                        <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()"><i class="fa-solid fa-triangle-exclamation"></i> Voir les avertissements</button>
                     </div>
                 </div>
             @endif
 
             @if (($stats['assets_migrated'] ?? 0) > 0)
                 <div class="recommendation-card priority-medium">
-                    <div class="rec-icon"><i class="fa-regular fa-chart-bar"></i></div>
+                    <div class="rec-icon"><i class="fa-solid fa-download"></i></div>
                     <div class="rec-content">
                         <h4>Mise à jour des dépendances</h4>
                         <p>N'oubliez pas d'exécuter <code>npm install</code> pour installer les nouvelles versions.</p>
-                        <button class="btn btn-primary btn-sm" onclick="copyCommand('npm install')"><i class="fa-regular fa-chart-bar"></i> Copier npm install</button>
+                        <button class="btn btn-primary btn-sm" onclick="copyCommand('npm install')"><i class="fa-regular fa-copy"></i> Copier npm install</button>
                     </div>
                 </div>
             @endif
@@ -278,7 +278,7 @@
 
             @if ($migrationScore >= 80)
                 <div class="recommendation-card priority-success">
-                    <div class="rec-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="rec-icon"><i class="fa-solid fa-trophy"></i></div>
                     <div class="rec-content">
                         <h4>Excellent score de migration</h4>
                         <p>{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code a été optimisé pour Font Awesome 6 !</p>
@@ -294,7 +294,7 @@
                 </div>
             @elseif($stats['total_changes'] == 0)
                 <div class="recommendation-card priority-success">
-                    <div class="rec-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="rec-icon"><i class="fa-solid fa-check-circle"></i></div>
                     <div class="rec-content">
                         <h4>Code déjà optimisé</h4>
                         <p>Votre code semble déjà compatible avec Font Awesome 6 !</p>
@@ -303,11 +303,11 @@
             @endif
 
             <div class="recommendation-card priority-info">
-                <div class="rec-icon"><i class="fa-regular fa-chart-bar"></i></div>
+                <div class="rec-icon"><i class="fa-solid fa-book"></i></div>
                 <div class="rec-content">
                     <h4>Documentation officielle</h4>
                     <p>Consultez le guide de migration Font Awesome 6 pour plus d'informations.</p>
-                    <a href="https://fontawesome.com/v6/docs/web/setup/upgrade/" target="_blank" class="btn btn-primary btn-sm"><i class="fa-regular fa-chart-bar"></i> Guide officiel</a>
+                    <a href="https://fontawesome.com/v6/docs/web/setup/upgrade/" target="_blank" class="btn btn-primary btn-sm"><i class="fa-solid fa-external-link"></i> Guide officiel</a>
                 </div>
             </div>
         </div>
@@ -316,7 +316,7 @@
 
     <!-- Configuration et options -->
     <div id="configuration-section" class="section">
-        <h2><i class="fa-solid fa-gear"></i> Configuration de migration</h2>
+        <h2 class="section-title"><i class="fa-solid fa-gear"></i> Configuration de migration</h2>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div>
@@ -382,14 +382,14 @@
     @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
     <!-- Section des sauvegardes créées -->
     <div id="backups-section" class="section enhanced-section">
-        <h2><i class="fa-regular fa-floppy-disk"></i> Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})</h2>
+        <h2 class="section-title"><i class="fa-regular fa-floppy-disk"></i> Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})</h2>
         <p>Liste des fichiers sauvegardés avant modification :</p>
 
         <div class="backups-list">
             @foreach ($migrationOptions['created_backups'] as $backup)
             <div class="backup-item">
                 <div class="backup-header">
-                    <span class="backup-file"><i class="fa-regular fa-chart-bar"></i> {{ $backup['relative_path'] }}</span>
+                    <span class="backup-file"><i class="fa-solid fa-file-arrow-down"></i> {{ $backup['relative_path'] }}</span>
                     <span class="backup-date">{{ $backup['created_at'] }}</span>
                 </div>
                 <div class="backup-details">
@@ -401,7 +401,7 @@
         </div>
 
         <div class="alert alert-info" style="margin-top: 20px;">
-            <i class="fa-solid fa-bolt"></i> <strong>Note :</strong> Ces sauvegardes peuvent être utilisées pour restaurer les fichiers originaux en cas de besoin.
+            <i class="fa-solid fa-circle-info"></i> <strong>Note :</strong> Ces sauvegardes peuvent être utilisées pour restaurer les fichiers originaux en cas de besoin.
             Utilisez la commande <code>php artisan fontawesome:backup</code> pour gérer les sauvegardes.
         </div>
     </div>
@@ -409,19 +409,19 @@
 
     <!-- Informations de fin -->
     <div id="info-section" class="section">
-        <h2><i class="fa-solid fa-bullseye"></i> Informations supplémentaires</h2>
+        <h2 class="section-title"><i class="fa-solid fa-circle-info"></i> Informations supplémentaires</h2>
         <p><strong>Rapport généré :</strong> {{ $timestamp }}</p>
         <p><strong>Package :</strong> FontAwesome Migrator version {{ $packageVersion }}</p>
 
         @if ($stats['total_changes'] > 0 && !$isDryRun)
             <div class="alert alert-info">
-                <i class="fa-solid fa-bolt"></i> <strong>Conseil :</strong> Testez votre application pour vous assurer que tous les changements fonctionnent correctement.
+                <i class="fa-solid fa-lightbulb"></i> <strong>Conseil :</strong> Testez votre application pour vous assurer que tous les changements fonctionnent correctement.
             </div>
         @endif
 
         @if ($isDryRun && $stats['total_changes'] > 0)
             <div class="alert alert-warning">
-                <i class="fa-solid fa-rocket"></i> <strong>Prêt pour la migration :</strong> Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces changements.
+                <i class="fa-solid fa-play"></i> <strong>Prêt pour la migration :</strong> Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces changements.
             </div>
         @endif
     </div>
@@ -429,7 +429,7 @@
     @if ($stats['total_changes'] > 0)
         <!-- Résumé de migration -->
         <div id="summary-section" class="section">
-            <h2><i class="fa-regular fa-chart-bar"></i> Résumé de la migration</h2>
+            <h2 class="section-title"><i class="fa-solid fa-clipboard-check"></i> Résumé de la migration</h2>
 
             @if ($stats['migration_success'])
                 <div class="alert alert-success">
@@ -473,7 +473,7 @@
         <!-- Section des assets si présents -->
         @if (!empty($stats['asset_types']))
             <div id="assets-section" class="section">
-                <h2><i class="fa-solid fa-gear"></i> Assets détectés</h2>
+                <h2 class="section-title"><i class="fa-solid fa-cubes"></i> Assets détectés</h2>
                 <table>
                     <tr><th>Type d'asset</th><th>Nombre</th><th>Description</th></tr>
                     @foreach($stats['asset_types'] as $assetType => $count)
@@ -492,14 +492,14 @@
     <!-- Détail des fichiers modifiés avec recherche -->
     <div id="details-section" class="section enhanced-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2><i class="fa-regular fa-chart-bar"></i> Détail des modifications</h2>
+            <h2 class="section-title"><i class="fa-solid fa-code-compare"></i> Détail des modifications</h2>
 
             <div class="export-buttons">
                 <button class="btn btn-primary btn-sm" onclick="copyToClipboard()">
-                    <i class="fa-regular fa-chart-bar"></i> Copier le rapport
+                    <i class="fa-regular fa-copy"></i> Copier le rapport
                 </button>
                 <button class="btn btn-primary btn-sm" onclick="toggleAllDetails()">
-                    <i class="fa-solid fa-bolt"></i> Développer/Réduire
+                    <i class="fa-solid fa-expand"></i> Développer/Réduire
                 </button>
             </div>
         </div>
@@ -519,7 +519,7 @@
                     @if (!empty($result['changes']))
                         <div class="file-item" data-file="{{ $result['file'] }}" data-index="{{ $index }}">
                             <div class="file-path" style="display: flex; justify-content: space-between; align-items: center;">
-                                <span><i class="fa-regular fa-folder"></i> {{ $result['file'] }}</span>
+                                <span><i class="fa-solid fa-file-code"></i> {{ $result['file'] }}</span>
                                 <button class="toggle-btn" onclick="toggleFileDetails({{ $index }})">
                                     <span id="toggle-icon-{{ $index }}">▶</span>
                                     {{ count($result['changes']) }} changement(s)
@@ -557,7 +557,7 @@
                                                 @if ($hasWarning && $warningMessage)
                                                     <div style="margin-top: 8px; padding: 8px 12px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; font-size: 0.9em;">
                                                         <div style="display: flex; align-items: center; gap: 8px;">
-                                                            <span style="color: var(--warning-color); font-weight: bold;"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                                            <span style="color: var(--warning-color); font-weight: bold;"><i class="fa-solid fa-triangle-exclamation"></i></span>
                                                             <span style="color: var(--gray-700);">{{ $warningMessage }}</span>
                                                         </div>
 
@@ -565,7 +565,7 @@
                                                         @switch($change['type'])
                                                             @case('pro_fallback')
                                                                 <div style="margin-top: 6px; font-size: 0.8em; color: var(--gray-600);">
-                                                                    <i class="fa-solid fa-bolt"></i> <em>Considérez une licence Pro pour conserver le style original</em>
+                                                                    <i class="fa-solid fa-crown"></i> <em>Considérez une licence Pro pour conserver le style original</em>
                                                                 </div>
                                                                 @break
                                                             @case('renamed_icon')
@@ -591,7 +591,7 @@
                                             <div style="text-align: right; color: var(--gray-500); font-size: 0.8em; min-width: 120px;">
                                                 @if (isset($change['line']))
                                                     <div style="background: var(--primary-color); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-bottom: 6px; display: inline-block; min-width: 35px; text-align: center; white-space: nowrap;">
-                                                        <i class="fa-solid fa-bullseye"></i> L.{{ $change['line'] }}
+                                                        <i class="fa-solid fa-hashtag"></i> L.{{ $change['line'] }}
                                                     </div><br>
                                                 @endif
 
@@ -621,7 +621,7 @@
                                         <strong>Assets détectés :</strong>
                                         @foreach($result['assets'] as $asset)
                                             <div style="margin: 5px 0; font-family: monospace; font-size: 0.9em;">
-                                                <i class="fa-solid fa-gear"></i> {{ $asset['type'] ?? 'unknown' }}: <code>{{ $asset['original'] ?? '' }}</code>
+                                                <i class="fa-solid fa-cube"></i> {{ $asset['type'] ?? 'unknown' }}: <code>{{ $asset['original'] ?? '' }}</code>
                                             </div>
                                         @endforeach
                                     </div>
@@ -633,7 +633,7 @@
             @else
                 <!-- Aucun changement -->
                 <div class="alert alert-info">
-                    <i class="fa-solid fa-bullseye"></i> Aucun changement nécessaire. Votre code semble déjà compatible avec Font Awesome 6.
+                    <i class="fa-solid fa-check-circle"></i> Aucun changement nécessaire. Votre code semble déjà compatible avec Font Awesome 6.
                 </div>
             @endif
         </div>
@@ -1200,7 +1200,7 @@
             performanceSection.className = 'section enhanced-section';
             performanceSection.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2 style="margin: 0;"><i class="fa-regular fa-chart-bar"></i> Métriques de performance</h2>
+                    <h2 class="section-title" style="margin: 0;"><i class="fa-regular fa-chart-bar"></i> Métriques de performance</h2>
                     <button onclick="showPerformanceHelpModal()" style="background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.2s;">
                         <i class="fa-solid fa-palette"></i> Comprendre les métriques
                     </button>
@@ -1551,7 +1551,7 @@
 
     <!-- Bouton retour en haut -->
     <button id="backToTop" class="back-to-top" onclick="scrollToTop()" title="Retour en haut">
-        <i class="fa-solid fa-arrow-up"></i>
+        <i class="fa-solid fa-chevron-up"></i>
     </button>
 
 @endsection

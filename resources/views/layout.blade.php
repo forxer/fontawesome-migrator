@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'FontAwesome Migrator')</title>
-    
+
     <!-- FontAwesome 7 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+
     @yield('head-extra')
     @include('fontawesome-migrator::partials.css.common')
 </head>
@@ -18,7 +18,7 @@
         <div class="navbar-container">
             <div class="navbar-brand">
                 <a href="{{ route('fontawesome-migrator.home') }}" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
-                    <span class="navbar-logo"><i class="fa-solid fa-house"></i></span>
+                    <span class="navbar-logo"><i class="fa-solid fa-arrows-rotate"></i></span>
                     <span class="navbar-title">FontAwesome Migrator</span>
                 </a>
             </div>
@@ -83,7 +83,7 @@
     </button>
 
     @yield('scripts')
-    
+
     <!-- Script commun pour le bouton retour en haut -->
     <script>
         // Fonction retour en haut

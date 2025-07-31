@@ -10,7 +10,7 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
-            <div class="hero-icon"><i class="fa-solid fa-rocket"></i></div>
+            <div class="hero-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>
             <p class="hero-subtitle">Migrez facilement de FontAwesome 5 vers FontAwesome 6</p>
             <div class="hero-version">Version {{ $stats['package_version'] }}</div>
@@ -46,7 +46,7 @@
         <div class="stat-card {{ $stats['total_size'] > 0 ? 'has-data' : '' }}">
             <div class="stat-icon"><i class="fa-regular fa-folder"></i></div>
             <div class="stat-content">
-                <div class="stat-number">{{ number_format($stats['total_size'] / 1024, 1, ',', ' ') }} KB</div>
+                <div class="stat-number">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
                 <div class="stat-label">Données générées</div>
             </div>
         </div>
@@ -55,7 +55,7 @@
     <!-- Quick Actions -->
     <div class="quick-actions">
         <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h2>
-        
+
         <div class="actions-grid">
             <div class="action-card">
                 <div class="action-icon"><i class="fa-regular fa-chart-bar"></i></div>
@@ -90,7 +90,7 @@
     @if(count($recentReports) > 0)
         <div class="recent-activity">
             <h2 class="section-title"><i class="fa-regular fa-chart-bar"></i> Activité Récente</h2>
-            
+
             <div class="activity-list">
                 @foreach($recentReports as $report)
                     <div class="activity-item">
@@ -126,7 +126,7 @@
     @if($stats['total_sessions'] == 0)
         <div class="getting-started">
             <h2 class="section-title"><i class="fa-solid fa-flask"></i> Premiers Pas</h2>
-            
+
             <div class="steps-container">
                 <div class="step-item">
                     <div class="step-number">1</div>
@@ -178,38 +178,38 @@
         const heroSection = document.querySelector('.hero-section');
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
-        
+
         // Taille aléatoire entre 10 et 40px
         const size = Math.random() * 30 + 10;
         bubble.style.width = size + 'px';
         bubble.style.height = size + 'px';
-        
+
         // Position horizontale aléatoire
         bubble.style.left = Math.random() * 90 + 5 + '%';
-        
+
         // Vitesse basée sur la taille (petites bulles = plus rapides)
         const speed = 8 + (40 - size) / 5; // Entre 8 et 14 secondes
         bubble.style.animationDuration = speed + 's';
-        
+
         // Léger mouvement horizontal pendant la montée
         const sway = (Math.random() - 0.5) * 30;
         bubble.style.setProperty('--sway', sway + 'px');
-        
+
         heroSection.appendChild(bubble);
-        
+
         // Supprimer la bulle après l'animation
         setTimeout(() => {
             bubble.remove();
         }, speed * 1000);
     }
-    
+
     // Créer des bulles périodiquement
     document.addEventListener('DOMContentLoaded', function() {
         // Créer quelques bulles au démarrage
         for (let i = 0; i < 5; i++) {
             setTimeout(createBubble, i * 800);
         }
-        
+
         // Continuer à créer des bulles à un rythme modéré
         setInterval(createBubble, 2500);
     });

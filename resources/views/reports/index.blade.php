@@ -24,8 +24,8 @@
                     <div class="stat-label">Rapports</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">{{ number_format(array_sum(array_column($reports, 'size')) / 1024, 1, ',', ' ') }}</div>
-                    <div class="stat-label">KB Total</div>
+                    <div class="stat-number">{{ human_readable_bytes_size(array_sum(array_column($reports, 'size')), 2) }}</div>
+                    <div class="stat-label">Total</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
@@ -71,8 +71,8 @@
 
                     <div class="report-meta">
                         <div class="meta-item">
-                            <div class="meta-value">{{ number_format($report['size'] / 1024, 1, ',', ' ') }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-chart-bar"></i> Taille (KB)</div>
+                            <div class="meta-value">{{ human_readable_bytes_size($report['size'], 2) }}</div>
+                            <div class="meta-label"><i class="fa-regular fa-chart-bar"></i> Taille</div>
                         </div>
                         <div class="meta-item">
                             <div class="meta-value">{{ $report['created_at']->format('H:i') }}</div>
