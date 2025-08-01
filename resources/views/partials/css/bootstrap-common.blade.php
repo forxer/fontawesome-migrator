@@ -128,6 +128,14 @@
      * COMPOSANTS MÉTIER MUTUALISÉS
      * ========================================*/
     
+    /* Liens de navigation avec icône */
+    .nav-link-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
     /* Titres de section avec icône */
     .section-title {
         display: flex;

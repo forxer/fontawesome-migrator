@@ -3,7 +3,6 @@
 @section('title', 'Rapport de migration')
 
 @section('head-extra')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @include('fontawesome-migrator::partials.css.bootstrap-common')
     @include('fontawesome-migrator::partials.css.reports-show')
 @endsection
@@ -19,71 +18,63 @@
     <!-- Table des matières -->
     <div class="card mb-4">
         <div class="card-body">
-            <h3 class="card-title section-title mb-3"><i class="bi bi-list"></i> Navigation rapide</h3>
+            <h2 class="card-title section-title mb-3"><i class="bi bi-list"></i> Navigation rapide</h2>
             <ul class="list-unstyled mb-0">
             <li class="mb-2">
-                <a href="#statistics" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#statistics" class="nav-link-item">
                     <i class="bi bi-graph-up text-primary"></i>
                     Statistiques générales
                 </a>
             </li>
-            @if ($stats['total_changes'] > 0)
             <li class="mb-2">
-                <a href="#chart-section" class="text-decoration-none d-flex align-items-center gap-2">
-                    <i class="bi bi-pie-chart text-primary"></i>
-                    Répartition des changements
-                </a>
-            </li>
-            @endif
-            <li class="mb-2">
-                <a href="#timeline-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#timeline-section" class="nav-link-item">
                     <i class="bi bi-clock text-primary"></i>
                     Chronologie de migration
                 </a>
             </li>
             <li class="mb-2">
-                <a href="#recommendations-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#recommendations-section" class="nav-link-item">
                     <i class="bi bi-lightbulb text-primary"></i>
                     Recommandations
                 </a>
             </li>
             <li class="mb-2">
-                <a href="#configuration-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#configuration-section" class="nav-link-item">
                     <i class="bi bi-gear text-primary"></i>
                     Configuration
                 </a>
             </li>
             @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
             <li class="mb-2">
-                <a href="#backups-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#backups-section" class="nav-link-item">
                     <i class="bi bi-hdd text-primary"></i>
                     Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})
                 </a>
             </li>
             @endif
             <li class="mb-2">
-                <a href="#info-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#info-section" class="nav-link-item">
                     <i class="bi bi-info-circle text-primary"></i>
                     Informations supplémentaires
                 </a>
             </li>
             @if ($stats['total_changes'] > 0)
             <li class="mb-2">
-                <a href="#summary-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#summary-section" class="nav-link-item">
                     <i class="bi bi-clipboard-check text-primary"></i>
                     Résumé de migration
                 </a>
             </li>
             @if (!empty($stats['asset_types']))
             <li class="mb-2">
-                <a href="#assets-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#assets-section" class="nav-link-item">
                     <i class="bi bi-box text-primary"></i>
                     Assets détectés
                 </a>
             </li>
             @endif
             <li class="mb-2">
-                <a href="#details-section" class="text-decoration-none d-flex align-items-center gap-2">
+                <a href="#details-section" class="nav-link-item">
                     <i class="bi bi-code-slash text-primary"></i>
                     Détail des modifications
                 </a>
@@ -215,21 +206,6 @@
     </div>
 
     @if ($stats['total_changes'] > 0)
-    <!-- Graphique des types de changements -->
-    <div id="chart-section" class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="card-title section-title mb-0"><i class="bi bi-pie-chart"></i> Répartition par type de changement</h2>
-                <button onclick="showChartHelpModal()" class="btn btn-primary btn-sm">
-                    <i class="bi bi-question-circle"></i> Comprendre les types
-                </button>
-            </div>
-            <div class="chart-container">
-                <canvas id="changesChart"></canvas>
-            </div>
-        </div>
-    </div>
-
     <!-- Chronologie de migration -->
     <div id="timeline-section" class="card mb-4">
         <div class="card-body">
@@ -288,10 +264,9 @@
     </div>
 
     <!-- Recommandations intelligentes -->
-    <div id="recommendations-section" class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title section-title"><i class="bi bi-lightbulb"></i> Recommandations</h2>
-            <div class="row g-3">
+    <div id="recommendations-section" class="mb-4">
+        <h2 class="section-title mb-3"><i class="bi bi-lightbulb"></i> Recommandations</h2>
+        <div class="row mb-4">
             @if ($isDryRun && $stats['total_changes'] > 0)
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 border-success border-2">
@@ -425,77 +400,81 @@
                     </div>
                 </div>
             </div>
-            </div>
         </div>
-    </div>
     @endif
 
     <!-- Configuration et options -->
-    <div id="configuration-section" class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title section-title"><i class="bi bi-gear"></i> Configuration de migration</h2>
-
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <h3 class="section-title-sm mb-3">Options utilisées</h3>
-                    <table class="table table-sm">
-                    <tr><td><strong>Mode</strong></td><td>{{ $isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète' }}</td></tr>
-                    @if (!empty($migrationOptions['custom_path']))
-                        <tr><td><strong>Chemin personnalisé</strong></td><td><code>{{ $migrationOptions['custom_path'] }}</code></td></tr>
-                    @endif
-                    @if ($migrationOptions['icons_only'] ?? false)
-                        <tr><td><strong>Migration</strong></td><td>Icônes uniquement</td></tr>
-                    @elseif($migrationOptions['assets_only'] ?? false)
-                        <tr><td><strong>Migration</strong></td><td>Assets uniquement</td></tr>
-                    @else
-                        <tr><td><strong>Migration</strong></td><td>Complète (icônes + assets)</td></tr>
-                    @endif
-                    <tr><td><strong>Sauvegarde</strong></td><td>
-                        @if ($migrationOptions['no_backup'] ?? false)
-                            Désactivée
-                        @elseif($migrationOptions['backup'] ?? false)
-                            Forcée
-                        @else
-                            {{ ($configuration['backup_enabled'] ?? true) ? 'Activée' : 'Désactivée' }}
+    <div id="configuration-section" class="mb-4">
+        <h2 class="section-title mb-3"><i class="bi bi-gear"></i> Configuration de migration</h2>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title section-title-sm mb-3"><i class="bi bi-sliders text-primary"></i> Options utilisées</h3>
+                        <table class="table table-striped table-sm">
+                        <tr><td><strong>Mode</strong></td><td>{{ $isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète' }}</td></tr>
+                        @if (!empty($migrationOptions['custom_path']))
+                            <tr><td><strong>Chemin personnalisé</strong></td><td><code>{{ $migrationOptions['custom_path'] }}</code></td></tr>
                         @endif
-                    </td></tr>
-                    @if (isset($migrationOptions['backups_count']) && $migrationOptions['backups_count'] > 0)
-                    <tr><td><strong>Sauvegardes créées</strong></td><td>
-                        <span class="text-success fw-bold">
-                            {{ number_format($migrationOptions['backups_count'], 0, ',', ' ') }} fichier(s) sauvegardé(s)
-                        </span>
-                    </td></tr>
-                    @endif
-                    </table>
+                        @if ($migrationOptions['icons_only'] ?? false)
+                            <tr><td><strong>Migration</strong></td><td>Icônes uniquement</td></tr>
+                        @elseif($migrationOptions['assets_only'] ?? false)
+                            <tr><td><strong>Migration</strong></td><td>Assets uniquement</td></tr>
+                        @else
+                            <tr><td><strong>Migration</strong></td><td>Complète (icônes + assets)</td></tr>
+                        @endif
+                        <tr><td><strong>Sauvegarde</strong></td><td>
+                            @if ($migrationOptions['no_backup'] ?? false)
+                                Désactivée
+                            @elseif($migrationOptions['backup'] ?? false)
+                                Forcée
+                            @else
+                                {{ ($configuration['backup_enabled'] ?? true) ? 'Activée' : 'Désactivée' }}
+                            @endif
+                        </td></tr>
+                        @if (isset($migrationOptions['backups_count']) && $migrationOptions['backups_count'] > 0)
+                        <tr><td><strong>Sauvegardes créées</strong></td><td>
+                            <span class="text-success fw-bold">
+                                {{ number_format($migrationOptions['backups_count'], 0, ',', ' ') }} fichier(s) sauvegardé(s)
+                            </span>
+                        </td></tr>
+                        @endif
+                        </table>
+                    </div>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <h3 class="section-title-sm mb-3">Configuration</h3>
-                    <table class="table table-sm">
-                    <tr><td><strong>Type de licence</strong></td><td>{{ ucfirst($configuration['license_type'] ?? 'free') }}</td></tr>
-                    <tr><td><strong>Chemins scannés</strong></td><td>
-                        @if (!empty($configuration['scan_paths']))
-                            @foreach($configuration['scan_paths'] as $path)
-                                <code>{{ $path }}</code>@if (!$loop->last), @endif
-                            @endforeach
-                        @else
-                            Non définis
-                        @endif
-                    </td></tr>
-                    <tr><td><strong>Extensions</strong></td><td>
-                        @if (!empty($configuration['file_extensions']))
-                            @foreach($configuration['file_extensions'] as $ext)
-                                <code>{{ $ext }}</code>@if (!$loop->last), @endif
-                            @endforeach
-                        @else
-                            Toutes
-                        @endif
-                    </td></tr>
-                    </table>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title section-title-sm mb-3"><i class="bi bi-gear-fill text-info"></i> Configuration</h3>
+                        <table class="table table-striped table-sm">
+                        <tr><td><strong>Type de licence</strong></td><td>{{ ucfirst($configuration['license_type'] ?? 'free') }}</td></tr>
+                        <tr><td><strong>Chemins scannés</strong></td><td>
+                            @if (!empty($configuration['scan_paths']))
+                                @foreach($configuration['scan_paths'] as $path)
+                                    <code>{{ $path }}</code>@if (!$loop->last), @endif
+                                @endforeach
+                            @else
+                                Non définis
+                            @endif
+                        </td></tr>
+                        <tr><td><strong>Extensions</strong></td><td>
+                            @if (!empty($configuration['file_extensions']))
+                                @foreach($configuration['file_extensions'] as $ext)
+                                    <code>{{ $ext }}</code>@if (!$loop->last), @endif
+                                @endforeach
+                            @else
+                                Toutes
+                            @endif
+                        </td></tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
     @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
     <!-- Section des sauvegardes créées -->
@@ -784,7 +763,7 @@
     <script>
         // Variables globales
         let allExpanded = false;
-        
+
         // Cache des éléments DOM
         const cache = {
             searchBox: null,
@@ -814,7 +793,7 @@
 
         function performSearch() {
             const searchTerm = cache.searchBox?.value.toLowerCase() || '';
-            
+
             // Mise à jour du cache des fichiers si nécessaire
             if (!cache.fileItems) {
                 const container = document.getElementById('modificationsContainer');
@@ -827,7 +806,7 @@
             cache.fileItems.forEach(item => {
                 const fileName = item.dataset.file?.toLowerCase() || '';
                 const fileMatches = showAll || fileName.includes(searchTerm);
-                
+
                 let hasVisibleChanges = false;
                 if (!showAll) {
                     const changeItems = item.querySelectorAll('[data-change-from]');
@@ -835,7 +814,7 @@
                         const changeFrom = changeItem.dataset.changeFrom?.toLowerCase() || '';
                         const changeTo = changeItem.dataset.changeTo?.toLowerCase() || '';
                         const matches = changeFrom.includes(searchTerm) || changeTo.includes(searchTerm);
-                        
+
                         changeItem.style.display = (matches || fileMatches) ? 'block' : 'none';
                         if (matches || fileMatches) {
                             hasVisibleChanges = true;
@@ -869,9 +848,9 @@
         function toggleFileDetails(index) {
             const details = document.getElementById(`details-${index}`);
             const icon = document.getElementById(`toggle-icon-${index}`);
-            
+
             if (!details || !icon) return;
-            
+
             const isVisible = details.classList.contains('show');
             details.classList.toggle('show', !isVisible);
             icon.className = isVisible ? 'bi bi-chevron-right' : 'bi bi-chevron-down';
@@ -881,11 +860,11 @@
         function toggleAllDetails() {
             allExpanded = !allExpanded;
             const iconClass = allExpanded ? 'bi bi-chevron-down' : 'bi bi-chevron-right';
-            
+
             document.querySelectorAll('[id^="details-"]').forEach(detail => {
                 detail.classList.toggle('show', allExpanded);
             });
-            
+
             document.querySelectorAll('[id^="toggle-icon-"]').forEach(icon => {
                 icon.className = iconClass;
             });
@@ -921,12 +900,12 @@
                 min-width: 300px; opacity: 0; transition: opacity 0.3s ease;
             `;
             notification.textContent = message;
-            
+
             document.body.appendChild(notification);
-            
+
             // Animation d'apparition
             setTimeout(() => notification.style.opacity = '1', 10);
-            
+
             // Suppression automatique
             setTimeout(() => {
                 notification.style.opacity = '0';
@@ -961,18 +940,18 @@
                     </div>
                 </div>
             `;
-            
+
             // Supprimer modal existante si présente
             const existing = document.getElementById('testingTipsModal');
             if (existing) existing.remove();
-            
+
             // Ajouter la nouvelle modal
             document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
+
             // Afficher la modal (Bootstrap 5)
             const modal = new bootstrap.Modal(document.getElementById('testingTipsModal'));
             modal.show();
-            
+
             // Nettoyer après fermeture
             document.getElementById('testingTipsModal').addEventListener('hidden.bs.modal', function() {
                 this.remove();
@@ -1004,12 +983,12 @@
         function scrollToWarnings() {
             // Chercher tous les éléments avec des avertissements
             const warningElements = document.querySelectorAll('.border-warning');
-            
+
             if (warningElements.length === 0) {
                 showNotification('Aucun avertissement trouvé', 'info');
                 return;
             }
-            
+
             // Développer tous les détails pour voir les avertissements
             document.querySelectorAll('[id^="details-"]').forEach(detail => {
                 detail.classList.add('show');
@@ -1017,50 +996,21 @@
             document.querySelectorAll('[id^="toggle-icon-"]').forEach(icon => {
                 icon.className = 'bi bi-chevron-down';
             });
-            
+
             // Faire défiler vers le premier avertissement
-            warningElements[0].scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
+            warningElements[0].scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
             });
-            
+
             // Notification avec compteur
             showNotification(`${warningElements.length} avertissement(s) trouvé(s)`, 'warning');
-            
+
             // Mise à jour de l'état global
             allExpanded = true;
         }
 
     </script>
 
-    <script>
-        // Configuration Chart.js (optionnel)
-        @if ($stats['total_changes'] > 0 && !empty($stats['changes_by_type']))
-        const chartData = {
-            labels: [
-                @foreach($stats['changes_by_type'] as $type => $count)
-                    '{{ ucfirst(str_replace("_", " ", $type)) }}',
-                @endforeach
-            ],
-            datasets: [{
-                data: [
-                    @foreach($stats['changes_by_type'] as $type => $count)
-                        {{ $count }},
-                    @endforeach
-                ],
-                backgroundColor: ['#4299e1', '#667eea', '#059669', '#f59e0b', '#f56565', '#8b5cf6']
-            }]
-        };
-        
-        // Initialiser le graphique si le canvas existe
-        const chartCanvas = document.getElementById('changesChart');
-        if (chartCanvas) {
-            new Chart(chartCanvas, {
-                type: 'doughnut',
-                data: chartData
-            });
-        }
-        @endif
-    </script>
 
 @endsection
