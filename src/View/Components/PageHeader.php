@@ -6,40 +6,22 @@ use Illuminate\View\Component;
 
 class PageHeader extends Component
 {
-    public string $icon;
-
-    public string $title;
-
-    public string $subtitle;
-
-    public ?string $counterText;
-
     public ?string $counterIcon;
-
-    public string $actionsLabel;
-
-    public bool $hasActions;
 
     public bool $hasCounter;
 
     public function __construct(
-        string $icon,
-        string $title,
-        string $subtitle = '',
-        ?string $counterText = null,
+        public string $icon,
+        public string $title,
+        public string $subtitle = '',
+        public ?string $counterText = null,
         ?string $counterIcon = null,
-        string $actionsLabel = 'Actions',
-        bool $hasActions = false
+        public string $actionsLabel = 'Actions',
+        public bool $hasActions = false
     ) {
 
-        $this->icon = $icon;
-        $this->title = $title;
-        $this->subtitle = $subtitle;
-        $this->counterText = $counterText;
-        $this->counterIcon = $counterIcon ?? $icon; // Par défaut, même icône que le header
-        $this->actionsLabel = $actionsLabel;
-        $this->hasActions = $hasActions;
-        $this->hasCounter = ! empty($counterText); // Computed property dans le constructeur
+        $this->counterIcon = $counterIcon ?? $this->icon;
+        $this->hasCounter = $this->counterText !== null && $this->counterText !== '' && $this->counterText !== '0'; // Computed property dans le constructeur
     }
 
     /**
