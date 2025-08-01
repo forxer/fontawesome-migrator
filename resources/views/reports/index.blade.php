@@ -3,20 +3,30 @@
 @section('title', 'Rapports FontAwesome Migrator')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="section-title section-title-lg">
-                <i class="bi bi-file-text text-primary"></i> Rapports
-            </h1>
-            <p class="text-muted mb-0">Gestion des rapports de migration</p>
-        </div>
-    </div>
+    <x-fontawesome-migrator::page-header 
+        icon="file-text" 
+        title="Rapports" 
+        subtitle="Gestion des rapports de migration"
+        :hasCounter="true"
+        counterIcon="file-text"
+        :counterText="count($reports) . ' rapport(s)'"
+        :hasActions="true"
+        actionsLabel="Actions sur les rapports"
+    >
+        <li><a class="dropdown-item" href="#" onclick="refreshReports()">
+            <span id="refresh-icon"><i class="bi bi-arrow-repeat me-2"></i></span>Actualiser les rapports
+        </a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" onclick="cleanupReports()">
+            <i class="bi bi-trash me-2"></i>Nettoyer (30j+)
+        </a></li>
+    </x-fontawesome-migrator::page-header>
 
     @if (count($reports) > 0)
         <!-- Statistiques globales Bootstrap -->
         <div class="mb-4">
             <h2 class="section-title">
-                <i class="bi bi-file-text text-primary"></i> Statistiques globales
+                <i class="bi bi-bar-chart text-primary"></i> Statistiques globales
             </h2>
             <div class="row g-3">
                 <div class="col-lg-3 col-md-6">
@@ -58,21 +68,6 @@
             </div>
         </div>
     @endif
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="btn-group" role="group" aria-label="Actions sur les rapports">
-            <button onclick="refreshReports()" class="btn btn-primary">
-                <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser les rapports
-            </button>
-            <button onclick="cleanupReports()" class="btn btn-outline-danger">
-                <i class="bi bi-trash"></i> Nettoyer (30j+)
-            </button>
-        </div>
-
-        <div class="text-muted fw-medium">
-            <i class="bi bi-file-text"></i> {{ count($reports) }} rapport(s) disponible(s)
-        </div>
-    </div>
 
     <div id="alerts"></div>
 
@@ -150,22 +145,22 @@
             @endforeach
         </div>
     @else
-        <div class="empty-state">
-            <div class="empty-icon">
-                <i class="bi bi-file-text"></i>
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-file-text display-1 text-muted"></i>
             </div>
-            <h3 class="empty-title">Aucun rapport disponible</h3>
-            <p class="empty-description">
-                Commencez par générer un rapport de migration en exécutant la commande ci-dessous.
+            <h3 class="mb-3">Aucun rapport disponible</h3>
+            <p class="text-muted mb-4">
+                Commencez par générer un rapport de migration en exécutant la commande ci-dessous.<br>
                 Les rapports vous permettront de visualiser les changements effectués lors de la migration Font Awesome 5 → 6.
             </p>
             <div class="mb-4">
-                <code class="empty-command">
+                <code class="bg-light p-3 rounded d-inline-block">
                     php artisan fontawesome:migrate --report
                 </code>
             </div>
-            <div class="empty-hint">
-                <i class="bi bi-arrow-repeat"></i> Ajoutez <code class="text-body">--dry-run</code> pour prévisualiser sans modifier les fichiers
+            <div class="text-muted">
+                <i class="bi bi-arrow-repeat me-1"></i> Ajoutez <code class="bg-light px-2 py-1 rounded">--dry-run</code> pour prévisualiser sans modifier les fichiers
             </div>
         </div>
     @endif
@@ -178,8 +173,10 @@
     }
 
     function refreshReports() {
-        const button = document.querySelector('button[onclick="refreshReports()"]');
-        toggleButtonSpinner(button, true);
+        const refreshIcon = document.getElementById('refresh-icon');
+        if (refreshIcon) {
+            refreshIcon.innerHTML = '<i class="bi bi-arrow-repeat me-2 spinner-border spinner-border-sm"></i>';
+        }
 
         // Recharger la page après un court délai
         setTimeout(() => {
