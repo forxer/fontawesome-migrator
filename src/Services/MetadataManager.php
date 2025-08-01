@@ -415,7 +415,7 @@ class MetadataManager
                 'directory' => $directory,
                 'created_at' => Carbon::createFromTimestamp(filemtime($directory)),
                 'has_metadata' => File::exists($metadataPath),
-                'backup_count' => \count(File::files($directory)) - 1, // -1 pour exclure metadata.json
+                'backup_count' => max(0, \count(File::files($directory)) - 1), // -1 pour exclure metadata.json, minimum 0
                 'package_version' => 'unknown',
                 'dry_run' => false,
                 'duration' => null,

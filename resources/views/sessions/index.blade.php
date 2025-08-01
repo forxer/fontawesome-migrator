@@ -7,40 +7,66 @@
 @endsection
 
 @section('content')
-    <div class="mb-4">
-        <h1 class="display-5 d-flex align-items-center gap-2">
-            <i class="bi bi-folder"></i> Sessions
-        </h1>
-        <p class="text-muted">Gestion des sessions et métadonnées</p>
-    </div>
+    <x-fontawesome-migrator::page-header
+        icon="folder"
+        title="Sessions"
+        subtitle="Gestion des sessions et métadonnées"
+        :counterText="count($sessions) . ' session(s) disponible(s)'"
+        counterIcon="folder"
+        :hasActions="true"
+        actionsLabel="Actions globales"
+    >
+        <x-slot name="actions">
+            <div class="btn-group">
+                <button onclick="refreshSessions()" class="btn btn-primary">
+                    <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
+                </button>
+                <button onclick="cleanupSessions()" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Nettoyer (30j+)
+                </button>
+            </div>
+        </x-slot>
+    </x-fontawesome-migrator::page-header>
 
     @if (count($sessions) > 0)
         <!-- Statistiques globales -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h2 class="card-title section-title"><i class="bi bi-file-text"></i> Statistiques des sessions</h2>
-                <div class="row g-3">
-                    <div class="col-6 col-md-3">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-primary">{{ $stats['total_sessions'] }}</div>
+        <div class="mb-4">
+            <h2 class="section-title">
+                <i class="bi bi-bar-chart text-primary"></i> Statistiques des sessions
+            </h2>
+            <div class="row g-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-folder fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">{{ $stats['total_sessions'] }}</div>
                             <div class="text-muted small">Sessions</div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-primary">{{ $stats['total_backups'] }}</div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-files fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">{{ $stats['total_backups'] }}</div>
                             <div class="text-muted small">Fichiers</div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-primary">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
                             <div class="text-muted small">Taille totale</div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-primary">
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">
                                 @if($stats['last_session'])
                                     {{ $stats['last_session']['created_at']->format('d/m') }}
                                 @else
@@ -55,81 +81,64 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="btn-group">
-            <button onclick="refreshSessions()" class="btn btn-primary">
-                <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
-            </button>
-
-            <button onclick="cleanupSessions()" class="btn btn-danger">
-                <i class="bi bi-trash"></i> Nettoyer (30j+)
-            </button>
-        </div>
-
-        <div class="text-muted">
-            <i class="bi bi-folder"></i> {{ count($sessions) }} session(s) disponible(s)
-        </div>
-    </div>
-
-    <div id="alerts"></div>
-
     @if (count($sessions) > 0)
         <div class="row g-4">
             @foreach ($sessions as $session)
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 entity-card" data-session="{{ $session['session_id'] }}">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="me-3">
-                                <i class="bi bi-folder fs-2 text-primary"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h5 class="card-title mb-1">Session <span data-bs-toggle="tooltip" title="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h5>
-                                <div class="text-muted small">
-                                    <i class="bi bi-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
-                                    @if($session['dry_run'])
-                                        <span class="badge bg-warning text-dark ms-2">DRY-RUN</span>
-                                    @else
-                                        <span class="badge bg-success ms-2">RÉEL</span>
-                                    @endif
-                                </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="card h-100 shadow-sm" data-session="{{ $session['session_id'] }}">
+                    <div class="card-header d-flex justify-content-between align-items-center gap-3">
+                        <div>
+                            <h5 class="card-title mb-1 text-truncate">
+                                <i class="bi bi-folder text-primary fs-4"></i>
+                                Session <span data-bs-toggle="tooltip" title="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span>
+                            </h5>
+                            <div class="text-muted small">
+                                <i class="bi bi-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
                             </div>
                         </div>
-
-                        <div class="row text-center g-2 mb-3">
+                        @if($session['dry_run'])
+                            <span class="badge bg-warning text-dark">DRY-RUN</span>
+                        @else
+                            <span class="badge bg-success">RÉEL</span>
+                        @endif
+                    </div>
+                    <div class="card-body py-4">
+                        <div class="row g-3 text-center">
                             <div class="col-6">
-                                <div class="border rounded p-2">
-                                    <div class="fw-bold text-primary">{{ $session['backup_count'] }}</div>
-                                    <div class="small text-muted"><i class="bi bi-folder"></i> Fichiers</div>
+                                <div class="border rounded p-3">
+                                    <div class="fw-semibold">{{ $session['backup_count'] }}</div>
+                                    <div class="text-muted small"><i class="bi bi-files"></i> Fichiers</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="border rounded p-2">
-                                    <div class="fw-bold text-primary">
-                                        @if(isset($session['dry_run']) && $session['dry_run'])
-                                            <i class="bi bi-eye"></i> Dry-run
+                                <div class="border rounded p-3">
+                                    <div class="fw-semibold">
+                                        @if($session['dry_run'])
+                                            <i class="bi bi-eye text-warning"></i> Dry-run
                                         @else
-                                            <i class="bi bi-check-square"></i> Réel
+                                            <i class="bi bi-check-square text-success"></i> Réel
                                         @endif
                                     </div>
-                                    <div class="small text-muted"><i class="bi bi-gear"></i> Mode</div>
+                                    <div class="text-muted small"><i class="bi bi-gear"></i> Mode</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="border rounded p-2">
-                                    <div class="fw-bold text-primary">{{ $session['package_version'] ?? '?' }}</div>
-                                    <div class="small text-muted"><i class="bi bi-file-text"></i> Version</div>
+                                <div class="border rounded p-3">
+                                    <div class="fw-semibold">{{ $session['package_version'] ?? 'v?' }}</div>
+                                    <div class="text-muted small"><i class="bi bi-tag"></i> Version</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="border rounded p-2">
-                                    <div class="fw-bold text-primary">{{ $session['created_at']->diffForHumans(['short' => true]) }}</div>
-                                    <div class="small text-muted"><i class="bi bi-clock"></i> Âge</div>
+                                <div class="border rounded p-3">
+                                    <div class="fw-semibold">{{ $session['created_at']->diffForHumans(['short' => true]) }}</div>
+                                    <div class="text-muted small"><i class="bi bi-calendar"></i> Âge</div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="btn-group-vertical btn-group-sm d-grid" role="group" aria-label="Actions de la session">
+                    <div class="card-footer bg-light">
+                        <div class="btn-group btn-group-sm d-flex flex-wrap" role="group" aria-label="Actions de la session">
                             <a href="{{ route('fontawesome-migrator.sessions.show', $session['session_id']) }}" class="btn btn-primary">
                                 <i class="bi bi-eye"></i> Détails
                             </a>
@@ -165,16 +174,16 @@
     window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     function showAlert(message, type = 'success') {
-        const alertsContainer = document.getElementById('alerts');
+        const existing = document.querySelector('.temp-alert');
+        if (existing) existing.remove();
+
         const alert = document.createElement('div');
-        alert.className = `alert alert-${type}`;
+        alert.className = `alert alert-${type} temp-alert`;
+        alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
         alert.textContent = message;
 
-        alertsContainer.appendChild(alert);
-
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 4000);
     }
 
     function refreshSessions() {
