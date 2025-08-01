@@ -20,6 +20,7 @@
     "require": {
         "php": "^8.4",
         "axn/tool-kit-for-laravel": "^11.0",
+        "diglactic/laravel-breadcrumbs": "^10.0",
         "laravel/framework": "^12.0",
         "laravel/prompts": "^0.3.0",
         "symfony/finder": "^7.0"
@@ -28,7 +29,7 @@
         "driftingly/rector-laravel": "^2.0.5",
         "laravel/pint": "^1.24.0",
         "orchestra/testbench": "^10.4",
-        "phpunit/phpunit": "^11.5.27",
+        "phpunit/phpunit": "^11.5.28",
         "rector/rector": "^2.1.2"
     },
     "autoload": {

@@ -14,10 +14,14 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
+    private string $basePath = '';
+
     public function register(): void
     {
+        $this->basePath = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
+
         $this->mergeConfigFrom(
-            __DIR__.'/../config/fontawesome-migrator.php',
+            $this->basePath.'/config/fontawesome-migrator.php',
             'fontawesome-migrator'
         );
     }
@@ -27,29 +31,16 @@ class ServiceProvider extends BaseServiceProvider
         // Configuration de Carbon pour la localisation française
         Carbon::setLocale('fr');
 
-        // Publier la configuration (stub pour une configuration minimale)
-        $this->publishes([
-            __DIR__.'/../config/fontawesome-migrator.stub' => config_path('fontawesome-migrator.php'),
-        ], 'fontawesome-migrator-config');
-
-        // Publier la configuration complète (pour référence)
-        $this->publishes([
-            __DIR__.'/../config/fontawesome-migrator.php' => config_path('fontawesome-migrator-full.php'),
-        ], 'fontawesome-migrator-config-full');
-
-        // Publier les fichiers de mapping
-        $this->publishes([
-            __DIR__.'/Mappers' => resource_path('fontawesome-migrator/mappers'),
-        ], 'fontawesome-migrator-mappers');
-
         // Enregistrer les vues
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'fontawesome-migrator');
+        $this->loadViewsFrom($this->basePath.'resources/views', 'fontawesome-migrator');
 
         // Enregistrer les components Blade
         Blade::component('fontawesome-migrator::page-header', PageHeader::class);
 
         // Enregistrer les routes web
         $this->registerRoutes();
+
+        require $this->basePath.'breadcrumbs/fontawesome-migrator.php';
 
         // Enregistrer les commandes (toujours disponibles pour Artisan::call)
         $this->commands([
@@ -58,6 +49,10 @@ class ServiceProvider extends BaseServiceProvider
             InstallCommand::class,
             MigrateCommand::class,
         ]);
+
+        if ($this->app->runningInConsole()) {
+            $this->configurePublishing();
+        }
     }
 
     /**
@@ -68,6 +63,27 @@ class ServiceProvider extends BaseServiceProvider
         Route::middleware(['web'])
             ->prefix('fontawesome-migrator')
             ->name('fontawesome-migrator.')
-            ->group(__DIR__.'/../routes/web.php');
+            ->group($this->basePath.'/routes/web.php');
+    }
+
+    /**
+     * Configure the publishable resources offered by the package.
+     */
+    private function configurePublishing(): void
+    {
+        // Publier la configuration (stub pour une configuration minimale)
+        $this->publishes([
+            $this->basePath.'/config/fontawesome-migrator.stub' => config_path('fontawesome-migrator.php'),
+        ], 'fontawesome-migrator-config');
+
+        // Publier la configuration complète (pour référence)
+        $this->publishes([
+            $this->basePath.'/config/fontawesome-migrator.php' => config_path('fontawesome-migrator-full.php'),
+        ], 'fontawesome-migrator-config-full');
+
+        // Publier les fichiers de mapping
+        $this->publishes([
+            __DIR__.'/Mappers' => resource_path('fontawesome-migrator/mappers'),
+        ], 'fontawesome-migrator-mappers');
     }
 }

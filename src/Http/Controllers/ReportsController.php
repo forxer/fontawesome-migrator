@@ -62,9 +62,6 @@ class ReportsController extends Controller
 
         return view('fontawesome-migrator::reports.index', [
             'reports' => $reports,
-            'breadcrumbs' => [
-                ['label' => '📊 Rapports'],
-            ],
         ]);
     }
 
@@ -124,11 +121,6 @@ class ReportsController extends Controller
                 'packageVersion' => '?',
             ];
 
-            $viewData['breadcrumbs'] = [
-                ['label' => 'Rapports', 'url' => route('fontawesome-migrator.reports.index')],
-                ['label' => 'Rapport - Session '.($sessionInfo['short_id'] ?? 'inconnue')],
-            ];
-
             return view('fontawesome-migrator::reports.show', $viewData);
         }
 
@@ -153,10 +145,6 @@ class ReportsController extends Controller
             'enrichedWarnings' => $enrichedWarnings,
         ];
 
-        $viewData['breadcrumbs'] = [
-            ['label' => 'Rapports', 'url' => route('fontawesome-migrator.reports.index')],
-            ['label' => 'Rapport - Session '.($sessionInfo['short_id'] ?? 'inconnue')],
-        ];
 
         return view('fontawesome-migrator::reports.show', $viewData);
     }

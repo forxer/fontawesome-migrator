@@ -126,60 +126,6 @@
         color: white;
     }
 
-    /* Fil d'ariane */
-    .breadcrumb {
-        background: transparent;
-        padding: 16px 0 8px 0;
-    }
-
-    .breadcrumb-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    .breadcrumb-list {
-        list-style: none;
-        margin: 0;
-        padding: 12px 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 1em;
-    }
-
-    .breadcrumb-item {
-        margin: 0;
-    }
-
-    .breadcrumb-separator {
-        color: var(--gray-600);
-        margin: 0 4px;
-        font-weight: 500;
-        font-size: 1.1em;
-    }
-
-    .breadcrumb-link {
-        color: var(--gray-600);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-        font-weight: 500;
-    }
-
-    .breadcrumb-link:hover {
-        color: var(--primary-color);
-        background: rgba(66, 153, 225, 0.1);
-    }
-
-    .breadcrumb-current {
-        color: var(--gray-800);
-        font-weight: 600;
-    }
 
     /* Container */
     .container {
@@ -188,9 +134,6 @@
         padding: 20px;
     }
 
-    .container.with-breadcrumb {
-        padding-top: 20px;
-    }
 
     .header {
         background: white;

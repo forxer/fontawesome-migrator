@@ -12,7 +12,6 @@
     <!-- Bootstrap Icons 1.13.1 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-
     @yield('head-extra')
     @include('fontawesome-migrator::partials.css.common')
     @include('fontawesome-migrator::partials.css.bootstrap-common')
@@ -50,39 +49,12 @@
         </div>
     </nav>
 
-    <!-- Fil d'ariane Bootstrap -->
-    <nav class="py-3" style="background: transparent;">
-        <div class="container-fluid" style="max-width: 1200px;">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
-                        <a href="{{ route('fontawesome-migrator.home') }}" class="text-decoration-none d-flex align-items-center gap-1">
-                            <i class="bi bi-house"></i> Accueil
-                        </a>
-                    @else
-                        <span class="fw-semibold d-flex align-items-center gap-1">
-                            <i class="bi bi-house"></i> Accueil
-                        </span>
-                    @endif
-                </li>
-                @if(isset($breadcrumbs))
-                    @foreach($breadcrumbs as $breadcrumb)
-                        <li class="breadcrumb-item {{ !isset($breadcrumb['url']) ? 'active' : '' }}">
-                            @if(isset($breadcrumb['url']))
-                                <a href="{{ $breadcrumb['url'] }}" class="text-decoration-none">
-                                    {{ $breadcrumb['label'] }}
-                                </a>
-                            @else
-                                <span class="fw-semibold">{{ $breadcrumb['label'] }}</span>
-                            @endif
-                        </li>
-                    @endforeach
-                @endif
-            </ol>
-        </div>
-    </nav>
+    <!-- Fil d'ariane -->
+    <div class="container">
+        {!! Breadcrumbs::render() !!}
+    </div>
 
-    <div class="container-fluid" style="max-width: 1200px; padding-top: 20px;">
+    <div class="container">
         @yield('content')
     </div>
 

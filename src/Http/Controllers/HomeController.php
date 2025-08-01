@@ -83,7 +83,6 @@ class HomeController extends Controller
         return view('fontawesome-migrator::home.index', [
             'stats' => $stats,
             'recentReports' => $recentReports,
-            'breadcrumbs' => [],
         ]);
     }
 

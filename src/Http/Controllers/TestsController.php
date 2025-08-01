@@ -25,9 +25,6 @@ class TestsController extends Controller
         return view('fontawesome-migrator::tests.index', [
             'sessions' => $sessions,
             'backupStats' => $backupStats,
-            'breadcrumbs' => [
-                ['label' => '🧪 Tests'],
-            ],
         ]);
     }
 
