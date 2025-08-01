@@ -9,7 +9,7 @@
 
 @section('content')
     <!-- Hero Section -->
-    <div class="hero-section">
+    <div class="hero-section mt-4">
         <div class="hero-content">
             <div class="hero-icon"><i class="bi bi-arrow-repeat"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>

@@ -50,9 +50,11 @@
     </nav>
 
     <!-- Fil d'ariane -->
-    <div class="container mt-3">
-        {!! Breadcrumbs::render() !!}
-    </div>
+    @unless(request()->routeIs('fontawesome-migrator.home'))
+        <div class="container mt-3">
+            {!! Breadcrumbs::render() !!}
+        </div>
+    @endunless
 
     <div class="container">
         @yield('content')
