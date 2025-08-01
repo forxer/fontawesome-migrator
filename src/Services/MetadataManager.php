@@ -4,6 +4,7 @@ namespace FontAwesome\Migrator\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
+use Konobit\FontAwesomeMigrator\Services\PackageVersionService;
 
 class MetadataManager
 {
@@ -30,7 +31,7 @@ class MetadataManager
                 'id' => $sessionId,
                 'short_id' => $shortId,
                 'started_at' => Carbon::now()->toIso8601String(),
-                'package_version' => $this->getPackageVersion(),
+                'package_version' => PackageVersionService::getVersion(),
             ],
             'environment' => [
                 'php_version' => PHP_VERSION,
@@ -223,27 +224,6 @@ class MetadataManager
         }
 
         return $this;
-    }
-
-    /**
-     * Obtenir la version du package depuis le CHANGELOG.md
-     */
-    protected function getPackageVersion(): string
-    {
-        $changelogPath = __DIR__.'/../../CHANGELOG.md';
-
-        if (file_exists($changelogPath)) {
-            $content = file_get_contents($changelogPath);
-
-            // Chercher le premier titre de niveau 2 : format ## ou souligné avec ---
-            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) ||
-                preg_match('/^## (\d+\.\d+\.\d+)/m', $content, $matches)) {
-                return $matches[1];
-            }
-        }
-
-        // Fallback version
-        return '2.0.0-dev';
     }
 
     /**

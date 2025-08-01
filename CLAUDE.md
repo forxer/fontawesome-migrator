@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **⚠️ PHP Execution Limitation**: Claude Code cannot execute PHP commands or any language interpreters (php, node, python, etc.). Only use Bash tool for basic system commands. Never attempt to run `php artisan`, `composer`, `npm`, or similar commands.
 
+**🚨 RAPPEL CRITIQUE**: NE JAMAIS essayer d'exécuter PHP avec Bash - cela échoue systématiquement. TOUJOURS demander à l'utilisateur.
+
 **🔧 Debug Process v2.0.0**: For syntax checking and quality control, ALWAYS ask the user to run:
 - `composer pint-test` (syntax and style check)
 - `composer rector-dry` (code modernization check)  

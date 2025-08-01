@@ -145,7 +145,6 @@ class ReportsController extends Controller
             'enrichedWarnings' => $enrichedWarnings,
         ];
 
-
         return view('fontawesome-migrator::reports.show', $viewData);
     }
 

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use FontAwesome\Migrator\Services\MetadataManager;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
+use Konobit\FontAwesomeMigrator\Services\PackageVersionService;
 
 /**
  * Contrôleur pour la page d'accueil
@@ -51,7 +52,7 @@ class HomeController extends Controller
             'total_size' => $totalSize,
             'last_activity' => $lastActivity ? Carbon::createFromTimestamp($lastActivity) : null,
             'successful_migrations' => $successfulMigrations,
-            'package_version' => $this->getPackageVersion(),
+            'package_version' => PackageVersionService::getVersion(),
         ];
 
         // Dernières activités (derniers rapports)
@@ -84,24 +85,5 @@ class HomeController extends Controller
             'stats' => $stats,
             'recentReports' => $recentReports,
         ]);
-    }
-
-    /**
-     * Obtenir la version du package
-     */
-    protected function getPackageVersion(): string
-    {
-        $changelogPath = __DIR__.'/../../CHANGELOG.md';
-
-        if (file_exists($changelogPath)) {
-            $content = file_get_contents($changelogPath);
-
-            if (preg_match('/^(\d+\.\d+\.\d+).*\n-+/m', $content, $matches) ||
-                preg_match('/^## (\d+\.\d+\.\d+)/m', $content, $matches)) {
-                return $matches[1];
-            }
-        }
-
-        return '2.0.0-dev';
     }
 }
