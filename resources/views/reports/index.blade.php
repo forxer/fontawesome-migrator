@@ -3,9 +3,9 @@
 @section('title', 'Rapports FontAwesome Migrator')
 
 @section('content')
-    <x-fontawesome-migrator::page-header 
-        icon="file-text" 
-        title="Rapports" 
+    <x-fontawesome-migrator::page-header
+        icon="file-text"
+        title="Rapports"
         subtitle="Gestion des rapports de migration"
         :hasCounter="true"
         counterIcon="file-text"
@@ -76,21 +76,17 @@
             @foreach ($reports as $report)
                 <div class="col-lg-6 col-xl-4">
                     <div class="card h-100 shadow-sm" data-filename="{{ $report['filename'] }}">
-                        <div class="card-header d-flex align-items-center gap-3">
-                            <i class="bi bi-file-text text-primary fs-4"></i>
-                            <div class="flex-grow-1 min-w-0">
-                                <h5 class="card-title mb-1 text-truncate">{{ $report['name'] }}</h5>
-                                <div class="text-muted small d-flex align-items-center gap-2">
-                                    <i class="bi bi-clock"></i> {{ $report['created_at']->format('d/m/Y à H:i') }}
-                                    @if($report['dry_run'])
-                                        <span class="badge bg-warning text-dark">DRY-RUN</span>
-                                    @else
-                                        <span class="badge bg-success">RÉEL</span>
-                                    @endif
-                                </div>
-                            </div>
+                        <div class="card-header d-flex justify-content-between align-items-center gap-3">
+                                <h5 class="card-title mb-1 text-truncate">
+                                    <i class="bi bi-file-text text-primary fs-4"></i>
+                                   {{ $report['created_at']->format('d/m à H:i') }}
+                                </h5>
+                                @if ($report['dry_run'])
+                                    <span class="badge bg-warning text-dark">DRY-RUN</span>
+                                @else
+                                    <span class="badge bg-success">RÉEL</span>
+                                @endif
                         </div>
-
                         <div class="card-body">
                             <div class="row g-2 text-center">
                                 <div class="col-6">
