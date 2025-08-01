@@ -22,7 +22,7 @@ async function runTest(type) {
     button.disabled = true;
     button.classList.add('loading');
     output.style.display = 'block';
-    result.innerHTML = `<i class="fa-solid fa-rocket"></i> Lancement du test ${type}...\n`;
+    result.innerHTML = `<i class="bi bi-rocket"></i> Lancement du test ${type}...\n`;
     
     try {
         const response = await fetch('/fontawesome-migrator/tests/migration', {
@@ -37,45 +37,45 @@ async function runTest(type) {
         const data = await response.json();
         
         if (data.success) {
-            result.innerHTML = `<i class="fa-regular fa-square-check"></i> Test ${type} terminé avec succès!
+            result.innerHTML = `<i class="bi bi-check-square"></i> Test ${type} terminé avec succès!
 
-<strong>🚀 Commande exécutée :</strong>
+<strong><i class="bi bi-rocket"></i> Commande exécutée :</strong>
 ${data.command}
 
-<strong>📋 Options passées :</strong>
+<strong><i class="bi bi-clipboard"></i> Options passées :</strong>
 ${JSON.stringify(data.options, null, 2)}
 
 <strong>📤 Sortie de la commande (avec debug) :</strong>
 ${data.output}
 
-<strong>📊 Sessions disponibles :</strong> ${data.sessions.length}
+<strong><i class="bi bi-graph-up"></i> Sessions disponibles :</strong> ${data.sessions.length}
 
-<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
+<i class="bi bi-clock"></i> Test terminé à ${data.timestamp}`;
             
             // Ne pas recharger automatiquement, laisser l'utilisateur voir le résultat
             // Ajouter un bouton pour recharger manuellement
             const reloadBtn = document.createElement('button');
-            reloadBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Recharger la page pour voir les nouvelles sessions';
+            reloadBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Recharger la page pour voir les nouvelles sessions';
             reloadBtn.className = 'btn-primary';
             reloadBtn.style.marginTop = '10px';
             reloadBtn.onclick = () => location.reload();
             output.appendChild(reloadBtn);
         } else {
-            result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur lors du test ${type}:
+            result.innerHTML = `<i class="bi bi-x-square"></i> Erreur lors du test ${type}:
 
-<strong>🚀 Commande tentée :</strong>
+<strong><i class="bi bi-rocket"></i> Commande tentée :</strong>
 ${data.command || 'Commande non disponible'}
 
-<strong>📋 Options passées :</strong>
+<strong><i class="bi bi-clipboard"></i> Options passées :</strong>
 ${data.options ? JSON.stringify(data.options, null, 2) : 'Options non disponibles'}
 
-<strong>❌ Sortie/Erreur :</strong>
+<strong><i class="bi bi-x-square"></i> Sortie/Erreur :</strong>
 ${data.error || data.output}
 
-<i class="fa-regular fa-clock"></i> Test terminé à ${data.timestamp}`;
+<i class="bi bi-clock"></i> Test terminé à ${data.timestamp}`;
         }
     } catch (error) {
-        result.innerHTML = `<i class="fa-regular fa-square-xmark"></i> Erreur de connexion:\n\n${error.message}`;
+        result.innerHTML = `<i class="bi bi-x-square"></i> Erreur de connexion:\n\n${error.message}`;
     } finally {
         button.disabled = false;
         button.classList.remove('loading');
@@ -98,10 +98,10 @@ async function inspectSession(sessionId) {
             <p><strong>Répertoire:</strong> ${data.session_dir}</p>
             <p><strong>Nombre de fichiers:</strong> ${data.files_count}</p>
             
-            <h5 class="section-title"><i class="fa-regular fa-clipboard"></i> Métadonnées:</h5>
+            <h5 class="section-title"><i class="bi bi-clipboard"></i> Métadonnées:</h5>
             <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto;">${JSON.stringify(data.metadata, null, 2)}</pre>
             
-            <h5 class="section-title"><i class="fa-regular fa-folder"></i> Fichiers de sauvegarde:</h5>
+            <h5 class="section-title"><i class="bi bi-folder"></i> Fichiers de sauvegarde:</h5>
             <ul>
                 ${data.backup_files.map(file => `
                     <li>

@@ -2,125 +2,158 @@
 
 @section('title', 'Sessions de Migration')
 
+@section('head-extra')
+    @include('fontawesome-migrator::partials.css.bootstrap-common')
+@endsection
+
 @section('content')
-    <div class="header">
-        <h1><i class="fa-regular fa-folder"></i> Sessions</h1>
-        <p>Gestion des sessions et métadonnées</p>
+    <div class="mb-4">
+        <h1 class="display-5 d-flex align-items-center gap-2">
+            <i class="bi bi-folder"></i> Sessions
+        </h1>
+        <p class="text-muted">Gestion des sessions et métadonnées</p>
     </div>
 
     @if (count($sessions) > 0)
         <!-- Statistiques globales -->
-        <div class="stats-summary">
-            <h2 class="section-title"><i class="fa-regular fa-chart-bar"></i> Statistiques des sessions</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">{{ $stats['total_sessions'] }}</div>
-                    <div class="stat-label">Sessions</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ $stats['total_backups'] }}</div>
-                    <div class="stat-label">Fichiers</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
-                    <div class="stat-label">Taille totale</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">
-                        @if($stats['last_session'])
-                            {{ $stats['last_session']['created_at']->format('d/m') }}
-                        @else
-                            -
-                        @endif
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title section-title"><i class="bi bi-file-text"></i> Statistiques des sessions</h2>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-primary">{{ $stats['total_sessions'] }}</div>
+                            <div class="text-muted small">Sessions</div>
+                        </div>
                     </div>
-                    <div class="stat-label">Dernière session</div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-primary">{{ $stats['total_backups'] }}</div>
+                            <div class="text-muted small">Fichiers</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-primary">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
+                            <div class="text-muted small">Taille totale</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-primary">
+                                @if($stats['last_session'])
+                                    {{ $stats['last_session']['created_at']->format('d/m') }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                            <div class="text-muted small">Dernière session</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     @endif
 
-    <div class="actions">
-        <button onclick="refreshSessions()" class="btn btn-primary">
-            <span id="refresh-icon"><i class="fa-solid fa-arrows-rotate"></i></span> Actualiser
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="btn-group">
+            <button onclick="refreshSessions()" class="btn btn-primary">
+                <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
+            </button>
 
-        <button onclick="cleanupSessions()" class="btn btn-danger">
-            <i class="fa-regular fa-trash-can"></i> Nettoyer (30j+)
-        </button>
+            <button onclick="cleanupSessions()" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Nettoyer (30j+)
+            </button>
+        </div>
 
-        <div style="margin-left: auto; color: var(--gray-500); font-weight: 500;">
-            <i class="fa-regular fa-folder"></i> {{ count($sessions) }} session(s) disponible(s)
+        <div class="text-muted">
+            <i class="bi bi-folder"></i> {{ count($sessions) }} session(s) disponible(s)
         </div>
     </div>
 
     <div id="alerts"></div>
 
     @if (count($sessions) > 0)
-        <div class="reports-grid">
+        <div class="row g-4">
             @foreach ($sessions as $session)
-                <div class="report-card" data-session="{{ $session['session_id'] }}">
-                    <div class="report-header">
-                        <div class="report-icon"><i class="fa-regular fa-folder"></i></div>
-                        <div class="report-title">
-                            <h3 class="section-title">Session <span data-tooltip="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h3>
-                            <div class="report-date">
-                                <i class="fa-regular fa-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
-                                @if($session['dry_run'])
-                                    <span class="badge badge-warning" style="margin-left: 8px;">DRY-RUN</span>
-                                @else
-                                    <span class="badge badge-success" style="margin-left: 8px;">RÉEL</span>
-                                @endif
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 entity-card" data-session="{{ $session['session_id'] }}">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                <i class="bi bi-folder fs-2 text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">Session <span data-bs-toggle="tooltip" title="ID complet : {{ $session['session_id'] }}">{{ $session['short_id'] }}</span></h5>
+                                <div class="text-muted small">
+                                    <i class="bi bi-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
+                                    @if($session['dry_run'])
+                                        <span class="badge bg-warning text-dark ms-2">DRY-RUN</span>
+                                    @else
+                                        <span class="badge bg-success ms-2">RÉEL</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="report-meta">
-                        <div class="meta-item">
-                            <div class="meta-value">{{ $session['backup_count'] }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-folder"></i> Fichiers</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-value">
-                                @if(isset($session['dry_run']) && $session['dry_run'])
-                                    <i class="fa-regular fa-eye"></i> Dry-run
-                                @else
-                                    <i class="fa-regular fa-square-check"></i> Réel
-                                @endif
+                        <div class="row text-center g-2 mb-3">
+                            <div class="col-6">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-primary">{{ $session['backup_count'] }}</div>
+                                    <div class="small text-muted"><i class="bi bi-folder"></i> Fichiers</div>
+                                </div>
                             </div>
-                            <div class="meta-label"><i class="fa-solid fa-gear"></i> Mode</div>
+                            <div class="col-6">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-primary">
+                                        @if(isset($session['dry_run']) && $session['dry_run'])
+                                            <i class="bi bi-eye"></i> Dry-run
+                                        @else
+                                            <i class="bi bi-check-square"></i> Réel
+                                        @endif
+                                    </div>
+                                    <div class="small text-muted"><i class="bi bi-gear"></i> Mode</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-primary">{{ $session['package_version'] ?? '?' }}</div>
+                                    <div class="small text-muted"><i class="bi bi-file-text"></i> Version</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-primary">{{ $session['created_at']->diffForHumans(['short' => true]) }}</div>
+                                    <div class="small text-muted"><i class="bi bi-clock"></i> Âge</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="meta-item">
-                            <div class="meta-value">{{ $session['package_version'] ?? '?' }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-chart-bar"></i> Version</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-value">{{ $session['created_at']->diffForHumans(['short' => true]) }}</div>
-                            <div class="meta-label"><i class="fa-regular fa-clock"></i> Âge</div>
-                        </div>
-                    </div>
 
-                    <div class="report-actions">
-                        <a href="{{ route('fontawesome-migrator.sessions.show', $session['session_id']) }}" class="btn btn-primary btn-sm">
-                            <i class="fa-regular fa-eye"></i> Détails
-                        </a>
-
-                        <button onclick="deleteSession('{{ $session['session_id'] }}')" class="btn btn-danger btn-sm">
-                            <i class="fa-regular fa-trash-can"></i> Supprimer
-                        </button>
+                        <div class="btn-group-vertical btn-group-sm d-grid" role="group" aria-label="Actions de la session">
+                            <a href="{{ route('fontawesome-migrator.sessions.show', $session['session_id']) }}" class="btn btn-primary">
+                                <i class="bi bi-eye"></i> Détails
+                            </a>
+                            <button onclick="deleteSession('{{ $session['session_id'] }}')" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
                     </div>
                 </div>
+            </div>
             @endforeach
         </div>
     @else
-        <div class="empty-state">
-            <div class="empty-icon"><i class="fa-regular fa-folder"></i></div>
-            <div class="empty-title">Aucune session disponible</div>
-            <div class="empty-description">
-                Les sessions sont créées automatiquement lors des migrations.
-                Exécutez une migration pour voir les sessions apparaître ici.
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-folder display-1 text-muted"></i>
             </div>
-            <div class="empty-code">
-                php artisan fontawesome:migrate --dry-run --report
+            <h3 class="text-muted mb-3">Aucune session disponible</h3>
+            <p class="text-muted mb-4">
+                Les sessions sont créées automatiquement lors des migrations.<br>
+                Exécutez une migration pour voir les sessions apparaître ici.
+            </p>
+            <div class="bg-dark text-light p-3 rounded d-inline-block">
+                <code>php artisan fontawesome:migrate --dry-run --report</code>
             </div>
         </div>
     @endif

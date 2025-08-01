@@ -342,4 +342,47 @@
         color: var(--bs-secondary);
         flex-shrink: 0;
     }
+    
+    /* Améliorations btn-group responsive */
+    .btn-group.flex-wrap {
+        flex-wrap: wrap;
+    }
+    
+    /* Amélioration responsive pour btn-group sur mobile */
+    @media (max-width: 576px) {
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .btn-group .btn {
+            border-radius: var(--bs-border-radius) !important;
+            margin-bottom: 0.25rem;
+        }
+        
+        .btn-group .btn:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Exception pour les btn-group qui doivent rester horizontaux */
+        .btn-group.stay-horizontal {
+            flex-direction: row;
+            width: auto;
+        }
+        
+        .btn-group.stay-horizontal .btn {
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+        
+        .btn-group.stay-horizontal .btn:first-child {
+            border-top-left-radius: var(--bs-border-radius);
+            border-bottom-left-radius: var(--bs-border-radius);
+        }
+        
+        .btn-group.stay-horizontal .btn:last-child {
+            border-top-right-radius: var(--bs-border-radius);
+            border-bottom-right-radius: var(--bs-border-radius);
+        }
+    }
 </style>

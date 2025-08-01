@@ -3,6 +3,7 @@
 @section('title', 'FontAwesome Migrator - Accueil')
 
 @section('head-extra')
+    @include('fontawesome-migrator::partials.css.bootstrap-common')
     @include('fontawesome-migrator::partials.css.home')
 @endsection
 

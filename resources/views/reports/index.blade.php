@@ -60,11 +60,10 @@
     @endif
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex gap-2">
+        <div class="btn-group" role="group" aria-label="Actions sur les rapports">
             <button onclick="refreshReports()" class="btn btn-primary">
                 <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser les rapports
             </button>
-
             <button onclick="cleanupReports()" class="btn btn-outline-danger">
                 <i class="bi bi-trash"></i> Nettoyer (30j+)
             </button>
@@ -129,22 +128,19 @@
                         </div>
 
                         <div class="card-footer bg-light">
-                            <div class="d-flex flex-wrap gap-1">
-                                <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary btn-sm">
+                            <div class="btn-group btn-group-sm d-flex flex-wrap" role="group" aria-label="Actions du rapport">
+                                <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-
                                 @if ($report['has_json'])
-                                    <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-outline-primary">
                                         <i class="bi bi-filetype-json"></i> JSON
                                     </a>
                                 @endif
-
-                                <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-outline-secondary btn-sm">
+                                <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-outline-secondary">
                                     <i class="bi bi-folder"></i> Session
                                 </a>
-
-                                <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-outline-danger btn-sm">
+                                <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-outline-danger">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
