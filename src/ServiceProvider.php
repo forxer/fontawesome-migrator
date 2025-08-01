@@ -7,6 +7,8 @@ use FontAwesome\Migrator\Commands\BackupCommand;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
+use FontAwesome\Migrator\View\Components\PageHeader;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -42,6 +44,9 @@ class ServiceProvider extends BaseServiceProvider
 
         // Enregistrer les vues
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'fontawesome-migrator');
+
+        // Enregistrer les components Blade
+        Blade::component('fontawesome-migrator::page-header', PageHeader::class);
 
         // Enregistrer les routes web
         $this->registerRoutes();

@@ -7,11 +7,9 @@
         icon="file-text"
         title="Rapports"
         subtitle="Gestion des rapports de migration"
-        :hasCounter="true"
-        counterIcon="file-text"
         :counterText="count($reports) . ' rapport(s)'"
-        :hasActions="true"
         actionsLabel="Actions sur les rapports"
+        :hasActions="true"
     >
         <li><a class="dropdown-item" href="#" onclick="refreshReports()">
             <span id="refresh-icon"><i class="bi bi-arrow-repeat me-2"></i></span>Actualiser les rapports
@@ -74,7 +72,7 @@
     @if (count($reports) > 0)
         <div class="row g-4 mb-4">
             @foreach ($reports as $report)
-                <div class="col-lg-6 col-xl-4">
+                <div class="col-md-6 col-xl-4">
                     <div class="card h-100 shadow-sm" data-filename="{{ $report['filename'] }}">
                         <div class="card-header d-flex justify-content-between align-items-center gap-3">
                                 <h5 class="card-title mb-1 text-truncate">
@@ -87,22 +85,22 @@
                                     <span class="badge bg-success">RÉEL</span>
                                 @endif
                         </div>
-                        <div class="card-body">
-                            <div class="row g-2 text-center">
+                        <div class="card-body py-4">
+                            <div class="row g-3 text-center">
                                 <div class="col-6">
-                                    <div class="border rounded p-2">
+                                    <div class="border rounded p-3">
                                         <div class="fw-semibold">{{ human_readable_bytes_size($report['size'], 2) }}</div>
                                         <div class="text-muted small"><i class="bi bi-hdd"></i> Taille</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="border rounded p-2">
+                                    <div class="border rounded p-3">
                                         <div class="fw-semibold">{{ $report['created_at']->format('H:i') }}</div>
                                         <div class="text-muted small"><i class="bi bi-clock"></i> Heure</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="border rounded p-2">
+                                    <div class="border rounded p-3">
                                         <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">
                                             {{ $report['short_id'] }}
                                         </div>
@@ -110,7 +108,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="border rounded p-2">
+                                    <div class="border rounded p-3">
                                         <div class="fw-semibold">{{ $report['created_at']->diffForHumans(['short' => true]) }}</div>
                                         <div class="text-muted small"><i class="bi bi-clock"></i> Âge</div>
                                     </div>

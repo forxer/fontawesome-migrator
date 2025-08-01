@@ -31,7 +31,7 @@
                     @if($hasActions)
                     <div class="dropdown">
                         <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-gear"></i> Actions
+                            <i class="bi bi-gear"></i> {{ $actionsLabel }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             {{ $slot }}
