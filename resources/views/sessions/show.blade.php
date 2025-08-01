@@ -3,103 +3,130 @@
 @section('title', 'Session ' . $shortId)
 
 @section('content')
-    <div class="mb-4">
-        <h1 class="display-5 d-flex align-items-center gap-2">
-            <i class="bi bi-folder-open"></i> Session {{ $shortId }}
-        </h1>
-        <p class="text-muted">Détails de la session de migration {{ $sessionId }}</p>
-    </div>
+    <x-fontawesome-migrator::page-header
+        icon="folder-open"
+        title="Session {{ $shortId }}"
+        subtitle="Détails de la session de migration"
+        :counterText="count($backupFiles) . ' fichier(s) de sauvegarde'"
+        counterIcon="files"
+        :hasActions="true"
+        actionsLabel="Actions de session"
+    >
+        <x-slot name="actions">
+            <li><a class="dropdown-item" href="{{ route('fontawesome-migrator.sessions.index') }}">
+                <i class="bi bi-arrow-left"></i> Retour aux sessions
+            </a></li>
+            <li><a class="dropdown-item" href="#" onclick="copySessionInfo(); return false;">
+                <i class="bi bi-clipboard"></i> Copier les infos
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="deleteCurrentSession(); return false;">
+                <i class="bi bi-trash"></i> Supprimer cette session
+            </a></li>
+        </x-slot>
+    </x-fontawesome-migrator::page-header>
 
     @if($metadata)
-        <!-- Informations de la session -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h2 class="card-title section-title"><i class="bi bi-clipboard"></i> Métadonnées de la session</h2>
-                <div class="row g-3">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card h-100 text-center">
-                            <div class="card-body">
-                                <div class="display-6 fw-bold text-primary mb-2">
-                                    @php
-                                        // Debug: chercher la date dans différentes structures possibles
-                                        $createdAt = $metadata['session']['started_at'] ?? 
-                                                    $metadata['meta']['generated_at'] ?? 
-                                                    $metadata['session']['created_at'] ?? 
-                                                    $metadata['created_at'] ?? null;
-                                    @endphp
-                                    @if($createdAt)
-                                        {{ \Carbon\Carbon::parse($createdAt)->format('d/m/Y H:i') }}
-                                    @else
-                                        <!-- Debug: afficher la structure pour comprendre -->
-                                        @if(isset($metadata['session']))
-                                            @if(isset($metadata['session']['started_at']))
-                                                {{ \Carbon\Carbon::parse($metadata['session']['started_at'])->format('d/m/Y H:i') }}
-                                            @else
-                                                Session: {{ json_encode(array_keys($metadata['session'])) }}
-                                            @endif
-                                        @elseif(isset($metadata['meta']))
-                                            Meta: {{ json_encode(array_keys($metadata['meta'])) }}
-                                        @else
-                                            Root: {{ json_encode(array_keys($metadata)) }}
-                                        @endif
-                                    @endif
-                                </div>
-                                <div class="text-muted small"><i class="bi bi-clock"></i> Créée le</div>
+        <!-- Statistiques de la session -->
+        <div class="mb-4">
+            <h2 class="section-title">
+                <i class="bi bi-bar-chart text-primary"></i> Métadonnées de la session
+            </h2>
+            <div class="row g-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">
+                                @php
+                                    $createdAt = $metadata['session']['started_at'] ?? $metadata['meta']['generated_at'] ?? null;
+                                @endphp
+                                @if($createdAt)
+                                    {{ \Carbon\Carbon::parse($createdAt)->format('d/m') }}
+                                @else
+                                    N/A
+                                @endif
                             </div>
+                            <div class="text-muted small">Créée le</div>
                         </div>
                     </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ $metadata['meta']['package_version'] ?? $metadata['session']['package_version'] ?? 'N/A' }}</div>
-                    <div class="stat-label"><i class="bi bi-tag"></i> Version</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">
-                        @php
-                            $isDryRun = $metadata['runtime']['dry_run'] ?? $metadata['meta']['dry_run'] ?? false;
-                        @endphp
-                        @if($isDryRun)
-                            <i class="bi bi-eye"></i> Dry-run
-                        @else
-                            <i class="bi bi-play-fill"></i> Réel
-                        @endif
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-tag fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">{{ $metadata['meta']['package_version'] ?? $metadata['session']['package_version'] ?? 'N/A' }}</div>
+                            <div class="text-muted small">Version</div>
+                        </div>
                     </div>
-                    <div class="stat-label"><i class="bi bi-gear"></i> Mode</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ count($backupFiles) }}</div>
-                    <div class="stat-label"><i class="bi bi-download"></i> Sauvegardes</div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            @php
+                                $isDryRun = $metadata['runtime']['dry_run'] ?? $metadata['meta']['dry_run'] ?? false;
+                            @endphp
+                            @if($isDryRun)
+                                <i class="bi bi-eye fs-1 text-warning mb-2"></i>
+                                <div class="fs-3 fw-bold text-warning">Dry-run</div>
+                            @else
+                                <i class="bi bi-play-fill fs-1 text-success mb-2"></i>
+                                <div class="fs-3 fw-bold text-success">Réel</div>
+                            @endif
+                            <div class="text-muted small">Mode</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-files fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">{{ count($backupFiles) }}</div>
+                            <div class="text-muted small">Sauvegardes</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Configuration -->
         @if(isset($metadata['meta']['configuration']))
-            <div class="section">
-                <h3 class="section-title"><i class="bi bi-gear"></i> Configuration</h3>
-                <div class="config-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
-                    <div class="config-item">
-                        <strong>Type de licence:</strong><br>
-                        <span class="badge">{{ $metadata['meta']['configuration']['license_type'] ?? 'N/A' }}</span>
-                    </div>
-                    <div class="config-item">
-                        <strong>Chemins scannés:</strong><br>
-                        @if(isset($metadata['meta']['configuration']['scan_paths']))
-                            @foreach($metadata['meta']['configuration']['scan_paths'] as $path)
-                                <span class="badge">{{ $path }}</span>
-                            @endforeach
-                        @else
-                            <span class="badge">N/A</span>
-                        @endif
-                    </div>
-                    <div class="config-item">
-                        <strong>Extensions:</strong><br>
-                        @if(isset($metadata['meta']['configuration']['file_extensions']))
-                            @foreach($metadata['meta']['configuration']['file_extensions'] as $ext)
-                                <span class="badge">{{ $ext }}</span>
-                            @endforeach
-                        @else
-                            <span class="badge">N/A</span>
-                        @endif
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="section-title">
+                        <i class="bi bi-gear text-primary"></i> Configuration
+                    </h2>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="border rounded p-3">
+                                <strong class="d-block mb-2">Type de licence:</strong>
+                                <span class="badge bg-primary">{{ $metadata['meta']['configuration']['license_type'] ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="border rounded p-3">
+                                <strong class="d-block mb-2">Chemins scannés:</strong>
+                                @if(isset($metadata['meta']['configuration']['scan_paths']))
+                                    @foreach($metadata['meta']['configuration']['scan_paths'] as $path)
+                                        <span class="badge bg-secondary me-1">{{ $path }}</span>
+                                    @endforeach
+                                @else
+                                    <span class="badge bg-secondary">N/A</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="border rounded p-3">
+                                <strong class="d-block mb-2">Extensions:</strong>
+                                @if(isset($metadata['meta']['configuration']['file_extensions']))
+                                    @foreach($metadata['meta']['configuration']['file_extensions'] as $ext)
+                                        <span class="badge bg-info me-1">{{ $ext }}</span>
+                                    @endforeach
+                                @else
+                                    <span class="badge bg-secondary">N/A</span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -107,17 +134,23 @@
 
         <!-- Options de migration -->
         @if(isset($metadata['meta']['migration_options']))
-            <div class="section">
-                <h3 class="section-title"><i class="bi bi-gear"></i> Options de migration</h3>
-                <div class="options-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0;">
-                    @foreach($metadata['meta']['migration_options'] as $option => $value)
-                        <div class="option-item">
-                            <span class="option-label">{{ ucfirst(str_replace('_', ' ', $option)) }}:</span>
-                            <span class="badge {{ $value ? 'badge-success' : 'badge-secondary' }}">
-                                {{ $value ? 'Oui' : 'Non' }}
-                            </span>
-                        </div>
-                    @endforeach
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="section-title">
+                        <i class="bi bi-sliders text-primary"></i> Options de migration
+                    </h2>
+                    <div class="row g-2">
+                        @foreach($metadata['meta']['migration_options'] as $option => $value)
+                            <div class="col-md-6 col-lg-4">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <span class="small">{{ ucfirst(str_replace('_', ' ', $option)) }}:</span>
+                                    <span class="badge {{ $value ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ $value ? 'Oui' : 'Non' }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         @endif
@@ -125,62 +158,58 @@
 
     <!-- Fichiers de sauvegarde -->
     @if(count($backupFiles) > 0)
-        <div class="section">
-            <h3 class="section-title"><i class="bi bi-download"></i> Fichiers de sauvegarde</h3>
-            <div class="files-table" style="margin: 20px 0;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background: var(--gray-100); border-bottom: 2px solid var(--gray-200);">
-                            <th style="padding: 12px; text-align: left;"><i class="bi bi-file-code"></i> Nom du fichier</th>
-                            <th style="padding: 12px; text-align: right;"><i class="bi bi-hdd"></i> Taille</th>
-                            <th style="padding: 12px; text-align: center;"><i class="bi bi-clock"></i> Modifié</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($backupFiles as $file)
-                            <tr style="border-bottom: 1px solid var(--gray-200);">
-                                <td style="padding: 12px; font-family: monospace;">{{ $file['name'] }}</td>
-                                <td style="padding: 12px; text-align: right;">{{ human_readable_bytes_size($file['size'], 2) }}</td>
-                                <td style="padding: 12px; text-align: center;">{{ $file['modified']->format('d/m/Y H:i') }}</td>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="section-title">
+                    <i class="bi bi-files text-primary"></i> Fichiers de sauvegarde
+                </h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="bi bi-file-code"></i> Nom du fichier</th>
+                                <th class="text-end"><i class="bi bi-hdd"></i> Taille</th>
+                                <th class="text-center"><i class="bi bi-clock"></i> Modifié</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($backupFiles as $file)
+                                <tr>
+                                    <td class="font-monospace">{{ $file['name'] }}</td>
+                                    <td class="text-end">{{ human_readable_bytes_size($file['size'], 2) }}</td>
+                                    <td class="text-center">{{ $file['modified']->format('d/m/Y H:i') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     @else
-        <div class="empty-state">
-            <div class="empty-icon"><i class="bi bi-folder-open"></i></div>
-            <div class="empty-title">Aucun fichier de sauvegarde</div>
-            <div class="empty-description">
-                Cette session ne contient aucun fichier de sauvegarde.
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-folder-open display-1 text-muted"></i>
             </div>
+            <h3 class="text-muted mb-3">Aucun fichier de sauvegarde</h3>
+            <p class="text-muted">
+                Cette session ne contient aucun fichier de sauvegarde.
+            </p>
         </div>
     @endif
 
-    <!-- Répertoire de la session -->
-    <div class="section">
-        <h3 class="section-title"><i class="bi bi-info-circle"></i> Informations système</h3>
-        <div class="system-info" style="background: var(--gray-100); padding: 15px; border-radius: 8px; font-family: monospace; margin: 20px 0;">
-            <strong>Répertoire:</strong> {{ $sessionDir }}<br>
-            <strong>Session ID:</strong> {{ $sessionId }}
+    <!-- Informations système -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="section-title">
+                <i class="bi bi-info-circle text-primary"></i> Informations système
+            </h2>
+            <div class="bg-light p-3 rounded font-monospace">
+                <div class="mb-2"><strong>Répertoire:</strong> {{ $sessionDir }}</div>
+                <div><strong>Session ID:</strong> {{ $sessionId }}</div>
+            </div>
         </div>
     </div>
 
-    <!-- Actions -->
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        <div class="btn-group" role="group" aria-label="Actions de navigation">
-            <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Retour aux sessions
-            </a>
-            <button onclick="deleteCurrentSession()" class="btn btn-danger">
-                <i class="bi bi-trash"></i> Supprimer cette session
-            </button>
-        </div>
-        <button onclick="copySessionInfo()" class="btn btn-primary">
-            <i class="bi bi-clipboard"></i> Copier les infos
-        </button>
-    </div>
 @endsection
 
 @section('head-extra')

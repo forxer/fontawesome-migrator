@@ -17,14 +17,13 @@
         actionsLabel="Actions globales"
     >
         <x-slot name="actions">
-            <div class="btn-group">
-                <button onclick="refreshSessions()" class="btn btn-primary">
-                    <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
-                </button>
-                <button onclick="cleanupSessions()" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Nettoyer (30j+)
-                </button>
-            </div>
+            <li><a class="dropdown-item" href="#" onclick="refreshSessions(); return false;">
+                <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupSessions(); return false;">
+                <i class="bi bi-trash"></i> Nettoyer (30j+)
+            </a></li>
         </x-slot>
     </x-fontawesome-migrator::page-header>
 

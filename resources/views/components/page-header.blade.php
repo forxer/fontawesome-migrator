@@ -34,7 +34,11 @@
                             <i class="bi bi-gear"></i> {{ $actionsLabel }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            {{ $slot }}
+                            @if(isset($actions))
+                                {{ $actions }}
+                            @else
+                                {{ $slot }}
+                            @endif
                         </ul>
                     </div>
                     @endif
