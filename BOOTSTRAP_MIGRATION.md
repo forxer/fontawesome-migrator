@@ -13,6 +13,34 @@
 
 ## ✅ Migration TERMINÉE - 31/07/2025
 
+## 🔧 Améliorations Post-Migration - 01/08/2025
+
+### Phase E : Optimisation interface et cohérence (TERMINÉ)
+- [x] **Standardisation btn-group** : Ajout de btn-group partout où des boutons sont consécutifs
+  - Reports index/show, Sessions index/show, Tests index
+  - Classes responsive ajoutées pour mobile (flex-direction: column)
+- [x] **Suppression effets hover translateY** : Retrait des animations "levée" sur boutons uniquement
+  - Conservé sur cards pour l'effet visuel
+  - Effets simplifiés dans `common.blade.php` et `bootstrap-common.blade.php`
+- [x] **Simplification styles boutons custom** : Suppression complexité excessive
+  - Retrait effets brillance (::before animations)
+  - Retrait box-shadows importantes
+  - Conservation transition douce (0.2s ease) pour UX
+- [x] **Correction doublons boutons** : Suppression bouton "retour en haut" dupliqué
+  - Layout global conservé, vue rapport nettoyée
+  - JavaScript associé supprimé
+- [x] **Migration emojis → Bootstrap Icons complète** :
+  - Toggle buttons : ▶ ▼ → `bi-chevron-right` `bi-chevron-down`
+  - Tests JavaScript : 🚀 📋 📊 ❌ → `bi-rocket` `bi-clipboard` `bi-graph-up` `bi-x-square`
+  - Classes `.toggle-btn` → `.btn .btn-outline-primary .btn-sm`
+
+### Résultats
+- ✅ Interface 100% cohérente avec Bootstrap 5
+- ✅ Aucun emoji/Unicode restant dans les vues
+- ✅ Boutons standardisés avec btn-group responsive
+- ✅ Styles simplifiés et performants
+- ✅ UX préservée avec animations douces
+
 ### Phase A : Intégration Bootstrap (TERMINÉ)
 - [x] Intégrer Bootstrap 5.3.7 CDN (avec integrity hashes corrects)
 - [x] Intégrer Bootstrap Icons 1.13.1

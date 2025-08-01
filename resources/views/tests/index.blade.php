@@ -3,7 +3,6 @@
 @section('title', 'Tests - FontAwesome Migrator')
 
 @section('head-extra')
-    @include('fontawesome-migrator::partials.css.bootstrap-common')
     @include('fontawesome-migrator::partials.css.tests')
 @endsection
 
@@ -17,46 +16,43 @@
     </div>
 
     <!-- Statistiques des sauvegardes -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="bi bi-folder fs-1 text-primary mb-2"></i>
-                    <h3 class="card-title">{{ $backupStats['total_sessions'] }}</h3>
-                    <p class="card-text text-muted">Sessions</p>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title section-title"><i class="bi bi-bar-chart"></i> Statistiques globales</h2>
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <i class="bi bi-folder fs-1 text-primary mb-2"></i>
+                        <div class="display-6 fw-bold text-primary">{{ $backupStats['total_sessions'] }}</div>
+                        <div class="text-muted small">Sessions</div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
-                    <h3 class="card-title">{{ $backupStats['total_backups'] }}</h3>
-                    <p class="card-text text-muted">Sauvegardes</p>
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
+                        <div class="display-6 fw-bold text-primary">{{ $backupStats['total_backups'] }}</div>
+                        <div class="text-muted small">Sauvegardes</div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="bi bi-file-text fs-1 text-primary mb-2"></i>
-                    <h3 class="card-title">{{ human_readable_bytes_size($backupStats['total_size'], 2) }}</h3>
-                    <p class="card-text text-muted">Taille totale</p>
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <i class="bi bi-file-text fs-1 text-primary mb-2"></i>
+                        <div class="display-6 fw-bold text-primary">{{ human_readable_bytes_size($backupStats['total_size'], 2) }}</div>
+                        <div class="text-muted small">Taille totale</div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="bi bi-clock fs-1 text-primary mb-2"></i>
-                    <h3 class="card-title">
-                        @if($backupStats['last_session'])
-                            {{ $backupStats['last_session']['created_at']->format('d/m/Y à H:i') }}
-                        @else
-                            Aucune
-                        @endif
-                    </h3>
-                    <p class="card-text text-muted">Dernière session</p>
+                <div class="col-6 col-md-3">
+                    <div class="text-center">
+                        <i class="bi bi-clock fs-1 text-primary mb-2"></i>
+                        <div class="display-6 fw-bold text-primary">
+                            @if($backupStats['last_session'])
+                                {{ $backupStats['last_session']['created_at']->format('d/m') }}
+                            @else
+                                -
+                            @endif
+                        </div>
+                        <div class="text-muted small">Dernière session</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,48 +86,73 @@
     </div>
 
     <!-- Sessions disponibles -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title section-title"><i class="bi bi-graph-up"></i> Sessions Disponibles</h2>
+    <h2 class="section-title"><i class="bi bi-graph-up"></i> Sessions Disponibles</h2>
+    <div class="mb-4">
         @if(count($sessions) > 0)
-            <div class="sessions-grid">
+            <div class="row g-4">
                 @foreach($sessions as $session)
-                    <div class="session-card" data-session-id="{{ $session['session_id'] }}">
-                        <div class="session-header">
-                            <h3 class="section-title">Session {{ substr($session['session_id'], -8) }}</h3>
-                            <div class="session-badges">
-                                @if($session['dry_run'])
-                                    <span class="badge badge-warning">DRY-RUN</span>
-                                @else
-                                    <span class="badge badge-success">RÉEL</span>
-                                @endif
-                                <span class="badge badge-secondary">{{ $session['package_version'] ?? 'unknown' }}</span>
-                            </div>
-                        </div>
-                        <div class="session-details">
-                            <div class="session-stat">
-                                <strong><i class="bi bi-clock"></i> Créée :</strong> {{ $session['created_at']->format('d/m/Y à H:i') }}
-                            </div>
-                            <div class="session-stat">
-                                <strong><i class="bi bi-hdd"></i> Sauvegardes :</strong> {{ $session['backup_count'] }}
-                            </div>
-                            @if($session['duration'])
-                                <div class="session-stat">
-                                    <strong><i class="bi bi-clock"></i> Durée :</strong> {{ $session['duration'] }}s
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 entity-card" data-session-id="{{ $session['session_id'] }}">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3">
+                                    <i class="bi bi-folder fs-2 text-primary"></i>
                                 </div>
-                            @endif
-                        </div>
-                        <div class="session-actions">
-                            <button class="btn btn-sm btn-primary inspect-session-btn" data-session-id="{{ $session['session_id'] }}">
-                                <i class="bi bi-search"></i> Inspecter
-                            </button>
-                            @if ($session['has_metadata'])
-                                <span class="badge bg-success"><i class="bi bi-check-square"></i> Métadonnées</span>
-                            @else
-                                <span class="badge bg-danger"><i class="bi bi-x-square"></i> Métadonnées</span>
-                            @endif
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1">Session <span data-bs-toggle="tooltip" title="ID complet : {{ $session['session_id'] }}">{{ substr($session['session_id'], -8) }}</span></h5>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-clock"></i> {{ $session['created_at']->format('d/m/Y à H:i') }}
+                                        @if($session['dry_run'])
+                                            <span class="badge bg-warning text-dark ms-2">DRY-RUN</span>
+                                        @else
+                                            <span class="badge bg-success ms-2">RÉEL</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row text-center g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-bold text-primary">{{ $session['backup_count'] }}</div>
+                                        <div class="small text-muted"><i class="bi bi-hdd"></i> Sauvegardes</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-bold text-primary">{{ $session['package_version'] ?? '?' }}</div>
+                                        <div class="small text-muted"><i class="bi bi-file-text"></i> Version</div>
+                                    </div>
+                                </div>
+                                @if($session['duration'])
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        <div class="fw-bold text-primary">{{ $session['duration'] }}s</div>
+                                        <div class="small text-muted"><i class="bi bi-clock"></i> Durée</div>
+                                    </div>
+                                </div>
+                                @endif
+                                <div class="col-6">
+                                    <div class="border rounded p-2">
+                                        @if ($session['has_metadata'])
+                                            <div class="fw-bold text-success"><i class="bi bi-check-square"></i></div>
+                                            <div class="small text-muted">Métadonnées</div>
+                                        @else
+                                            <div class="fw-bold text-danger"><i class="bi bi-x-square"></i></div>
+                                            <div class="small text-muted">Métadonnées</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-group-vertical btn-group-sm d-grid" role="group" aria-label="Actions de la session">
+                                <button class="btn btn-primary inspect-session-btn" data-session-id="{{ $session['session_id'] }}">
+                                    <i class="bi bi-search"></i> Inspecter
+                                </button>
+                            </div>
                         </div>
                     </div>
+                </div>
                 @endforeach
             </div>
         @else
@@ -143,7 +164,6 @@
                 <p class="text-muted">Lancez un test de migration pour créer votre première session.</p>
             </div>
         @endif
-        </div>
     </div>
 
     <!-- Modal d'inspection des sessions -->

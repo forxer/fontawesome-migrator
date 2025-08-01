@@ -2,10 +2,6 @@
 
 @section('title', 'Rapports FontAwesome Migrator')
 
-@section('head-extra')
-    @include('fontawesome-migrator::partials.css.reports')
-@endsection
-
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -26,6 +22,7 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card text-center h-100">
                         <div class="card-body">
+                            <i class="bi bi-file-text fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ count($reports) }}</div>
                             <div class="text-muted small">Rapports</div>
                         </div>
@@ -34,14 +31,16 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card text-center h-100">
                         <div class="card-body">
+                            <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size(array_sum(array_column($reports, 'size')), 2) }}</div>
-                            <div class="text-muted small">Total</div>
+                            <div class="text-muted small">Taille totale</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="card text-center h-100">
                         <div class="card-body">
+                            <i class="bi bi-clock fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
                             <div class="text-muted small">Dernier rapport</div>
                         </div>
@@ -50,6 +49,7 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card text-center h-100">
                         <div class="card-body">
+                            <i class="bi bi-calendar-week fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ collect($reports)->filter(fn($r) => $r['created_at']->isAfter(now()->subWeek()))->count() }}</div>
                             <div class="text-muted small">Cette semaine</div>
                         </div>
@@ -77,7 +77,7 @@
     <div id="alerts"></div>
 
     @if (count($reports) > 0)
-        <div class="row g-4">
+        <div class="row g-4 mb-4">
             @foreach ($reports as $report)
                 <div class="col-lg-6 col-xl-4">
                     <div class="card h-100 shadow-sm" data-filename="{{ $report['filename'] }}">
