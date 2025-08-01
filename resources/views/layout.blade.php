@@ -17,31 +17,31 @@
     @include('fontawesome-migrator::partials.css.bootstrap-common')
 </head>
 <body>
-    <!-- Menu de navigation Bootstrap -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Menu de navigation Bootstrap moderne -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm border-bottom">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('fontawesome-migrator.home') }}">
-                <i class="bi bi-arrow-repeat text-primary"></i>
-                FontAwesome Migrator
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('fontawesome-migrator.home') }}">
+                <i class="bi bi-arrow-repeat text-primary fs-4 me-2"></i>
+                <span class="fw-bold">FontAwesome Migrator</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.reports.index') }}">
-                            <i class="bi bi-file-text"></i> Rapports
+                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.reports.index') }}">
+                            <i class="bi bi-file-text me-1"></i> Rapports
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('fontawesome-migrator.sessions.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.sessions.index') }}">
-                            <i class="bi bi-folder"></i> Sessions
+                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.sessions.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.sessions.index') }}">
+                            <i class="bi bi-folder me-1"></i> Sessions
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('fontawesome-migrator.tests.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.tests.index') }}">
-                            <i class="bi bi-flask"></i> Tests
+                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.tests.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.tests.index') }}">
+                            <i class="bi bi-flask me-1"></i> Tests
                         </a>
                     </li>
                 </ul>
@@ -50,7 +50,7 @@
     </nav>
 
     <!-- Fil d'ariane -->
-    <div class="container">
+    <div class="container mt-3">
         {!! Breadcrumbs::render() !!}
     </div>
 

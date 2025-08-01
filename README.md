@@ -41,7 +41,8 @@
 - ✅ **Rapports détaillés** HTML et JSON avec métadonnées intégrées
 - ✅ **Interface web complète** de gestion des rapports et sessions
 - ✅ **Contrôleurs organisés** et navigation moderne (nouveau v2.0)
-- ✅ **Design system moderne** avec FontAwesome 7.0.0 et animations optimisées
+- ✅ **Design system Bootstrap 5** : Interface moderne et responsive
+- ✅ **Migration UI complète** : Bootstrap 5.3.7 avec composants natifs
 - ✅ **Mode dry-run** pour prévisualiser les changements
 - ✅ **Modes de migration** : complet, icônes uniquement, assets uniquement
 - ✅ **Gestion des sessions** : inspection, nettoyage, statistiques
@@ -478,16 +479,19 @@ L'interface de gestion des rapports offre :
 
 **🔄 Interface dynamique**
 - Actualisation AJAX sans rechargement de page
-- Animations et transitions fluides
-- Responsive design pour mobile et desktop
+- **Bootstrap Icons 1.13.1** : Icônes cohérentes sur toute l'interface
+- **Classes utilitaires Bootstrap** : Espacement, couleurs et typographie
+- **Performance améliorée** : Pas de dépendances CSS/JS externes
 
-### 🎨 Design moderne
+### 🎨 Design Bootstrap 5 moderne
 
-L'interface utilise un design moderne avec :
-- Gradients et ombres pour un aspect professionnel
-- Cards avec effets hover pour une UX intuitive
-- Icons et couleurs cohérentes avec l'identité FontAwesome
-- États vides informatifs quand aucun rapport n'existe
+L'interface a été entièrement migrée vers Bootstrap 5.3.7 :
+- **Composants Bootstrap natifs** : Cards, Tables, Navbar, Breadcrumbs
+- **Design system cohérent** : Classes Bootstrap sur toute l'application
+- **Performance optimisée** : Suppression de Chart.js, CSS/JS inline
+- **Navigation moderne** : Navbar sticky avec breadcrumbs intégrés
+- **Responsive mobile-first** : Grilles Bootstrap adaptatives
+- **États vides informatifs** : Messages clairs avec suggestions d'actions
 
 ## 🧪 Panneau de Debug (Nouveau v2.0)
 
@@ -744,6 +748,8 @@ La version 2.0.0 est actuellement en développement avec des améliorations arch
 - ✅ **Système de métadonnées centralisé** avec gestion des sessions
 - ✅ **Interface web reorganisée** avec contrôleurs spécialisés
 - ✅ **Navigation fluide** entre rapports, sessions et tests
+- ✅ **Migration Bootstrap 5** : Design system moderne et cohérent
+- ✅ **Breadcrumbs Laravel** : Navigation contextuelle avec diglactic/laravel-breadcrumbs
 - 🚧 **Tests automatisés** en cours de refonte pour la nouvelle architecture
 
 Cette version majeure accepte les breaking changes pour une architecture plus moderne et maintenable.

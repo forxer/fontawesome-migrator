@@ -24,6 +24,10 @@ CHANGELOG
 - **Modern UI Design**: Remplacement systématique des emojis par icônes FontAwesome sémantiquement cohérentes
 - **Bubble Animation System**: Animation de bulles optimisée avec performance GPU (translate3d)
 - **Mixed Icon Styles**: Équilibre intelligent entre fa-regular et fa-solid selon disponibilité
+- **Bootstrap 5.3.7 Migration**: Migration complète de l'interface vers Bootstrap 5 avec composants natifs
+- **Laravel Breadcrumbs**: Intégration du package diglactic/laravel-breadcrumbs pour navigation contextuelle
+- **Bootstrap Components**: Utilisation exclusive des composants Bootstrap (Cards, Tables, Navbar, etc.)
+- **Performance Optimization**: Suppression de Chart.js et optimisation CSS/JS inline
 
 ### Changed
 - **MigrateCommand**: Services injectés via `handle(FileScanner, IconReplacer, MigrationReporter, AssetMigrator, MetadataManager)`
