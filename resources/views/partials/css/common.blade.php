@@ -46,10 +46,6 @@
         --shadow-colored: 0 8px 32px rgba(66, 153, 225, 0.3);
     }
 
-    * {
-        box-sizing: border-box;
-    }
-
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         margin: 0;
@@ -59,81 +55,6 @@
         color: var(--gray-800);
         line-height: 1.6;
     }
-
-    /* Navigation */
-    .navbar {
-        background: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    .navbar-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 60px;
-    }
-
-    .navbar-brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-        font-size: 1.2em;
-        color: var(--gray-800);
-    }
-
-    .navbar-logo {
-        font-size: 1.5em;
-    }
-
-    .navbar-menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        gap: 8px;
-    }
-
-    .navbar-item {
-        margin: 0;
-    }
-
-    .navbar-link {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 10px 16px;
-        color: var(--gray-600);
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.2s;
-        font-weight: 500;
-    }
-
-    .navbar-link:hover {
-        background: var(--gray-100);
-        color: var(--gray-800);
-    }
-
-    .navbar-link.active {
-        background: var(--primary-color);
-        color: white;
-    }
-
-
-    /* Container */
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
 
     .header {
         background: white;

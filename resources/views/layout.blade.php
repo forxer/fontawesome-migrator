@@ -18,11 +18,11 @@
 </head>
 <body>
     <!-- Menu de navigation Bootstrap -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-        <div class="container-fluid" style="max-width: 1200px;">
-            <a class="navbar-brand d-flex align-items-center gap-3 fw-semibold" href="{{ route('fontawesome-migrator.home') }}">
-                <span class="fs-3"><i class="bi bi-arrow-repeat text-primary"></i></span>
-                <span>FontAwesome Migrator</span>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('fontawesome-migrator.home') }}">
+                <i class="bi bi-arrow-repeat text-primary"></i>
+                FontAwesome Migrator
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -30,17 +30,17 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.reports.index') }}">
+                        <a class="nav-link {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.reports.index') }}">
                             <i class="bi bi-file-text"></i> Rapports
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('fontawesome-migrator.sessions.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.sessions.index') }}">
+                        <a class="nav-link {{ request()->routeIs('fontawesome-migrator.sessions.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.sessions.index') }}">
                             <i class="bi bi-folder"></i> Sessions
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('fontawesome-migrator.tests.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.tests.index') }}">
+                        <a class="nav-link {{ request()->routeIs('fontawesome-migrator.tests.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.tests.index') }}">
                             <i class="bi bi-flask"></i> Tests
                         </a>
                     </li>
