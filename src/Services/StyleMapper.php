@@ -2,12 +2,35 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+
+/**
+ * Service de mapping des styles FontAwesome
+ * Adapté pour utiliser l'architecture multi-versions
+ */
 class StyleMapper
 {
     protected array $styleMapping;
 
+    protected MigrationVersionManager $versionManager;
+
+    protected ?VersionMapperInterface $currentMapper = null;
+
+    protected string $sourceVersion = '5';
+
+    protected string $targetVersion = '6';
+
     public function __construct()
     {
+        $this->versionManager = new MigrationVersionManager();
+
+        // Déterminer les versions depuis la config si disponible
+        $config = $this->getConfig();
+        $this->sourceVersion = $config['source_version'] ?? '5';
+        $this->targetVersion = $config['target_version'] ?? '6';
+
+        // Initialiser le mapper et le mapping pour compatibilité
+        $this->initializeMapper();
         $this->initializeStyleMapping();
     }
 
@@ -20,31 +43,36 @@ class StyleMapper
     }
 
     /**
+     * Initialiser le mapper pour les versions configurées
+     */
+    protected function initializeMapper(): void
+    {
+        $this->currentMapper = $this->versionManager->createMapper(
+            $this->sourceVersion,
+            $this->targetVersion
+        );
+    }
+
+    /**
      * Initialiser le mapping des styles FA5 vers FA6
      */
     protected function initializeStyleMapping(): void
     {
-        // Mapping COMPLET de tous les styles FA5 → FA6
-        // Peu importe la licence, tous les styles sont reconnus et convertis
-        $this->styleMapping = [
-            // Styles de base (Free)
-            'fas' => 'fa-solid',
-            'far' => 'fa-regular',
-            'fab' => 'fa-brands',
-            'fa-solid' => 'fa-solid',
-            'fa-regular' => 'fa-regular',
-            'fa-brands' => 'fa-brands',
+        // Utiliser les mappings du mapper multi-versions
+        $this->styleMapping = $this->currentMapper->getStyleMappings();
+    }
 
-            // Styles Pro (toujours mappés pour la conversion)
-            'fal' => 'fa-light',
-            'fad' => 'fa-duotone',
-            'fa-light' => 'fa-light',
-            'fa-duotone' => 'fa-duotone',
+    /**
+     * Définir les versions de migration
+     */
+    public function setVersions(string $sourceVersion, string $targetVersion): self
+    {
+        $this->sourceVersion = $sourceVersion;
+        $this->targetVersion = $targetVersion;
+        $this->initializeMapper();
+        $this->initializeStyleMapping();
 
-            // Nouveaux styles FA6 Pro
-            'fa-thin' => 'fa-thin',
-            'fa-sharp' => 'fa-sharp',
-        ];
+        return $this;
     }
 
     /**
@@ -52,8 +80,7 @@ class StyleMapper
      */
     public function mapStyle(string $fa5Style): string
     {
-        // Style non reconnu, retourner tel quel
-        return $this->styleMapping[$fa5Style] ?? $fa5Style;
+        return $this->currentMapper->mapStyle($fa5Style, false);
     }
 
     /**
@@ -61,16 +88,7 @@ class StyleMapper
      */
     public function mapStyleWithFallback(string $fa5Style): string
     {
-        $mappedStyle = $this->mapStyle($fa5Style);
-
-        // Appliquer le fallback seulement si licence Free ET style Pro
-        $config = $this->getConfig();
-
-        if (($config['license_type'] ?? 'free') === 'free' && $this->isProStyle($mappedStyle)) {
-            return $this->getFallbackStyle();
-        }
-
-        return $mappedStyle;
+        return $this->currentMapper->mapStyle($fa5Style, true);
     }
 
     /**
@@ -193,9 +211,7 @@ class StyleMapper
      */
     public function isProStyle(string $style): bool
     {
-        $proStyles = ['fal', 'fad', 'fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp'];
-
-        return \in_array($style, $proStyles);
+        return $this->currentMapper->isProStyle($style);
     }
 
     /**
@@ -213,5 +229,24 @@ class StyleMapper
 
             return $newStyle.' '.$iconName;
         }, $cssClass);
+    }
+
+    /**
+     * Obtenir les versions de migration actuelles
+     */
+    public function getMigrationVersions(): array
+    {
+        return [
+            'source' => $this->sourceVersion,
+            'target' => $this->targetVersion,
+        ];
+    }
+
+    /**
+     * Propriétés pour compatibilité (accès direct)
+     */
+    public function getStyleMapping(): array
+    {
+        return $this->styleMapping;
     }
 }
