@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services;
 
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\Mappers\FontAwesome4To5Mapper;
 use FontAwesome\Migrator\Services\Mappers\FontAwesome5To6Mapper;
+use FontAwesome\Migrator\Services\Mappers\FontAwesome6To7Mapper;
 use InvalidArgumentException;
 
 /**
@@ -112,7 +114,7 @@ class MigrationVersionManager
             [
                 'from' => '4',
                 'to' => '5',
-                'mapper' => 'FontAwesome\\Migrator\\Services\\Mappers\\FontAwesome4To5Mapper',
+                'mapper' => FontAwesome4To5Mapper::class,
                 'description' => 'Migration FontAwesome 4 → 5 (préfixes + noms)',
             ],
             [
@@ -124,7 +126,7 @@ class MigrationVersionManager
             [
                 'from' => '6',
                 'to' => '7',
-                'mapper' => 'FontAwesome\\Migrator\\Services\\Mappers\\FontAwesome6To7Mapper',
+                'mapper' => FontAwesome6To7Mapper::class,
                 'description' => 'Migration FontAwesome 6 → 7 (modernisation + comportements)',
             ],
         ];

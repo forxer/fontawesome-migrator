@@ -227,7 +227,7 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
         }
 
         // Ajouter info de style dans les warnings
-        if (! empty($result['warnings'])) {
+        if (isset($result['warnings']) && $result['warnings'] !== []) {
             $result['warnings'][] = \sprintf('Nouveau style recommandé: %s', $newStyle);
         }
 
@@ -276,7 +276,7 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
 
         // Rechercher dans les icônes renommées
         foreach ($this->iconMappings as $old => $new) {
-            if (str_contains($old, $searchTerm) || str_contains($new, $searchTerm)) {
+            if (str_contains($old, $searchTerm) || str_contains((string) $new, $searchTerm)) {
                 $similar[] = [
                     'icon' => $new,
                     'reason' => 'Migration FA4→FA5',
@@ -287,7 +287,7 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
 
         // Rechercher dans les nouvelles icônes FA5
         foreach ($this->newIcons as $newIcon) {
-            if (str_contains($newIcon, $searchTerm)) {
+            if (str_contains((string) $newIcon, $searchTerm)) {
                 $similar[] = [
                     'icon' => $newIcon,
                     'reason' => 'Nouvelle icône FA5',
@@ -328,12 +328,8 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
         }
 
         // Si pas de mapping et c'est déprécié, problématique
-        if (\in_array($iconName, $this->deprecatedIcons)) {
-            return false;
-        }
-
         // Pour les autres, on assume qu'elles existent (à vérifier)
-        return true;
+        return ! \in_array($iconName, $this->deprecatedIcons);
     }
 
     public function getDetectionPatterns(): array

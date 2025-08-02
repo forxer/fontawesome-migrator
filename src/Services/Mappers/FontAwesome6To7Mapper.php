@@ -122,19 +122,11 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
         // Vérifier si l'icône/classe est dépréciée
         if (\in_array($iconName, $this->deprecatedIcons)) {
             $result['deprecated'] = true;
-
-            switch ($iconName) {
-                case 'fa-fw':
-                    $result['warnings'][] = 'fa-fw déprécié : largeur fixe maintenant par défaut en FA7';
-                    break;
-
-                case 'sr-only':
-                    $result['warnings'][] = 'sr-only supprimé : utiliser aria-label pour l\'accessibilité';
-                    break;
-
-                default:
-                    $result['warnings'][] = 'Élément déprécié en FA7: '.$iconName;
-            }
+            $result['warnings'][] = match ($iconName) {
+                'fa-fw' => 'fa-fw déprécié : largeur fixe maintenant par défaut en FA7',
+                'sr-only' => 'sr-only supprimé : utiliser aria-label pour l\'accessibilité',
+                default => 'Élément déprécié en FA7: '.$iconName,
+            };
         }
 
         // Vérifier si l'icône est Pro uniquement
@@ -147,7 +139,7 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
         }
 
         // Avertissements spécifiques FA7
-        $this->addFA7SpecificWarnings($result, $iconName, $style);
+        $this->addFA7SpecificWarnings($result, $iconName);
 
         return $result;
     }
@@ -185,7 +177,7 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
 
         // Rechercher dans les icônes renommées
         foreach ($this->iconMappings as $old => $new) {
-            if (str_contains($old, $searchTerm) || str_contains($new, $searchTerm)) {
+            if (str_contains($old, $searchTerm) || str_contains((string) $new, $searchTerm)) {
                 $similar[] = [
                     'icon' => $new,
                     'reason' => 'Migration FA6→FA7',
@@ -196,7 +188,7 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
 
         // Rechercher dans les nouvelles icônes FA7
         foreach ($this->newIcons as $newIcon) {
-            if (str_contains($newIcon, $searchTerm)) {
+            if (str_contains((string) $newIcon, $searchTerm)) {
                 $similar[] = [
                     'icon' => $newIcon,
                     'reason' => 'Nouvelle fonctionnalité FA7',
@@ -264,7 +256,7 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
     /**
      * Ajouter des avertissements spécifiques à FA7
      */
-    private function addFA7SpecificWarnings(array &$result, string $iconName, string $style): void
+    private function addFA7SpecificWarnings(array &$result, string $iconName): void
     {
         // Avertissement largeur fixe par défaut
         if (str_contains($iconName, 'fa-fw')) {
