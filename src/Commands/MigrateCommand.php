@@ -124,7 +124,7 @@ class MigrateCommand extends Command
         $fromVersion = $this->metadata->get('source_version') ?? '5';
         $toVersion = $this->metadata->get('target_version') ?? '6';
 
-        note("🌐 Migration configurée : FontAwesome {$fromVersion} → {$toVersion}");
+        note(\sprintf('🌐 Migration configurée : FontAwesome %s → %s', $fromVersion, $toVersion));
 
         // Sélection du mode de migration
         $migrationMode = select(
@@ -287,7 +287,7 @@ class MigrateCommand extends Command
 
         if ($migrateIcons) {
             $fromVersion = $this->metadata->get('source_version') ?? '5';
-            $this->info("🔍 Recherche des icônes FontAwesome {$fromVersion}...");
+            $this->info(\sprintf('🔍 Recherche des icônes FontAwesome %s...', $fromVersion));
             $iconResults = $this->replacer->processFiles($files, $isDryRun);
             $results = $iconResults;
 
@@ -297,7 +297,7 @@ class MigrateCommand extends Command
 
         if ($migrateAssets) {
             $fromVersion = $this->metadata->get('source_version') ?? '5';
-            $this->info("🎨 Migration des assets FontAwesome {$fromVersion}...");
+            $this->info(\sprintf('🎨 Migration des assets FontAwesome %s...', $fromVersion));
             $assetResults = $this->processAssets($files, $isDryRun);
 
             if ($migrateIcons) {
@@ -608,8 +608,8 @@ class MigrateCommand extends Command
      */
     protected function configureVersions(?string $fromVersion = null, ?string $toVersion = null): void
     {
-        $fromVersion = $fromVersion ?? $this->option('from');
-        $toVersion = $toVersion ?? $this->option('to');
+        $fromVersion ??= $this->option('from');
+        $toVersion ??= $this->option('to');
 
         // Détection automatique de la version source si non spécifiée
         if (! $fromVersion) {
@@ -642,12 +642,12 @@ class MigrateCommand extends Command
 
         // Valider la migration
         if (! $this->versionManager->isMigrationSupported($fromVersion, $toVersion)) {
-            $this->error("❌ Migration FontAwesome {$fromVersion} → {$toVersion} non supportée");
+            $this->error(\sprintf('❌ Migration FontAwesome %s → %s non supportée', $fromVersion, $toVersion));
             $supported = $this->versionManager->getSupportedMigrations();
             $this->info('Migrations supportées :');
 
             foreach ($supported as $migration) {
-                $this->info("  - FA{$migration['from']} → FA{$migration['to']}: {$migration['description']}");
+                $this->info(\sprintf('  - FA%s → FA%s: %s', $migration['from'], $migration['to'], $migration['description']));
             }
 
             exit(Command::FAILURE);
@@ -792,8 +792,8 @@ class MigrateCommand extends Command
             }
         }
 
-        if ($detectedVersion) {
-            note("🎯 Version détectée : FontAwesome {$detectedVersion}");
+        if ($detectedVersion !== null && $detectedVersion !== '' && $detectedVersion !== '0') {
+            note('🎯 Version détectée : FontAwesome '.$detectedVersion);
         }
 
         // Sélection de la version source
@@ -820,12 +820,12 @@ class MigrateCommand extends Command
 
             foreach ($migrations as $migration) {
                 if ($migration['from'] === $fromVersion) {
-                    $availableTargets[$migration['to']] = "FontAwesome {$migration['to']} - {$migration['description']}";
+                    $availableTargets[$migration['to']] = \sprintf('FontAwesome %s - %s', $migration['to'], $migration['description']);
                 }
             }
 
-            if (empty($availableTargets)) {
-                warning("Aucune migration disponible depuis FontAwesome {$fromVersion}");
+            if ($availableTargets === []) {
+                warning('Aucune migration disponible depuis FontAwesome '.$fromVersion);
 
                 exit(Command::FAILURE);
             }
