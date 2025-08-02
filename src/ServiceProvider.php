@@ -3,7 +3,6 @@
 namespace FontAwesome\Migrator;
 
 use Carbon\Carbon;
-use FontAwesome\Migrator\Commands\BackupCommand;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
@@ -44,7 +43,6 @@ class ServiceProvider extends BaseServiceProvider
 
         // Enregistrer les commandes (toujours disponibles pour Artisan::call)
         $this->commands([
-            BackupCommand::class,
             ConfigureCommand::class,
             InstallCommand::class,
             MigrateCommand::class,
@@ -81,9 +79,5 @@ class ServiceProvider extends BaseServiceProvider
             $this->basePath.'/config/fontawesome-migrator.php' => config_path('fontawesome-migrator-full.php'),
         ], 'fontawesome-migrator-config-full');
 
-        // Publier les fichiers de mapping
-        $this->publishes([
-            __DIR__.'/Mappers' => resource_path('fontawesome-migrator/mappers'),
-        ], 'fontawesome-migrator-mappers');
     }
 }

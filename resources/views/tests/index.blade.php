@@ -185,28 +185,6 @@
         </div>
     </div>
 
-    <!-- Tests Rapides (Legacy) -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="section-title">
-                <i class="bi bi-rocket text-primary"></i> Tests Rapides (Legacy FA5→6)
-            </h2>
-            <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
-                <button onclick="runTest('dry-run')" class="btn btn-primary test-btn" data-type="dry-run">
-                    <i class="bi bi-eye"></i> Test Dry-Run
-                </button>
-                <button onclick="runTest('icons-only')" class="btn btn-outline-primary test-btn" data-type="icons-only">
-                    <i class="bi bi-palette"></i> Test Icônes
-                </button>
-                <button onclick="runTest('assets-only')" class="btn btn-outline-primary test-btn" data-type="assets-only">
-                    <i class="bi bi-file-code"></i> Test Assets
-                </button>
-                <button onclick="runTest('real')" class="btn btn-danger test-btn" data-type="real">
-                    <i class="bi bi-lightning-fill"></i> Test Réel
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Navigation vers les sessions -->
     <div class="card mb-4">
@@ -248,32 +226,7 @@
 
 @section('scripts')
 <style>
-    /* Loading spinner pour les boutons */
-    .test-btn.loading {
-        position: relative;
-        pointer-events: none;
-    }
-
-    .test-btn.loading::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: 15px;
-        width: 16px;
-        height: 16px;
-        border: 2px solid transparent;
-        border-top: 2px solid currentColor;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        transform: translateY(-50%);
-    }
-
-    @keyframes spin {
-        to {
-            transform: translateY(-50%) rotate(360deg);
-        }
-    }
-
+    /* Styles pour l'interface multi-versions */
 </style>
 
 <script>
@@ -562,69 +515,6 @@ ${data.error || data.output}
     }
 }
 
-async function runTest(type) {
-    const button = document.querySelector(`[data-type="${type}"]`);
-    const output = document.getElementById('test-output');
-    const result = document.getElementById('test-result');
-
-    // Désactiver le bouton et afficher le loading
-    button.disabled = true;
-    button.classList.add('loading');
-    output.style.display = 'block';
-    result.innerHTML = `<i class="bi bi-rocket"></i> Lancement du test ${type}...\n`;
-
-    try {
-        const response = await fetch('/fontawesome-migrator/tests/migration', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': window.csrfToken
-            },
-            body: JSON.stringify({ type: type })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            result.innerHTML = `<i class="bi bi-check-square text-success"></i> Test ${type} terminé avec succès!
-
-<strong><i class="bi bi-rocket"></i> Commande :</strong>
-${data.command}
-
-<strong><i class="bi bi-terminal"></i> Résultat :</strong>
-${data.output}
-
-<i class="bi bi-clock"></i> Terminé à ${data.timestamp}`;
-
-            // Ajouter un bouton pour recharger manuellement
-            const reloadBtn = document.createElement('button');
-            reloadBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Recharger la page';
-            reloadBtn.className = 'btn btn-primary mt-3';
-            reloadBtn.onclick = () => location.reload();
-            output.appendChild(reloadBtn);
-
-            showAlert('Test terminé avec succès');
-        } else {
-            result.innerHTML = `<i class="bi bi-x-square text-danger"></i> Erreur lors du test ${type}
-
-<strong><i class="bi bi-rocket"></i> Commande :</strong>
-${data.command || 'Non disponible'}
-
-<strong><i class="bi bi-exclamation-triangle"></i> Erreur :</strong>
-${data.error || data.output}
-
-<i class="bi bi-clock"></i> Terminé à ${data.timestamp}`;
-
-            showAlert('Erreur lors du test', 'error');
-        }
-    } catch (error) {
-        result.innerHTML = `<i class="bi bi-wifi-off text-danger"></i> Erreur de connexion\n\n${error.message}`;
-        showAlert('Erreur de connexion', 'error');
-    } finally {
-        button.disabled = false;
-        button.classList.remove('loading');
-    }
-}
 
 
 async function cleanupSessions(days) {

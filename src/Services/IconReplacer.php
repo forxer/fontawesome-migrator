@@ -6,8 +6,6 @@ use Exception;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Support\Facades\File;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 
 class IconReplacer
 {
@@ -287,115 +285,6 @@ class IconReplacer
                 'created_at' => date('Y-m-d H:i:s'),
                 'size' => File::size($backupPath),
             ];
-        }
-
-        return false;
-    }
-
-    /**
-     * Restaurer un fichier depuis sa sauvegarde
-     */
-    public function restoreFromBackup(string $filePath, ?string $backupTimestamp = null): bool
-    {
-        $backupDir = $this->config['backup_path'];
-        $relativePath = str_replace(base_path().'/', '', $filePath);
-
-        if ($backupTimestamp !== null && $backupTimestamp !== '' && $backupTimestamp !== '0') {
-            $backupPath = $backupDir.'/'.$relativePath.'.backup.'.$backupTimestamp;
-        } else {
-            // Trouver la sauvegarde la plus récente
-            $pattern = $backupDir.'/'.$relativePath.'.backup.*';
-            $backups = glob($pattern);
-
-            if ($backups === [] || $backups === false) {
-                return false;
-            }
-
-            // Trier par date de modification décroissante
-            usort($backups, fn ($a, $b): int => filemtime($b) <=> filemtime($a));
-            $backupPath = $backups[0];
-        }
-
-        if (! File::exists($backupPath)) {
-            return false;
-        }
-
-        return File::copy($backupPath, $filePath);
-    }
-
-    /**
-     * Lister les sauvegardes disponibles pour un fichier
-     */
-    public function listBackups(string $filePath): array
-    {
-        $backupDir = $this->config['backup_path'];
-        $relativePath = str_replace(base_path().'/', '', $filePath);
-        $pattern = $backupDir.'/'.$relativePath.'.backup.*';
-
-        $backups = glob($pattern);
-
-        return array_map(function ($backupPath): array {
-            $timestamp = basename($backupPath);
-            $timestamp = str_replace(basename($backupPath, '.backup.*').'.backup.', '', $timestamp);
-
-            return [
-                'path' => $backupPath,
-                'timestamp' => $timestamp,
-                'created_at' => date('Y-m-d H:i:s', filemtime($backupPath)),
-                'size' => filesize($backupPath),
-            ];
-        }, $backups);
-    }
-
-    /**
-     * Nettoyer les anciennes sauvegardes
-     */
-    public function cleanOldBackups(int $daysToKeep = 30): int
-    {
-        $backupDir = $this->config['backup_path'];
-
-        if (! File::exists($backupDir)) {
-            return 0;
-        }
-
-        $cutoffTime = time() - ($daysToKeep * 24 * 60 * 60);
-        $deleted = 0;
-
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($backupDir)
-        );
-
-        foreach ($iterator as $file) {
-            if (! ($file->isFile() && str_contains((string) $file->getFilename(), '.backup.'))) {
-                continue;
-            }
-
-            if ($file->getMTime() >= $cutoffTime) {
-                continue;
-            }
-
-            if (! File::delete($file->getRealPath())) {
-                continue;
-            }
-
-            $deleted++;
-        }
-
-        return $deleted;
-    }
-
-    /**
-     * Valider qu'un remplacement est correct
-     */
-    protected function validateReplacement(array $icon, string $newString): bool
-    {
-        // Vérifier que la nouvelle chaîne contient bien les nouveaux préfixes FA6
-        $fa6Styles = ['fa-solid', 'fa-regular', 'fa-light', 'fa-brands', 'fa-duotone', 'fa-thin', 'fa-sharp'];
-
-        foreach ($fa6Styles as $style) {
-            if (str_contains($newString, $style)) {
-                return true;
-            }
         }
 
         return false;

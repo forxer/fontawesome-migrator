@@ -681,9 +681,6 @@ class MigrateCommand extends Command
             'migration_source' => $this->option('web-interface') ? 'web_interface' : 'command_line',
         ]);
 
-        // Configurer IconReplacer avec le bon mapper
-        $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
-        $this->replacer = app()->make(IconReplacer::class, ['mapper' => $mapper]);
     }
 
     /**
@@ -698,7 +695,7 @@ class MigrateCommand extends Command
         } elseif ($this->option('no-backup')) {
             $result = false;
         } else {
-            $result = config('fontawesome-migrator.backup.enabled', true);
+            $result = config('fontawesome-migrator.backup_files', true);
         }
 
         return $result;
@@ -770,7 +767,7 @@ class MigrateCommand extends Command
             'Cache routes' => app()->getCachedRoutesPath() ?: 'Non mis en cache',
             'Sessions path' => config('fontawesome-migrator.sessions_path'),
             'License type' => config('fontawesome-migrator.license_type'),
-            'Backup enabled' => config('fontawesome-migrator.backup.enabled') ? 'Oui' : 'Non',
+            'Backup enabled' => config('fontawesome-migrator.backup_files') ? 'Oui' : 'Non',
         ];
 
         // Afficher les chemins de scan

@@ -41,9 +41,8 @@ class MetadataManager
                 'license_type' => $this->config['license_type'],
                 'scan_paths' => $this->config['scan_paths'] ?? [],
                 'file_extensions' => $this->config['file_extensions'] ?? [],
-                'backup_enabled' => $this->config['backup']['enabled'] ?? true,
-                'backup_path' => $this->config['backup']['path'] ?? null,
-                'report_path' => $this->config['report_path'] ?? null,
+                'backup_enabled' => $this->config['backup_files'] ?? true,
+                'sessions_path' => $this->config['sessions_path'] ?? null,
             ],
             'migration_options' => [],
             'runtime' => [
