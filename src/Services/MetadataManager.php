@@ -78,6 +78,7 @@ class MetadataManager
                 ],
                 'files' => [],
                 'enriched_warnings' => [],
+                'generated_at' => null,
             ],
         ];
 

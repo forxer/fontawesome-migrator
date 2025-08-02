@@ -48,6 +48,11 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - Documentation utilisateur créée et nettoyée des références internes
 - Configuration JSON externalisée avec système de fallbacks pour compatibilité
 - Importante leçon : distinguer "tambouille interne" vs documentation utilisateur
+- **LEÇON CRITIQUE** : NE JAMAIS créer de nouveaux fichiers de résumé quand les informations peuvent être ajoutées aux fichiers existants (CLAUDE.md, STATUS.md). Maintenir les fichiers existants au lieu de créer des doublons inutiles.
 - Environnement Docker d-packages-exec clarifié comme propriétaire AXN Informatique
 - Version 2.0.0 encore en développement, pas terminée - rester factuel sur l'avancement
-- **New Memory**: To memorize
+- **Août 2025 - Nettoyage architectural v2.0**: Code mort supprimé (BackupCommand, méthodes obsolètes IconReplacer, imports inutilisés)
+- **Bug critique résolu**: Erreur "migration_results" corrigée architecturalement dans MetadataManager::initialize()
+- **Architecture pure v2.0**: Plus de rétrocompatibilité, structure de données garantie dès l'initialisation
+- **Services consolidés**: IconMapper/StyleMapper supprimés, IconReplacer utilise VersionMapperInterface
+- **Code production-ready**: ~350+ lignes obsolètes supprimées, duplications éliminées
