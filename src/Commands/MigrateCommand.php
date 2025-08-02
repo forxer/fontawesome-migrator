@@ -614,17 +614,26 @@ class MigrateCommand extends Command
         // Détection automatique de la version source si non spécifiée
         if (! $fromVersion) {
             // Essayer de détecter depuis un échantillon de fichiers
-            $sampleFiles = $this->scanner->scanForFontAwesome()->take(5);
+            $paths = config('fontawesome-migrator.scan_paths', []);
+            $files = $this->scanner->scanFiles($paths);
             $detectedVersion = '5'; // Par défaut
 
-            foreach ($sampleFiles as $file) {
-                $content = file_get_contents($file->getPathname());
+            $fileCount = 0;
+
+            foreach ($files as $file) {
+                if ($fileCount >= 5) {
+                    break;
+                }
+
+                $content = file_get_contents($file['path']);
                 $detected = $this->versionManager->detectVersion($content);
 
                 if ($detected !== 'unknown') {
                     $detectedVersion = $detected;
                     break;
                 }
+
+                $fileCount++;
             }
 
             $fromVersion = $detectedVersion;
@@ -658,7 +667,7 @@ class MigrateCommand extends Command
         $this->styleMapper->setVersions($fromVersion, $toVersion);
 
         // Stocker dans les métadonnées
-        $this->metadata->merge([
+        $this->metadata->updateMigrationOptions([
             'source_version' => $fromVersion,
             'target_version' => $toVersion,
             'detected_version' => $this->option('from') ? null : $fromVersion,
@@ -780,16 +789,24 @@ class MigrateCommand extends Command
         $paths = config('fontawesome-migrator.scan_paths', []);
 
         // Scanner les fichiers pour détecter la version
-        $sampleFiles = $this->scanner->scanForFontAwesomeIcons($paths)->take(5);
+        $files = $this->scanner->scanFiles($paths);
 
-        foreach ($sampleFiles as $file) {
-            $content = file_get_contents($file->getPathname());
+        $fileCount = 0;
+
+        foreach ($files as $file) {
+            if ($fileCount >= 5) {
+                break;
+            }
+
+            $content = file_get_contents($file['path']);
             $detected = $this->versionManager->detectVersion($content);
 
             if ($detected !== 'unknown') {
                 $detectedVersion = $detected;
                 break;
             }
+
+            $fileCount++;
         }
 
         if ($detectedVersion !== null && $detectedVersion !== '' && $detectedVersion !== '0') {
