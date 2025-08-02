@@ -2,6 +2,8 @@
 
 Ce guide explique comment utiliser le package `fontawesome-migrator` dans un environnement Docker avec `d-packages-exec php84`.
 
+C'est à dire un environnement propriétaire à la société AXN Informatique
+
 ## 🐳 Environnement Docker
 
 ### Prérequis

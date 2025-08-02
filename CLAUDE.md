@@ -33,19 +33,119 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Laravel package called `fontawesome-migrator` that automates the migration from Font Awesome 5 to Font Awesome 7 (both Free and Pro versions). The package scans Laravel applications for Font Awesome classes and automatically converts them to the new FA7 syntax.
+This is a Laravel package called `fontawesome-migrator` that automates the migration between Font Awesome versions 4→5→6→7 (both Free and Pro versions). The package scans Laravel applications for Font Awesome classes and automatically converts them to the target version syntax with intelligent version detection.
 
 **Target version**: Laravel 12.0+ with PHP 8.4+
+
+## Project Structure
+
+```
+fontawesome-migrator/
+├── src/
+│   ├── Commands/
+│   │   ├── BackupCommand.php
+│   │   ├── ConfigureCommand.php
+│   │   ├── InstallCommand.php
+│   │   ├── MigrateCommand.php
+│   │   └── Traits/ConfigurationHelpers.php
+│   ├── Contracts/
+│   │   └── VersionMapperInterface.php
+│   ├── Http/Controllers/
+│   │   ├── HomeController.php
+│   │   ├── ReportsController.php
+│   │   ├── SessionsController.php
+│   │   └── TestsController.php
+│   ├── Services/
+│   │   ├── AssetMigrator.php
+│   │   ├── ConfigurationLoader.php      # NEW: Chargement JSON avec cache
+│   │   ├── FileScanner.php
+│   │   ├── IconMapper.php
+│   │   ├── IconReplacer.php
+│   │   ├── MetadataManager.php
+│   │   ├── MigrationReporter.php
+│   │   ├── MigrationVersionManager.php  # NEW: Orchestrateur multi-versions
+│   │   ├── PackageVersionService.php
+│   │   ├── StyleMapper.php
+│   │   └── Mappers/                     # NEW: Mappers spécialisés
+│   │       ├── FontAwesome4To5Mapper.php
+│   │       ├── FontAwesome5To6Mapper.php
+│   │       └── FontAwesome6To7Mapper.php
+│   ├── Support/
+│   │   └── DirectoryHelper.php
+│   ├── View/Components/
+│   │   └── PageHeader.php
+│   └── ServiceProvider.php
+├── config/
+│   ├── fontawesome-migrator.php
+│   └── fontawesome-migrator/mappings/  # NEW: Configuration JSON
+│       ├── 4-to-5/
+│       │   ├── styles.json
+│       │   ├── icons.json
+│       │   ├── deprecated.json
+│       │   ├── pro-only.json
+│       │   └── new-icons.json
+│       ├── 5-to-6/
+│       │   ├── styles.json
+│       │   └── icons.json
+│       └── 6-to-7/
+│           ├── styles.json
+│           ├── icons.json
+│           └── deprecated.json
+├── resources/views/
+│   ├── components/
+│   │   └── page-header.blade.php
+│   ├── partials/
+│   │   ├── css/                          # Partials CSS modulaires
+│   │   │   ├── bootstrap-common.blade.php
+│   │   │   ├── common.blade.php
+│   │   │   ├── home.blade.php
+│   │   │   ├── page-header.blade.php
+│   │   │   ├── reports-show.blade.php
+│   │   │   └── tests.blade.php
+│   │   └── js/                           # Partials JS modulaires
+│   │       ├── bootstrap-common.blade.php
+│   │       └── tests.blade.php
+│   ├── home/
+│   │   └── index.blade.php               # Dashboard principal
+│   ├── reports/
+│   │   ├── index.blade.php               # Liste des rapports
+│   │   └── show.blade.php                # Rapport détaillé
+│   ├── sessions/
+│   │   ├── index.blade.php               # Gestion des sessions
+│   │   └── show.blade.php                # Détails session
+│   ├── tests/
+│   │   └── index.blade.php               # Configurateur multi-versions
+│   └── layout.blade.php                  # Layout partagé
+├── docs/                                 # Documentation complète
+│   ├── index.md                          # Index de la documentation
+│   ├── migration-multi-versions-guide.md # Guide complet multi-versions
+│   ├── quick-reference.md                # Référence rapide
+│   ├── api-reference.md                  # Documentation API
+│   ├── docker.md                         # Guide Docker (AXN Informatique)
+│   └── fontawesome-migration-research.md # Recherches sur les migrations
+├── routes/web.php                        # Routes web pour interface
+├── README.md                             # Documentation utilisateur
+├── CHANGELOG.md                          # Historique des versions
+├── STATUS.md                             # État du développement (interne)
+└── CLAUDE.md                             # Instructions pour Claude Code (interne)
+```
 
 ## Development Commands
 
 ### Version 2.0.0 Development Status
-**🚧 En développement actif** - Version majeure avec améliorations architecturales
+**🚧 EN DÉVELOPPEMENT ACTIF** - Architecture multi-versions implémentée, optimisations en cours
 
+- **Architecture multi-versions** : MigrationVersionManager FA4→5→6→7 ✅
+- **Configuration JSON** : ConfigurationLoader avec mappings externalisés ✅
 - **Architecture des commandes** : Injection de dépendances modernisée ✅
 - **Système de métadonnées** : Gestion centralisée des sessions ✅  
 - **Interface web** : Contrôleurs organisés et navigation améliorée ✅
+- **Documentation complète** : Guide multi-versions, API reference, Quick reference ✅
+- **Nettoyage documentation** : Suppression références internes "Phase 5" ✅
+- **Clarification environnement** : Contexte Docker AXN Informatique précisé ✅
 - **Tests automatisés** : En cours de refonte pour la v2.0.0 🚧
+- **Optimisations CSS** : Consolidation 1782 lignes partials 🚧
+- **Migrations chaînées** : Support 4→5→6→7 en une commande 🚧
 
 ### Code Quality
 ```bash
@@ -83,6 +183,11 @@ php artisan fontawesome:migrate --dry-run
 php artisan fontawesome:migrate --icons-only    # Icons only
 php artisan fontawesome:migrate --assets-only   # Assets only (CSS, JS, CDN)
 
+# Multi-version migrations (with automatic detection)
+php artisan fontawesome:migrate --from=4 --to=7    # FA4 to FA7
+php artisan fontawesome:migrate --from=5 --to=6    # FA5 to FA6
+php artisan fontawesome:migrate                    # Auto-detect version
+
 # Migrate specific path
 php artisan fontawesome:migrate --path=resources/views
 
@@ -111,6 +216,9 @@ The package follows a service-oriented architecture with clear separation of con
 5. **AssetMigrator** (`src/Services/AssetMigrator.php`): Migrates FontAwesome assets (CSS, JS, CDN, package.json) with Pro/Free support
 6. **MigrationReporter** (`src/Services/MigrationReporter.php`): Generates HTML and JSON reports using Blade views with shared layout system and comprehensive metadata tracking
 7. **MetadataManager** (`src/Services/MetadataManager.php`): Centralized service for session-based metadata management with real-time data collection
+8. **MigrationVersionManager** (`src/Services/MigrationVersionManager.php`): Orchestrates multi-version migrations FA4→5→6→7
+9. **ConfigurationLoader** (`src/Services/ConfigurationLoader.php`): Loads JSON configuration files with caching and fallback support
+10. **Version-specific Mappers** (`src/Services/Mappers/`): FontAwesome4To5Mapper, FontAwesome5To6Mapper, FontAwesome6To7Mapper
 
 ### Command Structure
 
@@ -219,7 +327,7 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 
 ### Key Features
 
-1. **Intelligent Migration**: Automatically converts FA5 syntax to FA6 (e.g., `fas fa-home` → `fa-solid fa-house`)
+1. **Multi-version Migration**: Automatically converts between FA4→5→6→7 with intelligent detection (e.g., `fa fa-home` → `fas fa-house` → `fa-solid fa-house`)
 2. **Icon Mapping**: Handles renamed icons (e.g., `fa-times` → `fa-xmark`)
 3. **Asset Migration**: Migrates CDN URLs, NPM packages, JS imports, CSS @import statements, webpack.mix.js
 4. **Pro Support**: Full support for Pro styles with fallback to Free alternatives
@@ -229,7 +337,7 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
    - **Homepage with dashboard** at `/fontawesome-migrator/` avec statistiques et actions rapides
    - **Reports management UI** at `/fontawesome-migrator/reports` avec visualisations interactives
    - **Sessions management** at `/fontawesome-migrator/sessions` avec inspection détaillée
-   - **Tests interface** at `/fontawesome-migrator/tests` pour debug et testing
+   - **Tests interface** at `/fontawesome-migrator/tests` avec configurateur multi-versions interactif
    - **Navigation unifiée** avec menu et fil d'ariane sur toutes les pages
 8. **Backup System**: Creates timestamped backups before modifications
 9. **Progress Reporting**: Real-time progress bars and detailed interactive reports
@@ -247,9 +355,11 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
     - **Centralized storage** dans `storage/app/fontawesome-migrator` avec structure hiérarchique
 
 ### Package Status
-✅ **VERSION 2.0.0 - PHASE 5 TERMINÉE** (Août 2025) - Architecture multi-versions complète :
+🚧 **VERSION 2.0.0 - EN DÉVELOPPEMENT** (Août 2025) - Architecture multi-versions implémentée :
 - ✅ **Architecture multi-versions** : Support FA4→5→6→7 avec MigrationVersionManager
+- ✅ **Configuration JSON** : ConfigurationLoader avec mappings externalisés
 - ✅ **Interface web avancée** : Sélecteur de versions interactif avec validation dynamique
+- ✅ **Documentation complète** : Guide utilisateur, API reference, Quick reference
 - ✅ **Système de traçabilité** : Origine CLI/Web enregistrée dans métadonnées et rapports
 - ✅ **Injection de dépendances** refactorisée dans les commandes
 - ✅ **Système de métadonnées** centralisé avec sessions
@@ -257,23 +367,31 @@ The package uses a comprehensive configuration file (`config/fontawesome-migrato
 - ✅ **Migration Bootstrap 5** : Design system moderne et cohérent
 - ✅ **Session management** avec short IDs et organisation cohérente
 - ✅ **Performance optimisée** : CSS/JS inline, interface responsive
+- ✅ **Documentation utilisateur** : Nettoyage références internes "Phase 5"
+- ✅ **Contexte environnement** : Clarification Docker AXN Informatique
+- 🚧 **Optimisations** : CSS partials, tests unitaires, migrations chaînées
 
 ## 📋 DERNIÈRE SESSION (Août 2025)
-**PHASE 5 COMPLÈTEMENT TERMINÉE** - Architecture multi-versions opérationnelle
+**ARCHITECTURE MULTI-VERSIONS IMPLÉMENTÉE** - Configuration JSON et documentation finalisées
 - **Multi-versions** : MigrationVersionManager + mappers FA4→5, FA5→6, FA6→7 ✅
+- **Configuration JSON** : ConfigurationLoader + mappings externalisés ✅
 - **Interface web** : Configurateur interactif `/tests` avec sélecteur versions ✅
-- **Traçabilité** : Origine CLI/Web dans métadonnées + rapports ✅
-- **Corrections** : Types de retour, comparaisons versions, métadonnées rapports ✅
+- **Documentation complète** : Guide multi-versions, API reference, Quick reference ✅
+- **Nettoyage documentation** : Suppression références internes "Phase 5" ✅
+- **Clarification contexte** : Environnement Docker AXN Informatique précisé ✅
+- **CHANGELOG mis à jour** : Version 2.0.0-DEV avec fonctionnalités multi-versions ✅
 
-**PROCHAINES PRIORITÉS** :
-1. Tests unitaires pour nouveaux mappers et MigrationVersionManager
-2. Configuration avancée - Séparer mappings par fichiers dédiés
-3. Documentation - Guide migration multi-versions
+**ÉTAT ACTUEL** :
+- Version 2.0.0 en développement avec architecture multi-versions fonctionnelle
+- Configuration JSON externalisée avec fallbacks pour compatibilité
+- Documentation utilisateur nettoyée des références internes
+- Interface web moderne avec Bootstrap 5
+- Clarifications contextuelles (environnement Docker propriétaire)
 
-**FICHIERS CLÉS** : 
-- `SESSION_SUMMARY_AUGUST_2025.md` : Résumé complet session
-- `docs/phase5-architecture-multi-versions-status.md` : État détaillé
-- Interface web `/fontawesome-migrator/tests` : Configurateur multi-versions
+**PROCHAINES ÉTAPES** :
+1. Optimisation CSS (1782 lignes de partials)
+2. Tests unitaires pour nouveaux mappers et MigrationVersionManager
+3. Migrations chaînées 4→5→6→7 en une commande (optionnel)
 
 ## Modernisation Interface Utilisateur v2.0
 
@@ -645,7 +763,32 @@ The package implements a unified design system using Laravel Blade views:
 - **Pint**: `pint.json` with Laravel preset and custom rules
 - **Rector**: `rector.php` with Laravel-specific modernization rules
 - **Composer Scripts**: Automated workflows for development tasks
+- **JSON Configuration**: `config/fontawesome-migrator/mappings/` avec ConfigurationLoader
+- **Multi-version Support**: Mappings FA4→5, FA5→6, FA6→7 avec fallbacks
 - **Tests**: Test suite en cours de refonte pour la version 2.0.0
+
+### Multi-version Architecture
+
+The package now supports comprehensive multi-version migrations:
+
+#### Version Detection & Migration Paths
+- **Automatic Detection**: Scans code to identify FontAwesome version
+- **FA4 → FA5**: Style prefix transformation (`fa` → `fas/far`), suffix handling (`-o`)
+- **FA5 → FA6**: Icon renaming and style format changes
+- **FA6 → FA7**: Modern optimizations and behavioral updates
+
+#### Configuration System
+- **JSON-based mappings**: Externalized in `config/fontawesome-migrator/mappings/`
+- **ConfigurationLoader**: Cached loading with fallback to hardcoded mappings
+- **Version-specific mappers**: Dedicated classes for each migration path
+- **Flexible targeting**: `--from` and `--to` options for specific migrations
+
+#### Web Interface Enhancement
+- **Interactive version selector**: `/fontawesome-migrator/tests` avec configurateur
+- **Migration preview**: Real-time validation before execution
+- **Progress tracking**: Session-based monitoring avec métadonnées
+- **Source tracking**: CLI vs Web origin pour audit trail
+
 ```
 
 ## My Memories
@@ -653,3 +796,9 @@ The package implements a unified design system using Laravel Blade views:
 - Claude Code remembers to always test PHP code thoroughly before deployment
 - Claude Code prefers comprehensive test coverage for each code modification
 - Claude Code emphasizes clear, readable, and maintainable code
+- Multi-version architecture FA4→5→6→7 implémentée avec ConfigurationLoader
+- Documentation utilisateur créée et nettoyée des références internes
+- Configuration JSON externalisée avec système de fallbacks pour compatibilité
+- Importante leçon : distinguer "tambouille interne" vs documentation utilisateur
+- Environnement Docker d-packages-exec clarifié comme propriétaire AXN Informatique
+- Version 2.0.0 encore en développement, pas terminée - rester factuel sur l'avancement

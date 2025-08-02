@@ -1,16 +1,10 @@
 # Font Awesome Migrator pour Laravel
 
-> ⚠️ **Disclaimer**: Ce code a été largement généré avec Claude Code (claude.ai/code). Bien que fonctionnel, **je n'ai pas entièrement confiance en l'IA** - j'ai dû corriger de nombreuses erreurs et imprécisions tout au long du développement. Utilisez ce package avec prudence et testez soigneusement avant usage en production.
+> ⚠️ **Disclaimer**: Ce code a été largement généré avec Claude Code (claude.ai/code) à des fins d'apprentissage et pédagogiques. Bien que fonctionnel, **je n'ai pas entièrement confiance en l'IA** - j'ai dû corriger de nombreuses erreurs et imprécisions tout au long du développement. Utilisez ce package avec prudence et testez soigneusement avant usage en production.
 
-🚀 Package Laravel pour automatiser la migration de Font Awesome 5 vers Font Awesome 7 (versions Free et Pro).
+🚀 **Package Laravel professionnel** pour automatiser la migration FontAwesome multi-versions (4 → 5 → 6 → 7) avec architecture moderne et interface web complète.
 
-## 🎉 Statut du package
-
-**🚧 VERSION 2.0.0 EN DÉVELOPPEMENT** - Architecture modernisée
-- ✅ Compatible Laravel 12.0+ et PHP 8.4+
-- ✅ Fonctionnellement complet avec améliorations architecturales
-- ✅ Compatible avec les environnements Docker
-- 🚧 Tests en cours de refonte pour la nouvelle architecture
+**🚧 Version 2.0.0 en développement** : Architecture multi-versions avec configuration JSON externalisée.
 
 ## Prérequis
 
@@ -20,33 +14,35 @@
 
 ## Fonctionnalités
 
-### 🎯 Migration des icônes
-- ✅ **Migration automatique** des classes CSS FA5 → FA7
-- ✅ **Support complet Pro** (Light, Duotone, Thin, Sharp)
-- ✅ **Détection intelligente** des icônes dans tous types de fichiers
-- ✅ **Mapping des icônes renommées** et dépréciées
-- ✅ **Fallback automatique** Pro → Free si nécessaire
+### 🎯 Migration multi-versions des icônes
+- ✅ **Architecture multi-versions** : FA4 → FA5 → FA6 → FA7 avec MigrationVersionManager
+- ✅ **Détection automatique** de la version source dans votre code
+- ✅ **Support complet Pro** (Light, Duotone, Thin, Sharp) avec fallbacks Free
+- ✅ **Configuration JSON** : Mappings externalisés avec ConfigurationLoader et cache
+- ✅ **Mappers spécialisés** : FontAwesome4To5Mapper, FontAwesome5To6Mapper, FontAwesome6To7Mapper
+- ✅ **Interface web interactive** avec sélecteur de versions temps réel
+- ✅ **Mapping intelligent** des icônes renommées et dépréciées avec fallbacks
 
 ### 🎨 Migration des assets
-- ✅ **CDN URLs** : Migration automatique des liens CDN FA5 → FA7
+- ✅ **CDN URLs** : Migration automatique des liens CDN (toutes versions)
 - ✅ **Package managers** : NPM, Yarn, pnpm (package.json avec extension .json)
 - ✅ **Build tools** : webpack.mix.js avec support des fichiers JS individuels
 - ✅ **Imports JavaScript** : ES6 imports, CommonJS require, dynamic imports
 - ✅ **Feuilles de style** : CSS, SCSS, SASS (@import, URLs)
 - ✅ **Support Pro & Free** : Détection automatique selon la licence
-- ✅ **Composants Vue** : Migration complète des templates et scripts
+- ✅ **Composants Vue/React** : Migration complète des templates et scripts
 
-### 🛠️ Outils
-- ✅ **Sauvegarde par session** avec nouvelle organisation v2.0
-- ✅ **Rapports détaillés** HTML et JSON avec métadonnées intégrées
-- ✅ **Interface web complète** de gestion des rapports et sessions
-- ✅ **Contrôleurs organisés** et navigation moderne (nouveau v2.0)
-- ✅ **Design system Bootstrap 5** : Interface moderne et responsive
-- ✅ **Migration UI complète** : Bootstrap 5.3.7 avec composants natifs
-- ✅ **Mode dry-run** pour prévisualiser les changements
-- ✅ **Modes de migration** : complet, icônes uniquement, assets uniquement
-- ✅ **Gestion des sessions** : inspection, nettoyage, statistiques
-- ✅ **Interface de debug** : exécution des migrations directement depuis l'interface web
+### 🛠️ Interface et outils avancés
+- ✅ **Configurateur multi-versions** : Interface web `/tests` avec sélecteur interactif FA4→5→6→7
+- ✅ **Validation dynamique** : Vérification des migrations supportées en temps réel
+- ✅ **Aperçu de compatibilité** : Breaking changes et recommandations par migration
+- ✅ **Interface web complète** : Dashboard, rapports, sessions avec navigation moderne
+- ✅ **Documentation complète** : Guide multi-versions, API reference, Quick reference
+- ✅ **Architecture JSON** : Configuration externalisée avec ConfigurationLoader et fallbacks
+- ✅ **Mode dry-run** : Prévisualisation des changements avant application
+- ✅ **Rapports détaillés** : HTML interactifs et JSON avec métadonnées complètes
+- ✅ **Traçabilité complète** : Origine CLI/Web, sessions avec short IDs
+- ✅ **Design system Bootstrap 5** : Interface moderne, responsive et accessible
 
 ## Installation
 
@@ -164,30 +160,39 @@ return [
 
 ## Utilisation
 
-### 🚀 Migration complète (par défaut)
+### 🚀 Migration automatique (recommandée)
 
 ```bash
-# Migration complète : icônes + assets (mode interactif)
+# Mode interactif avec détection automatique de version
 php artisan fontawesome:migrate
 
 # Mode classique (non-interactif)
 php artisan fontawesome:migrate --no-interactive
 ```
 
-**Le mode interactif** vous guide à travers :
-- **🎯 Sélection du type** : Complète, icônes uniquement, assets uniquement
+### 🎯 Migrations spécifiques par version
+
+```bash
+# Migration FA4 → FA5 (révolution des préfixes)
+php artisan fontawesome:migrate --from=4 --to=5
+
+# Migration FA5 → FA6 (modernisation des noms)  
+php artisan fontawesome:migrate --from=5 --to=6
+
+# Migration FA6 → FA7 (optimisations comportementales)
+php artisan fontawesome:migrate --from=6 --to=7
+
+# Aperçu des changements (dry-run)
+php artisan fontawesome:migrate --from=5 --to=6 --dry-run
+```
+
+**Le mode interactif** détecte automatiquement votre version FontAwesome et vous guide :
+- **🎯 Détection automatique** : FA4, FA5, FA6 ou FA7 dans votre code
+- **📋 Sélection du type** : Complète, icônes uniquement, assets uniquement  
 - **👁️ Mode prévisualisation** : Dry-run avec confirmation
 - **📂 Chemins personnalisés** : Analyse de dossiers spécifiques
 - **📊 Génération de rapports** : Rapports détaillés optionnels
 - **💾 Configuration des sauvegardes** : Forcées, désactivées ou par défaut
-- **📋 Résumé de configuration** : Validation avant exécution
-
-Cette commande migre automatiquement :
-- **Classes d'icônes** : `fas fa-home` → `fa-solid fa-house`
-- **CDN URLs** : `font-awesome/5.15.4` → `font-awesome/6.15.4`
-- **NPM packages** : `@fortawesome/fontawesome-free-solid` → `@fortawesome/free-solid-svg-icons`
-- **Imports JS** : ES6, CommonJS, dynamic imports
-- **Feuilles de style** : SCSS @import, CSS URLs
 
 ### 🎛️ Modes de migration
 
@@ -252,9 +257,74 @@ php artisan fontawesome:migrate --report --verbose
 | `--verbose` | Mode verbeux avec détails |
 | `--report` | Génère un rapport détaillé |
 
+## 📖 Documentation complète
+
+### 🎯 Guides détaillés
+
+- **[Guide Migration Multi-Versions](docs/migration-multi-versions-guide.md)** - Guide complet pour migrer entre FA4 → FA5 → FA6 → FA7
+- **[Référence Rapide](docs/quick-reference.md)** - Commandes essentielles et exemples
+- **[API Reference](docs/api-reference.md)** - Documentation programmatique pour développeurs
+
+### 🚀 Architecture Multi-Versions (v2.0)
+
+Le package supporte maintenant les **migrations multi-versions** avec:
+
+```
+FontAwesome 4 ──→ FontAwesome 5 ──→ FontAwesome 6 ──→ FontAwesome 7
+```
+
+#### Interface web interactive
+
+Accédez au **configurateur multi-versions** via:
+```
+http://votre-app.local/fontawesome-migrator/tests
+```
+
+Fonctionnalités:
+- ✅ **Sélecteur de versions** : Dropdown pour choisir source/cible
+- ✅ **Validation dynamique** : Vérification des combinaisons supportées  
+- ✅ **Aperçu compatibilité** : Breaking changes et recommandations
+- ✅ **Lancement direct** : Exécution des migrations depuis l'interface
+
+#### Configuration JSON avancée
+
+```
+config/fontawesome-migrator/mappings/
+├── 4-to-5/ (styles, icons, deprecated, pro-only, new-icons)
+├── 5-to-6/ (styles, icons) 
+└── 6-to-7/ (styles, icons, deprecated)
+```
+
+#### Migration par versions
+
+```bash
+# FA4 → FA5 : Révolution des préfixes
+php artisan fontawesome:migrate --from=4 --to=5
+
+# FA5 → FA6 : Modernisation des noms
+php artisan fontawesome:migrate --from=5 --to=6
+
+# FA6 → FA7 : Optimisations comportementales  
+php artisan fontawesome:migrate --from=6 --to=7
+```
+
 ## Exemples de conversions
 
-### Changements de style
+### FA4 → FA5 : Révolution des préfixes
+
+```html
+<!-- Font Awesome 4 -->
+<i class="fa fa-home"></i>
+<i class="fa fa-envelope-o"></i>
+<i class="fa fa-star-o"></i>
+
+<!-- Font Awesome 5 -->
+<i class="fas fa-house"></i>
+<i class="far fa-envelope"></i>
+<i class="far fa-star"></i>
+```
+
+### FA5 → FA6 : Modernisation des styles
 
 ```html
 <!-- Font Awesome 5 -->
@@ -270,29 +340,38 @@ php artisan fontawesome:migrate --report --verbose
 <i class="fa-duotone fa-heart"></i>
 ```
 
-### Icônes renommées
+### FA6 → FA7 : Simplifications
 
 ```html
-<!-- Font Awesome 5 -->
-<i class="fas fa-external-link"></i>
-<i class="fas fa-times"></i>
-<i class="fas fa-trash-o"></i>
-
 <!-- Font Awesome 6 -->
-<i class="fa-solid fa-external-link-alt"></i>
-<i class="fa-solid fa-xmark"></i>
-<i class="fa-solid fa-trash-can"></i>
+<i class="fa-solid fa-user-large"></i>
+<i class="fa-solid fa-fw fa-icon"></i>
+<div class="sr-only">Texte caché</div>
+
+<!-- Font Awesome 7 -->
+<i class="fa-solid fa-user"></i>
+<i class="fa-solid fa-icon"></i> <!-- fa-fw supprimé -->
+<div aria-label="Texte caché"></div> <!-- sr-only → aria-label -->
 ```
 
-### Migration des assets
+### Migration des assets (tous versions)
 
 #### CDN URLs
 ```html
-<!-- Avant -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- FA4 → FA5 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+↓
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-<!-- Après -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.15.4/css/all.min.css">
+<!-- FA5 → FA6 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+↓
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.15.4/css/all.min.css">
+
+<!-- FA6 → FA7 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.15.4/css/all.min.css">
+↓
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
 ```
 
 #### NPM Packages (package.json)
@@ -443,15 +522,25 @@ Les rapports sont automatiquement sauvegardés dans `storage/app/public/fontawes
    • Menu : http://localhost/fontawesome-migrator/reports
 ```
 
-### 🎛️ Interface de gestion des rapports
+### 🎛️ Interface web complète
 
-Le package inclut une **interface web complète** accessible à `/fontawesome-migrator/reports` :
+Le package inclut une **interface web moderne** avec plusieurs sections :
 
-- **📊 Vue d'ensemble** : Liste de tous les rapports avec métadonnées
+#### 🏠 Dashboard principal (`/fontawesome-migrator/`)
+- **📊 Statistiques** : Vue d'ensemble des migrations et sessions
+- **🚀 Actions rapides** : Liens vers les fonctionnalités principales
+- **📈 Activité récente** : Dernières migrations et rapports
+
+#### 🧪 Configurateur multi-versions (`/fontawesome-migrator/tests`)
+- **🎯 Sélecteur interactif** : Dropdown pour choisir versions source/cible
+- **✅ Validation dynamique** : Vérification des migrations supportées
+- **📋 Aperçu compatibilité** : Breaking changes et recommandations
+- **🚀 Lancement direct** : Exécution des migrations depuis l'interface
+
+#### 📊 Gestion des rapports (`/fontawesome-migrator/reports`)
+- **📋 Liste complète** : Tous les rapports avec métadonnées
 - **🔍 Accès direct** : Liens vers HTML et JSON de chaque rapport
 - **🗑️ Gestion** : Suppression individuelle ou nettoyage automatique
-- **🔄 Temps réel** : Actualisation et notifications AJAX
-- **📱 Responsive** : Interface adaptée mobile et desktop
 
 **Note :** Assurez-vous que le lien symbolique `public/storage` existe :
 ```bash
@@ -668,6 +757,8 @@ composer quality
 
 #### Environnement Docker (avec d-packages-exec)
 
+**Note** : `d-packages-exec` est un environnement Docker propriétaire à la société AXN Informatique. Si vous n'utilisez pas cet environnement, adaptez les commandes selon votre configuration Docker.
+
 Si vous utilisez Docker avec `d-packages-exec php84` :
 
 **⚠️ Important : Utilisez votre terminal WSL Ubuntu (pas le terminal VSCode)**
@@ -693,9 +784,9 @@ composer rector-dry       # Prévisualiser les modernisations
 composer quality          # Contrôle qualité complet (style + rector)
 ```
 
-#### Environnement Docker
+#### Environnement Docker (AXN Informatique)
 ```bash
-# Qualité de code
+# Qualité de code avec d-packages-exec (environnement propriétaire AXN)
 d-packages-exec php84 composer pint             # Formatter le code
 d-packages-exec php84 composer pint-test        # Vérifier le style sans corriger
 d-packages-exec php84 composer rector           # Moderniser le code
@@ -721,8 +812,8 @@ composer rector
 composer quality
 ```
 
-#### Environnement Docker
-**Méthodes disponibles** :
+#### Environnement Docker (AXN Informatique)
+**Méthodes disponibles avec d-packages-exec** :
 ```bash
 d-packages-exec php84 composer pint     # Style
 d-packages-exec php84 composer rector   # Modernisation
@@ -740,19 +831,30 @@ Les contributions sont les bienvenues ! Veuillez :
 5. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
 6. Créer une Pull Request
 
-## Version 2.0.0 - Développement
+## Version 2.0.0 - En développement 🚧
 
-La version 2.0.0 est actuellement en développement avec des améliorations architecturales majeures :
+**État actuel** : Architecture multi-versions implémentée, optimisations en cours
 
+### Fonctionnalités implémentées
+
+- ✅ **Architecture multi-versions** : MigrationVersionManager + mappers FA4→5→6→7
+- ✅ **Configuration JSON** : ConfigurationLoader avec mappings externalisés et cache
+- ✅ **Interface web avancée** : Configurateur multi-versions interactif `/tests`
+- ✅ **Documentation complète** : Guide multi-versions, API reference, Quick reference
 - ✅ **Injection de dépendances modernisée** dans les commandes Laravel
 - ✅ **Système de métadonnées centralisé** avec gestion des sessions
 - ✅ **Interface web reorganisée** avec contrôleurs spécialisés
 - ✅ **Navigation fluide** entre rapports, sessions et tests
 - ✅ **Migration Bootstrap 5** : Design system moderne et cohérent
-- ✅ **Breadcrumbs Laravel** : Navigation contextuelle avec diglactic/laravel-breadcrumbs
-- 🚧 **Tests automatisés** en cours de refonte pour la nouvelle architecture
+- ✅ **Traçabilité complète** : Origine CLI/Web dans métadonnées et rapports
 
-Cette version majeure accepte les breaking changes pour une architecture plus moderne et maintenable.
+### Prochaines étapes
+
+- 🕒 **Optimisation CSS** : Consolidation des 1782 lignes de partials CSS
+- 🕒 **Tests automatisés** : Refonte pour les nouveaux composants multi-versions
+- 🕒 **Migrations chaînées** : Support 4→5→6→7 en une commande (optionnel)
+
+**Objectif** : Package Laravel professionnel avec architecture multi-versions complète
 
 ## Licence
 
