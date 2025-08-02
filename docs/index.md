@@ -8,6 +8,7 @@
 
 ### 👨‍💻 Documentation technique  
 - **[API Reference](api-reference.md)** - Documentation programmatique pour développeurs
+- **[Système JSON Alternatives](json-alternatives-system.md)** - Architecture des alternatives Free pour icônes Pro/dépréciées
 
 ### 📊 Statut et recherches
 - **[Package Status](../STATUS.md)** - État actuel du développement

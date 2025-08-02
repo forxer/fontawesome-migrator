@@ -134,7 +134,7 @@ class IconMapper
      */
     protected function getAlternativeIcon(string $deprecatedIcon): ?string
     {
-        $fallback = $this->currentMapper->getFreeFallback($deprecatedIcon);
+        $fallback = $this->currentMapper->getFreeAlternative($deprecatedIcon);
 
         if ($fallback !== null) {
             return $fallback;
@@ -147,11 +147,11 @@ class IconMapper
     }
 
     /**
-     * Obtenir une alternative gratuite pour une icône Pro
+     * Obtenir une alternative Free pour une icône Pro (compatibilité FontAwesome)
      */
-    protected function getFreeFallback(string $proIcon): ?string
+    protected function getFreeAlternative(string $iconName): ?string
     {
-        return $this->currentMapper->getFreeFallback($proIcon);
+        return $this->currentMapper->getFreeAlternative($iconName);
     }
 
     /**

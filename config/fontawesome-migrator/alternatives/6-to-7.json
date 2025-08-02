@@ -1,0 +1,26 @@
+{
+    "metadata": {
+        "version": "2.0.0",
+        "migration": "FontAwesome 6 → 7",
+        "description": "Alternatives Free pour icônes Pro/dépréciées FA6→7",
+        "last_updated": "2025-01-01"
+    },
+    "alternatives": {
+        "fa-home": "fa-house",
+        "fa-search": "fa-magnifying-glass",
+        "fa-envelope-o": "fa-envelope",
+        "fa-star-o": "fa-star"
+    },
+    "pro_to_free": {
+        "fa-chart-mixed": "fa-chart-line",
+        "fa-layer-group": "fa-layers",
+        "fa-users-medical": "fa-users"
+    },
+    "style_alternatives": {
+        "fa-light": "fa-regular",
+        "fa-duotone": "fa-solid",
+        "fa-thin": "fa-regular",
+        "fa-sharp": "fa-solid"
+    },
+    "notes": "Alternatives pour maintenir la compatibilité FontAwesome lors de la migration FA6→7"
+}

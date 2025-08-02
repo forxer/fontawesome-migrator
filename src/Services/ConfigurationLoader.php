@@ -156,6 +156,46 @@ class ConfigurationLoader
     }
 
     /**
+     * Charger les alternatives Free pour une migration
+     */
+    public function loadAlternatives(string $fromVersion, string $toVersion): array
+    {
+        $cacheKey = "alternatives_{$fromVersion}_to_{$toVersion}";
+
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        $filePath = $this->configPath."/alternatives/{$fromVersion}-to-{$toVersion}.json";
+
+        if (! File::exists($filePath)) {
+            $this->cache[$cacheKey] = [];
+
+            return [];
+        }
+
+        $content = File::get($filePath);
+        $data = json_decode($content, true);
+
+        if (! $data || ! isset($data['alternatives'])) {
+            $this->cache[$cacheKey] = [];
+
+            return [];
+        }
+
+        // Fusionner toutes les alternatives disponibles
+        $alternatives = array_merge(
+            $data['alternatives'] ?? [],
+            $data['pro_to_free'] ?? [],
+            $data['style_alternatives'] ?? []
+        );
+
+        $this->cache[$cacheKey] = $alternatives;
+
+        return $alternatives;
+    }
+
+    /**
      * Vider le cache
      */
     public function clearCache(): void

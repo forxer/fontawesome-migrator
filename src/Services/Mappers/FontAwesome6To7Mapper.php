@@ -24,6 +24,8 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
 
     private array $newIcons;
 
+    private array $alternatives;
+
     private readonly ConfigurationLoader $configLoader;
 
     public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
@@ -44,38 +46,10 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
             $this->deprecatedIcons = $this->configLoader->loadDeprecatedIcons('6', '7');
             $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('6', '7');
             $this->newIcons = $this->configLoader->loadNewIcons('6', '7');
-        } catch (Exception) {
-            // Fallback vers les données hardcodées si les fichiers de config ne sont pas disponibles
-            $this->loadHardcodedMappings();
+            $this->alternatives = $this->configLoader->loadAlternatives('6', '7');
+        } catch (Exception $e) {
+            throw new \RuntimeException('Configuration JSON manquante pour FontAwesome 6→7: '.$e->getMessage());
         }
-    }
-
-    /**
-     * Charger les mappings hardcodés (fallback)
-     */
-    private function loadHardcodedMappings(): void
-    {
-        // Fallback data is now minimal - just essential mappings to ensure the system works
-        $this->styleMappings = [
-            'fa-solid' => 'fa-solid',
-            'fa-regular' => 'fa-regular',
-            'fa-brands' => 'fa-brands',
-        ];
-
-        $this->iconMappings = [
-            'fa-user-large' => 'fa-user',
-            'fa-headphones-simple' => 'fa-headphones',
-            'fa-handshake-simple' => 'fa-handshake',
-        ];
-
-        $this->deprecatedIcons = [
-            'fa-fw',
-            'sr-only',
-        ];
-
-        $this->proOnlyIcons = [];
-
-        $this->newIcons = [];
     }
 
     public function getIconMappings(): array
@@ -164,12 +138,10 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
         return \in_array($style, $proStyles);
     }
 
-    public function getFreeFallback(string $proIcon): ?string
+    public function getFreeAlternative(string $iconName): ?string
     {
-        // Fallbacks spécifiques pour FA7
-        $fallbacks = [];
-
-        return $fallbacks[$proIcon] ?? null;
+        // Alternative Free pour icônes Pro/dépréciées (depuis JSON config)
+        return $this->alternatives[$iconName] ?? null;
     }
 
     public function findSimilarIcons(string $iconName): array

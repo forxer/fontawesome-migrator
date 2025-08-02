@@ -78,12 +78,12 @@ interface VersionMapperInterface
     public function isProStyle(string $style): bool;
 
     /**
-     * Obtenir le fallback gratuit pour une icône Pro
+     * Obtenir une alternative Free pour une icône Pro/dépréciée (compatibilité FontAwesome)
      *
-     * @param  string  $proIcon  Icône Pro
-     * @return string|null Fallback gratuit ou null si aucun
+     * @param  string  $iconName  Icône Pro ou dépréciée
+     * @return string|null Alternative Free compatible ou null si aucune
      */
-    public function getFreeFallback(string $proIcon): ?string;
+    public function getFreeAlternative(string $iconName): ?string;
 
     /**
      * Rechercher des icônes similaires

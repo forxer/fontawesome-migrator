@@ -376,7 +376,7 @@ class MetadataManager
             'created_at' => Carbon::now()->toIso8601String(),
         ];
 
-        // JSON path optionnel pour compatibilité
+        // Inclure JSON path si fourni
         if ($jsonPath !== null) {
             $reportEntry['json_path'] = $jsonPath;
         }
@@ -479,8 +479,8 @@ class MetadataManager
                     $sessionInfo['short_id'] = $metadata['session']['short_id'];
                 }
             } else {
-                // Pas de métadonnées disponibles - fallback
-                $sessionInfo['metadata'] = null;
+                // Session sans métadonnées - ignorer
+                continue;
             }
 
             $sessions[] = $sessionInfo;

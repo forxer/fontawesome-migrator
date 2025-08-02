@@ -45,14 +45,12 @@ class ReportsController extends Controller
                         'filename' => $file->getFilename(),
                         'session_id' => $sessionId,
                         'short_id' => $shortId,
-                        'created_at' => isset($sessionMetadata['session']['started_at'])
-                            ? Carbon::parse($sessionMetadata['session']['started_at'])
-                            : Carbon::createFromTimestamp($file->getMTime()),
+                        'created_at' => Carbon::parse($sessionMetadata['session']['started_at']),
                         'size' => $file->getSize(),
                         'html_path' => $file->getRealPath(),
                         'json_path' => null, // Données intégrées dans metadata.json
                         'has_json' => true,
-                        'dry_run' => $sessionMetadata['runtime']['dry_run'] ?? false,
+                        'dry_run' => $sessionMetadata['runtime']['dry_run'],
                     ];
                 }
             }
@@ -99,11 +97,7 @@ class ReportsController extends Controller
             }
 
             // Retourner les données depuis metadata.json
-            return response()->json($sessionMetadata['migration_results'] ?? [
-                'summary' => [],
-                'files' => [],
-                'enriched_warnings' => [],
-            ]);
+            return response()->json($sessionMetadata['migration_results']);
         }
 
         // Toutes les données proviennent de metadata.json
@@ -113,40 +107,24 @@ class ReportsController extends Controller
             abort(404, 'Métadonnées de session non trouvées');
         }
 
-        $migrationResults = $sessionMetadata['migration_results'] ?? [
-            'summary' => [
-                'total_files' => 0,
-                'modified_files' => 0,
-                'total_changes' => 0,
-                'icons_migrated' => 0,
-                'assets_migrated' => 0,
-                'migration_success' => true,
-            ],
-            'files' => [],
-            'enriched_warnings' => [],
-        ];
+        $migrationResults = $sessionMetadata['migration_results'];
 
         // Préparer les données pour la vue - TOUT depuis metadata.json
         $viewData = [
             // Données métier
-            'results' => $migrationResults['files'] ?? [],
-            'stats' => $migrationResults['summary'] ?? [],
-            'enrichedWarnings' => $migrationResults['enriched_warnings'] ?? [],
+            'results' => $migrationResults['files'],
+            'stats' => $migrationResults['summary'],
+            'enrichedWarnings' => $migrationResults['enriched_warnings'],
 
             // Données de contexte
             'timestamp' => Carbon::parse($sessionMetadata['session']['started_at'])->format('Y-m-d H:i:s'),
-            'isDryRun' => $sessionMetadata['runtime']['dry_run'] ?? false,
-            'migrationOptions' => $sessionMetadata['migration_options'] ?? [],
-            'configuration' => $sessionMetadata['configuration'] ?? [
-                'license_type' => 'free',
-                'scan_paths' => [],
-                'file_extensions' => [],
-                'backup_enabled' => true,
-            ],
-            'packageVersion' => $sessionMetadata['session']['package_version'] ?? '?',
-            'sessionId' => $sessionMetadata['session']['id'] ?? 'unknown',
-            'shortId' => $sessionMetadata['session']['short_id'] ?? 'unknown',
-            'duration' => $sessionMetadata['runtime']['duration'] ?? null,
+            'isDryRun' => $sessionMetadata['runtime']['dry_run'],
+            'migrationOptions' => $sessionMetadata['migration_options'],
+            'configuration' => $sessionMetadata['configuration'],
+            'packageVersion' => $sessionMetadata['session']['package_version'],
+            'sessionId' => $sessionMetadata['session']['id'],
+            'shortId' => $sessionMetadata['session']['short_id'],
+            'duration' => $sessionMetadata['runtime']['duration'],
         ];
 
         return view('fontawesome-migrator::reports.show', $viewData);

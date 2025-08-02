@@ -186,6 +186,21 @@ $mappings = $mapper->getIconMappings();
 // ['fa-old' => 'fa-new', ...]
 ```
 
+##### `getFreeAlternative(string $iconName): ?string`
+
+⭐ **NOUVEAU v2.0** - Obtient une alternative Free pour une icône Pro/dépréciée.
+
+```php
+// Alternative pour icône dépréciée
+$alt = $mapper->getFreeAlternative('fa-home'); // 'fa-house'
+
+// Alternative Pro → Free (licence Free)
+$alt = $mapper->getFreeAlternative('fa-analytics'); // 'fa-chart-line'
+
+// Aucune alternative
+$alt = $mapper->getFreeAlternative('fa-custom'); // null
+```
+
 ##### `findSimilarIcons(string $iconName): array`
 
 Trouve des icônes similaires pour suggestions.
@@ -247,6 +262,32 @@ foreach ($files as $file) {
 }
 ```
 
+### ConfigurationLoader API
+
+⭐ **NOUVEAU v2.0** - Service de chargement des configurations JSON.
+
+```php
+use FontAwesome\Migrator\Services\ConfigurationLoader;
+
+$loader = new ConfigurationLoader();
+
+// Charger les alternatives Free
+$alternatives = $loader->loadAlternatives('5', '6');
+// ['fa-home' => 'fa-house', 'fa-analytics' => 'fa-chart-line', ...]
+
+// Charger les mappings d'icônes  
+$iconMappings = $loader->loadIconMappings('5', '6');
+
+// Charger les mappings de styles
+$styleMappings = $loader->loadStyleMappings('5', '6');
+
+// Charger les icônes dépréciées
+$deprecated = $loader->loadDeprecatedIcons('5', '6');
+
+// Nettoyer le cache
+$loader->clearCache();
+```
+
 ### Configuration personnalisée
 
 ```php
@@ -256,10 +297,6 @@ $loader = new ConfigurationLoader($customConfigPath);
 
 // Créer un mapper avec configuration personnalisée
 $mapper = new FontAwesome5To6Mapper($config, $loader);
-
-// Ajouter des mappings runtime
-$customMappings = ['fa-custom' => 'fa-new-custom'];
-$mapper->addCustomMappings($customMappings);
 ```
 
 ### Validation et tests

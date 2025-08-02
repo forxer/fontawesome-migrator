@@ -24,6 +24,8 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
 
     private array $newIcons;
 
+    private array $alternatives;
+
     private readonly ConfigurationLoader $configLoader;
 
     public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
@@ -44,44 +46,10 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
             $this->deprecatedIcons = $this->configLoader->loadDeprecatedIcons('5', '6');
             $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('5', '6');
             $this->newIcons = $this->configLoader->loadNewIcons('5', '6');
-        } catch (Exception) {
-            // Fallback vers les données hardcodées si les fichiers de config ne sont pas disponibles
-            $this->loadHardcodedMappings();
+            $this->alternatives = $this->configLoader->loadAlternatives('5', '6');
+        } catch (Exception $e) {
+            throw new \RuntimeException('Configuration JSON manquante pour FontAwesome 5→6: '.$e->getMessage());
         }
-    }
-
-    /**
-     * Charger les mappings hardcodés (fallback)
-     */
-    private function loadHardcodedMappings(): void
-    {
-        // Fallback data is now minimal - just essential mappings to ensure the system works
-        $this->styleMappings = [
-            'fas' => 'fa-solid',
-            'far' => 'fa-regular',
-            'fab' => 'fa-brands',
-        ];
-
-        $this->iconMappings = [
-            'fa-external-link' => 'fa-external-link-alt',
-            'fa-sort-alpha-down' => 'fa-arrow-down-a-z',
-            'fa-home' => 'fa-house',
-        ];
-
-        $this->deprecatedIcons = [
-            'fa-glass',
-            'fa-meetup',
-        ];
-
-        $this->proOnlyIcons = [
-            'fa-analytics',
-            'fa-apple-pay',
-        ];
-
-        $this->newIcons = [
-            'fa-house',
-            'fa-magnifying-glass',
-        ];
     }
 
     public function getIconMappings(): array
@@ -132,13 +100,6 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
             $result['deprecated'] = true;
             $result['warnings'][] = 'Icône dépréciée: '.$iconName;
 
-            // Proposer une alternative si disponible
-            $alternative = $this->getFreeFallback($iconName);
-
-            if ($alternative !== null) {
-                $result['new_name'] = $alternative;
-                $result['warnings'][] = 'Alternative suggérée: '.$alternative;
-            }
         }
 
         // Vérifier si l'icône est Pro uniquement
@@ -147,12 +108,6 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
 
             if (($this->config['license_type'] ?? 'free') === 'free') {
                 $result['warnings'][] = 'Icône Pro uniquement: '.$iconName;
-                $fallback = $this->getFreeFallback($iconName);
-
-                if ($fallback !== null) {
-                    $result['new_name'] = $fallback;
-                    $result['warnings'][] = 'Fallback gratuit: '.$fallback;
-                }
             }
         }
 
@@ -161,13 +116,7 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
 
     public function mapStyle(string $style, bool $withFallback = true): string
     {
-        $mappedStyle = $this->styleMappings[$style] ?? $style;
-
-        if ($withFallback && ($this->config['license_type'] ?? 'free') === 'free' && $this->isProStyle($mappedStyle)) {
-            return $this->getFallbackStyle();
-        }
-
-        return $mappedStyle;
+        return $this->styleMappings[$style] ?? $style;
     }
 
     public function isProStyle(string $style): bool
@@ -175,48 +124,6 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
         $proStyles = ['fal', 'fad', 'fa-light', 'fa-duotone', 'fa-thin', 'fa-sharp'];
 
         return \in_array($style, $proStyles);
-    }
-
-    public function getFreeFallback(string $proIcon): ?string
-    {
-        $fallbacks = [
-            'fa-analytics' => 'fa-chart-line',
-            'fa-apple-pay' => 'fa-credit-card',
-            'fa-aws' => 'fa-cloud',
-            'fa-circle-1' => 'fa-1',
-            'fa-circle-2' => 'fa-2',
-            'fa-circle-3' => 'fa-3',
-            'fa-circle-4' => 'fa-4',
-            'fa-circle-5' => 'fa-5',
-            'fa-circle-6' => 'fa-6',
-            'fa-circle-7' => 'fa-7',
-            'fa-circle-8' => 'fa-8',
-            'fa-circle-9' => 'fa-9',
-            'fa-gallery-thumbnails' => 'fa-images',
-            'fa-house-laptop' => 'fa-house',
-            'fa-input-numeric' => 'fa-keyboard',
-            'fa-input-text' => 'fa-keyboard',
-            'fa-keynote' => 'fa-presentation-screen',
-            'fa-lamp-desk' => 'fa-lightbulb',
-            'fa-monitor-waveform' => 'fa-heartbeat',
-            'fa-users-crown' => 'fa-users',
-            'fa-wifi-1' => 'fa-wifi',
-            'fa-wifi-2' => 'fa-wifi',
-            'fa-wifi-fair' => 'fa-wifi',
-            'fa-wifi-weak' => 'fa-wifi',
-            // Alternatives pour icônes dépréciées
-            'fa-glass' => 'fa-martini-glass-empty',
-            'fa-star-o' => 'fa-star',
-            'fa-close' => 'fa-xmark',
-            'fa-remove' => 'fa-xmark',
-            'fa-gear' => 'fa-cog',
-            'fa-trash-o' => 'fa-trash-can',
-            'fa-home' => 'fa-house',
-            'fa-file-o' => 'fa-file',
-            'fa-clock-o' => 'fa-clock',
-        ];
-
-        return $fallbacks[$proIcon] ?? null;
     }
 
     public function findSimilarIcons(string $iconName): array
@@ -296,19 +203,9 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
         ];
     }
 
-    /**
-     * Obtenir le style de fallback configuré
-     */
-    private function getFallbackStyle(): string
+    public function getFreeAlternative(string $iconName): ?string
     {
-        $fallback = $this->config['fallback_strategy'] ?? 'solid';
-
-        $fallbackMapping = [
-            'solid' => 'fa-solid',
-            'regular' => 'fa-regular',
-            'brands' => 'fa-brands',
-        ];
-
-        return $fallbackMapping[$fallback] ?? 'fa-solid';
+        // Alternative Free pour icônes Pro/dépréciées (depuis JSON config)
+        return $this->alternatives[$iconName] ?? null;
     }
 }

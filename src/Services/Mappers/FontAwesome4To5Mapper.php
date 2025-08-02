@@ -24,6 +24,8 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
 
     private array $newIcons;
 
+    private array $alternatives;
+
     private readonly ConfigurationLoader $configLoader;
 
     public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
@@ -44,44 +46,10 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
             $this->deprecatedIcons = $this->configLoader->loadDeprecatedIcons('4', '5');
             $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('4', '5');
             $this->newIcons = $this->configLoader->loadNewIcons('4', '5');
-        } catch (Exception) {
-            // Fallback vers les données hardcodées si les fichiers de config ne sont pas disponibles
-            $this->loadHardcodedMappings();
+            $this->alternatives = $this->configLoader->loadAlternatives('4', '5');
+        } catch (Exception $e) {
+            throw new \RuntimeException('Configuration JSON manquante pour FontAwesome 4→5: '.$e->getMessage());
         }
-    }
-
-    /**
-     * Charger les mappings hardcodés (fallback)
-     */
-    private function loadHardcodedMappings(): void
-    {
-        // Fallback data is now minimal - just essential mappings to ensure the system works
-        $this->styleMappings = [
-            'fa' => 'fas',
-            'fa fa-' => 'fas fa-',
-        ];
-
-        $this->iconMappings = [
-            'fa-envelope-o' => 'fa-envelope',
-            'fa-star-o' => 'fa-star',
-            'fa-heart-o' => 'fa-heart',
-        ];
-
-        $this->deprecatedIcons = [
-            'fa-glass',
-            'fa-remove',
-            'fa-close',
-        ];
-
-        $this->proOnlyIcons = [
-            'fa-light',
-            'fa-duotone',
-        ];
-
-        $this->newIcons = [
-            'fa-table-cells',
-            'fa-face-smile',
-        ];
     }
 
     public function getIconMappings(): array
@@ -182,11 +150,10 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
         return \in_array($style, $proStyles);
     }
 
-    public function getFreeFallback(string $proIcon): ?string
+    public function getFreeAlternative(string $iconName): ?string
     {
-        // Pour FA4→5, pas de fallbacks spécifiques
-        // Les alternatives sont dans les mappings principaux
-        return null;
+        // Alternative Free pour icônes Pro/dépréciées (depuis JSON config)
+        return $this->alternatives[$iconName] ?? null;
     }
 
     public function findSimilarIcons(string $iconName): array

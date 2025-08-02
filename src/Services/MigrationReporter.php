@@ -2,7 +2,6 @@
 
 namespace FontAwesome\Migrator\Services;
 
-use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -33,15 +32,8 @@ class MigrationReporter
         // Obtenir le dossier de session actuel
         $sessionDir = $this->metadata->getSessionDirectory();
 
-        // Si pas de session, utiliser le chemin par défaut
-        if ($sessionDir === '' || $sessionDir === '0') {
-            $reportPath = $this->config['report_path'];
-            // S'assurer que le répertoire et le .gitignore existent
-            DirectoryHelper::ensureExistsWithGitignore($reportPath);
-        } else {
-            // Sauvegarder dans le dossier de session
-            $reportPath = $sessionDir;
-        }
+        // Utiliser le dossier de session
+        $reportPath = $sessionDir;
 
         // Générer seulement le fichier HTML pour visualisation (optionnel)
         $filename = 'fontawesome-migration-report.html';
@@ -73,18 +65,18 @@ class MigrationReporter
     {
         $stats = $this->calculateStats($results);
 
-        // Méthode de compatibilité - les données sont gérées via le contrôleur
+        // Données nécessaires pour la génération HTML
         $viewData = [
             'results' => $results,
             'stats' => $stats,
             'timestamp' => date('Y-m-d H:i:s'),
-            'isDryRun' => $this->metadata->get('runtime')['dry_run'] ?? false,
-            'migrationOptions' => $this->metadata->get('migration_options') ?? [],
-            'configuration' => $this->metadata->get('configuration') ?? [],
-            'packageVersion' => $this->metadata->get('session')['package_version'] ?? '?',
-            'sessionId' => $this->metadata->get('session')['id'] ?? 'unknown',
-            'shortId' => $this->metadata->get('session')['short_id'] ?? 'unknown',
-            'duration' => $this->metadata->get('runtime')['duration'] ?? null,
+            'isDryRun' => $this->metadata->get('runtime')['dry_run'],
+            'migrationOptions' => $this->metadata->get('migration_options'),
+            'configuration' => $this->metadata->get('configuration'),
+            'packageVersion' => $this->metadata->get('session')['package_version'],
+            'sessionId' => $this->metadata->get('session')['id'],
+            'shortId' => $this->metadata->get('session')['short_id'],
+            'duration' => $this->metadata->get('runtime')['duration'],
         ];
 
         return view('fontawesome-migrator::reports.show', $viewData)->render();

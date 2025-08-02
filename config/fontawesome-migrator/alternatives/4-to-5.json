@@ -1,0 +1,26 @@
+{
+    "metadata": {
+        "version": "2.0.0",
+        "migration": "FontAwesome 4 → 5",
+        "description": "Alternatives Free pour icônes Pro/dépréciées FA4→5",
+        "last_updated": "2025-01-01"
+    },
+    "alternatives": {
+        "fa-glass": "fa-martini-glass",
+        "fa-star-o": "fa-star",
+        "fa-close": "fa-times",
+        "fa-remove": "fa-times",
+        "fa-gear": "fa-cog",
+        "fa-trash-o": "fa-trash",
+        "fa-home": "fa-house",
+        "fa-file-o": "fa-file",
+        "fa-clock-o": "fa-clock",
+        "fa-user-o": "fa-user",
+        "fa-heart-o": "fa-heart"
+    },
+    "pro_to_free": {
+        "fal": "far",
+        "fad": "fas"
+    },
+    "notes": "Alternatives pour maintenir la compatibilité FontAwesome lors de la migration FA4→5"
+}
