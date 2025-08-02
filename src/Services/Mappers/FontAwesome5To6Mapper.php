@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services\Mappers;
 
+use Exception;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Services\ConfigurationLoader;
 
@@ -23,7 +24,7 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
 
     private array $newIcons;
 
-    private ConfigurationLoader $configLoader;
+    private readonly ConfigurationLoader $configLoader;
 
     public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
     {
@@ -43,7 +44,7 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
             $this->deprecatedIcons = $this->configLoader->loadDeprecatedIcons('5', '6');
             $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('5', '6');
             $this->newIcons = $this->configLoader->loadNewIcons('5', '6');
-        } catch (\Exception $e) {
+        } catch (Exception) {
             // Fallback vers les données hardcodées si les fichiers de config ne sont pas disponibles
             $this->loadHardcodedMappings();
         }

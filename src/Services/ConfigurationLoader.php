@@ -14,7 +14,7 @@ class ConfigurationLoader
 {
     private array $cache = [];
 
-    private string $configPath;
+    private readonly string $configPath;
 
     public function __construct(?string $configPath = null)
     {
@@ -26,16 +26,16 @@ class ConfigurationLoader
      */
     public function loadMigrationConfig(string $fromVersion, string $toVersion): array
     {
-        $migrationKey = "{$fromVersion}-to-{$toVersion}";
+        $migrationKey = \sprintf('%s-to-%s', $fromVersion, $toVersion);
 
         if (isset($this->cache[$migrationKey])) {
             return $this->cache[$migrationKey];
         }
 
-        $migrationPath = $this->configPath."/mappings/{$migrationKey}";
+        $migrationPath = $this->configPath.('/mappings/'.$migrationKey);
 
         if (! File::isDirectory($migrationPath)) {
-            throw new InvalidArgumentException("Configuration non trouvée pour la migration {$migrationKey}");
+            throw new InvalidArgumentException('Configuration non trouvée pour la migration '.$migrationKey);
         }
 
         $config = [
@@ -80,7 +80,7 @@ class ConfigurationLoader
         }
 
         if (isset($iconConfig['renamed_icons'])) {
-            $mappings = array_merge($mappings, $iconConfig['renamed_icons']);
+            return array_merge($mappings, $iconConfig['renamed_icons']);
         }
 
         return $mappings;
@@ -140,7 +140,7 @@ class ConfigurationLoader
         $directories = File::directories($mappingsPath);
 
         foreach ($directories as $directory) {
-            $migrationName = basename($directory);
+            $migrationName = basename((string) $directory);
 
             if (preg_match('/^(\d+)-to-(\d+)$/', $migrationName, $matches)) {
                 $migrations[] = [
@@ -173,14 +173,14 @@ class ConfigurationLoader
                 return $default;
             }
 
-            throw new InvalidArgumentException("Fichier de configuration non trouvé : {$path}");
+            throw new InvalidArgumentException('Fichier de configuration non trouvé : '.$path);
         }
 
         $content = File::get($path);
         $data = json_decode($content, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException("Erreur de parsing JSON dans {$path} : ".json_last_error_msg());
+            throw new InvalidArgumentException(\sprintf('Erreur de parsing JSON dans %s : ', $path).json_last_error_msg());
         }
 
         return $data;
@@ -200,8 +200,8 @@ class ConfigurationLoader
     public function validateMigrationConfig(string $fromVersion, string $toVersion): array
     {
         $errors = [];
-        $migrationKey = "{$fromVersion}-to-{$toVersion}";
-        $migrationPath = $this->configPath."/mappings/{$migrationKey}";
+        $migrationKey = \sprintf('%s-to-%s', $fromVersion, $toVersion);
+        $migrationPath = $this->configPath.('/mappings/'.$migrationKey);
 
         $requiredFiles = ['styles.json', 'icons.json'];
         $optionalFiles = ['deprecated.json', 'pro-only.json', 'new-icons.json'];
@@ -211,12 +211,12 @@ class ConfigurationLoader
             $filePath = $migrationPath.'/'.$file;
 
             if (! File::exists($filePath)) {
-                $errors[] = "Fichier requis manquant : {$file}";
+                $errors[] = 'Fichier requis manquant : '.$file;
             } else {
                 try {
                     $this->loadJsonFile($filePath);
                 } catch (InvalidArgumentException $e) {
-                    $errors[] = "Erreur dans {$file} : ".$e->getMessage();
+                    $errors[] = \sprintf('Erreur dans %s : ', $file).$e->getMessage();
                 }
             }
         }
@@ -229,7 +229,7 @@ class ConfigurationLoader
                 try {
                     $this->loadJsonFile($filePath);
                 } catch (InvalidArgumentException $e) {
-                    $errors[] = "Erreur dans {$file} : ".$e->getMessage();
+                    $errors[] = \sprintf('Erreur dans %s : ', $file).$e->getMessage();
                 }
             }
         }

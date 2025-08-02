@@ -32,11 +32,11 @@ return RectorConfig::configure()
         __DIR__.'/src',
     ])
 
-    // Up from PHP 5.3 to 8.2
-    ->withPhpSets()
+    // Up from PHP 5.3 to 8.4
+    // ->withPhpSets()
 
-    // only PHP 8.2
-    // ->withPhpSets(php82: true)
+    // only PHP 8.4
+    ->withPhpSets(php84: true)
 
     ->withSkip([
         // Désactivation de cette règle car elle

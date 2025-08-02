@@ -19,7 +19,7 @@ class MigrationVersionManager
 
     private array $mappers = [];
 
-    private ConfigurationLoader $configLoader;
+    private readonly ConfigurationLoader $configLoader;
 
     public function __construct(?ConfigurationLoader $configLoader = null)
     {
