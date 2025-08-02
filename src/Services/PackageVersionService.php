@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Konobit\FontAwesomeMigrator\Services;
+namespace FontAwesome\Migrator\Services;
 
 /**
  * Service pour récupérer la version du package FontAwesome Migrator

@@ -4,9 +4,9 @@ namespace FontAwesome\Migrator\Http\Controllers;
 
 use Carbon\Carbon;
 use FontAwesome\Migrator\Services\MetadataManager;
+use FontAwesome\Migrator\Services\PackageVersionService;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
-use Konobit\FontAwesomeMigrator\Services\PackageVersionService;
 
 /**
  * Contrôleur pour la page d'accueil

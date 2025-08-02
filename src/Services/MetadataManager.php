@@ -4,7 +4,6 @@ namespace FontAwesome\Migrator\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
-use Konobit\FontAwesomeMigrator\Services\PackageVersionService;
 
 class MetadataManager
 {

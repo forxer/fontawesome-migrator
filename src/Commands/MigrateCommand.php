@@ -615,7 +615,7 @@ class MigrateCommand extends Command
         if (! $fromVersion) {
             // Essayer de détecter depuis un échantillon de fichiers
             $paths = config('fontawesome-migrator.scan_paths', []);
-            $files = $this->scanner->scanFiles($paths);
+            $files = $this->scanner->scanPaths($paths);
             $detectedVersion = '5'; // Par défaut
 
             $fileCount = 0;
@@ -667,7 +667,7 @@ class MigrateCommand extends Command
         $this->styleMapper->setVersions($fromVersion, $toVersion);
 
         // Stocker dans les métadonnées
-        $this->metadata->updateMigrationOptions([
+        $this->metadata->setMigrationOptions([
             'source_version' => $fromVersion,
             'target_version' => $toVersion,
             'detected_version' => $this->option('from') ? null : $fromVersion,
@@ -789,7 +789,7 @@ class MigrateCommand extends Command
         $paths = config('fontawesome-migrator.scan_paths', []);
 
         // Scanner les fichiers pour détecter la version
-        $files = $this->scanner->scanFiles($paths);
+        $files = $this->scanner->scanPaths($paths);
 
         $fileCount = 0;
 
@@ -836,7 +836,7 @@ class MigrateCommand extends Command
             $migrations = $this->versionManager->getSupportedMigrations();
 
             foreach ($migrations as $migration) {
-                if ($migration['from'] === $fromVersion) {
+                if ((string) $migration['from'] === (string) $fromVersion) {
                     $availableTargets[$migration['to']] = \sprintf('FontAwesome %s - %s', $migration['to'], $migration['description']);
                 }
             }

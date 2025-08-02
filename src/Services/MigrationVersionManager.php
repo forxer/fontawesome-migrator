@@ -95,7 +95,7 @@ class MigrationVersionManager
         foreach ($detectionRules as $version => $patterns) {
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $content)) {
-                    return $version;
+                    return (string) $version;
                 }
             }
         }
@@ -144,7 +144,7 @@ class MigrationVersionManager
         $supported = $this->getSupportedMigrations();
 
         foreach ($supported as $migration) {
-            if ($migration['from'] === $fromVersion && $migration['to'] === $toVersion) {
+            if ((string) $migration['from'] === (string) $fromVersion && (string) $migration['to'] === (string) $toVersion) {
                 return true;
             }
         }
