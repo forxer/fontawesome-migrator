@@ -7,6 +7,7 @@ namespace FontAwesome\Migrator\Services\Mappers;
 use Exception;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Services\ConfigurationLoader;
+use RuntimeException;
 
 /**
  * Mapper pour la migration FontAwesome 5 → 6
@@ -47,8 +48,8 @@ class FontAwesome5To6Mapper implements VersionMapperInterface
             $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('5', '6');
             $this->newIcons = $this->configLoader->loadNewIcons('5', '6');
             $this->alternatives = $this->configLoader->loadAlternatives('5', '6');
-        } catch (Exception $e) {
-            throw new \RuntimeException('Configuration JSON manquante pour FontAwesome 5→6: '.$e->getMessage());
+        } catch (Exception $exception) {
+            throw new RuntimeException('Configuration JSON manquante pour FontAwesome 5→6: '.$exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 

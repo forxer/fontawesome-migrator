@@ -160,13 +160,13 @@ class ConfigurationLoader
      */
     public function loadAlternatives(string $fromVersion, string $toVersion): array
     {
-        $cacheKey = "alternatives_{$fromVersion}_to_{$toVersion}";
+        $cacheKey = \sprintf('alternatives_%s_to_%s', $fromVersion, $toVersion);
 
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
 
-        $filePath = $this->configPath."/alternatives/{$fromVersion}-to-{$toVersion}.json";
+        $filePath = $this->configPath.\sprintf('/alternatives/%s-to-%s.json', $fromVersion, $toVersion);
 
         if (! File::exists($filePath)) {
             $this->cache[$cacheKey] = [];
