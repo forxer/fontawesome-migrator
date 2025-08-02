@@ -13,7 +13,7 @@
 ## 📊 Résumé du développement
 
 ### Phase 1: Architecture ✅
-- [x] Services créés (IconMapper, StyleMapper, FileScanner, IconReplacer, MigrationReporter)
+- [x] Services créés (FileScanner, IconReplacer, MigrationReporter, MigrationVersionManager)
 - [x] Commande Artisan fonctionnelle
 - [x] Configuration Laravel complète
 - [x] ServiceProvider configuré

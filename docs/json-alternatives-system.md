@@ -162,13 +162,14 @@ $alt = $mapper->getFreeAlternative('fa-nonexistent');
 // → null
 ```
 
-### Via IconMapper (service principal)
+### Via MigrationVersionManager
 
 ```php
-$iconMapper = new IconMapper();
+$versionManager = new MigrationVersionManager();
+$mapper = $versionManager->createMapper('5', '6');
 
 // Recherche d'alternative pour icône dépréciée
-$alternative = $iconMapper->getFreeAlternative('fa-home');
+$alternative = $mapper->getFreeAlternative('fa-home');
 // → 'fa-house'
 ```
 

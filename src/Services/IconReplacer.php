@@ -3,6 +3,7 @@
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
+use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Support\Facades\File;
 use RecursiveDirectoryIterator;
@@ -13,8 +14,7 @@ class IconReplacer
     protected array $config;
 
     public function __construct(
-        protected IconMapper $iconMapper,
-        protected StyleMapper $styleMapper,
+        protected VersionMapperInterface $mapper,
         protected FileScanner $fileScanner
     ) {
         $this->config = config('fontawesome-migrator');
@@ -178,11 +178,12 @@ class IconReplacer
         $iconName = $icon['name'];
         $originalString = $icon['full_match'];
 
-        // Mapper le style FA5 vers FA6 avec fallback selon la licence
-        $newStyle = $this->styleMapper->mapStyleWithFallback($style);
+        // Mapper le style avec le nouveau système
+        $newStyle = $this->mapper->mapStyle($style);
 
-        // Mapper le nom de l'icône si nécessaire
-        $newIconName = $this->iconMapper->mapIcon($iconName);
+        // Mapper l'icône avec informations détaillées
+        $iconMapping = $this->mapper->mapIcon($iconName, $style);
+        $newIconName = $iconMapping['new_name'];
 
         // Construire la nouvelle chaîne
         $newString = str_replace(
@@ -194,15 +195,32 @@ class IconReplacer
         $warning = null;
         $type = 'style_update';
 
-        // Vérifier les cas spéciaux
-        if ($newIconName !== $iconName) {
-            $warning = \sprintf("Icône renommée '%s' → '%s'", $iconName, $newIconName);
+        // Analyser les résultats du mapping pour déterminer le type et warning
+        if ($iconMapping['renamed']) {
             $type = 'renamed_icon';
+            $warning = \sprintf("Icône renommée '%s' → '%s'", $iconName, $newIconName);
+        } elseif ($iconMapping['deprecated']) {
+            $type = 'deprecated_icon';
+            $warning = \sprintf("Icône dépréciée '%s' → '%s'", $iconName, $newIconName);
+        } elseif ($iconMapping['pro_only'] && ($this->config['license_type'] ?? 'free') === 'free') {
+            $type = 'pro_fallback';
+            $alternative = $this->mapper->getFreeAlternative($iconName);
+            if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
+                $newIconName = $alternative;
+                $newString = str_replace(
+                    [$style, $iconName],
+                    [$newStyle, $newIconName],
+                    $originalString
+                );
+                $warning = \sprintf("Icône Pro '%s' → alternative Free '%s'", $iconName, $alternative);
+            } else {
+                $warning = \sprintf("Icône Pro '%s' sans alternative Free disponible", $iconName);
+            }
         }
 
-        if ($this->styleMapper->isProStyle($style) && $this->config['license_type'] === 'free') {
-            $warning = \sprintf("Style Pro '%s' → fallback vers '%s'", $style, $newStyle);
-            $type = 'pro_fallback';
+        // Ajouter les warnings du mapper
+        if (!empty($iconMapping['warnings'])) {
+            $warning = $warning !== null && $warning !== '' && $warning !== '0' ? $warning . ' | ' . implode(' | ', $iconMapping['warnings']) : implode(' | ', $iconMapping['warnings']);
         }
 
         return [
