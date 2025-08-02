@@ -1,0 +1,19 @@
+{
+  "description": "Icônes et classes dépréciées en FontAwesome 7",
+  "version": "6-to-7",
+  "deprecated_classes": [
+    "fa-fw",
+    "sr-only"
+  ],
+  "deprecated_icons": [
+    "fa-user-large",
+    "fa-headphones-simple", 
+    "fa-handshake-simple"
+  ],
+  "notes": {
+    "fa-fw": "Fixed width est maintenant le comportement par défaut",
+    "sr-only": "Remplacé par l'usage d'aria-label pour l'accessibilité",
+    "renamed_icons": "Ces icônes ont été renommées pour la simplicité"
+  },
+  "migration_strategy": "Supprimer ces classes ou les remplacer par leurs équivalents"
+}

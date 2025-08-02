@@ -104,6 +104,7 @@ class MigrationReporter
             'meta' => $metadataForReport['meta'],
             'backups' => $metadataForReport['backups'],
             'statistics' => $metadataForReport['statistics'],
+            'custom' => $metadataForReport['custom'] ?? [],
             'summary' => $stats,
             'files' => array_map(fn ($result): array => [
                 'file' => $result['file'],

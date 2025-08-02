@@ -1,0 +1,25 @@
+{
+  "description": "Icônes FontAwesome 4 dépréciées ou supprimées en FA5",
+  "version": "4-to-5",
+  "deprecated_icons": [
+    "fa-glass",
+    "fa-remove",
+    "fa-close",
+    "fa-gear",
+    "fa-home",
+    "fa-file-o",
+    "fa-clock-o",
+    "fa-envelope-o",
+    "fa-star-o",
+    "fa-heart-o",
+    "fa-folder-o",
+    "fa-trash-o",
+    "fa-square-o",
+    "fa-circle-o"
+  ],
+  "notes": {
+    "outlined_icons": "Les icônes avec suffixe -o sont techniquement 'dépréciées' car la syntaxe change vers far fa-*",
+    "renamed_icons": "Les icônes renommées sont considérées comme dépréciées sous leur ancien nom"
+  },
+  "migration_strategy": "Ces icônes doivent être remplacées par leurs équivalents FA5 ou supprimées"
+}

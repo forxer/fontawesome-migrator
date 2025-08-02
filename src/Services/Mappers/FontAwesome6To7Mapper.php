@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services\Mappers;
 
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\ConfigurationLoader;
 
 /**
  * Mapper pour la migration FontAwesome 6 → 7
@@ -22,58 +23,58 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
 
     private array $newIcons;
 
-    public function __construct(private array $config = [])
+    private ConfigurationLoader $configLoader;
+
+    public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
     {
+        $this->configLoader = $configLoader ?? new ConfigurationLoader();
         $this->loadMappings();
     }
 
     /**
-     * Charger tous les mappings pour FA6 → FA7
+     * Charger tous les mappings pour FA6 → FA7 depuis les fichiers de configuration
      */
     private function loadMappings(): void
     {
-        // Styles FA6 → FA7 (identiques, mais comportements changés)
+        try {
+            // Charger depuis les fichiers de configuration JSON
+            $this->styleMappings = $this->configLoader->loadStyleMappings('6', '7');
+            $this->iconMappings = $this->configLoader->loadIconMappings('6', '7');
+            $this->deprecatedIcons = $this->configLoader->loadDeprecatedIcons('6', '7');
+            $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('6', '7');
+            $this->newIcons = $this->configLoader->loadNewIcons('6', '7');
+        } catch (\Exception $e) {
+            // Fallback vers les données hardcodées si les fichiers de config ne sont pas disponibles
+            $this->loadHardcodedMappings();
+        }
+    }
+
+    /**
+     * Charger les mappings hardcodés (fallback)
+     */
+    private function loadHardcodedMappings(): void
+    {
+        // Fallback data is now minimal - just essential mappings to ensure the system works
         $this->styleMappings = [
             'fa-solid' => 'fa-solid',
             'fa-regular' => 'fa-regular',
             'fa-brands' => 'fa-brands',
-            'fa-light' => 'fa-light',     // Pro
-            'fa-duotone' => 'fa-duotone', // Pro
-            'fa-thin' => 'fa-thin',       // Pro
-            'fa-sharp' => 'fa-sharp',     // Pro
         ];
 
-        // Icônes renommées FA6 → FA7
         $this->iconMappings = [
             'fa-user-large' => 'fa-user',
             'fa-headphones-simple' => 'fa-headphones',
             'fa-handshake-simple' => 'fa-handshake',
-            // Autres renommages FA7 (à compléter selon releases)
         ];
 
-        // Classes dépréciées en FA7
         $this->deprecatedIcons = [
-            'fa-fw',              // Fixed width maintenant par défaut
-            'sr-only',            // Remplacé par aria-label
-            'fa-user-large',      // Renommé fa-user
-            'fa-headphones-simple', // Renommé fa-headphones
-            'fa-handshake-simple',  // Renommé fa-handshake
+            'fa-fw',
+            'sr-only',
         ];
 
-        // Nouvelles fonctionnalités Pro+ FA7
-        $this->proOnlyIcons = [
-            // Pro+ icon packs (collections curées)
-            'fa-pro-plus-collection',
-            // Nouvelles icônes Pro FA7 (à compléter)
-        ];
+        $this->proOnlyIcons = [];
 
-        // Nouvelles icônes/fonctionnalités FA7
-        $this->newIcons = [
-            // Nouvelles icônes FA7 (à compléter selon releases)
-            'fa-new-icon-example',
-            // Pro+ collections
-            'fa-curated-collection',
-        ];
+        $this->newIcons = [];
     }
 
     public function getIconMappings(): array

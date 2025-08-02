@@ -1,0 +1,14 @@
+{
+  "description": "Mappings des icônes FontAwesome 6 vers 7",
+  "version": "6-to-7",
+  "renamed_icons": {
+    "fa-user-large": "fa-user",
+    "fa-headphones-simple": "fa-headphones",
+    "fa-handshake-simple": "fa-handshake"
+  },
+  "notes": {
+    "simplification": "FA7 simplifie les noms d'icônes en supprimant les suffixes redondants",
+    "minimal_changes": "Peu de changements par rapport à FA6, principalement des simplifications",
+    "to_complete": "Liste à compléter selon les releases officielles FA7"
+  }
+}

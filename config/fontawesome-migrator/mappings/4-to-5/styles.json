@@ -1,0 +1,19 @@
+{
+  "description": "Mappings des styles FontAwesome 4 vers 5",
+  "version": "4-to-5",
+  "mappings": {
+    "fa": "fas",
+    "fa fa-": "fas fa-"
+  },
+  "notes": {
+    "fa": "Par défaut : transformation vers solid",
+    "fa fa-": "Transformation générique pour les préfixes"
+  },
+  "special_cases": {
+    "outlined_icons": {
+      "description": "Icônes avec suffixe -o (outlined) FA4 qui deviennent far (regular) en FA5",
+      "pattern": "/-o$/",
+      "target_style": "far"
+    }
+  }
+}

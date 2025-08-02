@@ -19,9 +19,12 @@ class MigrationVersionManager
 
     private array $mappers = [];
 
-    public function __construct()
+    private ConfigurationLoader $configLoader;
+
+    public function __construct(?ConfigurationLoader $configLoader = null)
     {
         $this->config = config('fontawesome-migrator', []);
+        $this->configLoader = $configLoader ?? new ConfigurationLoader();
     }
 
     /**
@@ -49,7 +52,7 @@ class MigrationVersionManager
             );
         }
 
-        $this->mappers[$migrationKey] = new $mapperClass($this->config);
+        $this->mappers[$migrationKey] = new $mapperClass($this->config, $this->configLoader);
 
         return $this->mappers[$migrationKey];
     }

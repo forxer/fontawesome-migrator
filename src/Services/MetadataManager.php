@@ -181,6 +181,7 @@ class MetadataManager
             ],
             'backups' => $this->metadata['backups'],
             'statistics' => $this->metadata['statistics'],
+            'custom' => $this->metadata['custom'] ?? [],
         ];
     }
 

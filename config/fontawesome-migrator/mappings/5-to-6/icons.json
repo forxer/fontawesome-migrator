@@ -1,0 +1,38 @@
+{
+  "description": "Mappings des icônes FontAwesome 5 vers 6",
+  "version": "5-to-6",
+  "renamed_icons": {
+    "fa-external-link": "fa-external-link-alt",
+    "fa-sort-alpha-down": "fa-arrow-down-a-z",
+    "fa-sort-alpha-up": "fa-arrow-up-a-z",
+    "fa-sort-numeric-down": "fa-arrow-down-1-9",
+    "fa-sort-numeric-up": "fa-arrow-up-1-9",
+    "fa-sort-amount-down": "fa-arrow-down-short-wide",
+    "fa-sort-amount-up": "fa-arrow-up-short-wide",
+    "fa-sort-amount-down-alt": "fa-arrow-down-wide-short",
+    "fa-sort-amount-up-alt": "fa-arrow-up-wide-short",
+    "fa-ad": "fa-rectangle-ad",
+    "fa-glass": "fa-martini-glass-empty",
+    "fa-envelope-o": "fa-envelope",
+    "fa-star-o": "fa-star",
+    "fa-close": "fa-xmark",
+    "fa-remove": "fa-xmark",
+    "fa-gear": "fa-cog",
+    "fa-trash-o": "fa-trash-can",
+    "fa-file-o": "fa-file",
+    "fa-clock-o": "fa-clock",
+    "fa-arrow-circle-o-down": "fa-circle-arrow-down",
+    "fa-arrow-circle-o-up": "fa-circle-arrow-up",
+    "fa-play-circle-o": "fa-circle-play",
+    "fa-repeat": "fa-arrow-rotate-right",
+    "fa-rotate-right": "fa-arrow-rotate-right",
+    "fa-refresh": "fa-arrows-rotate",
+    "fa-list-alt": "fa-rectangle-list",
+    "fa-dedent": "fa-outdent"
+  },
+  "notes": {
+    "sorting_icons": "Beaucoup d'icônes de tri ont été renommées pour plus de clarté",
+    "legacy_support": "FA5 contenait encore des références FA4, FA6 les nettoie",
+    "semantic_improvements": "Les nouveaux noms sont plus descriptifs"
+  }
+}

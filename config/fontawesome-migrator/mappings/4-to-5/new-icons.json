@@ -1,0 +1,25 @@
+{
+  "description": "Nouvelles icônes introduites en FontAwesome 5",
+  "version": "4-to-5",
+  "new_styles": [
+    "fa-light",
+    "fa-duotone"
+  ],
+  "new_icons": [
+    "fa-table-cells",
+    "fa-table-cells-large",
+    "fa-face-smile",
+    "fa-face-frown",
+    "fa-face-meh",
+    "fa-circle-arrow-down",
+    "fa-circle-arrow-up",
+    "fa-circle-play",
+    "fa-square-check",
+    "fa-square-plus"
+  ],
+  "notes": {
+    "styles": "Nouveaux styles disponibles en FA5",
+    "icons": "Exemples de nouvelles icônes FA5 - liste non exhaustive",
+    "usage": "Ces icônes peuvent être utilisées pour moderniser l'interface"
+  }
+}

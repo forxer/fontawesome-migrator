@@ -143,6 +143,7 @@ class ReportsController extends Controller
             'configuration' => $jsonData['meta']['configuration'] ?? [],
             'packageVersion' => $jsonData['meta']['package_version'] ?? '1.1.0',
             'enrichedWarnings' => $enrichedWarnings,
+            'metadata' => $jsonData, // Ajouter toutes les métadonnées pour la vue
         ];
 
         return view('fontawesome-migrator::reports.show', $viewData);

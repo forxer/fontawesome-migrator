@@ -1,0 +1,23 @@
+{
+  "description": "Mappings des styles FontAwesome 5 vers 6",
+  "version": "5-to-6",
+  "mappings": {
+    "fas": "fa-solid",
+    "far": "fa-regular",
+    "fab": "fa-brands",
+    "fal": "fa-light",
+    "fad": "fa-duotone",
+    "fa-solid": "fa-solid",
+    "fa-regular": "fa-regular",
+    "fa-brands": "fa-brands",
+    "fa-light": "fa-light",
+    "fa-duotone": "fa-duotone",
+    "fa-thin": "fa-thin",
+    "fa-sharp": "fa-sharp"
+  },
+  "notes": {
+    "main_change": "FA5 utilise des préfixes courts (fas, far) tandis que FA6 utilise des préfixes longs (fa-solid, fa-regular)",
+    "backwards_compatibility": "FA6 accepte aussi les anciens préfixes FA5",
+    "new_styles": "fa-thin et fa-sharp sont nouveaux en FA6"
+  }
+}

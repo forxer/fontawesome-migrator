@@ -144,12 +144,62 @@
                             <div class="col-md-6 col-lg-4">
                                 <div class="d-flex justify-content-between align-items-center p-2 border rounded">
                                     <span class="small">{{ ucfirst(str_replace('_', ' ', $option)) }}:</span>
-                                    <span class="badge {{ $value ? 'bg-success' : 'bg-secondary' }}">
-                                        {{ $value ? 'Oui' : 'Non' }}
-                                    </span>
+                                    @if($option === 'migration_source')
+                                        <span class="badge {{ $value === 'web_interface' ? 'bg-success' : 'bg-info' }}">
+                                            {{ $value === 'web_interface' ? 'Interface Web' : 'CLI' }}
+                                        </span>
+                                    @elseif(is_bool($value))
+                                        <span class="badge {{ $value ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ $value ? 'Oui' : 'Non' }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-primary">{{ $value ?? 'Non défini' }}</span>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Origine de la migration -->
+        @if(isset($metadata['custom']['migration_origin']))
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="section-title">
+                        <i class="bi bi-info-circle text-primary"></i> Origine de la migration
+                    </h2>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center p-3 border rounded">
+                                @if($metadata['custom']['migration_origin']['source'] === 'web_interface')
+                                    <i class="bi bi-globe text-success fs-4 me-3"></i>
+                                    <div>
+                                        <strong>Interface Web</strong>
+                                        <small class="d-block text-muted">Lancé depuis l'interface web</small>
+                                    </div>
+                                @else
+                                    <i class="bi bi-terminal text-info fs-4 me-3"></i>
+                                    <div>
+                                        <strong>Ligne de Commande</strong>
+                                        <small class="d-block text-muted">Lancé via CLI</small>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded">
+                                <label class="small text-muted">User Agent</label>
+                                <div class="small">{{ $metadata['custom']['migration_origin']['user_agent'] }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded">
+                                <label class="small text-muted">Adresse IP</label>
+                                <div class="small">{{ $metadata['custom']['migration_origin']['ip_address'] }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

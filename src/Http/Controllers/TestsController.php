@@ -51,6 +51,7 @@ class TestsController extends Controller
             $commandOptions = [
                 '--no-interactive' => true,
                 '--debug' => true,
+                '--web-interface' => true, // Marquer que la migration vient de l'interface web
             ];
 
             // Ajouter les options de version si spécifiées
@@ -143,6 +144,7 @@ class TestsController extends Controller
                         '--report' => true,
                         '--no-interactive' => true,
                         '--debug' => true,
+                        '--web-interface' => true,
                     ];
                     break;
 
@@ -151,6 +153,7 @@ class TestsController extends Controller
                         '--report' => true,
                         '--no-interactive' => true,
                         '--debug' => true,
+                        '--web-interface' => true,
                     ];
                     break;
 
@@ -161,6 +164,7 @@ class TestsController extends Controller
                         '--report' => true,
                         '--no-interactive' => true,
                         '--debug' => true,
+                        '--web-interface' => true,
                     ];
                     break;
 
@@ -171,6 +175,7 @@ class TestsController extends Controller
                         '--report' => true,
                         '--no-interactive' => true,
                         '--debug' => true,
+                        '--web-interface' => true,
                     ];
                     break;
             }

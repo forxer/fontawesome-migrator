@@ -59,7 +59,8 @@ class MigrateCommand extends Command
                             {--no-interactive : Désactiver le mode interactif}
                             {--debug : Afficher les informations de debug de l\'environnement}
                             {--from= : Version source de FontAwesome (4, 5, 6)}
-                            {--to= : Version cible de FontAwesome (5, 6, 7)}';
+                            {--to= : Version cible de FontAwesome (5, 6, 7)}
+                            {--web-interface : Marquer que la migration provient de l\'interface web}';
 
     /**
      * The console command description.
@@ -244,6 +245,11 @@ class MigrateCommand extends Command
                 'migrate_icons' => $migrateIcons,
                 'migrate_assets' => $migrateAssets,
                 'custom_path' => $customPath,
+            ])
+            ->addCustomData('migration_origin', [
+                'source' => $this->option('web-interface') ? 'web_interface' : 'command_line',
+                'user_agent' => $this->option('web-interface') ? ($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown') : 'CLI',
+                'ip_address' => $this->option('web-interface') ? ($_SERVER['REMOTE_ADDR'] ?? $_SERVER['SERVER_ADDR'] ?? 'Unknown') : 'localhost',
             ])
             ->startMigration();
 
@@ -671,6 +677,7 @@ class MigrateCommand extends Command
             'source_version' => $fromVersion,
             'target_version' => $toVersion,
             'detected_version' => $this->option('from') ? null : $fromVersion,
+            'migration_source' => $this->option('web-interface') ? 'web_interface' : 'command_line',
         ]);
     }
 

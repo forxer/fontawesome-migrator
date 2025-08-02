@@ -1,0 +1,21 @@
+{
+  "description": "Icônes et styles FontAwesome 5 Pro uniquement",
+  "version": "4-to-5",
+  "pro_styles": [
+    "fa-light",
+    "fa-duotone"
+  ],
+  "pro_icons": [
+    "fa-abacus",
+    "fa-acorn",
+    "fa-ad",
+    "fa-album",
+    "fa-album-collection",
+    "fa-analytics"
+  ],
+  "notes": {
+    "styles": "Les styles light et duotone sont exclusifs à FA5 Pro",
+    "icons": "Liste d'exemples d'icônes Pro FA5 - la liste complète serait plus longue",
+    "fallback": "En version Free, utiliser fas ou far comme alternative"
+  }
+}

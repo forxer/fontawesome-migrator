@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services\Mappers;
 
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\ConfigurationLoader;
 
 /**
  * Mapper pour la migration FontAwesome 4 → 5
@@ -22,145 +23,63 @@ class FontAwesome4To5Mapper implements VersionMapperInterface
 
     private array $newIcons;
 
-    public function __construct(private array $config = [])
+    private ConfigurationLoader $configLoader;
+
+    public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
     {
+        $this->configLoader = $configLoader ?? new ConfigurationLoader();
         $this->loadMappings();
     }
 
     /**
-     * Charger tous les mappings pour FA4 → FA5
+     * Charger tous les mappings pour FA4 → FA5 depuis les fichiers de configuration
      */
     private function loadMappings(): void
     {
-        // Transformation des styles FA4 → FA5
+        try {
+            // Charger depuis les fichiers de configuration JSON
+            $this->styleMappings = $this->configLoader->loadStyleMappings('4', '5');
+            $this->iconMappings = $this->configLoader->loadIconMappings('4', '5');
+            $this->deprecatedIcons = $this->configLoader->loadDeprecatedIcons('4', '5');
+            $this->proOnlyIcons = $this->configLoader->loadProOnlyIcons('4', '5');
+            $this->newIcons = $this->configLoader->loadNewIcons('4', '5');
+        } catch (\Exception $e) {
+            // Fallback vers les données hardcodées si les fichiers de config ne sont pas disponibles
+            $this->loadHardcodedMappings();
+        }
+    }
+
+    /**
+     * Charger les mappings hardcodés (fallback)
+     */
+    private function loadHardcodedMappings(): void
+    {
+        // Fallback data is now minimal - just essential mappings to ensure the system works
         $this->styleMappings = [
-            'fa' => 'fas', // Par défaut : solid
-            'fa fa-' => 'fas fa-', // Transformation générique
+            'fa' => 'fas',
+            'fa fa-' => 'fas fa-',
         ];
 
-        // Icônes avec suffixe -o (outlined) FA4 → FA5 Regular
-        $outlinedIcons = [
-            'fa-envelope-o' => 'fa-envelope',    // far fa-envelope
-            'fa-star-o' => 'fa-star',            // far fa-star
-            'fa-heart-o' => 'fa-heart',          // far fa-heart
-            'fa-clock-o' => 'fa-clock',          // far fa-clock
-            'fa-file-o' => 'fa-file',            // far fa-file
-            'fa-folder-o' => 'fa-folder',        // far fa-folder
-            'fa-folder-open-o' => 'fa-folder-open', // far fa-folder-open
-            'fa-trash-o' => 'fa-trash-can',      // far fa-trash-can (renommé aussi)
-            'fa-square-o' => 'fa-square',        // far fa-square
-            'fa-circle-o' => 'fa-circle',        // far fa-circle
-            'fa-check-square-o' => 'fa-square-check', // far fa-square-check
-            'fa-plus-square-o' => 'fa-square-plus',   // far fa-square-plus
-            'fa-minus-square-o' => 'fa-square-minus', // far fa-square-minus
-            'fa-times-circle-o' => 'fa-circle-xmark', // far fa-circle-xmark
-            'fa-arrow-circle-o-down' => 'fa-circle-arrow-down', // far fa-circle-arrow-down
-            'fa-arrow-circle-o-up' => 'fa-circle-arrow-up',     // far fa-circle-arrow-up
-            'fa-play-circle-o' => 'fa-circle-play',    // far fa-circle-play
-            'fa-stop-circle-o' => 'fa-circle-stop',    // far fa-circle-stop
-            'fa-pause-circle-o' => 'fa-circle-pause',  // far fa-circle-pause
-            'fa-picture-o' => 'fa-image',         // far fa-image
-            'fa-smile-o' => 'fa-face-smile',      // far fa-face-smile
-            'fa-frown-o' => 'fa-face-frown',      // far fa-face-frown
-            'fa-meh-o' => 'fa-face-meh',          // far fa-face-meh
-            'fa-keyboard-o' => 'fa-keyboard',     // far fa-keyboard
-            'fa-flag-o' => 'fa-flag',             // far fa-flag
+        $this->iconMappings = [
+            'fa-envelope-o' => 'fa-envelope',
+            'fa-star-o' => 'fa-star',
+            'fa-heart-o' => 'fa-heart',
         ];
 
-        // Icônes renommées FA4 → FA5 (sans changement de style)
-        $renamedIcons = [
-            'fa-glass' => 'fa-martini-glass-empty',
-            'fa-remove' => 'fa-xmark',
-            'fa-close' => 'fa-xmark',
-            'fa-gear' => 'fa-cog',
-            'fa-trash' => 'fa-trash-can',
-            'fa-home' => 'fa-house',
-            'fa-file-o' => 'fa-file',
-            'fa-repeat' => 'fa-arrow-rotate-right',
-            'fa-rotate-right' => 'fa-arrow-rotate-right',
-            'fa-refresh' => 'fa-arrows-rotate',
-            'fa-list-alt' => 'fa-rectangle-list',
-            'fa-dedent' => 'fa-outdent',
-            'fa-video-camera' => 'fa-video',
-            'fa-photo' => 'fa-image',
-            'fa-picture-o' => 'fa-image',
-            'fa-pencil' => 'fa-pencil-alt',
-            'fa-map-marker' => 'fa-location-dot',
-            'fa-adjust' => 'fa-circle-half-stroke',
-            'fa-tint' => 'fa-droplet',
-            'fa-edit' => 'fa-pen-to-square',
-            'fa-share-square-o' => 'fa-share-from-square',
-            'fa-times' => 'fa-xmark',
-            'fa-times-circle' => 'fa-circle-xmark',
-            'fa-th' => 'fa-table-cells',
-            'fa-th-large' => 'fa-table-cells-large',
-            'fa-th-list' => 'fa-list',
-            'fa-sign-out' => 'fa-right-from-bracket',
-            'fa-sign-in' => 'fa-right-to-bracket',
-            'fa-github-alt' => 'fa-github',
-            'fa-mail-forward' => 'fa-share',
-            'fa-expand' => 'fa-up-right-and-down-left-from-center',
-            'fa-compress' => 'fa-down-left-and-up-right-to-center',
-        ];
-
-        // Fusion des mappings
-        $this->iconMappings = array_merge($outlinedIcons, $renamedIcons);
-
-        // Icônes dépréciées (supprimées en FA5)
         $this->deprecatedIcons = [
             'fa-glass',
             'fa-remove',
             'fa-close',
-            'fa-gear',
-            'fa-home',
-            'fa-file-o',
-            'fa-clock-o',
-            // Icônes -o qui deviennent regular
-            'fa-envelope-o',
-            'fa-star-o',
-            'fa-heart-o',
-            'fa-folder-o',
-            'fa-trash-o',
-            'fa-square-o',
-            'fa-circle-o',
         ];
 
-        // FA5 Pro styles (nouveaux en FA5)
         $this->proOnlyIcons = [
-            // Styles Pro FA5
             'fa-light',
             'fa-duotone',
-            // Icônes Pro spécifiques FA5
-            'fa-abacus',
-            'fa-acorn',
-            'fa-ad',
-            'fa-album',
-            'fa-album-collection',
-            'fa-analytics',
         ];
 
-        // Nouvelles icônes introduites en FA5
         $this->newIcons = [
-            // Nouveaux styles
-            'fa-light',
-            'fa-duotone',
-            // Nouvelles icônes FA5
             'fa-table-cells',
-            'fa-table-cells-large',
             'fa-face-smile',
-            'fa-face-frown',
-            'fa-face-meh',
-            'fa-circle-arrow-down',
-            'fa-circle-arrow-up',
-            'fa-circle-play',
-            'fa-square-check',
-            'fa-square-plus',
-            'fa-square-minus',
-            'fa-circle-xmark',
-            'fa-right-from-bracket',
-            'fa-right-to-bracket',
-            'fa-up-right-and-down-left-from-center',
-            'fa-down-left-and-up-right-to-center',
         ];
     }
 

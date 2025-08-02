@@ -1,0 +1,58 @@
+{
+  "description": "Mappings des icônes FontAwesome 4 vers 5",
+  "version": "4-to-5",
+  "outlined_icons": {
+    "description": "Icônes FA4 avec suffixe -o qui deviennent far (regular) en FA5",
+    "target_style": "far",
+    "mappings": {
+      "fa-envelope-o": "fa-envelope",
+      "fa-star-o": "fa-star",
+      "fa-heart-o": "fa-heart",
+      "fa-clock-o": "fa-clock",
+      "fa-file-o": "fa-file",
+      "fa-folder-o": "fa-folder",
+      "fa-folder-open-o": "fa-folder-open",
+      "fa-trash-o": "fa-trash-can",
+      "fa-square-o": "fa-square",
+      "fa-circle-o": "fa-circle",
+      "fa-check-square-o": "fa-square-check",
+      "fa-plus-square-o": "fa-square-plus",
+      "fa-minus-square-o": "fa-square-minus",
+      "fa-times-circle-o": "fa-circle-xmark",
+      "fa-arrow-circle-o-down": "fa-circle-arrow-down",
+      "fa-arrow-circle-o-up": "fa-circle-arrow-up",
+      "fa-play-circle-o": "fa-circle-play",
+      "fa-stop-circle-o": "fa-circle-stop",
+      "fa-pause-circle-o": "fa-circle-pause",
+      "fa-picture-o": "fa-image",
+      "fa-smile-o": "fa-face-smile",
+      "fa-frown-o": "fa-face-frown",
+      "fa-meh-o": "fa-face-meh",
+      "fa-keyboard-o": "fa-keyboard",
+      "fa-flag-o": "fa-flag"
+    }
+  },
+  "renamed_icons": {
+    "description": "Icônes FA4 renommées en FA5 (sans changement de style)",
+    "mappings": {
+      "fa-glass": "fa-martini-glass-empty",
+      "fa-remove": "fa-xmark",
+      "fa-close": "fa-xmark",
+      "fa-gear": "fa-cog",
+      "fa-trash": "fa-trash-can",
+      "fa-home": "fa-house",
+      "fa-repeat": "fa-arrow-rotate-right",
+      "fa-rotate-right": "fa-arrow-rotate-right",
+      "fa-refresh": "fa-arrows-rotate",
+      "fa-list-alt": "fa-rectangle-list",
+      "fa-dedent": "fa-outdent",
+      "fa-video-camera": "fa-video",
+      "fa-photo": "fa-image",
+      "fa-pencil": "fa-pencil-alt",
+      "fa-map-marker": "fa-location-dot",
+      "fa-adjust": "fa-circle-half-stroke",
+      "fa-tint": "fa-droplet",
+      "fa-edit": "fa-pen-to-square"
+    }
+  }
+}

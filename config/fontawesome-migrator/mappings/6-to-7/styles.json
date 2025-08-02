@@ -1,0 +1,18 @@
+{
+  "description": "Mappings des styles FontAwesome 6 vers 7",
+  "version": "6-to-7",
+  "mappings": {
+    "fa-solid": "fa-solid",
+    "fa-regular": "fa-regular",
+    "fa-brands": "fa-brands",
+    "fa-light": "fa-light",
+    "fa-duotone": "fa-duotone",
+    "fa-thin": "fa-thin",
+    "fa-sharp": "fa-sharp"
+  },
+  "notes": {
+    "compatibility": "Les styles restent identiques entre FA6 et FA7",
+    "behavioral_changes": "Améliorations des performances et comportements",
+    "pro_styles": "fa-light, fa-duotone, fa-thin, fa-sharp restent Pro uniquement"
+  }
+}
