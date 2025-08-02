@@ -4,9 +4,12 @@ namespace FontAwesome\Migrator\Commands;
 
 use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\FileScanner;
+use FontAwesome\Migrator\Services\IconMapper;
 use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MetadataManager;
 use FontAwesome\Migrator\Services\MigrationReporter;
+use FontAwesome\Migrator\Services\MigrationVersionManager;
+use FontAwesome\Migrator\Services\StyleMapper;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Console\Command;
 
@@ -36,6 +39,12 @@ class MigrateCommand extends Command
 
     protected MetadataManager $metadata;
 
+    protected MigrationVersionManager $versionManager;
+
+    protected IconMapper $iconMapper;
+
+    protected StyleMapper $styleMapper;
+
     /**
      * The name and signature of the console command.
      */
@@ -48,12 +57,14 @@ class MigrateCommand extends Command
                             {--icons-only : Migrer uniquement les classes d\'icônes}
                             {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}
                             {--no-interactive : Désactiver le mode interactif}
-                            {--debug : Afficher les informations de debug de l\'environnement}';
+                            {--debug : Afficher les informations de debug de l\'environnement}
+                            {--from= : Version source de FontAwesome (4, 5, 6)}
+                            {--to= : Version cible de FontAwesome (5, 6, 7)}';
 
     /**
      * The console command description.
      */
-    protected $description = 'Migrer Font Awesome 5 vers Font Awesome 6 (icônes et assets) dans votre application Laravel';
+    protected $description = 'Migrer FontAwesome vers une version plus récente (icônes et assets) dans votre application Laravel';
 
     /**
      * Execute the console command.
@@ -63,7 +74,10 @@ class MigrateCommand extends Command
         IconReplacer $replacer,
         MigrationReporter $reporter,
         AssetMigrator $assetMigrator,
-        MetadataManager $metadata
+        MetadataManager $metadata,
+        MigrationVersionManager $versionManager,
+        IconMapper $iconMapper,
+        StyleMapper $styleMapper
     ): int {
         // Assigner les services aux propriétés de classe
         $this->scanner = $scanner;
@@ -71,6 +85,12 @@ class MigrateCommand extends Command
         $this->reporter = $reporter;
         $this->assetMigrator = $assetMigrator;
         $this->metadata = $metadata;
+        $this->versionManager = $versionManager;
+        $this->iconMapper = $iconMapper;
+        $this->styleMapper = $styleMapper;
+
+        // Configurer les versions de migration si spécifiées
+        $this->configureVersions();
 
         // Initialiser les métadonnées
         $this->metadata->initialize();
@@ -95,6 +115,16 @@ class MigrateCommand extends Command
         if (! $this->validateConfiguration()) {
             return Command::FAILURE;
         }
+
+        // Détection ou sélection des versions si non spécifiées
+        if (! $this->option('from') || ! $this->option('to')) {
+            $this->configureVersionsInteractively();
+        }
+
+        $fromVersion = $this->metadata->get('source_version') ?? '5';
+        $toVersion = $this->metadata->get('target_version') ?? '6';
+
+        note("🌐 Migration configurée : FontAwesome {$fromVersion} → {$toVersion}");
 
         // Sélection du mode de migration
         $migrationMode = select(
@@ -256,7 +286,8 @@ class MigrateCommand extends Command
         $results = [];
 
         if ($migrateIcons) {
-            $this->info('🔍 Recherche des icônes Font Awesome 5...');
+            $fromVersion = $this->metadata->get('source_version') ?? '5';
+            $this->info("🔍 Recherche des icônes FontAwesome {$fromVersion}...");
             $iconResults = $this->replacer->processFiles($files, $isDryRun);
             $results = $iconResults;
 
@@ -265,7 +296,8 @@ class MigrateCommand extends Command
         }
 
         if ($migrateAssets) {
-            $this->info('🎨 Migration des assets Font Awesome 5...');
+            $fromVersion = $this->metadata->get('source_version') ?? '5';
+            $this->info("🎨 Migration des assets FontAwesome {$fromVersion}...");
             $assetResults = $this->processAssets($files, $isDryRun);
 
             if ($migrateIcons) {
@@ -355,6 +387,9 @@ class MigrateCommand extends Command
      */
     protected function displayMigrationSummary(string $mode, bool $isDryRun, ?string $customPath, bool $generateReport, string $backupOption): void
     {
+        $fromVersion = $this->metadata->get('source_version') ?? '5';
+        $toVersion = $this->metadata->get('target_version') ?? '6';
+
         $modeLabels = [
             'complete' => '🔄 Migration complète (icônes + assets)',
             'icons' => '🎯 Migration des icônes uniquement',
@@ -364,6 +399,7 @@ class MigrateCommand extends Command
         $summary = [
             '📋 Résumé de la configuration :',
             '',
+            '• Version : FontAwesome '.$fromVersion.' → '.$toVersion,
             '• Mode : '.$modeLabels[$mode],
             '• Prévisualisation : '.($isDryRun ? '✅ Activée (dry-run)' : '❌ Désactivée'),
             '• Chemin : '.($customPath !== null && $customPath !== '' && $customPath !== '0' ? $customPath : '📂 Chemins par défaut'),
@@ -568,6 +604,68 @@ class MigrateCommand extends Command
     }
 
     /**
+     * Configurer les versions de migration
+     */
+    protected function configureVersions(?string $fromVersion = null, ?string $toVersion = null): void
+    {
+        $fromVersion = $fromVersion ?? $this->option('from');
+        $toVersion = $toVersion ?? $this->option('to');
+
+        // Détection automatique de la version source si non spécifiée
+        if (! $fromVersion) {
+            // Essayer de détecter depuis un échantillon de fichiers
+            $sampleFiles = $this->scanner->scanForFontAwesome()->take(5);
+            $detectedVersion = '5'; // Par défaut
+
+            foreach ($sampleFiles as $file) {
+                $content = file_get_contents($file->getPathname());
+                $detected = $this->versionManager->detectVersion($content);
+
+                if ($detected !== 'unknown') {
+                    $detectedVersion = $detected;
+                    break;
+                }
+            }
+
+            $fromVersion = $detectedVersion;
+        }
+
+        // Version cible par défaut
+        if (! $toVersion) {
+            $toVersion = match ($fromVersion) {
+                '4' => '5',
+                '5' => '6',
+                '6' => '7',
+                default => '6'
+            };
+        }
+
+        // Valider la migration
+        if (! $this->versionManager->isMigrationSupported($fromVersion, $toVersion)) {
+            $this->error("❌ Migration FontAwesome {$fromVersion} → {$toVersion} non supportée");
+            $supported = $this->versionManager->getSupportedMigrations();
+            $this->info('Migrations supportées :');
+
+            foreach ($supported as $migration) {
+                $this->info("  - FA{$migration['from']} → FA{$migration['to']}: {$migration['description']}");
+            }
+
+            exit(Command::FAILURE);
+        }
+
+        // Configurer les services avec les versions
+        $this->iconMapper->setVersions($fromVersion, $toVersion);
+        $this->styleMapper->setVersions($fromVersion, $toVersion);
+
+        // Stocker dans les métadonnées
+        $this->metadata->merge([
+            'source_version' => $fromVersion,
+            'target_version' => $toVersion,
+            'detected_version' => $this->option('from') ? null : $fromVersion,
+        ]);
+    }
+
+    /**
      * Déterminer si une sauvegarde doit être créée
      */
     protected function shouldCreateBackup(): bool
@@ -668,5 +766,78 @@ class MigrateCommand extends Command
         }
 
         $this->newLine();
+    }
+
+    /**
+     * Configurer les versions de migration de manière interactive
+     */
+    protected function configureVersionsInteractively(): void
+    {
+        info('🔍 Détection automatique de la version FontAwesome...');
+
+        // Essayer de détecter la version actuelle
+        $detectedVersion = null;
+        $paths = config('fontawesome-migrator.scan_paths', []);
+
+        // Scanner les fichiers pour détecter la version
+        $sampleFiles = $this->scanner->scanForFontAwesomeIcons($paths)->take(5);
+
+        foreach ($sampleFiles as $file) {
+            $content = file_get_contents($file->getPathname());
+            $detected = $this->versionManager->detectVersion($content);
+
+            if ($detected !== 'unknown') {
+                $detectedVersion = $detected;
+                break;
+            }
+        }
+
+        if ($detectedVersion) {
+            note("🎯 Version détectée : FontAwesome {$detectedVersion}");
+        }
+
+        // Sélection de la version source
+        $fromVersion = $this->option('from');
+
+        if (! $fromVersion) {
+            $fromVersion = select(
+                'Quelle est votre version actuelle de FontAwesome ?',
+                [
+                    '4' => 'FontAwesome 4 (préfixes simples: fa)',
+                    '5' => 'FontAwesome 5 (préfixes: fas, far, fab)',
+                    '6' => 'FontAwesome 6 (préfixes: fa-solid, fa-regular)',
+                ],
+                default: $detectedVersion ?? '5'
+            );
+        }
+
+        // Sélection de la version cible
+        $toVersion = $this->option('to');
+
+        if (! $toVersion) {
+            $availableTargets = [];
+            $migrations = $this->versionManager->getSupportedMigrations();
+
+            foreach ($migrations as $migration) {
+                if ($migration['from'] === $fromVersion) {
+                    $availableTargets[$migration['to']] = "FontAwesome {$migration['to']} - {$migration['description']}";
+                }
+            }
+
+            if (empty($availableTargets)) {
+                warning("Aucune migration disponible depuis FontAwesome {$fromVersion}");
+
+                exit(Command::FAILURE);
+            }
+
+            $toVersion = select(
+                'Vers quelle version souhaitez-vous migrer ?',
+                $availableTargets,
+                default: array_key_first($availableTargets)
+            );
+        }
+
+        // Valider et configurer
+        $this->configureVersions($fromVersion, $toVersion);
     }
 }
