@@ -21,6 +21,15 @@ class MigrationReporter
      */
     public function generateReport(array $results): array
     {
+        // Calculer les statistiques
+        $stats = $this->calculateStats($results);
+
+        // Enrichir les avertissements
+        $enrichedWarnings = $this->extractWarnings($results);
+
+        // Stocker les résultats dans metadata.json
+        $this->metadata->storeMigrationResults($results, $stats, $enrichedWarnings);
+
         // Obtenir le dossier de session actuel
         $sessionDir = $this->metadata->getSessionDirectory();
 
@@ -34,32 +43,26 @@ class MigrationReporter
             $reportPath = $sessionDir;
         }
 
-        // Nom de fichier simple sans timestamp (l'unicité vient du dossier de session)
+        // Générer seulement le fichier HTML pour visualisation (optionnel)
         $filename = 'fontawesome-migration-report.html';
         $fullPath = $reportPath.'/'.$filename;
 
         $htmlContent = $this->generateHtmlReport($results);
-
         File::put($fullPath, $htmlContent);
 
-        // Générer aussi un rapport JSON pour l'automatisation
-        $jsonFilename = 'fontawesome-migration-report.json';
-        $jsonPath = $reportPath.'/'.$jsonFilename;
-        File::put($jsonPath, json_encode($this->generateJsonReport($results), JSON_PRETTY_PRINT));
+        // Enregistrer le chemin du fichier HTML
+        $this->metadata->addReportPaths($fullPath, null);
 
-        // Ajouter les chemins des rapports aux métadonnées
-        $this->metadata->addReportPaths($fullPath, $jsonPath);
-
-        // Générer les URLs d'accès web
+        // Générer l'URL d'accès web pour le HTML
         $relativePath = str_replace(storage_path('app/public'), '', $fullPath);
-        $jsonRelativePath = str_replace(storage_path('app/public'), '', $jsonPath);
 
         return [
             'html_path' => $fullPath,
-            'json_path' => $jsonPath,
+            'json_path' => null,
             'html_url' => Storage::url($relativePath),
-            'json_url' => Storage::url($jsonRelativePath),
+            'json_url' => null,
             'filename' => $filename,
+            'metadata_path' => $this->metadata->saveToFile(), // Chemin du metadata.json
         ];
     }
 
@@ -69,54 +72,22 @@ class MigrationReporter
     protected function generateHtmlReport(array $results): string
     {
         $stats = $this->calculateStats($results);
-        $metadataForReport = $this->metadata->getForReport();
 
-        // Préparer les options avec les sauvegardes pour compatibilité avec la vue
-        $migrationOptions = $metadataForReport['meta']['migration_options'] ?? [];
-        $migrationOptions['created_backups'] = $metadataForReport['backups']['created'] ?? [];
-        $migrationOptions['backups_count'] = $metadataForReport['backups']['count'] ?? 0;
-
-        // Préparer les données pour la vue
+        // Méthode de compatibilité - les données sont gérées via le contrôleur
         $viewData = [
             'results' => $results,
             'stats' => $stats,
             'timestamp' => date('Y-m-d H:i:s'),
-            'isDryRun' => $metadataForReport['meta']['dry_run'] ?? false,
-            'migrationOptions' => $migrationOptions,
-            'configuration' => $metadataForReport['meta']['configuration'] ?? [],
-            'packageVersion' => $metadataForReport['meta']['package_version'] ?? '2.0.0-dev',
-            'backups' => $metadataForReport['backups'] ?? [],
-            'metadata' => $metadataForReport,
+            'isDryRun' => $this->metadata->get('runtime')['dry_run'] ?? false,
+            'migrationOptions' => $this->metadata->get('migration_options') ?? [],
+            'configuration' => $this->metadata->get('configuration') ?? [],
+            'packageVersion' => $this->metadata->get('session')['package_version'] ?? '?',
+            'sessionId' => $this->metadata->get('session')['id'] ?? 'unknown',
+            'shortId' => $this->metadata->get('session')['short_id'] ?? 'unknown',
+            'duration' => $this->metadata->get('runtime')['duration'] ?? null,
         ];
 
         return view('fontawesome-migrator::reports.show', $viewData)->render();
-    }
-
-    /**
-     * Générer le rapport JSON
-     */
-    protected function generateJsonReport(array $results): array
-    {
-        $stats = $this->calculateStats($results);
-        $metadataForReport = $this->metadata->getForReport();
-
-        return [
-            'meta' => $metadataForReport['meta'],
-            'backups' => $metadataForReport['backups'],
-            'statistics' => $metadataForReport['statistics'],
-            'custom' => $metadataForReport['custom'] ?? [],
-            'summary' => $stats,
-            'files' => array_map(fn ($result): array => [
-                'file' => $result['file'],
-                'success' => $result['success'] ?? true,
-                'changes_count' => \count($result['changes'] ?? []),
-                'warnings_count' => \count($result['warnings'] ?? []),
-                'assets_count' => \count($result['assets'] ?? []),
-                'changes' => $result['changes'] ?? [],
-                'warnings' => $result['warnings'] ?? [],
-                'assets' => $result['assets'] ?? [],
-            ], $results),
-        ];
     }
 
     /**

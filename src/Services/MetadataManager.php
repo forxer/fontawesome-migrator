@@ -64,6 +64,22 @@ class MetadataManager
                 'warnings_generated' => 0,
                 'errors_encountered' => 0,
             ],
+            'migration_results' => [
+                'summary' => [
+                    'total_files' => 0,
+                    'modified_files' => 0,
+                    'total_changes' => 0,
+                    'changes_by_type' => [],
+                    'warnings' => 0,
+                    'errors' => 0,
+                    'assets_migrated' => 0,
+                    'icons_migrated' => 0,
+                    'asset_types' => [],
+                    'migration_success' => true,
+                ],
+                'files' => [],
+                'enriched_warnings' => [],
+            ],
         ];
 
         return $this;
@@ -135,6 +151,42 @@ class MetadataManager
         $this->metadata['statistics'] = array_merge($this->metadata['statistics'], $stats);
 
         return $this;
+    }
+
+    /**
+     * Stocker les résultats de migration
+     */
+    public function storeMigrationResults(array $results, array $stats, array $enrichedWarnings = []): self
+    {
+        $this->metadata['migration_results'] = [
+            'summary' => $stats,
+            'files' => array_map(fn ($result): array => [
+                'file' => $result['file'],
+                'success' => $result['success'] ?? true,
+                'changes_count' => \count($result['changes'] ?? []),
+                'warnings_count' => \count($result['warnings'] ?? []),
+                'assets_count' => \count($result['assets'] ?? []),
+                'changes' => $result['changes'] ?? [],
+                'warnings' => $result['warnings'] ?? [],
+                'assets' => $result['assets'] ?? [],
+            ], $results),
+            'enriched_warnings' => $enrichedWarnings,
+            'generated_at' => Carbon::now()->toIso8601String(),
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Obtenir les résultats de migration
+     */
+    public function getMigrationResults(): array
+    {
+        return $this->metadata['migration_results'] ?? [
+            'summary' => [],
+            'files' => [],
+            'enriched_warnings' => [],
+        ];
     }
 
     /**
@@ -313,17 +365,23 @@ class MetadataManager
     /**
      * Ajouter les chemins des rapports aux métadonnées
      */
-    public function addReportPaths(string $htmlPath, string $jsonPath): self
+    public function addReportPaths(string $htmlPath, ?string $jsonPath = null): self
     {
         if (! isset($this->metadata['reports'])) {
             $this->metadata['reports'] = [];
         }
 
-        $this->metadata['reports'][] = [
+        $reportEntry = [
             'html_path' => $htmlPath,
-            'json_path' => $jsonPath,
             'created_at' => Carbon::now()->toIso8601String(),
         ];
+
+        // JSON path optionnel pour compatibilité
+        if ($jsonPath !== null) {
+            $reportEntry['json_path'] = $jsonPath;
+        }
+
+        $this->metadata['reports'][] = $reportEntry;
 
         return $this;
     }
@@ -408,10 +466,21 @@ class MetadataManager
                 $sessionInfo['dry_run'] = $metadata['runtime']['dry_run'] ?? false;
                 $sessionInfo['duration'] = $metadata['runtime']['duration'] ?? null;
 
+                // Inclure les métadonnées complètes
+                $sessionInfo['metadata'] = $metadata;
+
+                // Utiliser la date de création depuis les métadonnées comme source unique
+                if (isset($metadata['session']['started_at'])) {
+                    $sessionInfo['created_at'] = Carbon::parse($metadata['session']['started_at']);
+                }
+
                 // Utiliser le short_id des métadonnées s'il existe
                 if (isset($metadata['session']['short_id'])) {
                     $sessionInfo['short_id'] = $metadata['session']['short_id'];
                 }
+            } else {
+                // Pas de métadonnées disponibles - fallback
+                $sessionInfo['metadata'] = null;
             }
 
             $sessions[] = $sessionInfo;

@@ -121,11 +121,9 @@
                                 <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-                                @if ($report['has_json'])
-                                    <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-outline-primary">
-                                        <i class="bi bi-filetype-json"></i> JSON
-                                    </a>
-                                @endif
+                                <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bi bi-database"></i> Données
+                                </a>
                                 <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-outline-secondary">
                                     <i class="bi bi-folder"></i> Session
                                 </a>

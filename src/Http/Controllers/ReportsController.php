@@ -4,7 +4,6 @@ namespace FontAwesome\Migrator\Http\Controllers;
 
 use Carbon\Carbon;
 use FontAwesome\Migrator\Services\MetadataManager;
-use FontAwesome\Migrator\Services\MigrationReporter;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
@@ -24,34 +23,36 @@ class ReportsController extends Controller
             $sessionDir = $session['directory'];
             $sessionId = $session['session_id'];
             $shortId = $session['short_id'];
+            $sessionMetadata = $session['metadata'];
+
+            // Métadonnées de la session
+            // Ignorer les sessions sans données de migration
+            if (! $sessionMetadata) {
+                continue;
+            }
+
+            if (! isset($sessionMetadata['migration_results'])) {
+                continue;
+            }
 
             // Chercher les fichiers HTML de rapport dans la session
             $files = File::files($sessionDir);
 
             foreach ($files as $file) {
                 if ($file->getExtension() === 'html' && $file->getFilename() !== 'metadata.json') {
-                    $jsonPath = str_replace('.html', '.json', $file->getRealPath());
-
-                    // Lire l'information dry_run depuis le JSON si disponible
-                    $isDryRun = false;
-
-                    if (File::exists($jsonPath)) {
-                        $jsonContent = File::get($jsonPath);
-                        $jsonData = json_decode($jsonContent, true);
-                        $isDryRun = $jsonData['meta']['dry_run'] ?? false;
-                    }
-
                     $reports[] = [
                         'name' => $file->getFilenameWithoutExtension(),
                         'filename' => $file->getFilename(),
                         'session_id' => $sessionId,
                         'short_id' => $shortId,
-                        'created_at' => Carbon::createFromTimestamp($file->getMTime()),
+                        'created_at' => isset($sessionMetadata['session']['started_at'])
+                            ? Carbon::parse($sessionMetadata['session']['started_at'])
+                            : Carbon::createFromTimestamp($file->getMTime()),
                         'size' => $file->getSize(),
                         'html_path' => $file->getRealPath(),
-                        'json_path' => $jsonPath,
-                        'has_json' => File::exists($jsonPath),
-                        'dry_run' => $isDryRun,
+                        'json_path' => null, // Données intégrées dans metadata.json
+                        'has_json' => true,
+                        'dry_run' => $sessionMetadata['runtime']['dry_run'] ?? false,
                     ];
                 }
             }
@@ -89,61 +90,63 @@ class ReportsController extends Controller
             abort(404, 'Rapport non trouvé');
         }
 
-        // Si c'est un fichier JSON, retourner en JSON
+        // Si c'est un fichier JSON, retourner les données depuis metadata.json
         if (pathinfo($filename, PATHINFO_EXTENSION) === 'json') {
-            return response()->json(json_decode(File::get($filePath), true));
+            $sessionMetadata = $sessionInfo['metadata'] ?? null;
+
+            if (! $sessionMetadata) {
+                abort(404, 'Métadonnées de session non trouvées');
+            }
+
+            // Retourner les données depuis metadata.json
+            return response()->json($sessionMetadata['migration_results'] ?? [
+                'summary' => [],
+                'files' => [],
+                'enriched_warnings' => [],
+            ]);
         }
 
-        // Pour les fichiers HTML, utiliser la vue Blade partagée
-        $jsonPath = str_replace('.html', '.json', $filePath);
+        // Toutes les données proviennent de metadata.json
+        $sessionMetadata = $sessionInfo['metadata'] ?? null;
 
-        if (! File::exists($jsonPath)) {
-            // Fallback : utiliser la vue Blade avec données par défaut
-            $viewData = [
-                'results' => [],
-                'stats' => [
-                    'total_files' => 0,
-                    'modified_files' => 0,
-                    'total_changes' => 0,
-                    'icons_migrated' => 0,
-                    'assets_migrated' => 0,
-                    'migration_success' => true,
-                ],
-                'timestamp' => Carbon::createFromTimestamp(filemtime($filePath))->format('Y-m-d H:i:s'),
-                'isDryRun' => false,
-                'migrationOptions' => [],
-                'configuration' => [
-                    'license_type' => 'free',
-                    'scan_paths' => [],
-                    'file_extensions' => [],
-                    'backup_enabled' => true,
-                ],
-                'packageVersion' => '?',
-            ];
-
-            return view('fontawesome-migrator::reports.show', $viewData);
+        if (! $sessionMetadata) {
+            abort(404, 'Métadonnées de session non trouvées');
         }
 
-        // Charger les données depuis le fichier JSON
-        $jsonData = json_decode(File::get($jsonPath), true);
+        $migrationResults = $sessionMetadata['migration_results'] ?? [
+            'summary' => [
+                'total_files' => 0,
+                'modified_files' => 0,
+                'total_changes' => 0,
+                'icons_migrated' => 0,
+                'assets_migrated' => 0,
+                'migration_success' => true,
+            ],
+            'files' => [],
+            'enriched_warnings' => [],
+        ];
 
-        // Enrichir les données avec les avertissements formatés
-        $results = $jsonData['files'] ?? [];
-        $migrationReporter = app(MigrationReporter::class);
-        $enrichedWarnings = $migrationReporter->extractWarnings($results);
-
+        // Préparer les données pour la vue - TOUT depuis metadata.json
         $viewData = [
-            'results' => $results,
-            'stats' => $jsonData['summary'] ?? [],
-            'timestamp' => isset($jsonData['meta']['generated_at']) ?
-                Carbon::parse($jsonData['meta']['generated_at'])->format('Y-m-d H:i:s') :
-                Carbon::now()->format('Y-m-d H:i:s'),
-            'isDryRun' => $jsonData['meta']['dry_run'] ?? false,
-            'migrationOptions' => $jsonData['meta']['migration_options'] ?? [],
-            'configuration' => $jsonData['meta']['configuration'] ?? [],
-            'packageVersion' => $jsonData['meta']['package_version'] ?? '1.1.0',
-            'enrichedWarnings' => $enrichedWarnings,
-            'metadata' => $jsonData, // Ajouter toutes les métadonnées pour la vue
+            // Données métier
+            'results' => $migrationResults['files'] ?? [],
+            'stats' => $migrationResults['summary'] ?? [],
+            'enrichedWarnings' => $migrationResults['enriched_warnings'] ?? [],
+
+            // Données de contexte
+            'timestamp' => Carbon::parse($sessionMetadata['session']['started_at'])->format('Y-m-d H:i:s'),
+            'isDryRun' => $sessionMetadata['runtime']['dry_run'] ?? false,
+            'migrationOptions' => $sessionMetadata['migration_options'] ?? [],
+            'configuration' => $sessionMetadata['configuration'] ?? [
+                'license_type' => 'free',
+                'scan_paths' => [],
+                'file_extensions' => [],
+                'backup_enabled' => true,
+            ],
+            'packageVersion' => $sessionMetadata['session']['package_version'] ?? '?',
+            'sessionId' => $sessionMetadata['session']['id'] ?? 'unknown',
+            'shortId' => $sessionMetadata['session']['short_id'] ?? 'unknown',
+            'duration' => $sessionMetadata['runtime']['duration'] ?? null,
         ];
 
         return view('fontawesome-migrator::reports.show', $viewData);
@@ -171,16 +174,11 @@ class ReportsController extends Controller
             return response()->json(['error' => 'Rapport non trouvé'], 404);
         }
 
-        $jsonPath = str_replace('.html', '.json', $htmlPath);
+        // Supprimer seulement le fichier HTML de visualisation
         $deleted = 0;
 
         if (File::exists($htmlPath)) {
             File::delete($htmlPath);
-            $deleted++;
-        }
-
-        if (File::exists($jsonPath)) {
-            File::delete($jsonPath);
             $deleted++;
         }
 
@@ -204,8 +202,8 @@ class ReportsController extends Controller
             $files = File::files($sessionDir);
 
             foreach ($files as $file) {
-                // Ne supprimer que les fichiers de rapport (HTML/JSON), pas les métadonnées
-                if (\in_array($file->getExtension(), ['html', 'json']) &&
+                // Supprimer seulement les fichiers HTML (données dans metadata.json)
+                if ($file->getExtension() === 'html' &&
                     $file->getFilename() !== 'metadata.json' &&
                     $file->getMTime() < $cutoffTime) {
                     File::delete($file->getRealPath());
