@@ -205,6 +205,7 @@ class IconReplacer
         } elseif ($iconMapping['pro_only'] && ($this->config['license_type'] ?? 'free') === 'free') {
             $type = 'pro_fallback';
             $alternative = $this->mapper->getFreeAlternative($iconName);
+
             if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
                 $newIconName = $alternative;
                 $newString = str_replace(
@@ -219,8 +220,8 @@ class IconReplacer
         }
 
         // Ajouter les warnings du mapper
-        if (!empty($iconMapping['warnings'])) {
-            $warning = $warning !== null && $warning !== '' && $warning !== '0' ? $warning . ' | ' . implode(' | ', $iconMapping['warnings']) : implode(' | ', $iconMapping['warnings']);
+        if (! empty($iconMapping['warnings'])) {
+            $warning = $warning !== null && $warning !== '' && $warning !== '0' ? $warning.' | '.implode(' | ', $iconMapping['warnings']) : implode(' | ', $iconMapping['warnings']);
         }
 
         return [

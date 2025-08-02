@@ -286,11 +286,11 @@ class MigrateCommand extends Command
         if ($migrateIcons) {
             $fromVersion = $this->metadata->get('source_version') ?? '5';
             $toVersion = $this->metadata->get('target_version') ?? '6';
-            
+
             // S'assurer que l'IconReplacer utilise le bon mapper
             $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
             $this->replacer = app()->make(IconReplacer::class, ['mapper' => $mapper]);
-            
+
             $this->info(\sprintf('🔍 Recherche des icônes FontAwesome %s...', $fromVersion));
             $iconResults = $this->replacer->processFiles($files, $isDryRun);
             $results = $iconResults;
@@ -669,7 +669,7 @@ class MigrateCommand extends Command
 
         // Configurer le IconReplacer avec le bon mapper pour les versions spécifiées
         $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
-        
+
         // Recréer IconReplacer avec le bon mapper
         $this->replacer = app()->make(IconReplacer::class, ['mapper' => $mapper]);
 
@@ -680,7 +680,7 @@ class MigrateCommand extends Command
             'detected_version' => $this->option('from') ? null : $fromVersion,
             'migration_source' => $this->option('web-interface') ? 'web_interface' : 'command_line',
         ]);
-        
+
         // Configurer IconReplacer avec le bon mapper
         $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
         $this->replacer = app()->make(IconReplacer::class, ['mapper' => $mapper]);
