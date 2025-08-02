@@ -144,7 +144,7 @@ class MigrationVersionManager
         $supported = $this->getSupportedMigrations();
 
         foreach ($supported as $migration) {
-            if ((string) $migration['from'] === (string) $fromVersion && (string) $migration['to'] === (string) $toVersion) {
+            if ((string) $migration['from'] === $fromVersion && (string) $migration['to'] === $toVersion) {
                 return true;
             }
         }

@@ -13,7 +13,7 @@
         <div class="hero-content">
             <div class="hero-icon"><i class="bi bi-arrow-repeat"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>
-            <p class="hero-subtitle">Migrez facilement de FontAwesome 5 vers FontAwesome 6</p>
+            <p class="hero-subtitle">Migrez facilement entre toutes les versions de FontAwesome</p>
             <div class="hero-version">Version {{ $stats['package_version'] }}</div>
         </div>
     </div>
