@@ -145,7 +145,6 @@ class ConfigureCommand extends Command
         $this->displayConfigSection('📝 Informations générales', [
             'Fichier de configuration' => $configPath,
             'Type de licence' => $this->tempConfig['license_type'] ?? 'free',
-            'Génération de rapports' => ($this->tempConfig['generate_report'] ?? true) ? '✅ Activée' : '❌ Désactivée',
             'Sauvegardes automatiques' => ($this->tempConfig['backup_files'] ?? true) ? '✅ Activées' : '❌ Désactivées',
         ]);
 
@@ -679,20 +678,13 @@ class ConfigureCommand extends Command
      */
     protected function editGeneralOptions(): int
     {
-        $generateReport = $this->tempConfig['generate_report'] ?? true;
         $backupFiles = $this->tempConfig['backup_files'] ?? true;
 
-        note("Options actuelles:\n  • Génération de rapports: ".($generateReport ? '✅' : '❌')."\n  • Sauvegardes automatiques: ".($backupFiles ? '✅' : '❌'));
+        note("Options actuelles:\n  • Sauvegardes automatiques: ".($backupFiles ? '✅' : '❌'));
 
-        $newGenerateReport = confirm('Générer automatiquement des rapports ?', $generateReport);
         $newBackupFiles = confirm('Créer des sauvegardes avant modification ?', $backupFiles);
 
         $changes = [];
-
-        if ($newGenerateReport !== $generateReport) {
-            $this->updateTempConfigValue('generate_report', $newGenerateReport);
-            $changes[] = 'generate_report';
-        }
 
         if ($newBackupFiles !== $backupFiles) {
             $this->updateTempConfigValue('backup_files', $newBackupFiles);

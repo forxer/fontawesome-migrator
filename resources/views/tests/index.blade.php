@@ -133,13 +133,6 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="generateReport" name="report" checked>
-                        <label class="form-check-label" for="generateReport">
-                            <i class="bi bi-file-text"></i> Générer un rapport
-                        </label>
-                        <div class="form-text">Créer un rapport détaillé des changements</div>
-                    </div>
                 </div>
 
                 <div class="col-12">
@@ -405,7 +398,6 @@ function generateCommand() {
     const toVersion = document.getElementById('toVersion').value;
     const mode = document.getElementById('migrationMode').value;
     const dryRun = document.getElementById('dryRun').checked;
-    const generateReport = document.getElementById('generateReport').checked;
 
     let command = 'php artisan fontawesome:migrate';
 
@@ -419,7 +411,6 @@ function generateCommand() {
 
     // Ajouter les autres options
     if (dryRun) command += ' --dry-run';
-    if (generateReport) command += ' --report';
     command += ' --no-interactive';
 
     return command;
@@ -450,7 +441,6 @@ async function runMultiVersionMigration() {
     const toVersion = document.getElementById('toVersion').value;
     const mode = document.getElementById('migrationMode').value;
     const dryRun = document.getElementById('dryRun').checked;
-    const generateReport = document.getElementById('generateReport').checked;
 
     const startBtn = document.getElementById('startMigration');
     const output = document.getElementById('test-output');
@@ -474,7 +464,6 @@ async function runMultiVersionMigration() {
                 to: toVersion || null,
                 mode: mode,
                 dry_run: dryRun,
-                report: generateReport
             })
         });
 

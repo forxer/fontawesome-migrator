@@ -47,7 +47,6 @@ class MigrateCommand extends Command
                             {--path= : Chemin spécifique à analyser}
                             {--backup : Forcer la création de sauvegardes}
                             {--no-backup : Désactiver les sauvegardes}
-                            {--report : Générer un rapport détaillé}
                             {--icons-only : Migrer uniquement les classes d\'icônes}
                             {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}
                             {--no-interactive : Désactiver le mode interactif}
@@ -147,14 +146,11 @@ class MigrateCommand extends Command
             );
         }
 
-        // Génération de rapport
-        $generateReport = confirm('Générer un rapport détaillé ?', true);
-
         // Configuration des sauvegardes
         $backupOption = $this->configureBackups();
 
         // Résumé de la configuration
-        $this->displayMigrationSummary($migrationMode, $isDryRun, $customPath, $generateReport, $backupOption);
+        $this->displayMigrationSummary($migrationMode, $isDryRun, $customPath, $backupOption);
 
         if (! confirm('Confirmer la migration avec ces paramètres ?', true)) {
             outro('❌ Migration annulée par l\'utilisateur');
@@ -168,7 +164,6 @@ class MigrateCommand extends Command
             'path' => $customPath,
             'icons-only' => $migrationMode === 'icons',
             'assets-only' => $migrationMode === 'assets',
-            'report' => $generateReport,
             'backup' => $backupOption === 'force',
             'no-backup' => $backupOption === 'disable',
         ]);
@@ -211,7 +206,6 @@ class MigrateCommand extends Command
             'path' => $customPath,
             'icons-only' => $iconsOnly,
             'assets-only' => $assetsOnly,
-            'report' => $this->option('report'),
             'backup' => $this->option('backup'),
             'no-backup' => $this->option('no-backup'),
         ]);
@@ -342,21 +336,17 @@ class MigrateCommand extends Command
         $sessionDir = $this->metadata->getSessionDirectory();
         $this->line('📋 Session sauvegardée : '.basename($sessionDir));
 
-        // Générer le rapport si demandé
-        if ($this->option('report') || config('fontawesome-migrator.generate_report')) {
-            // Créer le reporter avec les bonnes métadonnées
-            $reporterWithMetadata = new MigrationReporter($this->metadata);
-            $reportInfo = $reporterWithMetadata->generateReport($results);
+        $reporterWithMetadata = new MigrationReporter($this->metadata);
+        $reportInfo = $reporterWithMetadata->generateReport($results);
 
-            // Sauvegarder les métadonnées mises à jour avec les chemins des rapports
-            $this->metadata->saveToFile();
+        // Sauvegarder les métadonnées mises à jour avec les chemins des rapports
+        $this->metadata->saveToFile();
 
-            $this->info('📊 Rapport généré :');
-            $this->line('   • Fichier : '.$reportInfo['filename']);
-            $this->line('   • HTML : '.$reportInfo['html_url']);
-            $this->line('   • JSON : '.$reportInfo['json_url']);
-            $this->line('   • Menu : '.url('/fontawesome-migrator/reports'));
-        }
+        $this->info('📊 Rapport généré automatiquement :');
+        $this->line('   • Fichier : '.$reportInfo['filename']);
+        $this->line('   • HTML : '.$reportInfo['html_url']);
+        $this->line('   • JSON : '.$reportInfo['json_url']);
+        $this->line('   • Interface : '.url('/fontawesome-migrator/reports'));
 
         if ($isDryRun) {
             $this->info('✨ Prévisualisation terminée. Utilisez la commande sans --dry-run pour appliquer les changements.');
@@ -396,7 +386,7 @@ class MigrateCommand extends Command
     /**
      * Afficher le résumé de la migration
      */
-    protected function displayMigrationSummary(string $mode, bool $isDryRun, ?string $customPath, bool $generateReport, string $backupOption): void
+    protected function displayMigrationSummary(string $mode, bool $isDryRun, ?string $customPath, string $backupOption): void
     {
         $migrationOptions = $this->metadata->get('migration_options') ?? [];
         $fromVersion = $migrationOptions['source_version'] ?? '5';
@@ -415,7 +405,6 @@ class MigrateCommand extends Command
             '• Mode : '.$modeLabels[$mode],
             '• Prévisualisation : '.($isDryRun ? '✅ Activée (dry-run)' : '❌ Désactivée'),
             '• Chemin : '.($customPath !== null && $customPath !== '' && $customPath !== '0' ? $customPath : '📂 Chemins par défaut'),
-            '• Rapport : '.($generateReport ? '✅ Généré' : '❌ Non généré'),
             '• Sauvegardes : '.match ($backupOption) {
                 'force' => '✅ Forcées',
                 'disable' => '❌ Désactivées',

@@ -124,13 +124,12 @@ class InstallCommand extends Command
         if ($this->option('non-interactive')) {
             $licenseType = 'free';
             $customPaths = [];
-            $generateReports = true;
             $enableBackups = true;
 
             info('✅ Configuration par défaut appliquée (mode non-interactif)');
 
             // En mode non-interactif, utiliser seulement les chemins personnalisés (vides = valeurs par défaut du package)
-            $this->writeConfiguration($licenseType, $customPaths, $generateReports, $enableBackups, []);
+            $this->writeConfiguration($licenseType, $customPaths, $enableBackups, []);
 
             return;
         }
@@ -151,9 +150,6 @@ class InstallCommand extends Command
         // Fichiers à exclure (utilise le trait)
         $excludePatterns = $this->configureExcludePatterns();
 
-        // Génération de rapports
-        $generateReports = confirm('Générer automatiquement des rapports ?', true);
-
         // Sauvegardes
         $enableBackups = confirm('Créer des sauvegardes avant modification ?', true);
 
@@ -161,7 +157,6 @@ class InstallCommand extends Command
         $this->writeConfiguration(
             $licenseType,
             $customPaths,
-            $generateReports,
             $enableBackups,
             $excludePatterns
         );

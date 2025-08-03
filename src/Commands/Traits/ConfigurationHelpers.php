@@ -243,7 +243,7 @@ trait ConfigurationHelpers
     /**
      * Écrire la configuration personnalisée avec validation des différences
      */
-    protected function writeConfiguration(string $licenseType, array $scanPaths, bool $generateReports, bool $enableBackups, array $excludePatterns = []): void
+    protected function writeConfiguration(string $licenseType, array $scanPaths, bool $enableBackups, array $excludePatterns = []): void
     {
         $configPath = config_path('fontawesome-migrator.php');
 
@@ -267,10 +267,6 @@ trait ConfigurationHelpers
         // N'écrire scan_paths que s'il y a vraiment des chemins personnalisés (non vides et différents des défauts)
         if ($scanPaths !== [] && $scanPaths !== $defaultConfig['scan_paths']) {
             $customConfig['scan_paths'] = $scanPaths;
-        }
-
-        if ($generateReports !== $defaultConfig['generate_report']) {
-            $customConfig['generate_report'] = $generateReports;
         }
 
         if ($enableBackups !== $defaultConfig['backup_files']) {

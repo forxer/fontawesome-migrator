@@ -75,13 +75,9 @@ class TestsController extends Controller
                     // 'complete' ne nécessite pas d'option spéciale
             }
 
-            // Ajouter les options dry-run et report
+            // Ajouter l'option dry-run
             if ($request->boolean('dry_run', true)) {
                 $commandOptions['--dry-run'] = true;
-            }
-
-            if ($request->boolean('report', true)) {
-                $commandOptions['--report'] = true;
             }
 
             // Construire la commande complète pour affichage
