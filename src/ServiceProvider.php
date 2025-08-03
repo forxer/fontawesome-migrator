@@ -89,27 +89,13 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerBindings(): void
     {
-        // Liaison pour VersionMapperInterface - utiliser FA5→6 par défaut
-        $this->app->bind(
-            \FontAwesome\Migrator\Contracts\VersionMapperInterface::class,
-            function ($app) {
-                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
-
-                return $versionManager->createMapper('5', '6');
-            }
-        );
-
-        // Liaison contextuelle pour IconReplacer
-        $this->app->when(\FontAwesome\Migrator\Services\IconReplacer::class)
-            ->needs(\FontAwesome\Migrator\Contracts\VersionMapperInterface::class)
-            ->give(function ($app) {
-                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
-
-                return $versionManager->createMapper('5', '6');
-            });
+        // === Services singleton (état partagé) ===
 
         // MetadataManager en singleton pour partager la session
         $this->app->singleton(\FontAwesome\Migrator\Services\MetadataManager::class);
+
+        // MigrationVersionManager en singleton
+        $this->app->singleton(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
 
         // BackupManager en singleton qui utilise le MetadataManager singleton
         $this->app->singleton(
@@ -118,6 +104,59 @@ class ServiceProvider extends BaseServiceProvider
                 return new \FontAwesome\Migrator\Services\BackupManager(
                     $app->make(\FontAwesome\Migrator\Services\MetadataManager::class)
                 );
+            }
+        );
+
+        // === Services avec injection automatique ===
+
+        // ConfigurationLoader - pas de dépendances
+        $this->app->bind(\FontAwesome\Migrator\Services\ConfigurationLoader::class);
+
+        // FileScanner - pas de dépendances externes
+        $this->app->bind(\FontAwesome\Migrator\Services\FileScanner::class);
+
+        // PackageVersionService - service statique, pas besoin de binding
+
+        // === Services avec dépendances spécifiques ===
+
+        // MigrationReporter avec MetadataManager
+        $this->app->bind(
+            \FontAwesome\Migrator\Services\MigrationReporter::class,
+            function ($app) {
+                return new \FontAwesome\Migrator\Services\MigrationReporter(
+                    $app->make(\FontAwesome\Migrator\Services\MetadataManager::class)
+                );
+            }
+        );
+
+        // AssetMigrator - injection automatique
+        $this->app->bind(\FontAwesome\Migrator\Services\AssetMigrator::class);
+
+        // IconReplacer avec dépendances complexes
+        $this->app->bind(
+            \FontAwesome\Migrator\Services\IconReplacer::class,
+            function ($app) {
+                // Obtenir le mapper par défaut (FA5→6) ou utiliser le contexte
+                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+                $mapper = $versionManager->createMapper('5', '6'); // Par défaut
+
+                return new \FontAwesome\Migrator\Services\IconReplacer(
+                    $mapper,
+                    $app->make(\FontAwesome\Migrator\Services\FileScanner::class),
+                    $app->make(\FontAwesome\Migrator\Services\BackupManager::class)
+                );
+            }
+        );
+
+        // === Interface bindings ===
+
+        // Liaison pour VersionMapperInterface - utiliser FA5→6 par défaut
+        $this->app->bind(
+            \FontAwesome\Migrator\Contracts\VersionMapperInterface::class,
+            function ($app) {
+                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+
+                return $versionManager->createMapper('5', '6');
             }
         );
     }

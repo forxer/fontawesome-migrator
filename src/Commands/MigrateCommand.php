@@ -80,11 +80,11 @@ class MigrateCommand extends Command
         $this->metadata = $metadata;
         $this->versionManager = $versionManager;
 
-        // Configurer les versions de migration si spécifiées
-        $this->configureVersions();
-
         // Initialiser les métadonnées
         $this->metadata->initialize();
+
+        // Configurer les versions de migration si spécifiées
+        $this->configureVersions();
 
         // Mode interactif par défaut, sauf si --no-interactive est spécifié
         if (! $this->option('no-interactive')) {
@@ -112,8 +112,9 @@ class MigrateCommand extends Command
             $this->configureVersionsInteractively();
         }
 
-        $fromVersion = $this->metadata->get('source_version') ?? '5';
-        $toVersion = $this->metadata->get('target_version') ?? '6';
+        $migrationOptions = $this->metadata->get('migration_options') ?? [];
+        $fromVersion = $migrationOptions['source_version'] ?? '5';
+        $toVersion = $migrationOptions['target_version'] ?? '6';
 
         note(\sprintf('🌐 Migration configurée : FontAwesome %s → %s', $fromVersion, $toVersion));
 
@@ -178,8 +179,9 @@ class MigrateCommand extends Command
      */
     protected function handleClassic(): int
     {
-        $fromVersion = $this->metadata->get('source_version') ?? '5';
-        $toVersion = $this->metadata->get('target_version') ?? '6';
+        $migrationOptions = $this->metadata->get('migration_options') ?? [];
+        $fromVersion = $migrationOptions['source_version'] ?? '5';
+        $toVersion = $migrationOptions['target_version'] ?? '6';
         $this->info(\sprintf('🚀 Démarrage de la migration FontAwesome %s → %s', $fromVersion, $toVersion));
 
         // Afficher les informations de debug si demandé
@@ -284,8 +286,9 @@ class MigrateCommand extends Command
         $results = [];
 
         if ($migrateIcons) {
-            $fromVersion = $this->metadata->get('source_version') ?? '5';
-            $toVersion = $this->metadata->get('target_version') ?? '6';
+            $migrationOptions = $this->metadata->get('migration_options') ?? [];
+            $fromVersion = $migrationOptions['source_version'] ?? '5';
+            $toVersion = $migrationOptions['target_version'] ?? '6';
 
             // S'assurer que l'IconReplacer utilise le bon mapper
             $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
@@ -302,8 +305,9 @@ class MigrateCommand extends Command
         }
 
         if ($migrateAssets) {
-            $fromVersion = $this->metadata->get('source_version') ?? '5';
-            $toVersion = $this->metadata->get('target_version') ?? '6';
+            $migrationOptions = $this->metadata->get('migration_options') ?? [];
+            $fromVersion = $migrationOptions['source_version'] ?? '5';
+            $toVersion = $migrationOptions['target_version'] ?? '6';
             $this->info(\sprintf('🎨 Migration des assets FontAwesome %s → %s...', $fromVersion, $toVersion));
             $assetResults = $this->processAssets($files, $isDryRun);
 
@@ -394,8 +398,9 @@ class MigrateCommand extends Command
      */
     protected function displayMigrationSummary(string $mode, bool $isDryRun, ?string $customPath, bool $generateReport, string $backupOption): void
     {
-        $fromVersion = $this->metadata->get('source_version') ?? '5';
-        $toVersion = $this->metadata->get('target_version') ?? '6';
+        $migrationOptions = $this->metadata->get('migration_options') ?? [];
+        $fromVersion = $migrationOptions['source_version'] ?? '5';
+        $toVersion = $migrationOptions['target_version'] ?? '6';
 
         $modeLabels = [
             'complete' => '🔄 Migration complète (icônes + assets)',
