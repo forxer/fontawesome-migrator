@@ -76,7 +76,7 @@ php artisan fontawesome:migrate --from=5 --to=6
 php artisan fontawesome:migrate --from=4 --to=5 --dry-run
 
 # Migration avec rapport détaillé
-php artisan fontawesome:migrate --from=6 --to=7 --report --verbose
+php artisan fontawesome:migrate --from=6 --to=7 --verbose
 ```
 
 ### Options avancées
@@ -251,7 +251,7 @@ php artisan fontawesome:migrate --from=4 --to=5 --dry-run
 
 **Commande :**
 ```bash
-php artisan fontawesome:migrate --from=5 --to=6 --report --verbose --path=resources/views
+php artisan fontawesome:migrate --from=5 --to=6 --verbose --path=resources/views
 ```
 
 **Rapport généré :**

@@ -9,8 +9,8 @@ php artisan fontawesome:migrate
 # Migration spécifique avec dry-run
 php artisan fontawesome:migrate --from=5 --to=6 --dry-run
 
-# Migration avec rapport détaillé
-php artisan fontawesome:migrate --from=4 --to=5 --report --verbose
+# Migration avec verbosité
+php artisan fontawesome:migrate --from=4 --to=5 --verbose
 
 # Configuration
 php artisan fontawesome:config --show

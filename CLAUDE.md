@@ -56,3 +56,4 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Architecture pure v2.0**: Plus de rétrocompatibilité, structure de données garantie dès l'initialisation
 - **Services consolidés**: IconMapper/StyleMapper supprimés, IconReplacer utilise VersionMapperInterface
 - **Code production-ready**: ~350+ lignes obsolètes supprimées, duplications éliminées
+- **Simplification rapports v2.0**: Option `--report` et config `generate_report` supprimées - rapports automatiques via métadonnées de session

@@ -16,6 +16,7 @@ CHANGELOG
 - **Dependency Injection**: Migration vers l'injection de dépendances dans la méthode `handle()`
 - **Metadata Architecture**: Refonte complète de la gestion des métadonnées avec séparation du reporting
 - **MigrationReporter API**: Suppression des méthodes `setDryRun()` et `setMigrationOptions()` - remplacées par injection de `MetadataManager`
+- **Report Generation**: Suppression de l'option `--report` et configuration `generate_report` - rapports automatiques via métadonnées
 
 ### Added
 - **🎯 Multi-Version Architecture**: Support complet FA4→5→6→7 avec détection automatique de version

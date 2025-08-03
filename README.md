@@ -99,7 +99,6 @@ return [
         'public/js',
         'custom/path'  // Chemin ajouté
     ],
-    'generate_report' => false,  // Modifié
     'pro_styles' => [
         'thin' => true,   // Activé pour FA6 Pro
         'sharp' => true,  // Activé pour FA6 Pro
@@ -152,9 +151,6 @@ return [
     'backup_files' => true,
     'backup_path' => storage_path('fontawesome-migrator/backups'),
 
-    // Génération de rapports
-    'generate_report' => true,
-    'report_path' => storage_path('app/public/fontawesome-migrator/reports'),
 ];
 ```
 
@@ -176,7 +172,7 @@ php artisan fontawesome:migrate --no-interactive
 # Migration FA4 → FA5 (révolution des préfixes)
 php artisan fontawesome:migrate --from=4 --to=5
 
-# Migration FA5 → FA6 (modernisation des noms)  
+# Migration FA5 → FA6 (modernisation des noms)
 php artisan fontawesome:migrate --from=5 --to=6
 
 # Migration FA6 → FA7 (optimisations comportementales)
@@ -188,10 +184,10 @@ php artisan fontawesome:migrate --from=5 --to=6 --dry-run
 
 **Le mode interactif** détecte automatiquement votre version FontAwesome et vous guide :
 - **🎯 Détection automatique** : FA4, FA5, FA6 ou FA7 dans votre code
-- **📋 Sélection du type** : Complète, icônes uniquement, assets uniquement  
+- **📋 Sélection du type** : Complète, icônes uniquement, assets uniquement
 - **👁️ Mode prévisualisation** : Dry-run avec confirmation
 - **📂 Chemins personnalisés** : Analyse de dossiers spécifiques
-- **📊 Génération de rapports** : Rapports détaillés optionnels
+- **📊 Génération de rapports** : Rapports automatiques dans les métadonnées
 - **💾 Configuration des sauvegardes** : Forcées, désactivées ou par défaut
 
 ### 🎛️ Modes de migration
@@ -241,7 +237,7 @@ php artisan fontawesome:migrate --path=resources/views
 
 ```bash
 # Migration avec rapport détaillé
-php artisan fontawesome:migrate --report --verbose
+php artisan fontawesome:migrate --verbose
 ```
 
 ### Options disponibles
@@ -255,7 +251,6 @@ php artisan fontawesome:migrate --report --verbose
 | `--backup` | Force la création de sauvegardes |
 | `--no-backup` | Désactive les sauvegardes |
 | `--verbose` | Mode verbeux avec détails |
-| `--report` | Génère un rapport détaillé |
 
 ## 📖 Documentation complète
 
@@ -282,7 +277,7 @@ http://votre-app.local/fontawesome-migrator/tests
 
 Fonctionnalités:
 - ✅ **Sélecteur de versions** : Dropdown pour choisir source/cible
-- ✅ **Validation dynamique** : Vérification des combinaisons supportées  
+- ✅ **Validation dynamique** : Vérification des combinaisons supportées
 - ✅ **Aperçu compatibilité** : Breaking changes et recommandations
 - ✅ **Lancement direct** : Exécution des migrations depuis l'interface
 
@@ -290,9 +285,9 @@ Fonctionnalités:
 
 ```
 config/fontawesome-migrator/mappings/
-├── 4-to-5/ (styles, icons, deprecated, pro-only, new-icons)
-├── 5-to-6/ (styles, icons) 
-└── 6-to-7/ (styles, icons, deprecated)
+├── 4-to-5/
+├── 5-to-6/
+└── 6-to-7/
 ```
 
 #### Migration par versions
@@ -304,7 +299,7 @@ php artisan fontawesome:migrate --from=4 --to=5
 # FA5 → FA6 : Modernisation des noms
 php artisan fontawesome:migrate --from=5 --to=6
 
-# FA6 → FA7 : Optimisations comportementales  
+# FA6 → FA7 : Optimisations comportementales
 php artisan fontawesome:migrate --from=6 --to=7
 ```
 
@@ -602,7 +597,7 @@ Accessible à `/fontawesome-migrator/test/panel` depuis l'interface de gestion d
 ```bash
 # Types de migrations disponibles via l'interface :
 🔍 Dry-Run           # Migration de prévisualisation
-🎯 Icônes seulement  # Migration des icônes uniquement  
+🎯 Icônes seulement  # Migration des icônes uniquement
 🎨 Assets seulement  # Migration des assets uniquement
 ⚡ Migration réelle  # Migration complète (attention !)
 ```
