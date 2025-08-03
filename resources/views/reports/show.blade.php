@@ -15,80 +15,209 @@
         :hasActions="false"
     />
 
-    <!-- Table des matières -->
+    <!-- Navigation rapide améliorée -->
     <div class="card mb-4">
         <div class="card-body">
-            <h2 class="card-title section-title mb-3"><i class="bi bi-list"></i> Navigation rapide</h2>
-            <ul class="list-unstyled mb-0">
-            <li class="mb-2">
-                <a href="#statistics" class="nav-link-item">
-                    <i class="bi bi-graph-up text-primary"></i>
-                    Statistiques générales
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="#timeline-section" class="nav-link-item">
-                    <i class="bi bi-clock text-primary"></i>
-                    Chronologie de migration
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="#recommendations-section" class="nav-link-item">
-                    <i class="bi bi-lightbulb text-primary"></i>
-                    Recommandations
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="#configuration-section" class="nav-link-item">
-                    <i class="bi bi-gear text-primary"></i>
-                    Configuration
-                </a>
-            </li>
-            @if (isset($metadata['custom']['migration_origin']))
-            <li class="mb-2">
-                <a href="#environment-section" class="nav-link-item">
-                    <i class="bi bi-info-circle text-primary"></i>
-                    Environnement
-                </a>
-            </li>
-            @endif
-            @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
-            <li class="mb-2">
-                <a href="#backups-section" class="nav-link-item">
-                    <i class="bi bi-hdd text-primary"></i>
-                    Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})
-                </a>
-            </li>
-            @endif
-            <li class="mb-2">
-                <a href="#info-section" class="nav-link-item">
-                    <i class="bi bi-info-circle text-primary"></i>
-                    Informations supplémentaires
-                </a>
-            </li>
-            @if ($stats['total_changes'] > 0)
-            <li class="mb-2">
-                <a href="#summary-section" class="nav-link-item">
-                    <i class="bi bi-clipboard-check text-primary"></i>
-                    Résumé de migration
-                </a>
-            </li>
-            @if (!empty($stats['asset_types']))
-            <li class="mb-2">
-                <a href="#assets-section" class="nav-link-item">
-                    <i class="bi bi-box text-primary"></i>
-                    Assets détectés
-                </a>
-            </li>
-            @endif
-            <li class="mb-2">
-                <a href="#details-section" class="nav-link-item">
-                    <i class="bi bi-code-slash text-primary"></i>
-                    Détail des modifications
-                </a>
-            </li>
-            @endif
-        </ul>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="card-title section-title mb-0">
+                    <i class="bi bi-compass text-primary me-2"></i>
+                    Navigation rapide
+                </h2>
+                <small class="text-muted">{{ collect([
+                    ['#statistics', 'Statistiques'],
+                    $stats['total_changes'] > 0 ? ['#timeline-section', 'Chronologie'] : null,
+                    $stats['total_changes'] > 0 ? ['#recommendations-section', 'Recommandations'] : null,
+                    ['#configuration-section', 'Configuration'],
+                    isset($metadata['custom']['migration_origin']) ? ['#environment-section', 'Environnement'] : null,
+                    (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0) ? ['#backups-section', 'Sauvegardes'] : null,
+                    ['#info-section', 'Informations'],
+                    $stats['total_changes'] > 0 ? ['#summary-section', 'Résumé'] : null,
+                    (!empty($stats['asset_types']) && $stats['total_changes'] > 0) ? ['#assets-section', 'Assets'] : null,
+                    $stats['total_changes'] > 0 ? ['#details-section', 'Détails'] : null
+                ])->filter()->count() }} sections</small>
+            </div>
+
+            <div class="row g-2">
+                <!-- Statistiques -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#statistics" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-graph-up text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Statistiques</div>
+                                    <small class="text-muted">{{ number_format($stats['total_files'], 0, ',', ' ') }} fichiers</small>
+                                </div>
+                                @if ($stats['total_changes'] > 0)
+                                    <span class="badge bg-success">{{ number_format($stats['total_changes'], 0, ',', ' ') }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                @if ($stats['total_changes'] > 0)
+                <!-- Chronologie -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#timeline-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock-history text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Chronologie</div>
+                                    <small class="text-muted">Étapes de migration</small>
+                                </div>
+                                <span class="badge {{ $isDryRun ? 'bg-warning' : 'bg-success' }}">
+                                    {{ $isDryRun ? 'Dry-run' : 'Appliquée' }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Recommandations -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#recommendations-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-lightbulb text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Recommandations</div>
+                                    <small class="text-muted">Actions suggérées</small>
+                                </div>
+                                @if (($stats['warnings'] ?? 0) > 0)
+                                    <span class="badge bg-warning">{{ $stats['warnings'] }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                @endif
+
+                <!-- Configuration -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#configuration-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-gear text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Configuration</div>
+                                    <small class="text-muted">Paramètres utilisés</small>
+                                </div>
+                                <span class="badge bg-secondary">{{ ucfirst($configuration['license_type'] ?? 'free') }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                @if (isset($metadata['custom']['migration_origin']))
+                <!-- Environnement -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#environment-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-server text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Environnement</div>
+                                    <small class="text-muted">Contexte d'exécution</small>
+                                </div>
+                                <span class="badge {{ $metadata['custom']['migration_origin']['source'] === 'web_interface' ? 'bg-success' : 'bg-info' }}">
+                                    {{ $metadata['custom']['migration_origin']['source'] === 'web_interface' ? 'Web' : 'CLI' }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                @endif
+
+                @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
+                <!-- Sauvegardes -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#backups-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-hdd text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Sauvegardes</div>
+                                    <small class="text-muted">Fichiers protégés</small>
+                                </div>
+                                <span class="badge bg-warning">{{ count($migrationOptions['created_backups']) }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                @endif
+
+                <!-- Informations -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#info-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-info-circle text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Informations</div>
+                                    <small class="text-muted">Détails techniques</small>
+                                </div>
+                                <span class="badge bg-outline-secondary">v{{ $packageVersion }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                @if ($stats['total_changes'] > 0)
+                <!-- Résumé -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#summary-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clipboard-check text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Résumé</div>
+                                    <small class="text-muted">Bilan migration</small>
+                                </div>
+                                <span class="badge {{ ($stats['migration_success'] ?? true) ? 'bg-success' : 'bg-warning' }}">
+                                    {{ ($stats['migration_success'] ?? true) ? 'OK' : 'Partiel' }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                @if (!empty($stats['asset_types']))
+                <!-- Assets -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#assets-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-box text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Assets</div>
+                                    <small class="text-muted">CDN, NPM détectés</small>
+                                </div>
+                                <span class="badge bg-info">{{ array_sum($stats['asset_types']) }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                @endif
+
+                <!-- Détails -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#details-section" class="text-decoration-none">
+                        <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-code-slash text-primary fs-5 me-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">Détails</div>
+                                    <small class="text-muted">Modifications par fichier</small>
+                                </div>
+                                <span class="badge bg-primary">{{ number_format($stats['modified_files'], 0, ',', ' ') }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                @endif
+            </div>
         </div>
     </div>
 
@@ -414,7 +543,7 @@
     <!-- Configuration et options -->
     <div id="configuration-section" class="mb-4">
         <h2 class="section-title mb-3"><i class="bi bi-gear"></i> Configuration de migration</h2>
-        
+
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="card h-100">
@@ -494,7 +623,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Informations d'environnement et d'origine -->
         @if (isset($metadata['custom']['migration_origin']))
         <div id="environment-section" class="row g-4 mt-2">
@@ -608,7 +737,11 @@
             @if (!empty($stats['changes_by_type']))
                 <table class="table table-striped table-sm">
                     <thead>
-                        <tr><th>Type de changement</th><th>Nombre</th><th>Pourcentage</th></tr>
+                        <tr>
+                            <th scope="col">Type de changement</th>
+                            <th scope="col" class="text-end">Nombre</th>
+                            <th scope="col" class="text-end">Pourcentage</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @foreach($stats['changes_by_type'] as $type => $count)
@@ -617,20 +750,18 @@
                             @endphp
                             <tr>
                                 <td>
-                                    <span class="badge">
-                                        @switch($type)
-                                            @case('style_update') Mise à jour de style @break
-                                            @case('renamed_icon') Icône renommée @break
-                                            @case('pro_fallback') Fallback Pro→Free @break
-                                            @case('asset') Asset migré @break
-                                            @case('deprecated_icon') Icône dépréciée @break
-                                            @case('manual_review') Révision manuelle @break
-                                            @default {{ ucfirst(str_replace('_', ' ', $type)) }}
-                                        @endswitch
-                                    </span>
+                                    @switch($type)
+                                        @case('style_update') Mise à jour de style @break
+                                        @case('renamed_icon') Icône renommée @break
+                                        @case('pro_fallback') Fallback Pro→Free @break
+                                        @case('asset') Asset migré @break
+                                        @case('deprecated_icon') Icône dépréciée @break
+                                        @case('manual_review') Révision manuelle @break
+                                        @default {{ ucfirst(str_replace('_', ' ', $type)) }}
+                                    @endswitch
                                 </td>
-                                <td>{{ number_format($count, 0, ',', ' ') }}</td>
-                                <td>{{ number_format($percentage, 1, ',', ' ') }} %</td>
+                                <td class="text-end">{{ number_format($count, 0, ',', ' ') }}</td>
+                                <td class="text-end">{{ number_format($percentage, 1, ',', ' ') }} %</td>
                             </tr>
                         @endforeach
                     </tbody>

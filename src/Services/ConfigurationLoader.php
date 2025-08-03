@@ -233,13 +233,13 @@ class ConfigurationLoader
     private function getDefaultConfigPath(): string
     {
         // En contexte de package, utiliser le chemin du package
-        $packagePath = dirname(__DIR__, 2).'/config/fontawesome-migrator';
-        
+        $packagePath = \dirname(__DIR__, 2).'/config/fontawesome-migrator';
+
         // Si on est dans un projet Laravel, utiliser base_path
-        if (function_exists('base_path') && is_dir(base_path('config/fontawesome-migrator'))) {
+        if (\function_exists('base_path') && is_dir(base_path('config/fontawesome-migrator'))) {
             return base_path('config/fontawesome-migrator');
         }
-        
+
         return $packagePath;
     }
 

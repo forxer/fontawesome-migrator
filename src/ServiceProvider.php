@@ -107,5 +107,18 @@ class ServiceProvider extends BaseServiceProvider
 
                 return $versionManager->createMapper('5', '6');
             });
+
+        // MetadataManager en singleton pour partager la session
+        $this->app->singleton(\FontAwesome\Migrator\Services\MetadataManager::class);
+
+        // BackupManager en singleton qui utilise le MetadataManager singleton
+        $this->app->singleton(
+            \FontAwesome\Migrator\Services\BackupManager::class,
+            function ($app) {
+                return new \FontAwesome\Migrator\Services\BackupManager(
+                    $app->make(\FontAwesome\Migrator\Services\MetadataManager::class)
+                );
+            }
+        );
     }
 }

@@ -235,7 +235,7 @@
         font-weight: 500;
     }
 
-    /* Badge styles */
+    /* Badge styles
     .badge {
         display: inline-flex;
         align-items: center;
@@ -244,7 +244,7 @@
         font-size: 0.8em;
         font-weight: 500;
         gap: 4px;
-    }
+    }*/
 
     .badge-icon {
         color: var(--primary-color);
@@ -253,7 +253,7 @@
     .badge-asset {
         color: #7c3aed;
     }
-
+/*
     .badge-success {
         background: #d1fae5;
         color: #065f46;
@@ -267,7 +267,7 @@
     .badge-error {
         background: #fee2e2;
         color: #991b1b;
-    }
+    } */
 
     /* Responsive */
     @media (max-width: 768px) {

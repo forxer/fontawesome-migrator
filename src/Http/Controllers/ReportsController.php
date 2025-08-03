@@ -125,6 +125,7 @@ class ReportsController extends Controller
             'sessionId' => $sessionMetadata['session']['id'],
             'shortId' => $sessionMetadata['session']['short_id'],
             'duration' => $sessionMetadata['runtime']['duration'],
+            'metadata' => $sessionMetadata, // Toutes les métadonnées pour accès aux données custom
         ];
 
         return view('fontawesome-migrator::reports.show', $viewData);

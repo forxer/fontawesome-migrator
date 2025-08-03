@@ -93,9 +93,9 @@
                     </label>
                     <select class="form-select" id="fromVersion" name="from">
                         <option value="">Détection automatique</option>
-                        <option value="4">FontAwesome 4 (préfixes simples: fa)</option>
-                        <option value="5">FontAwesome 5 (préfixes: fas, far, fab)</option>
-                        <option value="6">FontAwesome 6 (préfixes: fa-solid, fa-regular)</option>
+                        <option value="4">FontAwesome 4</option>
+                        <option value="5">FontAwesome 5</option>
+                        <option value="6">FontAwesome 6</option>
                     </select>
                     <div class="form-text">La version actuelle de votre projet</div>
                 </div>

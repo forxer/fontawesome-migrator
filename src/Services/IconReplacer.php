@@ -4,7 +4,6 @@ namespace FontAwesome\Migrator\Services;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
-use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Support\Facades\File;
 
 class IconReplacer
@@ -13,7 +12,8 @@ class IconReplacer
 
     public function __construct(
         protected VersionMapperInterface $mapper,
-        protected FileScanner $fileScanner
+        protected FileScanner $fileScanner,
+        protected BackupManager $backupManager
     ) {
         $this->config = config('fontawesome-migrator');
     }
@@ -258,36 +258,7 @@ class IconReplacer
      */
     protected function createBackup(string $filePath): array|bool
     {
-        $backupDir = $this->config['sessions_path'];
-
-        // S'assurer que le répertoire et le .gitignore existent
-        DirectoryHelper::ensureExistsWithGitignore($backupDir);
-
-        $relativePath = str_replace(base_path().'/', '', $filePath);
-        $timestamp = date('Y-m-d_H-i-s');
-        $backupPath = $backupDir.'/'.$relativePath.'.backup.'.$timestamp;
-
-        // Créer les dossiers nécessaires
-        $backupDirectory = \dirname($backupPath);
-
-        if (! File::exists($backupDirectory)) {
-            File::makeDirectory($backupDirectory, 0755, true);
-        }
-
-        $success = File::copy($filePath, $backupPath);
-
-        if ($success) {
-            return [
-                'original_file' => $filePath,
-                'relative_path' => $relativePath,
-                'backup_path' => $backupPath,
-                'timestamp' => $timestamp,
-                'created_at' => date('Y-m-d H:i:s'),
-                'size' => File::size($backupPath),
-            ];
-        }
-
-        return false;
+        return $this->backupManager->createBackup($filePath);
     }
 
     /**

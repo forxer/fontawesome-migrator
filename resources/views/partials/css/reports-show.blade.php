@@ -1,6 +1,21 @@
 <style>
     /* Styles spécifiques à la page de détail d'un rapport de migration - nettoyé pour Bootstrap */
 
+    /* Navigation rapide améliorée */
+    .hover-bg-light {
+        transition: all 0.2s ease;
+    }
+    
+    .hover-bg-light:hover {
+        background-color: #f8f9fa !important;
+        border-color: #dee2e6 !important;
+        transform: translateY(-1px);
+    }
+    
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
+
     /* Styles spécifiques pour la timeline qui ne sont pas couverts par Bootstrap */
     .timeline-container {
         position: relative;
