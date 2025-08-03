@@ -6,6 +6,15 @@ use Carbon\Carbon;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
+use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\AssetMigrator;
+use FontAwesome\Migrator\Services\BackupManager;
+use FontAwesome\Migrator\Services\ConfigurationLoader;
+use FontAwesome\Migrator\Services\FileScanner;
+use FontAwesome\Migrator\Services\IconReplacer;
+use FontAwesome\Migrator\Services\MetadataManager;
+use FontAwesome\Migrator\Services\MigrationReporter;
+use FontAwesome\Migrator\Services\MigrationVersionManager;
 use FontAwesome\Migrator\View\Components\PageHeader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
@@ -92,28 +101,26 @@ class ServiceProvider extends BaseServiceProvider
         // === Services singleton (état partagé) ===
 
         // MetadataManager en singleton pour partager la session
-        $this->app->singleton(\FontAwesome\Migrator\Services\MetadataManager::class);
+        $this->app->singleton(MetadataManager::class);
 
         // MigrationVersionManager en singleton
-        $this->app->singleton(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+        $this->app->singleton(MigrationVersionManager::class);
 
         // BackupManager en singleton qui utilise le MetadataManager singleton
         $this->app->singleton(
-            \FontAwesome\Migrator\Services\BackupManager::class,
-            function ($app) {
-                return new \FontAwesome\Migrator\Services\BackupManager(
-                    $app->make(\FontAwesome\Migrator\Services\MetadataManager::class)
-                );
-            }
+            BackupManager::class,
+            fn ($app): BackupManager => new BackupManager(
+                $app->make(MetadataManager::class)
+            )
         );
 
         // === Services avec injection automatique ===
 
         // ConfigurationLoader - pas de dépendances
-        $this->app->bind(\FontAwesome\Migrator\Services\ConfigurationLoader::class);
+        $this->app->bind(ConfigurationLoader::class);
 
         // FileScanner - pas de dépendances externes
-        $this->app->bind(\FontAwesome\Migrator\Services\FileScanner::class);
+        $this->app->bind(FileScanner::class);
 
         // PackageVersionService - service statique, pas besoin de binding
 
@@ -121,29 +128,27 @@ class ServiceProvider extends BaseServiceProvider
 
         // MigrationReporter avec MetadataManager
         $this->app->bind(
-            \FontAwesome\Migrator\Services\MigrationReporter::class,
-            function ($app) {
-                return new \FontAwesome\Migrator\Services\MigrationReporter(
-                    $app->make(\FontAwesome\Migrator\Services\MetadataManager::class)
-                );
-            }
+            MigrationReporter::class,
+            fn ($app): MigrationReporter => new MigrationReporter(
+                $app->make(MetadataManager::class)
+            )
         );
 
         // AssetMigrator - injection automatique
-        $this->app->bind(\FontAwesome\Migrator\Services\AssetMigrator::class);
+        $this->app->bind(AssetMigrator::class);
 
         // IconReplacer avec dépendances complexes
         $this->app->bind(
-            \FontAwesome\Migrator\Services\IconReplacer::class,
-            function ($app) {
+            IconReplacer::class,
+            function ($app): IconReplacer {
                 // Obtenir le mapper par défaut (FA5→6) ou utiliser le contexte
-                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+                $versionManager = $app->make(MigrationVersionManager::class);
                 $mapper = $versionManager->createMapper('5', '6'); // Par défaut
 
-                return new \FontAwesome\Migrator\Services\IconReplacer(
+                return new IconReplacer(
                     $mapper,
-                    $app->make(\FontAwesome\Migrator\Services\FileScanner::class),
-                    $app->make(\FontAwesome\Migrator\Services\BackupManager::class)
+                    $app->make(FileScanner::class),
+                    $app->make(BackupManager::class)
                 );
             }
         );
@@ -152,9 +157,9 @@ class ServiceProvider extends BaseServiceProvider
 
         // Liaison pour VersionMapperInterface - utiliser FA5→6 par défaut
         $this->app->bind(
-            \FontAwesome\Migrator\Contracts\VersionMapperInterface::class,
+            VersionMapperInterface::class,
             function ($app) {
-                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+                $versionManager = $app->make(MigrationVersionManager::class);
 
                 return $versionManager->createMapper('5', '6');
             }
