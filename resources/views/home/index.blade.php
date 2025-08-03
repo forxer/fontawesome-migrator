@@ -21,26 +21,26 @@
     <!-- Statistics Dashboard Bootstrap -->
     <div class="row g-4 mb-5">
         <div class="col-lg-3 col-md-6">
-            <div class="card h-100 shadow-sm {{ $stats['total_sessions'] > 0 ? 'border-primary' : '' }}">
+            <div class="card h-100 shadow-sm {{ $stats['total_migrations'] > 0 ? 'border-primary' : '' }}">
                 <div class="card-body text-center">
-                    <i class="bi bi-folder fs-1 {{ $stats['total_sessions'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                    <h3 class="card-title {{ $stats['total_sessions'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_sessions'] }}</h3>
-                    <p class="card-text text-muted">Sessions de migration</p>
+                    <i class="bi bi-folder fs-1 {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
+                    <h3 class="card-title {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_migrations'] }}</h3>
+                    <p class="card-text text-muted">Migrations effectuées</p>
                 </div>
-                @if($stats['total_sessions'] > 0)
+                @if($stats['total_migrations'] > 0)
                     <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
                 @endif
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <div class="card h-100 shadow-sm {{ $stats['total_reports'] > 0 ? 'border-primary' : '' }}">
+            <div class="card h-100 shadow-sm {{ $stats['total_files_migrated'] > 0 ? 'border-primary' : '' }}">
                 <div class="card-body text-center">
-                    <i class="bi bi-file-text fs-1 {{ $stats['total_reports'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                    <h3 class="card-title {{ $stats['total_reports'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_reports'] }}</h3>
-                    <p class="card-text text-muted">Rapports générés</p>
+                    <i class="bi bi-file-code fs-1 {{ $stats['total_files_migrated'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
+                    <h3 class="card-title {{ $stats['total_files_migrated'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_files_migrated'] }}</h3>
+                    <p class="card-text text-muted">Fichiers migrés</p>
                 </div>
-                @if($stats['total_reports'] > 0)
+                @if($stats['total_files_migrated'] > 0)
                     <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
                 @endif
             </div>
@@ -83,24 +83,11 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card action-card-bootstrap">
                     <div class="card-body text-center p-4">
-                        <i class="bi bi-file-text action-icon"></i>
-                        <h5 class="card-title">Voir les Rapports</h5>
-                        <p class="card-text text-muted">Consultez tous les rapports de migration générés</p>
+                        <i class="bi bi-arrow-repeat action-icon"></i>
+                        <h5 class="card-title">Migrations</h5>
+                        <p class="card-text text-muted">Consultez l'historique des migrations et leurs rapports détaillés</p>
                         <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
-                            Accéder aux rapports
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="card action-card-bootstrap">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-folder action-icon"></i>
-                        <h5 class="card-title">Gérer les Sessions</h5>
-                        <p class="card-text text-muted">Explorez les sessions de migration et leurs métadonnées</p>
-                        <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-primary">
-                            Voir les sessions
+                            Voir les migrations
                         </a>
                     </div>
                 </div>
@@ -122,29 +109,29 @@
     </div>
 
     <!-- Recent Activity Bootstrap -->
-    @if(count($recentReports) > 0)
+    @if(count($recentMigrations) > 0)
         <div class="mb-5">
             <h2 class="section-title section-title-lg">
-                <i class="bi bi-file-text text-primary"></i> Activité Récente
+                <i class="bi bi-arrow-repeat text-primary"></i> Migrations Récentes
             </h2>
 
             <div class="card shadow-sm activity-list">
                 <div class="list-group list-group-flush">
-                    @foreach($recentReports as $report)
+                    @foreach($recentMigrations as $migration)
                         <div class="list-group-item activity-item">
-                            <i class="bi bi-file-text activity-icon"></i>
+                            <i class="bi bi-arrow-repeat activity-icon"></i>
                             <div class="activity-content">
                                 <div class="activity-title">
-                                    <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}"
+                                    <a href="{{ route('fontawesome-migrator.reports.show', $migration['short_id']) }}"
                                        class="text-decoration-none text-dark">
-                                        {{ $report['name'] }}
+                                        {{ $migration['name'] }}
                                     </a>
                                 </div>
                                 <div class="activity-meta">
-                                    Session <span data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">{{ $report['short_id'] }}</span>
-                                    • {{ $report['created_at']->format('d/m/Y à H:i') }}
-                                    • {{ human_readable_bytes_size($report['size'], 2) }}
-                                    @if($report['dry_run'])
+                                    Migration <span data-bs-toggle="tooltip" title="ID complet : {{ $migration['session_id'] }}">{{ $migration['short_id'] }}</span>
+                                    • {{ $migration['created_at']->format('d/m/Y à H:i') }}
+                                    • {{ $migration['files_modified'] }} fichier(s) • {{ $migration['total_changes'] }} changement(s)
+                                    @if($migration['dry_run'])
                                         • <span class="badge bg-warning text-dark">DRY-RUN</span>
                                     @else
                                         • <span class="badge bg-success">RÉEL</span>
@@ -152,7 +139,7 @@
                                 </div>
                             </div>
                             <span class="badge activity-badge">
-                                {{ $report['created_at']->diffForHumans(['short' => true]) }}
+                                {{ $migration['created_at']->diffForHumans(['short' => true]) }}
                             </span>
                         </div>
                     @endforeach
@@ -168,7 +155,7 @@
     @endif
 
     <!-- Getting Started Bootstrap -->
-    @if($stats['total_sessions'] == 0)
+    @if($stats['total_migrations'] == 0)
         <div class="card shadow-sm mb-5">
             <div class="card-body p-4">
                 <h2 class="section-title">

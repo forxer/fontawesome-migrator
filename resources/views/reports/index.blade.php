@@ -1,38 +1,54 @@
 @extends('fontawesome-migrator::layout')
 
-@section('title', 'Rapports FontAwesome Migrator')
+@section('title', 'Migrations FontAwesome')
+
+@section('head-extra')
+    @include('fontawesome-migrator::partials.css.bootstrap-common')
+@endsection
 
 @section('content')
     <x-fontawesome-migrator::page-header
         icon="file-text"
-        title="Rapports"
-        subtitle="Gestion des rapports de migration"
-        :counterText="count($reports) . ' rapport(s)'"
-        actionsLabel="Actions sur les rapports"
+        title="Migrations"
+        subtitle="Historique et résultats des migrations FontAwesome"
+        :counterText="count($reports) . ' migration(s) effectuée(s)'"
+        counterIcon="folder"
         :hasActions="true"
+        actionsLabel="Actions globales"
     >
-        <li><a class="dropdown-item" href="#" onclick="refreshReports()">
-            <span id="refresh-icon"><i class="bi bi-arrow-repeat me-2"></i></span>Actualiser les rapports
-        </a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item text-danger" href="#" onclick="cleanupReports()">
-            <i class="bi bi-trash me-2"></i>Nettoyer (30j+)
-        </a></li>
+        <x-slot name="actions">
+            <li><a class="dropdown-item" href="#" onclick="refreshReports(); return false;">
+                <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupSessions(); return false;">
+                <i class="bi bi-trash"></i> Nettoyer (30j+)
+            </a></li>
+        </x-slot>
     </x-fontawesome-migrator::page-header>
 
     @if (count($reports) > 0)
-        <!-- Statistiques globales Bootstrap -->
+        <!-- Statistiques globales enrichies -->
         <div class="mb-4">
             <h2 class="section-title">
-                <i class="bi bi-bar-chart text-primary"></i> Statistiques globales
+                <i class="bi bi-bar-chart text-primary"></i> Statistiques des migrations
             </h2>
             <div class="row g-3">
                 <div class="col-lg-3 col-md-6">
                     <div class="card text-center h-100">
                         <div class="card-body">
-                            <i class="bi bi-file-text fs-1 text-primary mb-2"></i>
+                            <i class="bi bi-folder fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ count($reports) }}</div>
-                            <div class="text-muted small">Rapports</div>
+                            <div class="text-muted small">Migrations</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="bi bi-files fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">{{ $stats['total_backups'] }}</div>
+                            <div class="text-muted small">Fichiers sauvegardés</div>
                         </div>
                     </div>
                 </div>
@@ -40,7 +56,7 @@
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
-                            <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size(array_sum(array_column($reports, 'size')), 2) }}</div>
+                            <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
                             <div class="text-muted small">Taille totale</div>
                         </div>
                     </div>
@@ -48,18 +64,15 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="card text-center h-100">
                         <div class="card-body">
-                            <i class="bi bi-clock fs-1 text-primary mb-2"></i>
-                            <div class="fs-3 fw-bold text-primary">{{ collect($reports)->max('created_at')->format('d/m') }}</div>
-                            <div class="text-muted small">Dernier rapport</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <i class="bi bi-calendar-week fs-1 text-primary mb-2"></i>
-                            <div class="fs-3 fw-bold text-primary">{{ collect($reports)->filter(fn($r) => $r['created_at']->isAfter(now()->subWeek()))->count() }}</div>
-                            <div class="text-muted small">Cette semaine</div>
+                            <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
+                            <div class="fs-3 fw-bold text-primary">
+                                @if($stats['last_session'])
+                                    {{ $stats['last_session']['created_at']->format('d/m') }}
+                                @else
+                                    -
+                                @endif
+                            </div>
+                            <div class="text-muted small">Dernière migration</div>
                         </div>
                     </div>
                 </div>
@@ -73,7 +86,7 @@
         <div class="row g-4 mb-4">
             @foreach ($reports as $report)
                 <div class="col-md-6 col-xl-4">
-                    <div class="card h-100 shadow-sm" data-filename="{{ $report['filename'] }}">
+                    <div class="card h-100 shadow-sm" data-session="{{ $report['session_id'] }}">
                         <div class="card-header d-flex justify-content-between align-items-center gap-3">
                                 <h5 class="card-title mb-1 text-truncate">
                                     <i class="bi bi-file-text text-primary fs-4"></i>
@@ -89,14 +102,26 @@
                             <div class="row g-3 text-center">
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold">{{ human_readable_bytes_size($report['size'], 2) }}</div>
-                                        <div class="text-muted small"><i class="bi bi-hdd"></i> Taille</div>
+                                        <div class="fw-semibold">{{ $report['backup_count'] }}</div>
+                                        <div class="text-muted small"><i class="bi bi-files"></i> Fichiers</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold">{{ $report['created_at']->format('H:i') }}</div>
-                                        <div class="text-muted small"><i class="bi bi-clock"></i> Heure</div>
+                                        <div class="fw-semibold">{{ $report['package_version'] ?? 'v?' }}</div>
+                                        <div class="text-muted small"><i class="bi bi-tag"></i> Version</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="border rounded p-3">
+                                        <div class="fw-semibold">
+                                            @if($report['migration_origin'] === 'web_interface')
+                                                <i class="bi bi-globe text-info"></i> Web
+                                            @else
+                                                <i class="bi bi-terminal text-secondary"></i> CLI
+                                            @endif
+                                        </div>
+                                        <div class="text-muted small"><i class="bi bi-arrow-right"></i> Origine</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -104,13 +129,19 @@
                                         <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">
                                             {{ $report['short_id'] }}
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-folder"></i> Session</div>
+                                        <div class="text-muted small"><i class="bi bi-arrow-repeat"></i> Migration</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold">{{ $report['created_at']->diffForHumans(['short' => true]) }}</div>
-                                        <div class="text-muted small"><i class="bi bi-clock"></i> Âge</div>
+                                        <div class="fw-semibold">
+                                            @if(isset($report['migration_summary']['total_changes']))
+                                                {{ $report['migration_summary']['total_changes'] }}
+                                            @else
+                                                -
+                                            @endif
+                                        </div>
+                                        <div class="text-muted small"><i class="bi bi-arrow-repeat"></i> Changements</div>
                                     </div>
                                 </div>
                             </div>
@@ -124,9 +155,9 @@
                                 <a href="{{ route('fontawesome-migrator.reports.show', $report['short_id']) }}?format=json" target="_blank" class="btn btn-outline-primary">
                                     <i class="bi bi-database"></i> JSON
                                 </a>
-                                <a href="{{ route('fontawesome-migrator.sessions.show', $report['short_id']) }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-folder"></i> Session
-                                </a>
+                                <button onclick="inspectSession('{{ $report['short_id'] }}')" class="btn btn-outline-secondary">
+                                    <i class="bi bi-search"></i> Inspecter
+                                </button>
                                 <button onclick="deleteReport('{{ $report['short_id'] }}')" class="btn btn-outline-danger">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -141,10 +172,10 @@
             <div class="mb-4">
                 <i class="bi bi-file-text display-1 text-muted"></i>
             </div>
-            <h3 class="mb-3">Aucun rapport disponible</h3>
+            <h3 class="mb-3">Aucune migration disponible</h3>
             <p class="text-muted mb-4">
-                Les rapports sont automatiquement générés lors de chaque migration.<br>
-                Exécutez une migration pour voir les changements effectués lors de la migration FontAwesome.
+                Les migrations sont automatiquement enregistrées avec leurs résultats.<br>
+                Exécutez une migration pour voir l'historique des changements FontAwesome.
             </p>
             <div class="mb-4">
                 <code class="bg-light p-3 rounded d-inline-block">
@@ -176,13 +207,13 @@
         }, 500);
     }
 
-    async function deleteReport(filename) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce rapport ?')) {
+    async function deleteReport(sessionId) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette migration ?')) {
             return;
         }
 
         try {
-            const response = await fetch(`/fontawesome-migrator/reports/${filename}`, {
+            const response = await fetch(`/fontawesome-migrator/reports/${sessionId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': window.csrfToken,
@@ -193,9 +224,9 @@
             const data = await response.json();
 
             if (response.ok) {
-                showAlert('Rapport supprimé avec succès');
-                // Masquer la carte du rapport
-                const card = document.querySelector(`[data-filename="${filename}"]`);
+                showAlert('Migration supprimée avec succès');
+                // Masquer la carte de la session
+                const card = document.querySelector(`[data-session="${sessionId}"]`);
                 if (card) {
                     card.style.opacity = '0.5';
                     card.style.pointerEvents = 'none';
@@ -209,8 +240,8 @@
         }
     }
 
-    async function cleanupReports() {
-        if (!confirm('Supprimer tous les rapports de plus de 30 jours ?')) {
+    async function cleanupSessions() {
+        if (!confirm('Supprimer toutes les migrations de plus de 30 jours ?')) {
             return;
         }
 
@@ -227,12 +258,42 @@
             const data = await response.json();
 
             if (response.ok) {
-                showAlert(`${data.deleted} rapport(s) supprimé(s)`);
+                showAlert(`${data.deleted} migration(s) supprimée(s)`);
                 if (data.deleted > 0) {
                     setTimeout(() => window.location.reload(), 1500);
                 }
             } else {
                 showAlert('Erreur lors du nettoyage', 'error');
+            }
+        } catch (error) {
+            showAlert('Erreur de connexion', 'error');
+        }
+    }
+
+    async function inspectSession(sessionId) {
+        try {
+            const response = await fetch(`/fontawesome-migrator/tests/session/${sessionId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Afficher les détails de session dans une modale ou une nouvelle fenêtre
+                const details = `
+Session: ${data.session_id}
+Répertoire: ${data.session_dir}
+Fichiers de sauvegarde: ${data.files_count}
+Métadonnées: ${JSON.stringify(data.metadata, null, 2)}
+                `;
+                
+                // Pour l'instant, afficher dans une alerte - on pourrait améliorer avec une vraie modale
+                alert(details);
+            } else {
+                showAlert('Erreur lors de l\'inspection de la session', 'error');
             }
         } catch (error) {
             showAlert('Erreur de connexion', 'error');

@@ -11,7 +11,7 @@
         icon="flask"
         title="Tests"
         subtitle="Utilitaires de tests et diagnostics"
-        :counterText="$backupStats['total_sessions'] . ' session(s) de test'"
+        :counterText="$backupStats['total_migrations'] . ' migration(s) de test'"
         counterIcon="folder"
         :hasActions="true"
         actionsLabel="Actions globales"
@@ -27,7 +27,7 @@
         </x-slot>
     </x-fontawesome-migrator::page-header>
 
-    @if ($backupStats['total_sessions'] > 0)
+    @if ($backupStats['total_migrations'] > 0)
         <!-- Statistiques globales -->
         <div class="mb-4">
             <h2 class="section-title">
@@ -38,8 +38,8 @@
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <i class="bi bi-folder fs-1 text-primary mb-2"></i>
-                            <div class="fs-3 fw-bold text-primary">{{ $backupStats['total_sessions'] }}</div>
-                            <div class="text-muted small">Sessions</div>
+                            <div class="fs-3 fw-bold text-primary">{{ $backupStats['total_migrations'] }}</div>
+                            <div class="text-muted small">Migrations</div>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                                     -
                                 @endif
                             </div>
-                            <div class="text-muted small">Dernière session</div>
+                            <div class="text-muted small">Dernière migration</div>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                         <label class="form-check-label" for="dryRun">
                             <i class="bi bi-eye"></i> Mode Dry-Run (simulation)
                         </label>
-                        <div class="form-text">Recommandé pour tester avant migration réelle. Les rapports sont automatiquement générés dans les métadonnées de session.</div>
+                        <div class="form-text">Recommandé pour tester avant migration réelle. Les résultats sont automatiquement enregistrés.</div>
                     </div>
                 </div>
 
@@ -176,21 +176,18 @@
     </div>
 
 
-    <!-- Navigation vers les sessions -->
+    <!-- Navigation vers les migrations -->
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="section-title">
                 <i class="bi bi-folder-open text-primary"></i> Voir les résultats
             </h2>
             <p class="text-muted mb-3">
-                Après avoir lancé un test, consultez les sessions et rapports générés pour analyser les résultats.
+                Après avoir lancé un test, consultez les migrations effectuées pour analyser les résultats.
             </p>
             <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('fontawesome-migrator.sessions.index') }}" class="btn btn-primary">
-                    <i class="bi bi-folder"></i> Voir les sessions
-                </a>
-                <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-outline-primary">
-                    <i class="bi bi-file-text"></i> Voir les rapports
+                <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
+                    <i class="bi bi-arrow-repeat"></i> Voir les migrations
                 </a>
             </div>
         </div>
@@ -504,7 +501,7 @@ ${data.error || data.output}
 
 
 async function cleanupSessions(days) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les sessions de plus de ${days} jour(s) ?`)) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les migrations de plus de ${days} jour(s) ?`)) {
         return;
     }
 

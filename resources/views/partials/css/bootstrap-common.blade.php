@@ -212,7 +212,7 @@
         margin-bottom: 1rem;
     }
     
-    /* Cards de rapports/sessions */
+    /* Cards de migrations */
     .entity-card {
         height: 100%;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);

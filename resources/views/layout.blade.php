@@ -31,12 +31,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.reports.index') }}">
-                            <i class="bi bi-file-text me-1"></i> Rapports
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.sessions.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.sessions.index') }}">
-                            <i class="bi bi-folder me-1"></i> Sessions
+                            <i class="bi bi-arrow-repeat me-1"></i> Migrations
                         </a>
                     </li>
                     <li class="nav-item">

@@ -35,7 +35,6 @@ class ReportsController extends Controller
                 continue;
             }
 
-            // Utiliser uniquement les métadonnées (plus de fichiers HTML séparés)
             $reports[] = [
                 'name' => 'Migration Report',
                 'filename' => 'metadata.json',
@@ -47,14 +46,27 @@ class ReportsController extends Controller
                 'has_json' => true,
                 'dry_run' => $sessionMetadata['runtime']['dry_run'] ?? false,
                 'metadata' => $sessionMetadata,
+
+                // Données enrichies de session
+                'backup_count' => $session['backup_count'] ?? 0,
+                'package_version' => $sessionMetadata['session']['package_version'] ?? 'unknown',
+                'duration' => $sessionMetadata['runtime']['duration'] ?? null,
+                'migration_origin' => $sessionMetadata['custom']['migration_origin']['source'] ?? 'unknown',
+                'migration_options' => $sessionMetadata['migration_options'] ?? [],
+                'statistics' => $sessionMetadata['statistics'] ?? [],
+                'migration_summary' => $sessionMetadata['migration_results']['summary'] ?? [],
             ];
         }
 
         // Trier par date de création (plus récent en premier)
         usort($reports, fn ($a, $b): int => $b['created_at'] <=> $a['created_at']);
 
+        // Calculer les statistiques globales
+        $stats = $this->getSessionStats($sessions);
+
         return view('fontawesome-migrator::reports.index', [
             'reports' => $reports,
+            'stats' => $stats,
         ]);
     }
 
@@ -65,14 +77,7 @@ class ReportsController extends Controller
     {
         // Chercher la session par ID (court ou complet)
         $sessions = MetadataManager::getAvailableSessions();
-        $sessionInfo = null;
-
-        foreach ($sessions as $session) {
-            if ($session['short_id'] === $sessionId || $session['session_id'] === $sessionId) {
-                $sessionInfo = $session;
-                break;
-            }
-        }
+        $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
 
         if (! $sessionInfo) {
             abort(404, 'Session de migration non trouvée');
@@ -127,16 +132,9 @@ class ReportsController extends Controller
     {
         // Chercher la session par ID (court ou complet)
         $sessions = MetadataManager::getAvailableSessions();
-        $sessionInfo = null;
+        $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
 
-        foreach ($sessions as $session) {
-            if ($session['short_id'] === $sessionId || $session['session_id'] === $sessionId) {
-                $sessionInfo = $session;
-                break;
-            }
-        }
-
-        if (!$sessionInfo) {
+        if (! $sessionInfo) {
             return response()->json(['error' => 'Session non trouvée'], 404);
         }
 
@@ -145,9 +143,9 @@ class ReportsController extends Controller
 
         if ($deleted) {
             return response()->json(['message' => 'Session supprimée avec succès']);
-        } else {
-            return response()->json(['error' => 'Erreur lors de la suppression'], 500);
         }
+
+        return response()->json(['error' => 'Erreur lors de la suppression'], 500);
     }
 
     /**
@@ -163,5 +161,32 @@ class ReportsController extends Controller
             'deleted' => $deleted,
             'days' => $days,
         ]);
+    }
+
+    /**
+     * Obtenir les statistiques des sessions
+     */
+    protected function getSessionStats(array $sessions): array
+    {
+        $totalBackups = 0;
+        $totalSize = 0;
+
+        foreach ($sessions as $session) {
+            $totalBackups += $session['backup_count'];
+
+            // Calculer la taille totale des fichiers
+            $files = File::files($session['directory']);
+
+            foreach ($files as $file) {
+                $totalSize += $file->getSize();
+            }
+        }
+
+        return [
+            'total_migrations' => \count($sessions),
+            'total_backups' => $totalBackups,
+            'total_size' => $totalSize,
+            'last_migration' => $sessions[0] ?? null,
+        ];
     }
 }

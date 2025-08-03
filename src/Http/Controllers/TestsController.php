@@ -209,10 +209,10 @@ class TestsController extends Controller
         }
 
         return [
-            'total_sessions' => \count($sessions),
+            'total_migrations' => \count($sessions),
             'total_backups' => $totalBackups,
             'total_size' => $totalSize,
-            'last_session' => $sessions[0] ?? null,
+            'last_migration' => $sessions[0] ?? null,
         ];
     }
 }
