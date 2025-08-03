@@ -161,7 +161,7 @@
                 Exécutez une migration pour voir les sessions apparaître ici.
             </p>
             <div class="bg-dark text-light p-3 rounded d-inline-block">
-                <code>php artisan fontawesome:migrate --dry-run --report</code>
+                <code>php artisan fontawesome:migrate --dry-run</code>
             </div>
         </div>
     @endif

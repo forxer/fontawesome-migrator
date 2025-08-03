@@ -194,7 +194,7 @@
                             <div class="activity-content">
                                 <h5 class="mb-2">Test de Migration</h5>
                                 <p class="text-muted mb-3">Testez la migration en mode dry-run pour voir les changements</p>
-                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:migrate --dry-run --report</code>
+                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:migrate --dry-run</code>
                             </div>
                         </div>
                     </div>
@@ -206,7 +206,7 @@
                             <div class="activity-content">
                                 <h5 class="mb-2">Migration Réelle</h5>
                                 <p class="text-muted mb-3">Appliquez les changements définitivement</p>
-                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:migrate --report</code>
+                                <code class="d-block bg-dark text-light p-2 rounded">php artisan fontawesome:migrate</code>
                             </div>
                         </div>
                     </div>

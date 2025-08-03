@@ -343,10 +343,9 @@ class MigrateCommand extends Command
         $this->metadata->saveToFile();
 
         $this->info('📊 Rapport généré automatiquement :');
-        $this->line('   • Fichier : '.$reportInfo['filename']);
-        $this->line('   • HTML : '.$reportInfo['html_url']);
-        $this->line('   • JSON : '.$reportInfo['json_url']);
-        $this->line('   • Interface : '.url('/fontawesome-migrator/reports'));
+        $this->line('   • Session : '.$reportInfo['session_id']);
+        $this->line('   • Métadonnées : '.$reportInfo['filename']);
+        $this->line('   • Interface web : '.$reportInfo['web_url']);
 
         if ($isDryRun) {
             $this->info('✨ Prévisualisation terminée. Utilisez la commande sans --dry-run pour appliquer les changements.');

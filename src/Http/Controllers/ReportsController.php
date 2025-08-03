@@ -35,25 +35,19 @@ class ReportsController extends Controller
                 continue;
             }
 
-            // Chercher les fichiers HTML de rapport dans la session
-            $files = File::files($sessionDir);
-
-            foreach ($files as $file) {
-                if ($file->getExtension() === 'html' && $file->getFilename() !== 'metadata.json') {
-                    $reports[] = [
-                        'name' => $file->getFilenameWithoutExtension(),
-                        'filename' => $file->getFilename(),
-                        'session_id' => $sessionId,
-                        'short_id' => $shortId,
-                        'created_at' => Carbon::parse($sessionMetadata['session']['started_at']),
-                        'size' => $file->getSize(),
-                        'html_path' => $file->getRealPath(),
-                        'json_path' => null, // Données intégrées dans metadata.json
-                        'has_json' => true,
-                        'dry_run' => $sessionMetadata['runtime']['dry_run'],
-                    ];
-                }
-            }
+            // Utiliser uniquement les métadonnées (plus de fichiers HTML séparés)
+            $reports[] = [
+                'name' => 'Migration Report',
+                'filename' => 'metadata.json',
+                'session_id' => $sessionId,
+                'short_id' => $shortId,
+                'created_at' => Carbon::parse($sessionMetadata['session']['started_at']),
+                'size' => File::size($sessionDir.'/metadata.json'),
+                'metadata_path' => $sessionDir.'/metadata.json',
+                'has_json' => true,
+                'dry_run' => $sessionMetadata['runtime']['dry_run'] ?? false,
+                'metadata' => $sessionMetadata,
+            ];
         }
 
         // Trier par date de création (plus récent en premier)
@@ -65,38 +59,33 @@ class ReportsController extends Controller
     }
 
     /**
-     * Afficher un rapport spécifique
+     * Afficher un rapport spécifique (depuis métadonnées)
      */
-    public function show(string $filename)
+    public function show(string $sessionId)
     {
-        // Chercher le fichier dans toutes les sessions
+        // Chercher la session par ID (court ou complet)
         $sessions = MetadataManager::getAvailableSessions();
-        $filePath = null;
         $sessionInfo = null;
 
         foreach ($sessions as $session) {
-            $possiblePath = $session['directory'].'/'.$filename;
-
-            if (File::exists($possiblePath)) {
-                $filePath = $possiblePath;
+            if ($session['short_id'] === $sessionId || $session['session_id'] === $sessionId) {
                 $sessionInfo = $session;
                 break;
             }
         }
 
-        if ($filePath === null || $filePath === '' || $filePath === '0') {
-            abort(404, 'Rapport non trouvé');
+        if (! $sessionInfo) {
+            abort(404, 'Session de migration non trouvée');
         }
 
-        // Si c'est un fichier JSON, retourner les données depuis metadata.json
-        if (pathinfo($filename, PATHINFO_EXTENSION) === 'json') {
-            $sessionMetadata = $sessionInfo['metadata'] ?? null;
+        $sessionMetadata = $sessionInfo['metadata'] ?? null;
 
-            if (! $sessionMetadata) {
-                abort(404, 'Métadonnées de session non trouvées');
-            }
+        if (! $sessionMetadata) {
+            abort(404, 'Métadonnées de session non trouvées');
+        }
 
-            // Retourner les données depuis metadata.json
+        // Retourner JSON si demandé
+        if (request()->wantsJson()) {
             return response()->json($sessionMetadata['migration_results']);
         }
 
@@ -132,64 +121,42 @@ class ReportsController extends Controller
     }
 
     /**
-     * Supprimer un rapport
+     * Supprimer une session complète
      */
-    public function destroy(string $filename)
+    public function destroy(string $sessionId)
     {
-        // Chercher le fichier dans toutes les sessions
+        // Chercher la session par ID (court ou complet)
         $sessions = MetadataManager::getAvailableSessions();
-        $htmlPath = null;
+        $sessionInfo = null;
 
         foreach ($sessions as $session) {
-            $possiblePath = $session['directory'].'/'.$filename;
-
-            if (File::exists($possiblePath)) {
-                $htmlPath = $possiblePath;
+            if ($session['short_id'] === $sessionId || $session['session_id'] === $sessionId) {
+                $sessionInfo = $session;
                 break;
             }
         }
 
-        if ($htmlPath === null || $htmlPath === '' || $htmlPath === '0') {
-            return response()->json(['error' => 'Rapport non trouvé'], 404);
+        if (!$sessionInfo) {
+            return response()->json(['error' => 'Session non trouvée'], 404);
         }
 
-        // Supprimer seulement le fichier HTML de visualisation
-        $deleted = 0;
+        // Supprimer tout le répertoire de session
+        $deleted = File::deleteDirectory($sessionInfo['directory']);
 
-        if (File::exists($htmlPath)) {
-            File::delete($htmlPath);
-            $deleted++;
+        if ($deleted) {
+            return response()->json(['message' => 'Session supprimée avec succès']);
+        } else {
+            return response()->json(['error' => 'Erreur lors de la suppression'], 500);
         }
-
-        return response()->json(['message' => 'Rapport supprimé avec succès']);
     }
 
     /**
-     * Nettoyer les anciens rapports
+     * Nettoyer les anciennes sessions
      */
     public function cleanup(Request $request)
     {
         $days = $request->input('days', 30);
-        $cutoffTime = time() - ($days * 24 * 60 * 60);
-        $deleted = 0;
-
-        // Parcourir toutes les sessions
-        $sessions = MetadataManager::getAvailableSessions();
-
-        foreach ($sessions as $session) {
-            $sessionDir = $session['directory'];
-            $files = File::files($sessionDir);
-
-            foreach ($files as $file) {
-                // Supprimer seulement les fichiers HTML (données dans metadata.json)
-                if ($file->getExtension() === 'html' &&
-                    $file->getFilename() !== 'metadata.json' &&
-                    $file->getMTime() < $cutoffTime) {
-                    File::delete($file->getRealPath());
-                    $deleted++;
-                }
-            }
-        }
+        $deleted = MetadataManager::cleanOldSessions($days);
 
         return response()->json([
             'message' => 'Nettoyage terminé',

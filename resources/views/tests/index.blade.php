@@ -122,17 +122,14 @@
                     <div class="form-text">Type de migration à effectuer</div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="dryRun" name="dry_run" checked>
                         <label class="form-check-label" for="dryRun">
                             <i class="bi bi-eye"></i> Mode Dry-Run (simulation)
                         </label>
-                        <div class="form-text">Recommandé pour tester avant migration réelle</div>
+                        <div class="form-text">Recommandé pour tester avant migration réelle. Les rapports sont automatiquement générés dans les métadonnées de session.</div>
                     </div>
-                </div>
-
-                <div class="col-md-6">
                 </div>
 
                 <div class="col-12">

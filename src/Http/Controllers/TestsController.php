@@ -44,7 +44,6 @@ class TestsController extends Controller
             'to' => ['nullable', 'string', 'in:5,6,7'],
             'mode' => ['required', 'string', 'in:complete,icons-only,assets-only'],
             'dry_run' => ['boolean'],
-            'report' => ['boolean'],
         ]);
 
         try {

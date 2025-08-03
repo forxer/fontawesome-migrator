@@ -363,30 +363,6 @@ class MetadataManager
     }
 
     /**
-     * Ajouter les chemins des rapports aux métadonnées
-     */
-    public function addReportPaths(string $htmlPath, ?string $jsonPath = null): self
-    {
-        if (! isset($this->metadata['reports'])) {
-            $this->metadata['reports'] = [];
-        }
-
-        $reportEntry = [
-            'html_path' => $htmlPath,
-            'created_at' => Carbon::now()->toIso8601String(),
-        ];
-
-        // Inclure JSON path si fourni
-        if ($jsonPath !== null) {
-            $reportEntry['json_path'] = $jsonPath;
-        }
-
-        $this->metadata['reports'][] = $reportEntry;
-
-        return $this;
-    }
-
-    /**
      * Nettoyer les anciens répertoires de session
      */
     public static function cleanOldSessions(int $daysToKeep = 30): int

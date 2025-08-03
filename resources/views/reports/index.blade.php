@@ -118,16 +118,16 @@
 
                         <div class="card-footer bg-light">
                             <div class="btn-group btn-group-sm d-flex flex-wrap" role="group" aria-label="Actions du rapport">
-                                <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" class="btn btn-primary">
+                                <a href="{{ route('fontawesome-migrator.reports.show', $report['short_id']) }}" class="btn btn-primary">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-                                <a href="{{ route('fontawesome-migrator.reports.show', str_replace('.html', '.json', $report['filename'])) }}" target="_blank" class="btn btn-outline-primary">
-                                    <i class="bi bi-database"></i> Données
+                                <a href="{{ route('fontawesome-migrator.reports.show', $report['short_id']) }}?format=json" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bi bi-database"></i> JSON
                                 </a>
-                                <a href="{{ route('fontawesome-migrator.sessions.show', $report['session_id']) }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('fontawesome-migrator.sessions.show', $report['short_id']) }}" class="btn btn-outline-secondary">
                                     <i class="bi bi-folder"></i> Session
                                 </a>
-                                <button onclick="deleteReport('{{ $report['filename'] }}')" class="btn btn-outline-danger">
+                                <button onclick="deleteReport('{{ $report['short_id'] }}')" class="btn btn-outline-danger">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -143,12 +143,12 @@
             </div>
             <h3 class="mb-3">Aucun rapport disponible</h3>
             <p class="text-muted mb-4">
-                Commencez par générer un rapport de migration en exécutant la commande ci-dessous.<br>
-                Les rapports vous permettront de visualiser les changements effectués lors de la migration Font Awesome 5 → 6.
+                Les rapports sont automatiquement générés lors de chaque migration.<br>
+                Exécutez une migration pour voir les changements effectués lors de la migration FontAwesome.
             </p>
             <div class="mb-4">
                 <code class="bg-light p-3 rounded d-inline-block">
-                    php artisan fontawesome:migrate --report
+                    php artisan fontawesome:migrate --dry-run
                 </code>
             </div>
             <div class="text-muted">
