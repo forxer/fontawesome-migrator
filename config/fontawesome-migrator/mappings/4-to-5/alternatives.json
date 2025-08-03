@@ -6,13 +6,13 @@
         "last_updated": "2025-01-01"
     },
     "alternatives": {
-        "fa-glass": "fa-martini-glass",
+        "fa-glass": "fa-glass-martini",
         "fa-star-o": "fa-star",
         "fa-close": "fa-times",
         "fa-remove": "fa-times",
         "fa-gear": "fa-cog",
         "fa-trash-o": "fa-trash",
-        "fa-home": "fa-house",
+        "fa-home": "fa-home",
         "fa-file-o": "fa-file",
         "fa-clock-o": "fa-clock",
         "fa-user-o": "fa-user",

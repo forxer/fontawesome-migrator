@@ -6,17 +6,17 @@
         "last_updated": "2025-01-01"
     },
     "alternatives": {
-        "fa-home": "fa-house",
-        "fa-external-link": "fa-external-link-alt",
+        "fa-times": "fa-xmark",
+        "fa-external-link": "fa-up-right-from-square",
         "fa-sort-alpha-down": "fa-arrow-down-a-z",
-        "fa-glass": "fa-martini-glass-empty",
-        "fa-star-o": "fa-star",
-        "fa-close": "fa-xmark",
-        "fa-remove": "fa-xmark",
-        "fa-gear": "fa-cog",
-        "fa-trash-o": "fa-trash-can",
-        "fa-file-o": "fa-file",
-        "fa-clock-o": "fa-clock"
+        "fa-sort-alpha-up": "fa-arrow-down-z-a",
+        "fa-sort-numeric-down": "fa-arrow-down-1-9",
+        "fa-sort-numeric-up": "fa-arrow-down-9-1",
+        "fa-glass-martini": "fa-martini-glass-empty",
+        "fa-level-down-alt": "fa-turn-down",
+        "fa-level-up-alt": "fa-turn-up",
+        "fa-sign-in-alt": "fa-right-to-bracket",
+        "fa-sign-out-alt": "fa-right-from-bracket"
     },
     "pro_to_free": {
         "fa-analytics": "fa-chart-line",
@@ -41,8 +41,6 @@
         "fa-wifi-weak": "fa-wifi"
     },
     "style_alternatives": {
-        "fal": "far",
-        "fad": "fas",
         "fa-light": "fa-regular",
         "fa-duotone": "fa-solid",
         "fa-thin": "fa-regular",

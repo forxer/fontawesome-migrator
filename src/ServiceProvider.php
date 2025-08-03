@@ -23,6 +23,9 @@ class ServiceProvider extends BaseServiceProvider
             $this->basePath.'/config/fontawesome-migrator.php',
             'fontawesome-migrator'
         );
+
+        // Enregistrer les liaisons de services
+        $this->registerBindings();
     }
 
     public function boot(): void
@@ -79,5 +82,30 @@ class ServiceProvider extends BaseServiceProvider
             $this->basePath.'/config/fontawesome-migrator.php' => config_path('fontawesome-migrator-full.php'),
         ], 'fontawesome-migrator-config-full');
 
+    }
+
+    /**
+     * Enregistrer les liaisons de services
+     */
+    protected function registerBindings(): void
+    {
+        // Liaison pour VersionMapperInterface - utiliser FA5→6 par défaut
+        $this->app->bind(
+            \FontAwesome\Migrator\Contracts\VersionMapperInterface::class,
+            function ($app) {
+                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+
+                return $versionManager->createMapper('5', '6');
+            }
+        );
+
+        // Liaison contextuelle pour IconReplacer
+        $this->app->when(\FontAwesome\Migrator\Services\IconReplacer::class)
+            ->needs(\FontAwesome\Migrator\Contracts\VersionMapperInterface::class)
+            ->give(function ($app) {
+                $versionManager = $app->make(\FontAwesome\Migrator\Services\MigrationVersionManager::class);
+
+                return $versionManager->createMapper('5', '6');
+            });
     }
 }

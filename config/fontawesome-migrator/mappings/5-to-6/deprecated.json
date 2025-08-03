@@ -1,0 +1,31 @@
+{
+    "deprecated_icons": [
+        "fa-times",
+        "fa-external-link",
+        "fa-sort-alpha-down",
+        "fa-sort-alpha-up",
+        "fa-sort-numeric-down",
+        "fa-sort-numeric-up",
+        "fa-glass-martini",
+        "fa-level-down-alt",
+        "fa-level-up-alt",
+        "fa-sign-in-alt",
+        "fa-sign-out-alt",
+        "fa-expand-arrows-alt",
+        "fa-external-link-square-alt",
+        "fa-file-alt",
+        "fa-folder-open"
+    ],
+    "deprecated_classes": [
+        "fa-lg",
+        "fa-2x",
+        "fa-3x",
+        "fa-4x",
+        "fa-5x"
+    ],
+    "notes": {
+        "icons": "Ces icônes ont été renommées en FA6 pour plus de cohérence",
+        "classes": "Classes de taille remplacées par fa-xl, fa-2xl, etc.",
+        "migration": "Utiliser les nouveaux noms FA6 équivalents"
+    }
+}

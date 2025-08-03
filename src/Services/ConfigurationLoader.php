@@ -47,6 +47,7 @@ class ConfigurationLoader
             'deprecated' => $this->loadJsonFile($migrationPath.'/deprecated.json', []),
             'pro_only' => $this->loadJsonFile($migrationPath.'/pro-only.json', []),
             'new_icons' => $this->loadJsonFile($migrationPath.'/new-icons.json', []),
+            'alternatives' => $this->loadJsonFile($migrationPath.'/alternatives.json', []),
         ];
 
         $this->cache[$migrationKey] = $config;
@@ -166,7 +167,7 @@ class ConfigurationLoader
             return $this->cache[$cacheKey];
         }
 
-        $filePath = $this->configPath.\sprintf('/alternatives/%s-to-%s.json', $fromVersion, $toVersion);
+        $filePath = $this->configPath.\sprintf('/mappings/%s-to-%s/alternatives.json', $fromVersion, $toVersion);
 
         if (! File::exists($filePath)) {
             $this->cache[$cacheKey] = [];
@@ -231,7 +232,15 @@ class ConfigurationLoader
      */
     private function getDefaultConfigPath(): string
     {
-        return base_path('config/fontawesome-migrator');
+        // En contexte de package, utiliser le chemin du package
+        $packagePath = dirname(__DIR__, 2).'/config/fontawesome-migrator';
+        
+        // Si on est dans un projet Laravel, utiliser base_path
+        if (function_exists('base_path') && is_dir(base_path('config/fontawesome-migrator'))) {
+            return base_path('config/fontawesome-migrator');
+        }
+        
+        return $packagePath;
     }
 
     /**
@@ -244,7 +253,7 @@ class ConfigurationLoader
         $migrationPath = $this->configPath.('/mappings/'.$migrationKey);
 
         $requiredFiles = ['styles.json', 'icons.json'];
-        $optionalFiles = ['deprecated.json', 'pro-only.json', 'new-icons.json'];
+        $optionalFiles = ['deprecated.json', 'pro-only.json', 'new-icons.json', 'alternatives.json'];
 
         // Vérifier les fichiers requis
         foreach ($requiredFiles as $file) {

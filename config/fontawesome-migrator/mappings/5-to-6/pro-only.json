@@ -1,0 +1,25 @@
+{
+    "pro_styles": [
+        "fa-light",
+        "fa-duotone",
+        "fa-thin",
+        "fa-sharp"
+    ],
+    "pro_icons": [
+        "fa-analytics",
+        "fa-apple-pay",
+        "fa-aws",
+        "fa-gallery-thumbnails",
+        "fa-house-laptop",
+        "fa-input-numeric",
+        "fa-input-text",
+        "fa-keynote",
+        "fa-lamp-desk",
+        "fa-monitor-waveform",
+        "fa-users-crown"
+    ],
+    "notes": {
+        "styles": "Styles Pro disponibles en FA6 (fal et fad supprimés)",
+        "icons": "Exemples d'icônes exclusives à FontAwesome Pro 6"
+    }
+}

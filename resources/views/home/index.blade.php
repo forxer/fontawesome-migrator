@@ -135,7 +135,7 @@
                             <i class="bi bi-file-text activity-icon"></i>
                             <div class="activity-content">
                                 <div class="activity-title">
-                                    <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}" 
+                                    <a href="{{ route('fontawesome-migrator.reports.show', $report['filename']) }}"
                                        class="text-decoration-none text-dark">
                                         {{ $report['name'] }}
                                     </a>
@@ -170,16 +170,14 @@
     <!-- Getting Started Bootstrap -->
     @if($stats['total_sessions'] == 0)
         <div class="card shadow-sm mb-5">
-            <div class="card-header bg-primary text-white">
+            <div class="card-body p-4">
                 <h2 class="section-title">
                     <i class="bi bi-flask"></i> Premiers Pas
                 </h2>
-            </div>
-            <div class="card-body p-4">
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="d-flex align-items-start bg-light p-3 rounded">
-                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">1</span>
                             <div class="activity-content">
                                 <h5 class="mb-2">Installation</h5>
@@ -191,7 +189,7 @@
 
                     <div class="col-12">
                         <div class="d-flex align-items-start bg-light p-3 rounded">
-                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">2</span>
                             <div class="activity-content">
                                 <h5 class="mb-2">Test de Migration</h5>
@@ -203,7 +201,7 @@
 
                     <div class="col-12">
                         <div class="d-flex align-items-start bg-light p-3 rounded">
-                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                            <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">3</span>
                             <div class="activity-content">
                                 <h5 class="mb-2">Migration Réelle</h5>

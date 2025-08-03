@@ -2,20 +2,20 @@
   "description": "Nouvelles icônes introduites en FontAwesome 5",
   "version": "4-to-5",
   "new_styles": [
-    "fa-light",
-    "fa-duotone"
+    "fal",
+    "fad"
   ],
   "new_icons": [
-    "fa-table-cells",
-    "fa-table-cells-large",
-    "fa-face-smile",
-    "fa-face-frown",
-    "fa-face-meh",
-    "fa-circle-arrow-down",
-    "fa-circle-arrow-up",
-    "fa-circle-play",
-    "fa-square-check",
-    "fa-square-plus"
+    "fa-table",
+    "fa-th-large",
+    "fa-smile",
+    "fa-frown",
+    "fa-meh",
+    "fa-arrow-circle-down",
+    "fa-arrow-circle-up",
+    "fa-play-circle",
+    "fa-check-square",
+    "fa-plus-square"
   ],
   "notes": {
     "styles": "Nouveaux styles disponibles en FA5",

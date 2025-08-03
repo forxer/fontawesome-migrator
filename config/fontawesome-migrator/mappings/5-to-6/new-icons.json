@@ -1,0 +1,50 @@
+{
+    "new_styles": [
+        "fa-thin",
+        "fa-sharp"
+    ],
+    "new_icons": [
+        "fa-house",
+        "fa-xmark",
+        "fa-magnifying-glass",
+        "fa-up-right-from-square",
+        "fa-arrow-down-a-z",
+        "fa-arrow-down-z-a",
+        "fa-arrow-down-1-9",
+        "fa-arrow-down-9-1",
+        "fa-turn-down",
+        "fa-turn-up",
+        "fa-right-to-bracket",
+        "fa-right-from-bracket",
+        "fa-martini-glass-empty",
+        "fa-rotate",
+        "fa-code-compare",
+        "fa-up-right-and-down-left-from-center",
+        "fa-down-left-and-up-right-to-center",
+        "fa-house-chimney",
+        "fa-window-minimize",
+        "fa-window-maximize",
+        "fa-window-restore",
+        "fa-square-share-nodes",
+        "fa-hashtag",
+        "fa-up-right-from-square",
+        "fa-face-smile",
+        "fa-face-frown",
+        "fa-face-meh",
+        "fa-circle-arrow-down",
+        "fa-circle-arrow-up",
+        "fa-circle-play",
+        "fa-square-check",
+        "fa-square-plus",
+        "fa-square-minus",
+        "fa-circle-xmark",
+        "fa-face-grin",
+        "fa-face-laugh",
+        "fa-face-sad-tear"
+    ],
+    "notes": {
+        "styles": "Nouveaux styles fa-thin et fa-sharp introduits en FA6",
+        "icons": "Sélection des principales nouvelles icônes FA6 - liste non exhaustive",
+        "naming": "FA6 introduit une nomenclature plus cohérente et descriptive"
+    }
+}

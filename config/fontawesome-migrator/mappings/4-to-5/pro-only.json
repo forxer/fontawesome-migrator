@@ -2,8 +2,8 @@
   "description": "Icônes et styles FontAwesome 5 Pro uniquement",
   "version": "4-to-5",
   "pro_styles": [
-    "fa-light",
-    "fa-duotone"
+    "fal",
+    "fad"
   ],
   "pro_icons": [
     "fa-abacus",

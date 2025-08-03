@@ -1,0 +1,13 @@
+{
+    "pro_styles": [
+        "fa-light",
+        "fa-duotone",
+        "fa-thin",
+        "fa-sharp"
+    ],
+    "pro_icons": [],
+    "notes": {
+        "description": "Styles et icônes exclusifs à FontAwesome Pro en version 7",
+        "unchanged": "Les styles Pro restent identiques entre FA6 et FA7"
+    }
+}

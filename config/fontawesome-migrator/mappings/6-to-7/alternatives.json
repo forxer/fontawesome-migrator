@@ -6,10 +6,9 @@
         "last_updated": "2025-01-01"
     },
     "alternatives": {
-        "fa-home": "fa-house",
-        "fa-search": "fa-magnifying-glass",
-        "fa-envelope-o": "fa-envelope",
-        "fa-star-o": "fa-star"
+        "fa-user-large": "fa-user",
+        "fa-headphones-simple": "fa-headphones",
+        "fa-handshake-simple": "fa-handshake"
     },
     "pro_to_free": {
         "fa-chart-mixed": "fa-chart-line",
