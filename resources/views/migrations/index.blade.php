@@ -8,7 +8,7 @@
 
 @section('content')
     <x-fontawesome-migrator::page-header
-        icon="file-text"
+        icon="folder"
         title="Migrations"
         subtitle="Historique et résultats des migrations FontAwesome"
         :counterText="count($reports) . ' migration(s) effectuée(s)'"
@@ -129,7 +129,7 @@
                                         <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">
                                             {{ $report['short_id'] }}
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-arrow-repeat"></i> Migration</div>
+                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Migration</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -141,7 +141,7 @@
                                                 -
                                             @endif
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-arrow-repeat"></i> Changements</div>
+                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Changements</div>
                                     </div>
                                 </div>
                             </div>
@@ -149,10 +149,10 @@
 
                         <div class="card-footer bg-light">
                             <div class="btn-group btn-group-sm d-flex flex-wrap" role="group" aria-label="Actions du rapport">
-                                <a href="{{ route('fontawesome-migrator.reports.show', $report['short_id']) }}" class="btn btn-primary">
+                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}" class="btn btn-primary">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-                                <a href="{{ route('fontawesome-migrator.reports.show', $report['short_id']) }}?format=json" target="_blank" class="btn btn-outline-primary">
+                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}?format=json" target="_blank" class="btn btn-outline-primary">
                                     <i class="bi bi-database"></i> JSON
                                 </a>
                                 <button onclick="inspectSession('{{ $report['short_id'] }}')" class="btn btn-outline-secondary">
@@ -215,7 +215,7 @@
         }
 
         try {
-            const response = await fetch(`/fontawesome-migrator/reports/${sessionId}`, {
+            const response = await fetch(`/fontawesome-migrator/migrations/${sessionId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': window.csrfToken,
@@ -248,7 +248,7 @@
         }
 
         try {
-            const response = await fetch('/fontawesome-migrator/reports/cleanup', {
+            const response = await fetch('/fontawesome-migrator/migrations/cleanup', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': window.csrfToken,

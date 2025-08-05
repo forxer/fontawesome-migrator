@@ -186,8 +186,8 @@
                 Après avoir lancé un test, consultez les migrations effectuées pour analyser les résultats.
             </p>
             <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
-                    <i class="bi bi-arrow-repeat"></i> Voir les migrations
+                <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="btn btn-primary">
+                    <i class="bi bi-folder"></i> Voir les migrations
                 </a>
             </div>
         </div>

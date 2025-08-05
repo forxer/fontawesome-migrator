@@ -21,7 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm border-bottom">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('fontawesome-migrator.home') }}">
-                <i class="bi bi-arrow-repeat text-primary fs-4 me-2"></i>
+                <i class="bi bi-arrow-clockwise fs-4 me-2"></i>
                 <span class="fw-bold">FontAwesome Migrator</span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,8 +30,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.reports.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.reports.index') }}">
-                            <i class="bi bi-arrow-repeat me-1"></i> Migrations
+                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.migrations.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.migrations.index') }}">
+                            <i class="bi bi-folder me-1"></i> Migrations
                         </a>
                     </li>
                     <li class="nav-item">

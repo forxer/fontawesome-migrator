@@ -1,7 +1,7 @@
 <?php
 
 use FontAwesome\Migrator\Http\Controllers\HomeController;
-use FontAwesome\Migrator\Http\Controllers\ReportsController;
+use FontAwesome\Migrator\Http\Controllers\MigrationsController;
 use FontAwesome\Migrator\Http\Controllers\TestsController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Migrations
-Route::prefix('reports')->name('reports.')->group(function () {
-    Route::get('/', [ReportsController::class, 'index'])->name('index');
-    Route::get('/{sessionId}', [ReportsController::class, 'show'])->name('show');
-    Route::delete('/{sessionId}', [ReportsController::class, 'destroy'])->name('destroy');
-    Route::post('/cleanup', [ReportsController::class, 'cleanup'])->name('cleanup');
+Route::prefix('migrations')->name('migrations.')->group(function () {
+    Route::get('/', [MigrationsController::class, 'index'])->name('index');
+    Route::get('/{sessionId}', [MigrationsController::class, 'show'])->name('show');
+    Route::delete('/{sessionId}', [MigrationsController::class, 'destroy'])->name('destroy');
+    Route::post('/cleanup', [MigrationsController::class, 'cleanup'])->name('cleanup');
 });
 
 // Tests et debug

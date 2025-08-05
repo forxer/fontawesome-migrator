@@ -985,5 +985,37 @@
         font-weight: 500;
     }
 
+    /* Logo simple pour bi-arrow-clockwise */
+    .navbar-brand .bi-arrow-clockwise {
+        color: #4299e1;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-brand:hover .bi-arrow-clockwise {
+        color: #667eea;
+    }
+
+    /* Amélioration du texte du logo */
+    .navbar-brand {
+        position: relative;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+        transform: translateY(-1px);
+    }
+
+    .navbar-brand .fw-bold {
+        color: var(--gray-800);
+        transition: all 0.3s ease;
+    }
+
+    .navbar-brand:hover .fw-bold {
+        color: var(--primary-color);
+    }
+
     @yield('additional-styles')
 </style>

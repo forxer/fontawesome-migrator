@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
-class ReportsController extends Controller
+class MigrationsController extends Controller
 {
     /**
      * Afficher la liste des rapports
@@ -79,7 +79,7 @@ class ReportsController extends Controller
         // Calculer les statistiques globales
         $stats = $this->getSessionStats($sessions);
 
-        return view('fontawesome-migrator::reports.index', [
+        return view('fontawesome-migrator::migrations.index', [
             'reports' => $reports,
             'stats' => $stats,
         ]);
@@ -151,7 +151,7 @@ class ReportsController extends Controller
             'metadata' => $sessionMetadata, // Toutes les métadonnées pour accès aux données custom
         ];
 
-        return view('fontawesome-migrator::reports.show', $viewData);
+        return view('fontawesome-migrator::migrations.show', $viewData);
     }
 
     /**

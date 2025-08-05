@@ -32,7 +32,7 @@ class MigrationReporter
             'success' => true,
             'session_id' => $this->metadata->get('session')['short_id'] ?? 'unknown',
             'metadata_path' => $this->metadata->saveToFile(),
-            'web_url' => url('/fontawesome-migrator/reports'),
+            'web_url' => url('/fontawesome-migrator/migrations'),
             'filename' => 'metadata.json', // Source unique des données
         ];
     }

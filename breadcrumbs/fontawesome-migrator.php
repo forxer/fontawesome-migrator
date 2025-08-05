@@ -11,14 +11,14 @@ Breadcrumbs::for('fontawesome-migrator.home', function (BreadcrumbTrail $trail):
 });
 
 // Migrations - Liste
-Breadcrumbs::for('fontawesome-migrator.reports.index', function (BreadcrumbTrail $trail): void {
+Breadcrumbs::for('fontawesome-migrator.migrations.index', function (BreadcrumbTrail $trail): void {
     $trail->parent('fontawesome-migrator.home');
-    $trail->push('Migrations', route('fontawesome-migrator.reports.index'));
+    $trail->push('Migrations', route('fontawesome-migrator.migrations.index'));
 });
 
 // Migration - Détail
-Breadcrumbs::for('fontawesome-migrator.reports.show', function (BreadcrumbTrail $trail, string $sessionId): void {
-    $trail->parent('fontawesome-migrator.reports.index');
+Breadcrumbs::for('fontawesome-migrator.migrations.show', function (BreadcrumbTrail $trail, string $sessionId): void {
+    $trail->parent('fontawesome-migrator.migrations.index');
     $trail->push('Rapport');
 });
 

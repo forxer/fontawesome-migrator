@@ -11,7 +11,7 @@
     <!-- Hero Section -->
     <div class="hero-section mt-4">
         <div class="hero-content">
-            <div class="hero-icon"><i class="bi bi-arrow-repeat"></i></div>
+            <div class="hero-icon"><i class="bi bi-arrow-clockwise"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>
             <p class="hero-subtitle">Migrez facilement entre toutes les versions de FontAwesome</p>
             <div class="hero-version">Version {{ $stats['package_version'] }}</div>
@@ -187,10 +187,10 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="card action-card">
                         <div class="card-body text-center p-4">
-                            <i class="bi bi-arrow-repeat action-icon"></i>
+                            <i class="bi bi-folder action-icon"></i>
                             <h5 class="card-title">Migrations</h5>
                             <p class="card-text text-muted">Consultez l'historique des migrations et leurs rapports détaillés</p>
-                            <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-primary">
+                            <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="btn btn-primary">
                                 Voir les migrations
                             </a>
                         </div>
@@ -216,17 +216,17 @@
         @if(count($recentMigrations) > 0)
             <div class="mb-5">
                 <h2 class="section-title section-title-lg">
-                    <i class="bi bi-arrow-repeat text-primary"></i> Migrations Récentes
+                    <i class="bi bi-folder text-primary"></i> Migrations Récentes
                 </h2>
 
                 <div class="card shadow-sm activity-list">
                     <div class="list-group list-group-flush">
                         @foreach($recentMigrations as $migration)
                             <div class="list-group-item activity-item">
-                                <i class="bi bi-arrow-repeat activity-icon"></i>
+                                <i class="bi bi-file-text activity-icon"></i>
                                 <div class="activity-content">
                                     <div class="activity-title">
-                                        <a href="{{ route('fontawesome-migrator.reports.show', $migration['short_id']) }}"
+                                        <a href="{{ route('fontawesome-migrator.migrations.show', $migration['short_id']) }}"
                                         class="text-decoration-none text-dark">
                                             {{ $migration['name'] }}
                                         </a>
@@ -251,7 +251,7 @@
                 </div>
 
                 <div class="text-center mt-3">
-                    <a href="{{ route('fontawesome-migrator.reports.index') }}" class="btn btn-outline-primary">
+                    <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="btn btn-outline-primary">
                         Voir tous les rapports <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
