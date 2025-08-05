@@ -186,7 +186,7 @@ class TestsController extends Controller
 
         if (! File::exists($baseBackupDir)) {
             return [
-                'total_sessions' => 0,
+                'total_migrations' => 0,
                 'total_backups' => 0,
                 'total_size' => 0,
                 'last_session' => null,

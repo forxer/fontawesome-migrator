@@ -84,7 +84,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="section-title">
-                <i class="bi bi-arrow-repeat"></i> Migration Multi-Versions
+                <i class="bi bi-arrow-clockwise"></i> Migration multi-versions
             </h2>
             <form id="migrationForm" class="row g-3">
                 <div class="col-md-4">
