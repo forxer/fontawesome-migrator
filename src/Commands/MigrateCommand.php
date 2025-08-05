@@ -82,6 +82,9 @@ class MigrateCommand extends Command
         // Initialiser les métadonnées
         $this->metadata->initialize();
 
+        // Capturer les options de commande
+        $this->captureCommandOptions();
+
         // Configurer les versions de migration si spécifiées
         $this->configureVersions();
 
@@ -862,5 +865,25 @@ class MigrateCommand extends Command
 
         // Valider et configurer
         $this->configureVersions($fromVersion, $toVersion);
+    }
+
+    /**
+     * Capturer les options de commande pour traçabilité
+     */
+    protected function captureCommandOptions(): void
+    {
+        $this->metadata->addCustomData('command_options', [
+            'dry_run' => $this->option('dry-run'),
+            'path' => $this->option('path'),
+            'backup' => $this->option('backup'),
+            'no_backup' => $this->option('no-backup'),
+            'icons_only' => $this->option('icons-only'),
+            'assets_only' => $this->option('assets-only'),
+            'no_interactive' => $this->option('no-interactive'),
+            'debug' => $this->option('debug'),
+            'from' => $this->option('from'),
+            'to' => $this->option('to'),
+            'web_interface' => $this->option('web-interface'),
+        ]);
     }
 }

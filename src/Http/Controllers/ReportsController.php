@@ -40,21 +40,36 @@ class ReportsController extends Controller
                 'filename' => 'metadata.json',
                 'session_id' => $sessionId,
                 'short_id' => $shortId,
-                'created_at' => Carbon::parse($sessionMetadata['session']['started_at']),
+                'created_at' => Carbon::parse($sessionMetadata['started_at']),
                 'size' => File::size($sessionDir.'/metadata.json'),
                 'metadata_path' => $sessionDir.'/metadata.json',
                 'has_json' => true,
-                'dry_run' => $sessionMetadata['runtime']['dry_run'] ?? false,
+                'dry_run' => $sessionMetadata['dry_run'] ?? false,
                 'metadata' => $sessionMetadata,
 
                 // Données enrichies de session
                 'backup_count' => $session['backup_count'] ?? 0,
-                'package_version' => $sessionMetadata['session']['package_version'] ?? 'unknown',
-                'duration' => $sessionMetadata['runtime']['duration'] ?? null,
-                'migration_origin' => $sessionMetadata['custom']['migration_origin']['source'] ?? 'unknown',
-                'migration_options' => $sessionMetadata['migration_options'] ?? [],
-                'statistics' => $sessionMetadata['statistics'] ?? [],
-                'migration_summary' => $sessionMetadata['migration_results']['summary'] ?? [],
+                'package_version' => $sessionMetadata['package_version'] ?? 'unknown',
+                'duration' => $sessionMetadata['duration'] ?? null,
+                'migration_origin' => $sessionMetadata['migration_source'] ?? 'unknown',
+                'migration_options' => [
+                    'source_version' => $sessionMetadata['source_version'],
+                    'target_version' => $sessionMetadata['target_version'],
+                    'icons_only' => $sessionMetadata['icons_only'],
+                    'assets_only' => $sessionMetadata['assets_only'],
+                ],
+                'statistics' => [
+                    'total_files' => $sessionMetadata['total_files'] ?? 0,
+                    'modified_files' => $sessionMetadata['modified_files'] ?? 0,
+                    'total_changes' => $sessionMetadata['total_changes'] ?? 0,
+                    'warnings' => $sessionMetadata['warnings'] ?? 0,
+                    'errors' => $sessionMetadata['errors'] ?? 0,
+                ],
+                'migration_summary' => [
+                    'total_files' => $sessionMetadata['total_files'] ?? 0,
+                    'modified_files' => $sessionMetadata['modified_files'] ?? 0,
+                    'total_changes' => $sessionMetadata['total_changes'] ?? 0,
+                ],
             ];
         }
 
@@ -101,24 +116,38 @@ class ReportsController extends Controller
             abort(404, 'Métadonnées de session non trouvées');
         }
 
-        $migrationResults = $sessionMetadata['migration_results'];
-
-        // Préparer les données pour la vue - TOUT depuis metadata.json
+        // Préparer les données pour la vue - TOUT depuis metadata.json simplifiée
         $viewData = [
             // Données métier
-            'results' => $migrationResults['files'],
-            'stats' => $migrationResults['summary'],
-            'enrichedWarnings' => $migrationResults['enriched_warnings'],
+            'results' => $sessionMetadata['files'] ?? [],
+            'stats' => [
+                'total_files' => $sessionMetadata['total_files'] ?? 0,
+                'modified_files' => $sessionMetadata['modified_files'] ?? 0,
+                'total_changes' => $sessionMetadata['total_changes'] ?? 0,
+                'warnings' => $sessionMetadata['warnings'] ?? 0,
+                'errors' => $sessionMetadata['errors'] ?? 0,
+                'assets_migrated' => $sessionMetadata['assets_migrated'] ?? 0,
+                'icons_migrated' => $sessionMetadata['icons_migrated'] ?? 0,
+                'migration_success' => $sessionMetadata['migration_success'] ?? true,
+                'changes_by_type' => $sessionMetadata['changes_by_type'] ?? [],
+                'asset_types' => $sessionMetadata['asset_types'] ?? [],
+            ],
+            'enrichedWarnings' => $sessionMetadata['warnings_details'] ?? [],
 
             // Données de contexte
-            'timestamp' => Carbon::parse($sessionMetadata['session']['started_at'])->format('Y-m-d H:i:s'),
-            'isDryRun' => $sessionMetadata['runtime']['dry_run'],
-            'migrationOptions' => $sessionMetadata['migration_options'],
-            'configuration' => $sessionMetadata['configuration'],
-            'packageVersion' => $sessionMetadata['session']['package_version'],
-            'sessionId' => $sessionMetadata['session']['id'],
-            'shortId' => $sessionMetadata['session']['short_id'],
-            'duration' => $sessionMetadata['runtime']['duration'],
+            'timestamp' => Carbon::parse($sessionMetadata['started_at'])->format('Y-m-d H:i:s'),
+            'isDryRun' => $sessionMetadata['dry_run'],
+            'migrationOptions' => [
+                'source_version' => $sessionMetadata['source_version'],
+                'target_version' => $sessionMetadata['target_version'],
+                'icons_only' => $sessionMetadata['icons_only'],
+                'assets_only' => $sessionMetadata['assets_only'],
+            ],
+            'configuration' => $sessionMetadata['scan_config'] ?? [],
+            'packageVersion' => $sessionMetadata['package_version'],
+            'sessionId' => $sessionMetadata['session_id'],
+            'shortId' => $sessionMetadata['short_id'],
+            'duration' => $sessionMetadata['duration'],
             'metadata' => $sessionMetadata, // Toutes les métadonnées pour accès aux données custom
         ];
 

@@ -168,22 +168,24 @@
             @endforeach
         </div>
     @else
-        <div class="text-center py-5">
-            <div class="mb-4">
-                <i class="bi bi-file-text display-1 text-muted"></i>
-            </div>
-            <h3 class="mb-3">Aucune migration disponible</h3>
-            <p class="text-muted mb-4">
-                Les migrations sont automatiquement enregistrées avec leurs résultats.<br>
-                Exécutez une migration pour voir l'historique des changements FontAwesome.
-            </p>
-            <div class="mb-4">
-                <code class="bg-light p-3 rounded d-inline-block">
-                    php artisan fontawesome:migrate --dry-run
-                </code>
-            </div>
-            <div class="text-muted">
-                <i class="bi bi-arrow-repeat me-1"></i> Ajoutez <code class="bg-light px-2 py-1 rounded">--dry-run</code> pour prévisualiser sans modifier les fichiers
+        <div class="card mb-3">
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-file-text display-1 text-muted"></i>
+                </div>
+                <h3 class="mb-3">Aucune migration disponible</h3>
+                <p class="text-muted mb-4">
+                    Les migrations sont automatiquement enregistrées avec leurs résultats.<br>
+                    Exécutez une migration pour voir l'historique des changements FontAwesome.
+                </p>
+                <div class="mb-4">
+                    <code class="bg-light p-3 rounded d-inline-block">
+                        php artisan fontawesome:migrate --dry-run
+                    </code>
+                </div>
+                <div class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i> Ajouter <code class="bg-light px-2 py-1 rounded">--dry-run</code> permet de prévisualiser sans modifier les fichiers
+                </div>
             </div>
         </div>
     @endif
@@ -289,7 +291,7 @@ Répertoire: ${data.session_dir}
 Fichiers de sauvegarde: ${data.files_count}
 Métadonnées: ${JSON.stringify(data.metadata, null, 2)}
                 `;
-                
+
                 // Pour l'instant, afficher dans une alerte - on pourrait améliorer avec une vraie modale
                 alert(details);
             } else {

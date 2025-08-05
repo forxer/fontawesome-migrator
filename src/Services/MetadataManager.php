@@ -26,60 +26,64 @@ class MetadataManager
         $shortId = substr($sessionId, strpos($sessionId, '_') + 1, 8);
 
         $this->metadata = [
-            'session' => [
-                'id' => $sessionId,
-                'short_id' => $shortId,
-                'started_at' => Carbon::now()->toIso8601String(),
-                'package_version' => PackageVersionService::getVersion(),
-            ],
+            // === IDENTIFICATION ===
+            'session_id' => $sessionId,
+            'short_id' => $shortId,
+            'package_version' => PackageVersionService::getVersion(),
+
+            // === EXECUTION ===
+            'started_at' => Carbon::now()->toIso8601String(),
+            'completed_at' => null,
+            'duration' => null,
+            'dry_run' => false,
+            'migration_source' => 'command_line',
+
+            // === MIGRATION CONFIG ===
+            'source_version' => null,
+            'target_version' => null,
+            'license_type' => $this->config['license_type'],
+            'icons_only' => false,
+            'assets_only' => false,
+            'custom_path' => null,
+
+            // === RESULTS (direct access) ===
+            'total_files' => 0,
+            'modified_files' => 0,
+            'total_changes' => 0,
+            'warnings' => 0,
+            'errors' => 0,
+            'assets_migrated' => 0,
+            'icons_migrated' => 0,
+            'migration_success' => true,
+
+            // === DETAILED DATA ===
+            'files' => [],
+            'warnings_details' => [],
+            'changes_by_type' => [],
+            'asset_types' => [],
+
+            // === BACKUPS ===
+            'backup_files' => [],
+            'backup_count' => 0,
+            'backup_size' => 0,
+
+            // === ENVIRONMENT (groupé) ===
             'environment' => [
                 'php_version' => PHP_VERSION,
                 'laravel_version' => app()->version(),
                 'timezone' => Carbon::now()->timezoneName,
             ],
-            'configuration' => [
-                'license_type' => $this->config['license_type'],
-                'scan_paths' => $this->config['scan_paths'] ?? [],
-                'file_extensions' => $this->config['file_extensions'] ?? [],
+
+            // === CONFIGURATION (groupé) ===
+            'scan_config' => [
+                'paths' => $this->config['scan_paths'] ?? [],
+                'extensions' => $this->config['file_extensions'] ?? [],
                 'backup_enabled' => $this->config['backup_files'] ?? true,
                 'sessions_path' => $this->config['sessions_path'] ?? null,
             ],
-            'migration_options' => [],
-            'runtime' => [
-                'dry_run' => false,
-                'started_at' => null,
-                'completed_at' => null,
-                'duration' => null,
-            ],
-            'backups' => [
-                'created' => [],
-                'count' => 0,
-                'total_size' => 0,
-            ],
-            'statistics' => [
-                'files_scanned' => 0,
-                'files_modified' => 0,
-                'changes_made' => 0,
-                'warnings_generated' => 0,
-                'errors_encountered' => 0,
-            ],
-            'migration_results' => [
-                'summary' => [
-                    'total_files' => 0,
-                    'modified_files' => 0,
-                    'total_changes' => 0,
-                    'changes_by_type' => [],
-                    'warnings' => 0,
-                    'errors' => 0,
-                    'assets_migrated' => 0,
-                    'icons_migrated' => 0,
-                    'asset_types' => [],
-                    'migration_success' => true,
-                ],
-                'files' => [],
-                'enriched_warnings' => [],
-                'generated_at' => null,
-            ],
+
+            // === COMMAND TRACE (groupé) ===
+            'command_options' => [],
         ];
 
         return $this;
@@ -90,7 +94,10 @@ class MetadataManager
      */
     public function setMigrationOptions(array $options): self
     {
-        $this->metadata['migration_options'] = $options;
+        // Mapper vers la nouvelle structure simplifiée
+        $this->metadata['source_version'] = $options['source_version'] ?? null;
+        $this->metadata['target_version'] = $options['target_version'] ?? null;
+        $this->metadata['migration_source'] = $options['migration_source'] ?? 'command_line';
 
         return $this;
     }
@@ -100,7 +107,7 @@ class MetadataManager
      */
     public function setDryRun(bool $isDryRun): self
     {
-        $this->metadata['runtime']['dry_run'] = $isDryRun;
+        $this->metadata['dry_run'] = $isDryRun;
 
         return $this;
     }
@@ -110,8 +117,8 @@ class MetadataManager
      */
     public function startMigration(): self
     {
-        $this->metadata['runtime']['started_at'] = Carbon::now()->toIso8601String();
-
+        // La session started_at est déjà définie dans initialize()
+        // Ici on pourrait mettre à jour si besoin d'un timestamp de démarrage différent
         return $this;
     }
 
@@ -120,12 +127,12 @@ class MetadataManager
      */
     public function completeMigration(): self
     {
-        $this->metadata['runtime']['completed_at'] = Carbon::now()->toIso8601String();
+        $this->metadata['completed_at'] = Carbon::now()->toIso8601String();
 
-        if ($this->metadata['runtime']['started_at']) {
-            $start = Carbon::parse($this->metadata['runtime']['started_at']);
-            $end = Carbon::parse($this->metadata['runtime']['completed_at']);
-            $this->metadata['runtime']['duration'] = $start->diffInSeconds($end);
+        if ($this->metadata['started_at']) {
+            $start = Carbon::parse($this->metadata['started_at']);
+            $end = Carbon::parse($this->metadata['completed_at']);
+            $this->metadata['duration'] = $start->diffInSeconds($end);
         }
 
         return $this;
@@ -136,19 +143,9 @@ class MetadataManager
      */
     public function addBackup(array $backupInfo): self
     {
-        $this->metadata['backups']['created'][] = $backupInfo;
-        $this->metadata['backups']['count'] = \count($this->metadata['backups']['created']);
-        $this->metadata['backups']['total_size'] += $backupInfo['size'] ?? 0;
-
-        return $this;
-    }
-
-    /**
-     * Mettre à jour les statistiques
-     */
-    public function updateStatistics(array $stats): self
-    {
-        $this->metadata['statistics'] = array_merge($this->metadata['statistics'], $stats);
+        $this->metadata['backup_files'][] = $backupInfo;
+        $this->metadata['backup_count'] = \count($this->metadata['backup_files']);
+        $this->metadata['backup_size'] += $backupInfo['size'] ?? 0;
 
         return $this;
     }
@@ -158,21 +155,31 @@ class MetadataManager
      */
     public function storeMigrationResults(array $results, array $stats, array $enrichedWarnings = []): self
     {
-        $this->metadata['migration_results'] = [
-            'summary' => $stats,
-            'files' => array_map(fn ($result): array => [
-                'file' => $result['file'],
-                'success' => $result['success'] ?? true,
-                'changes_count' => \count($result['changes'] ?? []),
-                'warnings_count' => \count($result['warnings'] ?? []),
-                'assets_count' => \count($result['assets'] ?? []),
-                'changes' => $result['changes'] ?? [],
-                'warnings' => $result['warnings'] ?? [],
-                'assets' => $result['assets'] ?? [],
-            ], $results),
-            'enriched_warnings' => $enrichedWarnings,
-            'generated_at' => Carbon::now()->toIso8601String(),
-        ];
+        // === RESULTS (direct access) ===
+        $this->metadata['total_files'] = $stats['total_files'] ?? 0;
+        $this->metadata['modified_files'] = $stats['modified_files'] ?? 0;
+        $this->metadata['total_changes'] = $stats['total_changes'] ?? 0;
+        $this->metadata['warnings'] = $stats['warnings'] ?? 0;
+        $this->metadata['errors'] = $stats['errors'] ?? 0;
+        $this->metadata['assets_migrated'] = $stats['assets_migrated'] ?? 0;
+        $this->metadata['icons_migrated'] = $stats['icons_migrated'] ?? 0;
+        $this->metadata['migration_success'] = $stats['migration_success'] ?? true;
+
+        // === DETAILED DATA ===
+        $this->metadata['files'] = array_map(fn ($result): array => [
+            'file' => $result['file'],
+            'success' => $result['success'] ?? true,
+            'changes_count' => \count($result['changes'] ?? []),
+            'warnings_count' => \count($result['warnings'] ?? []),
+            'assets_count' => \count($result['assets'] ?? []),
+            'changes' => $result['changes'] ?? [],
+            'warnings' => $result['warnings'] ?? [],
+            'assets' => $result['assets'] ?? [],
+        ], $results);
+
+        $this->metadata['warnings_details'] = $enrichedWarnings;
+        $this->metadata['changes_by_type'] = $stats['changes_by_type'] ?? [];
+        $this->metadata['asset_types'] = $stats['asset_types'] ?? [];
 
         return $this;
     }
@@ -182,10 +189,22 @@ class MetadataManager
      */
     public function getMigrationResults(): array
     {
-        return $this->metadata['migration_results'] ?? [
-            'summary' => [],
-            'files' => [],
-            'enriched_warnings' => [],
+        // Reconstituer la structure attendue pour compatibilité
+        return [
+            'summary' => [
+                'total_files' => $this->metadata['total_files'] ?? 0,
+                'modified_files' => $this->metadata['modified_files'] ?? 0,
+                'total_changes' => $this->metadata['total_changes'] ?? 0,
+                'warnings' => $this->metadata['warnings'] ?? 0,
+                'errors' => $this->metadata['errors'] ?? 0,
+                'assets_migrated' => $this->metadata['assets_migrated'] ?? 0,
+                'icons_migrated' => $this->metadata['icons_migrated'] ?? 0,
+                'migration_success' => $this->metadata['migration_success'] ?? true,
+                'changes_by_type' => $this->metadata['changes_by_type'] ?? [],
+                'asset_types' => $this->metadata['asset_types'] ?? [],
+            ],
+            'files' => $this->metadata['files'] ?? [],
+            'enriched_warnings' => $this->metadata['warnings_details'] ?? [],
         ];
     }
 
@@ -194,7 +213,16 @@ class MetadataManager
      */
     public function addCustomData(string $key, mixed $value): self
     {
-        $this->metadata['custom'][$key] = $value;
+        // Mapper les données vers la nouvelle structure
+        if ($key === 'command_options') {
+            $this->metadata['command_options'] = $value;
+        } elseif ($key === 'migration_scope') {
+            $this->metadata['icons_only'] = $value['migrate_icons'] ?? false;
+            $this->metadata['assets_only'] = $value['migrate_assets'] ?? false;
+            $this->metadata['custom_path'] = $value['custom_path'] ?? null;
+        } elseif ($key === 'migration_origin') {
+            $this->metadata['migration_source'] = $value['source'] ?? 'command_line';
+        }
 
         return $this;
     }
@@ -222,18 +250,23 @@ class MetadataManager
     {
         return [
             'meta' => [
-                'session_id' => $this->metadata['session']['id'],
-                'generated_at' => $this->metadata['session']['started_at'],
-                'package_version' => $this->metadata['session']['package_version'],
-                'dry_run' => $this->metadata['runtime']['dry_run'],
-                'duration' => $this->metadata['runtime']['duration'],
-                'migration_options' => $this->metadata['migration_options'],
-                'configuration' => $this->metadata['configuration'],
-                'environment' => $this->metadata['environment'],
+                'session_id' => $this->metadata['session_id'],
+                'generated_at' => $this->metadata['started_at'],
+                'package_version' => $this->metadata['package_version'],
+                'dry_run' => $this->metadata['dry_run'],
+                'duration' => $this->metadata['duration'],
+                'source_version' => $this->metadata['source_version'],
+                'target_version' => $this->metadata['target_version'],
             ],
-            'backups' => $this->metadata['backups'],
-            'statistics' => $this->metadata['statistics'],
-            'custom' => $this->metadata['custom'] ?? [],
+            'backups' => [
+                'created' => $this->metadata['backup_files'],
+                'count' => $this->metadata['backup_count'],
+                'total_size' => $this->metadata['backup_size'],
+            ],
+            'migration_results' => $this->getMigrationResults(),
+            'environment' => $this->metadata['environment'],
+            'scan_config' => $this->metadata['scan_config'],
+            'command_options' => $this->metadata['command_options'],
         ];
     }
 
@@ -245,7 +278,7 @@ class MetadataManager
         if ($filePath === null || $filePath === '' || $filePath === '0') {
             // Déterminer le répertoire de session pour les métadonnées
             $baseBackupDir = config('fontawesome-migrator.sessions_path');
-            $sessionId = $this->metadata['session']['id'] ?? 'unknown';
+            $sessionId = $this->metadata['session_id'] ?? 'unknown';
             $sessionDir = $baseBackupDir.'/session-'.$sessionId;
 
             // S'assurer que le répertoire de session existe avec .gitignore
@@ -285,23 +318,12 @@ class MetadataManager
     {
         $errors = [];
 
-        // Vérifier les sections obligatoires
-        $requiredSections = ['session', 'configuration', 'runtime'];
+        // Vérifier les champs obligatoires de la nouvelle structure
+        $requiredFields = ['session_id', 'started_at', 'package_version'];
 
-        foreach ($requiredSections as $section) {
-            if (! isset($this->metadata[$section])) {
-                $errors[] = 'Section manquante: '.$section;
-            }
-        }
-
-        // Vérifier les champs obligatoires
-        if (isset($this->metadata['session'])) {
-            $requiredFields = ['id', 'started_at', 'package_version'];
-
-            foreach ($requiredFields as $field) {
-                if (! isset($this->metadata['session'][$field])) {
-                    $errors[] = 'Champ manquant dans session: '.$field;
-                }
+        foreach ($requiredFields as $field) {
+            if (! isset($this->metadata[$field])) {
+                $errors[] = 'Champ manquant: '.$field;
             }
         }
 
@@ -324,13 +346,13 @@ class MetadataManager
     public function getSummary(): array
     {
         return [
-            'session_id' => $this->metadata['session']['id'] ?? null,
-            'version' => $this->metadata['session']['package_version'] ?? null,
-            'dry_run' => $this->metadata['runtime']['dry_run'] ?? false,
-            'backups_count' => $this->metadata['backups']['count'] ?? 0,
-            'files_modified' => $this->metadata['statistics']['files_modified'] ?? 0,
-            'changes_made' => $this->metadata['statistics']['changes_made'] ?? 0,
-            'duration' => $this->metadata['runtime']['duration'] ?? null,
+            'session_id' => $this->metadata['session_id'] ?? null,
+            'version' => $this->metadata['package_version'] ?? null,
+            'dry_run' => $this->metadata['dry_run'] ?? false,
+            'backups_count' => $this->metadata['backup_count'] ?? 0,
+            'files_modified' => $this->metadata['modified_files'] ?? 0,
+            'changes_made' => $this->metadata['total_changes'] ?? 0,
+            'duration' => $this->metadata['duration'] ?? null,
         ];
     }
 
@@ -357,7 +379,7 @@ class MetadataManager
     public function getSessionDirectory(): string
     {
         $baseBackupDir = config('fontawesome-migrator.sessions_path');
-        $sessionId = $this->metadata['session']['id'] ?? 'unknown';
+        $sessionId = $this->metadata['session_id'] ?? 'unknown';
 
         return $baseBackupDir.'/session-'.$sessionId;
     }
@@ -438,21 +460,23 @@ class MetadataManager
             // Charger les métadonnées si disponibles
             if ($sessionInfo['has_metadata']) {
                 $metadata = json_decode(File::get($metadataPath), true);
-                $sessionInfo['package_version'] = $metadata['session']['package_version'] ?? 'unknown';
-                $sessionInfo['dry_run'] = $metadata['runtime']['dry_run'] ?? false;
-                $sessionInfo['duration'] = $metadata['runtime']['duration'] ?? null;
+
+                // Adapter à la nouvelle structure simplifiée
+                $sessionInfo['package_version'] = $metadata['package_version'] ?? 'unknown';
+                $sessionInfo['dry_run'] = $metadata['dry_run'] ?? false;
+                $sessionInfo['duration'] = $metadata['duration'] ?? null;
 
                 // Inclure les métadonnées complètes
                 $sessionInfo['metadata'] = $metadata;
 
                 // Utiliser la date de création depuis les métadonnées comme source unique
-                if (isset($metadata['session']['started_at'])) {
-                    $sessionInfo['created_at'] = Carbon::parse($metadata['session']['started_at']);
+                if (isset($metadata['started_at'])) {
+                    $sessionInfo['created_at'] = Carbon::parse($metadata['started_at']);
                 }
 
                 // Utiliser le short_id des métadonnées s'il existe
-                if (isset($metadata['session']['short_id'])) {
-                    $sessionInfo['short_id'] = $metadata['session']['short_id'];
+                if (isset($metadata['short_id'])) {
+                    $sessionInfo['short_id'] = $metadata['short_id'];
                 }
             } else {
                 // Session sans métadonnées - ignorer
