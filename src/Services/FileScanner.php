@@ -9,11 +9,6 @@ use Symfony\Component\Finder\Finder;
 
 class FileScanner
 {
-    public function __construct()
-    {
-        // Configuration chargée via ConfigHelper
-    }
-
     /**
      * Scanner les chemins spécifiés et retourner la liste des fichiers à traiter
      */
@@ -108,7 +103,7 @@ class FileScanner
         // Ajouter les extensions de fichiers
         $extensions = ConfigHelper::getFileExtensions();
 
-        if (! empty($extensions)) {
+        if ($extensions !== []) {
             $patterns = array_map(fn ($ext): string => '*.'.$ext, $extensions);
             $finder->name($patterns);
         }
@@ -139,7 +134,7 @@ class FileScanner
     {
         $extensions = ConfigHelper::getFileExtensions();
 
-        if (empty($extensions)) {
+        if ($extensions === []) {
             return true; // Si aucune extension configurée, accepter tous les fichiers
         }
 

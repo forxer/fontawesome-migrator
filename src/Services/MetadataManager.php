@@ -11,11 +11,6 @@ class MetadataManager
 {
     protected array $metadata = [];
 
-    public function __construct()
-    {
-        // Configuration chargée via ConfigHelper
-    }
-
     /**
      * Initialiser les métadonnées de base
      */

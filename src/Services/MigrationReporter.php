@@ -9,9 +9,7 @@ class MigrationReporter
 {
     public function __construct(
         protected MetadataManager $metadata
-    ) {
-        // Configuration chargée via ConfigHelper
-    }
+    ) {}
 
     /**
      * Générer les métadonnées de migration

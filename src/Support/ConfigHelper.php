@@ -147,7 +147,7 @@ class ConfigHelper
 
         foreach ($requiredFields as $field) {
             if (! isset($config[$field])) {
-                $errors[] = "Configuration manquante : {$field}";
+                $errors[] = 'Configuration manquante : '.$field;
             }
         }
 
@@ -160,7 +160,7 @@ class ConfigHelper
         $migrationsPath = self::getMigrationsPath();
 
         if (! is_dir($migrationsPath) && ! mkdir($migrationsPath, 0755, true)) {
-            $errors[] = "Le répertoire migrations_path n'est pas accessible en écriture : {$migrationsPath}";
+            $errors[] = 'Le répertoire migrations_path n\'est pas accessible en écriture : '.$migrationsPath;
         }
 
         return $errors;

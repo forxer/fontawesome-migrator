@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\File;
 
 class AssetMigrator
 {
-    public function __construct()
-    {
-        // Configuration chargée via ConfigHelper
-    }
-
     /**
      * Migrer les références d'assets FontAwesome dans un fichier
      */

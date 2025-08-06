@@ -13,9 +13,7 @@ class IconReplacer
         protected VersionMapperInterface $mapper,
         protected FileScanner $fileScanner,
         protected BackupManager $backupManager
-    ) {
-        // Configuration chargée via ConfigHelper
-    }
+    ) {}
 
     /**
      * Traiter une liste de fichiers pour la migration
