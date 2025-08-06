@@ -510,11 +510,10 @@ Les rapports sont automatiquement sauvegardés dans `storage/app/public/fontawes
 
 ```bash
 # Après migration, la commande affiche :
-📊 Rapport généré :
-   • Fichier : fontawesome-migration-report-2024-01-15_14-30-25.html
-   • HTML : /storage/fontawesome-migrator/reports/fontawesome-migration-report-2024-01-15_14-30-25.html
-   • JSON : /storage/fontawesome-migrator/reports/fontawesome-migration-report-2024-01-15_14-30-25.json
-   • Menu : http://localhost/fontawesome-migrator/reports
+📊 Rapport généré automatiquement :
+   • Session : migration_abc123
+   • Métadonnées : metadata.json
+   • Interface web : http://localhost/fontawesome-migrator/migrations
 ```
 
 ### 🎛️ Interface web complète

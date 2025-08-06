@@ -8,6 +8,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **🚨 RAPPEL CRITIQUE**: NE JAMAIS essayer d'exécuter PHP avec Bash - cela échoue systématiquement. TOUJOURS demander à l'utilisateur.
 
+**📁 Storage Access Limitation**: Claude Code n'a PAS accès aux répertoires `storage/` car nous ne sommes pas dans une application Laravel déployée, mais dans un package en développement. NE JAMAIS essayer d'accéder à `storage/app/` ou équivalent - ces répertoires n'existent pas dans le contexte de développement du package.
+
+**🎯 Workflow de travail**: L'utilisateur fonctionne ÉTAPE PAR ÉTAPE. NE JAMAIS faire plusieurs vérifications ou analyses d'un coup. Toujours demander validation avant de passer à l'étape suivante. Une seule action à la fois, attendre les instructions de l'utilisateur pour continuer.
+
 **🔧 Debug Process v2.0.0**: For syntax checking and quality control, ALWAYS ask the user to run:
 - `composer pint-test` (syntax and style check)
 - `composer rector-dry` (code modernization check)  
@@ -98,4 +102,4 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Code mort supprimé**: SERVICES_ANALYSIS.md, SERVICES_ANALYSIS_v2.md éliminés (~11KB documentation technique temporaire obsolète)
 - **200+ lignes dupliquées supprimées**: Architecture DRY respectée, services réutilisables, maintenabilité maximale
 - **Refactorisation v2.0 terminée**: Services modulaires, injection pure, utilitaires centralisés, 0 duplication, prêt production
-- to memorize
+- Claude Code must always be curious and eager to learn, understanding that technology is a journey of continuous improvement
