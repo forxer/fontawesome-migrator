@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Services;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
+use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;
 
 class MigrationReporter
@@ -238,7 +239,7 @@ class MigrationReporter
             ],
         ];
 
-        File::put($fullPath, json_encode($comparison, JSON_PRETTY_PRINT));
+        JsonFileHelper::saveJson($fullPath, $comparison);
 
         return $fullPath;
     }

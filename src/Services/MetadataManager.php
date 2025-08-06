@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Support\FormatterHelper;
+use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;
 
 class MetadataManager implements MetadataManagerInterface
@@ -31,14 +32,45 @@ class MetadataManager implements MetadataManagerInterface
         $sessionData = $this->sessionService->getSessionData();
 
         // Construire la structure unifiée avec données de session
-        $this->metadata = array_merge($sessionData, [
-            // === MIGRATION CONFIG ===
+        $this->metadata = array_merge($sessionData, $this->buildDefaultMetadata());
+
+        return $this;
+    }
+
+    /**
+     * Construire la structure de métadonnées par défaut
+     */
+    private function buildDefaultMetadata(): array
+    {
+        return array_merge(
+            $this->buildMigrationConfig(),
+            $this->buildResultsDefaults(),
+            $this->buildDetailedDataDefaults(),
+            $this->buildBackupDefaults(),
+            $this->buildEnvironmentData(),
+            $this->buildScanConfiguration()
+        );
+    }
+
+    /**
+     * Configuration de migration de base
+     */
+    private function buildMigrationConfig(): array
+    {
+        return [
             'license_type' => $this->config->getLicenseType(),
             'icons_only' => false,
             'assets_only' => false,
             'custom_path' => null,
+        ];
+    }
 
-            // === RESULTS (direct access) ===
+    /**
+     * Valeurs par défaut des résultats de migration
+     */
+    private function buildResultsDefaults(): array
+    {
+        return [
             'total_files' => 0,
             'modified_files' => 0,
             'total_changes' => 0,
@@ -47,35 +79,61 @@ class MetadataManager implements MetadataManagerInterface
             'assets_migrated' => 0,
             'icons_migrated' => 0,
             'migration_success' => true,
+        ];
+    }
 
-            // === DETAILED DATA ===
+    /**
+     * Structure par défaut des données détaillées
+     */
+    private function buildDetailedDataDefaults(): array
+    {
+        return [
             'files' => [],
             'warnings_details' => [],
             'changes_by_type' => [],
             'asset_types' => [],
+        ];
+    }
 
-            // === BACKUPS ===
+    /**
+     * Configuration par défaut des backups
+     */
+    private function buildBackupDefaults(): array
+    {
+        return [
             'backup_files' => [],
             'backup_count' => 0,
             'backup_size' => 0,
+        ];
+    }
 
-            // === ENVIRONMENT (groupé) ===
+    /**
+     * Données d'environnement d'exécution
+     */
+    private function buildEnvironmentData(): array
+    {
+        return [
             'environment' => [
                 'php_version' => PHP_VERSION,
                 'laravel_version' => app()->version(),
                 'timezone' => Carbon::now()->timezoneName,
             ],
+        ];
+    }
 
-            // === CONFIGURATION (groupé) ===
+    /**
+     * Configuration de scan depuis ConfigurationInterface
+     */
+    private function buildScanConfiguration(): array
+    {
+        return [
             'scan_config' => [
                 'paths' => $this->config->getScanPaths(),
                 'extensions' => $this->config->getFileExtensions(),
                 'backup_enabled' => $this->config->isBackupEnabled(),
                 'migrations_path' => $this->config->getMigrationsPath(),
             ],
-        ]);
-
-        return $this;
+        ];
     }
 
     /**
@@ -447,7 +505,7 @@ class MetadataManager implements MetadataManagerInterface
 
             // Charger les métadonnées si disponibles
             if ($migrationInfo['has_metadata']) {
-                $metadata = json_decode(File::get($metadataPath), true);
+                $metadata = JsonFileHelper::loadJson($metadataPath, []);
 
                 // Adapter à la nouvelle structure simplifiée
                 $migrationInfo['package_version'] = $metadata['package_version'] ?? 'unknown';

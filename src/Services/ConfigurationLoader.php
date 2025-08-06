@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services;
 
+use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 
@@ -94,10 +95,10 @@ class ConfigurationLoader
     {
         $config = $this->loadMigrationConfig($fromVersion, $toVersion);
 
-        return array_merge(
-            $config['deprecated']['deprecated_icons'] ?? [],
-            $config['deprecated']['deprecated_classes'] ?? []
-        );
+        return $this->mergeConfigSections($config, [
+            'deprecated.deprecated_icons',
+            'deprecated.deprecated_classes',
+        ]);
     }
 
     /**
@@ -107,10 +108,10 @@ class ConfigurationLoader
     {
         $config = $this->loadMigrationConfig($fromVersion, $toVersion);
 
-        return array_merge(
-            $config['pro_only']['pro_styles'] ?? [],
-            $config['pro_only']['pro_icons'] ?? []
-        );
+        return $this->mergeConfigSections($config, [
+            'pro_only.pro_styles',
+            'pro_only.pro_icons',
+        ]);
     }
 
     /**
@@ -120,10 +121,10 @@ class ConfigurationLoader
     {
         $config = $this->loadMigrationConfig($fromVersion, $toVersion);
 
-        return array_merge(
-            $config['new_icons']['new_styles'] ?? [],
-            $config['new_icons']['new_icons'] ?? []
-        );
+        return $this->mergeConfigSections($config, [
+            'new_icons.new_styles',
+            'new_icons.new_icons',
+        ]);
     }
 
     /**
@@ -175,21 +176,20 @@ class ConfigurationLoader
             return [];
         }
 
-        $content = File::get($filePath);
-        $data = json_decode($content, true);
+        $data = JsonFileHelper::loadJson($filePath, []);
 
-        if (! $data || ! isset($data['alternatives'])) {
+        if ($data === [] || ! isset($data['alternatives'])) {
             $this->cache[$cacheKey] = [];
 
             return [];
         }
 
         // Fusionner toutes les alternatives disponibles
-        $alternatives = array_merge(
-            $data['alternatives'] ?? [],
-            $data['pro_to_free'] ?? [],
-            $data['style_alternatives'] ?? []
-        );
+        $alternatives = $this->mergeConfigSections($data, [
+            'alternatives',
+            'pro_to_free',
+            'style_alternatives',
+        ]);
 
         $this->cache[$cacheKey] = $alternatives;
 
@@ -217,14 +217,7 @@ class ConfigurationLoader
             throw new InvalidArgumentException('Fichier de configuration non trouvé : '.$path);
         }
 
-        $content = File::get($path);
-        $data = json_decode($content, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException(\sprintf('Erreur de parsing JSON dans %s : ', $path).json_last_error_msg());
-        }
-
-        return $data;
+        return JsonFileHelper::loadJson($path, $default);
     }
 
     /**
@@ -284,5 +277,42 @@ class ConfigurationLoader
         }
 
         return $errors;
+    }
+
+    /**
+     * Fusionner plusieurs sections de configuration avec clés par défaut vides
+     */
+    private function mergeConfigSections(array $config, array $sectionPaths): array
+    {
+        $result = [];
+
+        foreach ($sectionPaths as $path) {
+            $value = $this->getNestedValue($config, $path);
+
+            if (\is_array($value)) {
+                $result = array_merge($result, $value);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Récupérer une valeur imbriquée dans un tableau avec notation point
+     */
+    private function getNestedValue(array $array, string $path, mixed $default = []): mixed
+    {
+        $keys = explode('.', $path);
+        $value = $array;
+
+        foreach ($keys as $key) {
+            if (! \is_array($value) || ! isset($value[$key])) {
+                return $default;
+            }
+
+            $value = $value[$key];
+        }
+
+        return $value;
     }
 }

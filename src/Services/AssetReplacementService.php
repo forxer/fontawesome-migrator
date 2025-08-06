@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
-use Illuminate\Support\Facades\File;
+use FontAwesome\Migrator\Support\JsonFileHelper;
 
 /**
  * Service centralisé pour la gestion des remplacements d'assets FontAwesome
@@ -29,16 +29,7 @@ class AssetReplacementService
     {
         try {
             $configPath = __DIR__.'/../../config/fontawesome-migrator/assets/replacements.json';
-
-            if (! File::exists($configPath)) {
-                throw new Exception('Configuration des remplacements d\'assets non trouvée: '.$configPath);
-            }
-
-            $config = json_decode(File::get($configPath), true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new Exception('Configuration JSON invalide: '.json_last_error_msg());
-            }
+            $config = JsonFileHelper::loadJson($configPath);
 
             $this->replacements = $config['replacements'] ?? [];
             $this->excludedPatterns = $config['excluded_patterns'] ?? [];

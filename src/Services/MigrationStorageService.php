@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Services;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 
@@ -28,7 +29,7 @@ class MigrationStorageService
 
         $this->ensureDirectoryExists(\dirname($finalPath));
 
-        File::put($finalPath, json_encode($migrationData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        JsonFileHelper::saveJson($finalPath, $migrationData);
 
         return $finalPath;
     }
@@ -42,14 +43,7 @@ class MigrationStorageService
             throw new InvalidArgumentException('Migration file not found: '.$filePath);
         }
 
-        $content = File::get($filePath);
-        $data = json_decode($content, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException('Invalid JSON in migration file: '.json_last_error_msg());
-        }
-
-        return $data;
+        return JsonFileHelper::loadJson($filePath);
     }
 
     /**
