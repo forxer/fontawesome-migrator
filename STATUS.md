@@ -81,6 +81,31 @@
 - [x] **Documentation complète**: Guide multi-versions, API reference, quick reference
 - [x] **Traçabilité complète**: Origine CLI/Web, métadonnées enrichies
 
+### Phase 8: Refactorisation architecturale services v2.0 ✅
+- [x] **Services centralisés**: FontAwesomePatternService et AssetReplacementService créés
+- [x] **Injection de dépendances pure**: Container Laravel utilisé partout, 0 instanciation manuelle
+- [x] **Configuration externalisée**: `/config/fontawesome-migrator/assets/replacements.json` pour assets
+- [x] **Duplication éliminée**: ~140 lignes supprimées dans AssetMigrator, patterns unifiés
+- [x] **ServiceProvider optimisé**: Imports nettoyés, bindings redondants supprimés
+- [x] **Méthodes clarifiées**: Noms explicites et cohérents dans tous les services
+- [x] **Architecture testable**: Injection permet mocking complet, tests facilités
+- [x] **Performance améliorée**: Singletons partagés, patterns réutilisés, cache efficace
+- [x] **Code production-ready**: 0 erreur diagnostique PHP, type safety, architecture SOLID
+
+## 📦 Services utilitaires anti-duplication (Août 2025)
+- [x] **JsonFileHelper**: Gestion JSON centralisée (élimine 4 duplications)
+- [x] **StatisticsCalculator**: Calculs statistiques unifiés (élimine 5 duplications)
+- [x] **FileValidator trait**: Validation fichiers standardisée (élimine 3 duplications)
+- [x] **CleanupManager**: Nettoyage par ancienneté centralisé (élimine 3 duplications)
+- [x] **FontAwesomePatternService**: Patterns FA centralisés dans IconReplacer (élimine 1 duplication)
+
+## 🔄 Refactorisation modulaire MetadataManager
+- [x] **MigrationSessionService**: Gestion cycle de vie sessions
+- [x] **MigrationResultsService**: Stockage et traitement résultats
+- [x] **MigrationStorageService**: Persistance données migrations
+- [x] **Séparation responsabilités**: Architecture SOLID respectée
+- [x] **Compatibilité maintenue**: Interface MetadataManager inchangée
+
 ---
 
 ## 🚀 Fonctionnalités validées
@@ -180,6 +205,14 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 - **Bug critique résolu**: Erreur "migration_results" corrigée dans MetadataManager
 - **Services actifs**: MigrateCommand, ConfigureCommand, InstallCommand (BackupCommand supprimé)
 - **Structure garantie**: Métadonnées complètes dès l'initialisation des sessions
+
+### Refactorisation InstallCommand & Configuration Août 2025 ✅
+- **InstallCommand v2.0 complet**: Backup version actuelle → réécriture depuis zéro, simplification 4→2 étapes
+- **Configuration modernisée**: Suppression sections obsolètes (`report_path`, `pro_styles`), ajout multi-versions
+- **Architecture cohérente**: `sessions_path` → `migrations_path` (9 occurrences corrigées), terminologie unifiée
+- **Trait ConfigurationHelpers adapté**: Suppression références obsolètes, préservation logique pour compatibilité
+- **Nettoyage exhaustif**: MigrationReporter corrigé, ConfigureCommand identifié (todo), références validées
+- **État production-ready**: InstallCommand fonctionnel, configuration v2.0 cohérente, prêt pour tests
 
 ---
 
