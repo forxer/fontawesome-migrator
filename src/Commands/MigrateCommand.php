@@ -9,7 +9,7 @@ use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Core\AssetMigrator;
 use FontAwesome\Migrator\Services\Core\IconReplacer;
 use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
-use FontAwesome\Migrator\Services\Reports\MigrationReporter;
+use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Console\Command;
 

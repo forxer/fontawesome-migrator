@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services\Reports;
+namespace FontAwesome\Migrator\Services\Metadata;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;

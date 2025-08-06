@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Http\Controllers;
 
 use Carbon\Carbon;
-use FontAwesome\Migrator\Services\Metadata\MetadataManager;
 use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
+use FontAwesome\Migrator\Services\Metadata\MetadataManager;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
