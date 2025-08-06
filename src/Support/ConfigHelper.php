@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Support;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use Illuminate\Support\Facades\File;
 
 /**
  * Helper pour la gestion centralisée de la configuration
@@ -63,7 +64,7 @@ class ConfigHelper implements ConfigurationInterface
     /**
      * Vérifier si une configuration est définie
      */
-    public static function has(string $key): bool
+    public function has(string $key): bool
     {
         $config = $this->getConfig();
 
@@ -160,7 +161,11 @@ class ConfigHelper implements ConfigurationInterface
         // Valider que migrations_path est défini et accessible en écriture
         $migrationsPath = $this->getMigrationsPath();
 
-        if (! is_dir($migrationsPath) && ! mkdir($migrationsPath, 0755, true)) {
+        if (! File::isDirectory($migrationsPath)) {
+            File::makeDirectory($migrationsPath, 0755, true, true);
+        }
+
+        if (! File::isWritable($migrationsPath)) {
             $errors[] = 'Le répertoire migrations_path n\'est pas accessible en écriture : '.$migrationsPath;
         }
 

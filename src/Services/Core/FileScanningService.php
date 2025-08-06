@@ -8,6 +8,7 @@ use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
+use Illuminate\Support\Facades\File;
 
 /**
  * Service orchestrateur pour le scan de fichiers
@@ -26,7 +27,7 @@ class FileScanningService
      */
     public function analyzeFileForFontAwesome(string $filePath): array
     {
-        if (! file_exists($filePath)) {
+        if (! File::exists($filePath)) {
             return [
                 'has_icons' => false,
                 'version' => null,
@@ -36,7 +37,7 @@ class FileScanningService
         }
 
         try {
-            $content = file_get_contents($filePath);
+            $content = File::get($filePath);
 
             if ($content === false) {
                 return [

@@ -18,7 +18,7 @@ class HomeController extends Controller
     /**
      * Afficher la page d'accueil
      */
-    public function index(MetadataManagerInterface $metadataManager)
+    public function index(MetadataManagerInterface $metadataManager, PackageVersionService $packageVersionService)
     {
         // Récupérer les statistiques globales depuis les métadonnées de sessions
         $sessions = $metadataManager->getAvailableMigrations();
@@ -76,7 +76,7 @@ class HomeController extends Controller
             'total_size' => $totalSize,
             'last_activity' => $lastActivity ? Carbon::createFromTimestamp($lastActivity) : null,
             'successful_migrations' => $successfulMigrations,
-            'package_version' => PackageVersionService::getVersion(),
+            'package_version' => $packageVersionService->getVersion(),
             'success_rate' => $successRate,
             'avg_changes' => $avgChanges,
             'dry_run_count' => $dryRunCount,

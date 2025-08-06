@@ -165,7 +165,7 @@ class FileScanner implements FileScannerInterface
 
         return [
             'icons' => $analysisResult['icons'],
-            'content' => file_exists($filePath) ? file_get_contents($filePath) : '',
+            'content' => File::exists($filePath) ? File::get($filePath) : '',
             'error' => null,
             'detected_version' => $analysisResult['version'] ?? 'unknown',
         ];

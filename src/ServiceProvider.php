@@ -16,6 +16,7 @@ use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Services\Configuration\AssetReplacementService;
 use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
+use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
 use FontAwesome\Migrator\Services\Core\AssetMigrator;
 use FontAwesome\Migrator\Services\Core\BackupManager;
 use FontAwesome\Migrator\Services\Core\FileScanner;
@@ -134,6 +135,9 @@ class ServiceProvider extends BaseServiceProvider
 
         // AssetReplacementService en singleton pour réutiliser les configurations
         $this->app->singleton(AssetReplacementService::class);
+
+        // PackageVersionService en singleton pour cache de version
+        $this->app->singleton(PackageVersionService::class);
 
         // Services spécialisés pour MetadataManager - séparation des responsabilités
         $this->app->singleton(MigrationSessionService::class);

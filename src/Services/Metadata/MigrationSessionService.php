@@ -15,6 +15,10 @@ class MigrationSessionService
 {
     private array $sessionData = [];
 
+    public function __construct(
+        private readonly PackageVersionService $packageVersionService
+    ) {}
+
     /**
      * Initialiser une nouvelle session de migration
      */
@@ -26,7 +30,7 @@ class MigrationSessionService
         $this->sessionData = [
             'session_id' => $sessionId,
             'short_id' => $shortId,
-            'package_version' => PackageVersionService::getVersion(),
+            'package_version' => $this->packageVersionService->getVersion(),
             'started_at' => now()->toISOString(),
             'status' => 'initialized',
             'dry_run' => false,

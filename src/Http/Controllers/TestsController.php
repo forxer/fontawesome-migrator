@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Http\Controllers;
 
 use Exception;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
 use Illuminate\Http\Request;
@@ -24,10 +25,10 @@ class TestsController extends Controller
     /**
      * Afficher la page d'index des tests
      */
-    public function index(MetadataManagerInterface $metadataManager)
+    public function index(MetadataManagerInterface $metadataManager, ConfigurationInterface $config)
     {
         $sessions = $metadataManager->getAvailableMigrations();
-        $backupStats = $this->getBackupStats($metadataManager);
+        $backupStats = $this->getBackupStats($metadataManager, $config);
 
         // Ajouter les informations de migration multi-versions
         $supportedMigrations = $this->versionManager->getSupportedMigrations();
@@ -129,9 +130,9 @@ class TestsController extends Controller
     /**
      * Inspecter une migration spécifique
      */
-    public function inspectMigration(string $migrationId)
+    public function inspectMigration(string $migrationId, ConfigurationInterface $config)
     {
-        $baseBackupDir = config('fontawesome-migrator.migrations_path');
+        $baseBackupDir = $config->getMigrationsPath();
         $migrationDir = $baseBackupDir.'/migration-'.$migrationId;
 
         if (! File::exists($migrationDir)) {
@@ -142,7 +143,7 @@ class TestsController extends Controller
         $metadata = [];
 
         if (File::exists($metadataPath)) {
-            $metadata = json_decode(File::get($metadataPath), true);
+            $metadata = File::json($metadataPath);
         }
 
         $files = File::files($migrationDir);
@@ -185,9 +186,9 @@ class TestsController extends Controller
     /**
      * Obtenir les statistiques des sauvegardes pour le test
      */
-    protected function getBackupStats(MetadataManagerInterface $metadataManager): array
+    protected function getBackupStats(MetadataManagerInterface $metadataManager, ConfigurationInterface $config): array
     {
-        $baseBackupDir = config('fontawesome-migrator.migrations_path');
+        $baseBackupDir = $config->getMigrationsPath();
 
         if (! File::exists($baseBackupDir)) {
             return [
