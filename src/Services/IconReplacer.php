@@ -17,7 +17,8 @@ class IconReplacer
         protected VersionMapperInterface $mapper,
         protected FileScannerInterface $fileScanner,
         protected BackupManagerInterface $backupManager,
-        protected ConfigurationInterface $config
+        protected ConfigurationInterface $config,
+        protected FontAwesomePatternService $patternService
     ) {}
 
     /**
@@ -57,7 +58,7 @@ class IconReplacer
             }
 
             $content = File::get($filePath);
-            $icons = $this->findFontAwesomeIcons($content);
+            $icons = $this->patternService->extractIconsWithPositions($content);
 
             if ($icons === []) {
                 return [
@@ -125,42 +126,6 @@ class IconReplacer
                 'backup' => null,
             ];
         }
-    }
-
-    /**
-     * Trouver les icônes Font Awesome dans le contenu d'un fichier
-     */
-    protected function findFontAwesomeIcons(string $content): array
-    {
-        $icons = [];
-        $lines = explode("\n", $content);
-        $offset = 0;
-
-        // Pattern pour capturer les icônes Font Awesome
-        $pattern = '/\b(fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone|fa-thin|fa-sharp)\s+(fa-[a-zA-Z0-9-]+)\b/';
-
-        foreach ($lines as $lineNumber => $line) {
-            if (preg_match_all($pattern, $line, $matches, PREG_OFFSET_CAPTURE)) {
-                foreach ($matches[0] as $index => $match) {
-                    $fullMatch = $match[0];
-                    $lineOffset = $match[1];
-                    $style = $matches[1][$index][0];
-                    $iconName = $matches[2][$index][0];
-
-                    $icons[] = [
-                        'full_match' => $fullMatch,
-                        'style' => $style,
-                        'name' => $iconName,
-                        'line' => $lineNumber + 1,
-                        'offset' => $offset + $lineOffset,
-                    ];
-                }
-            }
-
-            $offset += \strlen($line) + 1; // +1 pour le \n
-        }
-
-        return $icons;
     }
 
     /**

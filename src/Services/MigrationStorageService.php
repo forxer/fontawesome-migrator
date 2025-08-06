@@ -57,7 +57,7 @@ class MigrationStorageService
      */
     public function getMigrationDirectory(): string
     {
-        return base_path($this->config->getConfig()['migrations_path'] ?? 'storage/app/fontawesome-migrations');
+        return base_path($this->config->getMigrationsPath());
     }
 
     /**
