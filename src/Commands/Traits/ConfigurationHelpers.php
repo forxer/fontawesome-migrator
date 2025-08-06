@@ -3,62 +3,52 @@
 namespace FontAwesome\Migrator\Commands\Traits;
 
 use Exception;
-use Illuminate\Support\Facades\File;
-
 use function Laravel\Prompts\confirm;
+
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
+use Illuminate\Support\Facades\File;
 
 trait ConfigurationHelpers
 {
     /**
-     * Obtenir les chemins de scan par défaut
+     * Obtenir toute la configuration par défaut depuis le package
+     */
+    protected function defaultConfig(): array
+    {
+        static $config = null;
+
+        if ($config === null) {
+            $config = require __DIR__.'/../../../config/fontawesome-migrator.php';
+        }
+
+        return $config;
+    }
+
+    /**
+     * Obtenir les chemins de scan par défaut depuis le package
      */
     protected function getDefaultScanPaths(): array
     {
-        return [
-            'resources/views',
-            'resources/js',
-            'resources/css',
-            'resources/scss',
-            'resources/sass',
-            'public/css',
-            'public/js',
-        ];
+        return $this->defaultConfig()['scan_paths'];
     }
 
     /**
-     * Obtenir les extensions par défaut
-     */
-    protected function getDefaultFileExtensions(): array
-    {
-        return [
-            'blade.php',
-            'css',
-            'js',
-            'json',
-            'scss',
-            'ts',
-            'tsx',
-            'vue',
-        ];
-    }
-
-    /**
-     * Obtenir les patterns d'exclusion par défaut
+     * Obtenir les patterns d'exclusion par défaut depuis le package
      */
     protected function getDefaultExcludePatterns(): array
     {
-        return [
-            'node_modules',
-            'vendor',
-            '.git',
-            'storage',
-            'bootstrap/cache',
-            '*.min.js',
-            '*.min.css',
-        ];
+        return $this->defaultConfig()['exclude_patterns'];
+    }
+
+    /**
+     * Obtenir les extensions par défaut depuis le package
+     */
+    protected function getDefaultFileExtensions(): array
+    {
+        return $this->defaultConfig()['file_extensions'];
     }
 
     /**
@@ -147,6 +137,55 @@ trait ConfigurationHelpers
     }
 
     /**
+     * Configurer les extensions de fichiers de manière interactive
+     */
+    protected function configureFileExtensions(): array
+    {
+        $defaultExtensions = $this->getDefaultFileExtensions();
+
+        note(
+            "📄 Extensions par défaut :\n".
+            collect($defaultExtensions)->map(fn ($ext): string => '  • .'.$ext)->join("\n")
+        );
+
+        $customExtensions = [];
+        $addCustomExtensions = confirm('Voulez-vous ajouter des extensions personnalisées ?', false);
+
+        if ($addCustomExtensions) {
+            note(
+                "💡 Exemples d'extensions :\n".
+                "  • tsx (TypeScript React)\n".
+                "  • mdx (Markdown avec JSX)\n".
+                "  • svelte (Svelte components)\n".
+                '  • twig (Templates Twig)'
+            );
+
+            do {
+                $extension = text(
+                    'Extension supplémentaire (sans le point)',
+                    placeholder: 'ex: tsx, mdx, svelte'
+                );
+
+                if ($extension !== '' && $extension !== '0') {
+                    // Nettoyer l'extension (enlever le point s'il y en a un)
+                    $extension = ltrim($extension, '.');
+
+                    if (! \in_array($extension, $defaultExtensions) && ! \in_array($extension, $customExtensions)) {
+                        $customExtensions[] = $extension;
+                        info('✅ Ajoutée: .'.$extension);
+                    } else {
+                        warning('⚠️ Extension déjà présente: .'.$extension);
+                    }
+                }
+
+                $continueAdding = $extension && confirm('Ajouter une autre extension ?', false);
+            } while ($continueAdding);
+        }
+
+        return array_merge($defaultExtensions, $customExtensions);
+    }
+
+    /**
      * Mettre à jour une valeur de configuration
      */
     protected function updateConfigValue(string $key, mixed $value): void
@@ -224,7 +263,7 @@ trait ConfigurationHelpers
      */
     protected function displayConfigSection(string $title, array $items): void
     {
-        if ($this->option('no-interactive')) {
+        if (app()->runningInConsole() && ! app()->runningUnitTests()) {
             $this->info($title);
 
             foreach ($items as $key => $value) {
@@ -243,8 +282,13 @@ trait ConfigurationHelpers
     /**
      * Écrire la configuration personnalisée avec validation des différences
      */
-    protected function writeConfiguration(string $licenseType, array $scanPaths, bool $enableBackups, array $excludePatterns = []): void
-    {
+    protected function writeConfiguration(
+        string $licenseType,
+        bool $enableBackups,
+        array $scanPaths = [],
+        array $excludePatterns = [],
+        array $fileExtensions = [],
+    ): void {
         $configPath = config_path('fontawesome-migrator.php');
 
         // Charger la configuration par défaut depuis le package
@@ -278,18 +322,9 @@ trait ConfigurationHelpers
             $customConfig['exclude_patterns'] = $excludePatterns;
         }
 
-        // Si Pro, activer tous les styles seulement si différent du défaut
-        if ($licenseType === 'pro') {
-            $proStyles = [
-                'light' => true,
-                'duotone' => true,
-                'thin' => true,
-                'sharp' => true,
-            ];
-
-            if ($proStyles !== $defaultConfig['pro_styles']) {
-                $customConfig['pro_styles'] = $proStyles;
-            }
+        // N'écrire file_extensions que s'ils sont différents des défauts
+        if ($fileExtensions !== [] && $fileExtensions !== $defaultConfig['file_extensions']) {
+            $customConfig['file_extensions'] = $fileExtensions;
         }
 
         // Générer le contenu du fichier avec seulement les valeurs personnalisées

@@ -241,8 +241,7 @@ class MigrateCommand extends Command
                 'source' => $this->option('web-interface') ? 'web_interface' : 'command_line',
                 'user_agent' => $this->option('web-interface') ? ($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown') : 'CLI',
                 'ip_address' => $this->option('web-interface') ? ($_SERVER['REMOTE_ADDR'] ?? $_SERVER['SERVER_ADDR'] ?? 'Unknown') : 'localhost',
-            ])
-            ->startMigration();
+            ]);
 
         if ($isDryRun) {
             $this->warn('Mode DRY-RUN activé - Aucune modification ne sera appliquée');
@@ -336,11 +335,11 @@ class MigrateCommand extends Command
 
         // Sauvegarder les métadonnées dans le répertoire de session
         $this->metadata->saveToFile();
-        $sessionDir = $this->metadata->getSessionDirectory();
+        $sessionDir = $this->metadata->getMigrationDirectory();
         $this->line('📋 Session sauvegardée : '.basename($sessionDir));
 
         $reporterWithMetadata = new MigrationReporter($this->metadata);
-        $reportInfo = $reporterWithMetadata->generateReport($results);
+        $reportInfo = $reporterWithMetadata->generateMetadata($results);
 
         // Sauvegarder les métadonnées mises à jour avec les chemins des rapports
         $this->metadata->saveToFile();
@@ -706,18 +705,18 @@ class MigrateCommand extends Command
      */
     protected function createBackup(string $filePath): void
     {
-        $baseBackupDir = config('fontawesome-migrator.sessions_path');
+        $baseBackupDir = config('fontawesome-migrator.migrations_path');
 
-        // Créer le répertoire de session basé sur l'ID de session des métadonnées
-        $sessionId = $this->metadata->get('session')['id'] ?? 'unknown';
-        $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+        // Créer le répertoire de migration basé sur l'ID de migration des métadonnées
+        $migrationId = $this->metadata->get('session')['id'] ?? 'unknown';
+        $migrationDir = $baseBackupDir.'/migration-'.$migrationId;
 
-        // S'assurer que le répertoire de session et le .gitignore existent
-        DirectoryHelper::ensureExistsWithGitignore($sessionDir);
+        // S'assurer que le répertoire de migration et le .gitignore existent
+        DirectoryHelper::ensureExistsWithGitignore($migrationDir);
 
         $relativePath = str_replace(base_path().'/', '', $filePath);
         $backupFilename = str_replace('/', '_', $relativePath);
-        $backupPath = $sessionDir.'/'.$backupFilename;
+        $backupPath = $migrationDir.'/'.$backupFilename;
 
         copy($filePath, $backupPath);
 
@@ -727,8 +726,8 @@ class MigrateCommand extends Command
             'relative_path' => $relativePath,
             'backup_path' => $backupPath,
             'backup_filename' => $backupFilename,
-            'session_dir' => $sessionDir,
-            'session_id' => $sessionId,
+            'session_dir' => $migrationDir,
+            'session_id' => $migrationId,
             'created_at' => date('Y-m-d H:i:s'),
             'size' => filesize($backupPath),
         ];
@@ -765,7 +764,7 @@ class MigrateCommand extends Command
             'Environnement Laravel' => app()->environment(),
             'Cache config' => app()->getCachedConfigPath() ?: 'Non mis en cache',
             'Cache routes' => app()->getCachedRoutesPath() ?: 'Non mis en cache',
-            'Sessions path' => config('fontawesome-migrator.sessions_path'),
+            'Migrations path' => config('fontawesome-migrator.migrations_path'),
             'License type' => config('fontawesome-migrator.license_type'),
             'Backup enabled' => config('fontawesome-migrator.backup_files') ? 'Oui' : 'Non',
         ];

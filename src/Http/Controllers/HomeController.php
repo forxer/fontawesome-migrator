@@ -19,7 +19,7 @@ class HomeController extends Controller
     public function index()
     {
         // Récupérer les statistiques globales depuis les métadonnées de sessions
-        $sessions = MetadataManager::getAvailableSessions();
+        $sessions = MetadataManager::getAvailableMigrations();
         $totalSize = 0;
         $lastActivity = null;
         $successfulMigrations = 0;

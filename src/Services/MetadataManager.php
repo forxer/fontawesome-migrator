@@ -21,13 +21,13 @@ class MetadataManager
      */
     public function initialize(): self
     {
-        $sessionId = uniqid('migration_', true);
+        $migrationId = uniqid('migration_', true);
         // Extraire les 8 premiers caractères après 'migration_' pour le short_id
-        $shortId = substr($sessionId, strpos($sessionId, '_') + 1, 8);
+        $shortId = substr($migrationId, strpos($migrationId, '_') + 1, 8);
 
         $this->metadata = [
             // === IDENTIFICATION ===
-            'session_id' => $sessionId,
+            'session_id' => $migrationId,
             'short_id' => $shortId,
             'package_version' => PackageVersionService::getVersion(),
 
@@ -79,7 +79,7 @@ class MetadataManager
                 'paths' => $this->config['scan_paths'] ?? [],
                 'extensions' => $this->config['file_extensions'] ?? [],
                 'backup_enabled' => $this->config['backup_files'] ?? true,
-                'sessions_path' => $this->config['sessions_path'] ?? null,
+                'migrations_path' => $this->config['migrations_path'] ?? null,
             ],
 
             // === COMMAND TRACE (groupé) ===
@@ -109,16 +109,6 @@ class MetadataManager
     {
         $this->metadata['dry_run'] = $isDryRun;
 
-        return $this;
-    }
-
-    /**
-     * Marquer le début de la migration
-     */
-    public function startMigration(): self
-    {
-        // La session started_at est déjà définie dans initialize()
-        // Ici on pourrait mettre à jour si besoin d'un timestamp de démarrage différent
         return $this;
     }
 
@@ -246,7 +236,7 @@ class MetadataManager
     /**
      * Obtenir les métadonnées formatées pour les rapports
      */
-    public function getForReport(): array
+    public function getForMigration(): array
     {
         return [
             'meta' => [
@@ -271,20 +261,18 @@ class MetadataManager
     }
 
     /**
-     * Sauvegarder les métadonnées dans le répertoire de session
+     * Sauvegarder les métadonnées dans le répertoire de migration
      */
     public function saveToFile(?string $filePath = null): string
     {
         if ($filePath === null || $filePath === '' || $filePath === '0') {
-            // Déterminer le répertoire de session pour les métadonnées
-            $baseBackupDir = config('fontawesome-migrator.sessions_path');
-            $sessionId = $this->metadata['session_id'] ?? 'unknown';
-            $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+            // Déterminer le répertoire de migration pour les métadonnées
+            $migrationDir = $this->getMigrationDirectory();
 
-            // S'assurer que le répertoire de session existe avec .gitignore
-            $this->ensureSessionDirectoryExists($sessionDir);
+            // S'assurer que le répertoire de migration existe avec .gitignore
+            $this->ensureMigrationDirectoryExists($migrationDir);
 
-            $filePath = $sessionDir.'/metadata.json';
+            $filePath = $migrationDir.'/metadata.json';
         }
 
         $directory = \dirname($filePath);
@@ -357,15 +345,15 @@ class MetadataManager
     }
 
     /**
-     * S'assurer que le répertoire de session existe avec .gitignore
+     * S'assurer que le répertoire de migration existe avec .gitignore
      */
-    protected function ensureSessionDirectoryExists(string $sessionDir): void
+    protected function ensureMigrationDirectoryExists(string $migrationDir): void
     {
-        if (! File::exists($sessionDir)) {
-            File::makeDirectory($sessionDir, 0755, true);
+        if (! File::exists($migrationDir)) {
+            File::makeDirectory($migrationDir, 0755, true);
         }
 
-        $gitignorePath = $sessionDir.'/.gitignore';
+        $gitignorePath = $migrationDir.'/.gitignore';
 
         if (! File::exists($gitignorePath)) {
             $gitignoreContent = "# FontAwesome Migrator - Session Backups\n*\n!.gitignore\n!metadata.json\n";
@@ -374,35 +362,34 @@ class MetadataManager
     }
 
     /**
-     * Obtenir le chemin du répertoire de session
+     * Obtenir le chemin du répertoire de migration
      */
-    public function getSessionDirectory(): string
+    public function getMigrationDirectory(): string
     {
-        $baseBackupDir = config('fontawesome-migrator.sessions_path');
-        $sessionId = $this->metadata['session_id'] ?? 'unknown';
+        $migrationId = $this->metadata['session_id'] ?? 'unknown';
 
-        return $baseBackupDir.'/session-'.$sessionId;
+        return config('fontawesome-migrator.migrations_path').'/migration-'.$migrationId;
     }
 
     /**
-     * Nettoyer les anciens répertoires de session
+     * Nettoyer les anciens répertoires de migration
      */
     public static function cleanOldSessions(int $daysToKeep = 30): int
     {
-        $baseBackupDir = config('fontawesome-migrator.sessions_path');
+        $migrationsDir = config('fontawesome-migrator.migrations_path');
 
-        if (! File::exists($baseBackupDir)) {
+        if (! File::exists($migrationsDir)) {
             return 0;
         }
 
         $cutoffTime = time() - ($daysToKeep * 24 * 60 * 60);
         $deleted = 0;
 
-        $directories = File::directories($baseBackupDir);
+        $directories = File::directories($migrationsDir);
 
         foreach ($directories as $directory) {
-            // Vérifier si c'est un répertoire de session
-            if (\in_array(preg_match('/\/session-/', (string) $directory), [0, false], true)) {
+            // Vérifier si c'est un répertoire de migration
+            if (\in_array(preg_match('/\/migration-/', (string) $directory), [0, false], true)) {
                 continue;
             }
 
@@ -411,7 +398,7 @@ class MetadataManager
                 continue;
             }
 
-            // Supprimer le répertoire de session complet
+            // Supprimer le répertoire de migration complet
             if (File::deleteDirectory($directory)) {
                 $deleted++;
             }
@@ -421,32 +408,32 @@ class MetadataManager
     }
 
     /**
-     * Lister tous les répertoires de session disponibles
+     * Lister tous les répertoires de migration disponibles
      */
-    public static function getAvailableSessions(): array
+    public static function getAvailableMigrations(): array
     {
-        $baseBackupDir = config('fontawesome-migrator.sessions_path');
-        $sessions = [];
+        $migrationsDir = config('fontawesome-migrator.migrations_path');
+        $migrations = [];
 
-        if (! File::exists($baseBackupDir)) {
-            return $sessions;
+        if (! File::exists($migrationsDir)) {
+            return $migrations;
         }
 
-        $directories = File::directories($baseBackupDir);
+        $directories = File::directories($migrationsDir);
 
         foreach ($directories as $directory) {
-            if (\in_array(preg_match('/\/session-(.+)$/', (string) $directory, $matches), [0, false], true)) {
+            if (\in_array(preg_match('/\/migration-(.+)$/', (string) $directory, $matches), [0, false], true)) {
                 continue;
             }
 
-            $sessionId = $matches[1];
+            $migrationId = $matches[1];
             $metadataPath = $directory.'/metadata.json';
 
             // Calculer le short_id à partir du session_id
-            $shortId = substr($sessionId, strpos($sessionId, '_') + 1, 8);
+            $shortId = substr($migrationId, strpos($migrationId, '_') + 1, 8);
 
-            $sessionInfo = [
-                'session_id' => $sessionId,
+            $migrationInfo = [
+                'session_id' => $migrationId,
                 'short_id' => $shortId,
                 'directory' => $directory,
                 'created_at' => Carbon::createFromTimestamp(filemtime($directory)),
@@ -458,37 +445,37 @@ class MetadataManager
             ];
 
             // Charger les métadonnées si disponibles
-            if ($sessionInfo['has_metadata']) {
+            if ($migrationInfo['has_metadata']) {
                 $metadata = json_decode(File::get($metadataPath), true);
 
                 // Adapter à la nouvelle structure simplifiée
-                $sessionInfo['package_version'] = $metadata['package_version'] ?? 'unknown';
-                $sessionInfo['dry_run'] = $metadata['dry_run'] ?? false;
-                $sessionInfo['duration'] = $metadata['duration'] ?? null;
+                $migrationInfo['package_version'] = $metadata['package_version'] ?? 'unknown';
+                $migrationInfo['dry_run'] = $metadata['dry_run'] ?? false;
+                $migrationInfo['duration'] = $metadata['duration'] ?? null;
 
                 // Inclure les métadonnées complètes
-                $sessionInfo['metadata'] = $metadata;
+                $migrationInfo['metadata'] = $metadata;
 
                 // Utiliser la date de création depuis les métadonnées comme source unique
                 if (isset($metadata['started_at'])) {
-                    $sessionInfo['created_at'] = Carbon::parse($metadata['started_at']);
+                    $migrationInfo['created_at'] = Carbon::parse($metadata['started_at']);
                 }
 
                 // Utiliser le short_id des métadonnées s'il existe
                 if (isset($metadata['short_id'])) {
-                    $sessionInfo['short_id'] = $metadata['short_id'];
+                    $migrationInfo['short_id'] = $metadata['short_id'];
                 }
             } else {
                 // Session sans métadonnées - ignorer
                 continue;
             }
 
-            $sessions[] = $sessionInfo;
+            $migrations[] = $migrationInfo;
         }
 
         // Trier par date de création décroissante
-        usort($sessions, fn ($a, $b): int => Carbon::parse($b['created_at'])->timestamp - Carbon::parse($a['created_at'])->timestamp);
+        usort($migrations, fn ($a, $b): int => Carbon::parse($b['created_at'])->timestamp - Carbon::parse($a['created_at'])->timestamp);
 
-        return $sessions;
+        return $migrations;
     }
 }

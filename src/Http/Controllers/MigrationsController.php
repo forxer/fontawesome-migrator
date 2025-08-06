@@ -16,7 +16,7 @@ class MigrationsController extends Controller
     public function index()
     {
         // Récupérer les sessions qui contiennent des rapports
-        $sessions = MetadataManager::getAvailableSessions();
+        $sessions = MetadataManager::getAvailableMigrations();
         $reports = [];
 
         foreach ($sessions as $session) {
@@ -91,7 +91,7 @@ class MigrationsController extends Controller
     public function show(string $sessionId)
     {
         // Chercher la session par ID (court ou complet)
-        $sessions = MetadataManager::getAvailableSessions();
+        $sessions = MetadataManager::getAvailableMigrations();
         $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
 
         if (! $sessionInfo) {
@@ -160,7 +160,7 @@ class MigrationsController extends Controller
     public function destroy(string $sessionId)
     {
         // Chercher la session par ID (court ou complet)
-        $sessions = MetadataManager::getAvailableSessions();
+        $sessions = MetadataManager::getAvailableMigrations();
         $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
 
         if (! $sessionInfo) {

@@ -4,62 +4,34 @@ namespace FontAwesome\Migrator\Commands;
 
 use Exception;
 use FontAwesome\Migrator\Commands\Traits\ConfigurationHelpers;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\File;
-
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
+
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\spin;
 use function Laravel\Prompts\warning;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class InstallCommand extends Command
 {
     use ConfigurationHelpers;
 
-    /**
-     * The name and signature of the console command.
-     */
     protected $signature = 'fontawesome:install
-                            {--force : Forcer la réécriture des fichiers existants}
-                            {--non-interactive : Mode non-interactif pour les tests}';
+                            {--force : Forcer la réécriture des fichiers existants}';
 
-    /**
-     * The console command description.
-     */
-    protected $description = 'Installation interactive du package FontAwesome Migrator';
+    protected $description = 'Installation du package FontAwesome Migrator';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(): int
     {
         $this->displayWelcome();
 
-        // Étape 1: Publier la configuration
-        $this->step('Publication de la configuration', function (): void {
-            $this->publishConfiguration();
-        });
-
-        // Étape 2: Configurer le package
-        $this->step('Configuration du package', function (): void {
-            $this->configurePackage();
-        });
-
-        // Étape 3: Créer le lien symbolique storage
-        $this->step('Configuration des rapports web', function (): void {
-            $this->setupStorage();
-        });
-
-        // Étape 4: Vérifier l'installation
-        $this->step('Vérification de l\'installation', function (): void {
-            $this->verifyInstallation();
-        });
+        // Configuration du package (sans spin pour les interactions)
+        info('📋 Configuration du package...');
+        $this->setupConfiguration();
 
         $this->displayCompletion();
 
@@ -67,76 +39,83 @@ class InstallCommand extends Command
     }
 
     /**
-     * Afficher l'écran de bienvenue
+     * Affichage de bienvenue simple
      */
     protected function displayWelcome(): void
     {
-        intro('🚀 FontAwesome Migrator - Installation Interactive');
+        intro('🚀 FontAwesome Migrator - Installation');
 
         note(
-            "Migration automatique Font Awesome 5 → 6\n".
-            'Support Free & Pro • Assets & Icônes • Interface Web'
+            "Migration automatique FontAwesome\n".
+            'Interface web • Configuration • Sauvegardes'
         );
     }
 
     /**
-     * Publier la configuration
+     * Configuration de base
      */
-    protected function publishConfiguration(): void
+    protected function setupConfiguration(): void
     {
-        $configExists = File::exists(config_path('fontawesome-migrator.php'));
+        $configPath = config_path('fontawesome-migrator.php');
+        $configExists = File::exists($configPath);
 
-        if ($configExists && ! $this->option('force') && ! $this->option('non-interactive')) {
-            $replace = confirm('Le fichier de configuration existe déjà. Le remplacer ?', false);
+        // 1. Gérer la publication du fichier
+        if (! $configExists) {
+            // Première installation : publier directement
+            info('📄 Publication du fichier de configuration...');
+            $this->publishConfiguration();
+        } elseif ($this->option('force')) {
+            // Force : écraser sans demander
+            info('🔄 Remplacement forcé de la configuration...');
+            $this->publishConfiguration();
+        } else {
+            // Config existe : demander confirmation
+            $replace = confirm('Configuration existante trouvée. Remplacer ?', false);
 
-            if (! $replace) {
-                info('Configuration existante conservée');
-
-                return;
+            if ($replace) {
+                info('🔄 Remplacement de la configuration...');
+                $this->publishConfiguration();
+            } else {
+                info('✅ Configuration existante conservée');
+                // On continue quand même pour configurer les paramètres
             }
         }
 
-        // Copier le fichier stub au lieu du fichier complet
-        $stubPath = __DIR__.'/../../config/fontawesome-migrator.stub';
-        $configPath = config_path('fontawesome-migrator.php');
+        // 2. Configurer les paramètres (toujours exécuté)
+        $this->configureSettings();
+    }
 
-        if (File::exists($stubPath)) {
+    /**
+     * Publier le fichier de configuration
+     */
+    protected function publishConfiguration(): void
+    {
+        try {
+            $configPath = config_path('fontawesome-migrator.php');
+            $stubPath = __DIR__.'/../../config/fontawesome-migrator.stub';
+
+            if (! File::exists($stubPath)) {
+                throw new Exception('Fichier stub introuvable : '.$stubPath);
+            }
+
             File::copy($stubPath, $configPath);
-            info('✅ Configuration initialisée dans config/fontawesome-migrator.php');
-        } else {
-            // Fallback vers la méthode classique si le stub n'existe pas
-            Artisan::call('vendor:publish', [
-                '--tag' => 'fontawesome-migrator-config',
-                '--force' => $this->option('force') || $configExists,
-            ]);
-            info('✅ Configuration publiée dans config/fontawesome-migrator.php');
+            info('✅ Configuration publiée');
+        } catch (Exception $e) {
+            error('❌ Erreur lors de la publication : '.$e->getMessage());
+            warning('Vérifiez que le package est correctement installé');
         }
     }
 
     /**
-     * Configurer le package de manière interactive
+     * Configuration des paramètres de base
      */
-    protected function configurePackage(): void
+    protected function configureSettings(): void
     {
-        info('📝 Configuration du package...');
+        note('⚙️ Configuration du package');
 
-        // Mode non-interactif pour les tests
-        if ($this->option('non-interactive')) {
-            $licenseType = 'free';
-            $customPaths = [];
-            $enableBackups = true;
-
-            info('✅ Configuration par défaut appliquée (mode non-interactif)');
-
-            // En mode non-interactif, utiliser seulement les chemins personnalisés (vides = valeurs par défaut du package)
-            $this->writeConfiguration($licenseType, $customPaths, $enableBackups, []);
-
-            return;
-        }
-
-        // Type de licence
+        // 1. Type de licence
         $licenseType = select(
-            'Quel type de licence FontAwesome utilisez-vous ?',
+            'Type de licence FontAwesome ?',
             [
                 'free' => 'Free (gratuite)',
                 'pro' => 'Pro (payante)',
@@ -144,133 +123,36 @@ class InstallCommand extends Command
             default: 'free'
         );
 
-        // Chemins de scan personnalisés (utilise le trait)
-        $customPaths = $this->configureScanPaths();
+        // 2. Sauvegardes automatiques
+        $enableBackups = confirm('Activer les sauvegardes automatiques ?', true);
 
-        // Fichiers à exclure (utilise le trait)
+        // 4. Chemins de scan personnalisés
+        $scanPaths = $this->configureScanPaths();
+
+        // 5. Patterns d'exclusion personnalisés
         $excludePatterns = $this->configureExcludePatterns();
 
-        // Sauvegardes
-        $enableBackups = confirm('Créer des sauvegardes avant modification ?', true);
+        // 6. Extensions de fichiers
+        $fileExtensions = $this->configureFileExtensions();
 
         // Écrire la configuration
-        $this->writeConfiguration(
-            $licenseType,
-            $customPaths,
-            $enableBackups,
-            $excludePatterns
-        );
+        $this->writeConfiguration($licenseType, $enableBackups, $scanPaths, $excludePatterns, $fileExtensions);
 
-        info('✅ Configuration personnalisée sauvegardée');
+        info('✅ Configuration appliquée avec succès');
     }
 
     /**
-     * Configurer le stockage pour les rapports web
-     */
-    protected function setupStorage(): void
-    {
-        info('🔗 Configuration du stockage pour l\'interface web...');
-
-        // Vérifier si le lien symbolique existe
-        $storageLink = public_path('storage');
-
-        if (! File::exists($storageLink)) {
-            if ($this->option('non-interactive') || confirm('Créer le lien symbolique storage pour l\'accès web ?', true)) {
-                spin(
-                    fn () => Artisan::call('storage:link'),
-                    'Création du lien symbolique...'
-                );
-                info('✅ Lien symbolique storage créé');
-            } else {
-                warning('⚠️  Sans le lien storage, les rapports ne seront pas accessibles via le web');
-            }
-        } else {
-            info('✅ Lien symbolique storage déjà configuré');
-        }
-
-        // Créer le répertoire des rapports
-        $reportPath = storage_path('app/public/fontawesome-migrator/reports');
-
-        if (! File::exists($reportPath)) {
-            spin(
-                fn () => File::makeDirectory($reportPath, 0755, true),
-                'Création du répertoire des rapports...'
-            );
-            info('✅ Répertoire des rapports créé');
-        } else {
-            info('✅ Répertoire des rapports existe déjà');
-        }
-    }
-
-    /**
-     * Vérifier l'installation
-     */
-    protected function verifyInstallation(): void
-    {
-        info('🔍 Vérification de l\'installation...');
-
-        $checks = [
-            'Configuration' => File::exists(config_path('fontawesome-migrator.php')),
-            'Lien storage' => File::exists(public_path('storage')),
-            'Répertoire rapports' => File::exists(storage_path('app/public/fontawesome-migrator/reports')),
-        ];
-
-        $results = [];
-
-        foreach ($checks as $check => $passed) {
-            $results[] = ($passed ? '✅' : '❌').' '.$check;
-        }
-
-        note(implode("\n", $results));
-
-        if (\in_array(false, $checks, true)) {
-            warning('Certaines vérifications ont échoué');
-        } else {
-            info('✅ Installation vérifiée avec succès');
-        }
-    }
-
-    // Configuration methods moved to ConfigurationHelpers trait
-
-    /**
-     * Afficher l'écran de fin
+     * Affichage de fin
      */
     protected function displayCompletion(): void
     {
-        outro('🎉 Installation terminée avec succès !');
+        outro('✅ Installation terminée !');
 
         note(
-            "📋 Prochaines étapes :\n\n".
-            "1️⃣  Tester la migration :\n".
-            "    php artisan fontawesome:migrate --dry-run\n\n".
-            "2️⃣  Effectuer la migration :\n".
-            "    php artisan fontawesome:migrate\n\n".
-            "3️⃣  Accéder aux rapports :\n".
-            '    '.url('/fontawesome-migrator/reports')
-        );
-
-        note(
-            "📖 Documentation complète :\n".
-            "  • README.md du package\n".
-            "  • config/fontawesome-migrator.php\n\n".
-            "🆘 Support :\n".
-            "  • php artisan fontawesome:migrate --help\n".
-            '  • GitHub Issues pour les problèmes'
+            "Prochaines étapes :\n\n".
+            "• Test : php artisan fontawesome:migrate --dry-run\n".
+            "• Migration : php artisan fontawesome:migrate\n".
+            '• Interface : '.url('/fontawesome-migrator')
         );
     }
-
-    /**
-     * Exécuter une étape avec gestion d'erreur
-     */
-    protected function step(string $title, callable $callback): void
-    {
-        try {
-            spin($callback, '🔧 '.$title);
-        } catch (Exception $exception) {
-            error('❌ Erreur: '.$exception->getMessage());
-            warning('Vous pouvez réessayer avec --force si nécessaire');
-        }
-    }
-
-    // Scan paths and exclusion patterns methods moved to ConfigurationHelpers trait
 }

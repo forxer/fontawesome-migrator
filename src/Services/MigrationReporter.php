@@ -15,9 +15,9 @@ class MigrationReporter
     }
 
     /**
-     * Générer un rapport de migration
+     * Générer les métadonnées de migration
      */
-    public function generateReport(array $results): array
+    public function generateMetadata(array $results): array
     {
         // Calculer les statistiques
         $stats = $this->calculateStats($results);
@@ -218,7 +218,7 @@ class MigrationReporter
      */
     public function generateComparisonReport(array $beforeStats, array $afterStats): string
     {
-        $reportPath = $this->config['report_path'];
+        $reportPath = $this->config['migrations_path'];
         $timestamp = date('Y-m-d_H-i-s');
         $filename = \sprintf('fontawesome-comparison-%s.json', $timestamp);
         $fullPath = $reportPath.'/'.$filename;
@@ -247,7 +247,7 @@ class MigrationReporter
      */
     public function cleanOldReports(int $daysToKeep = 30): int
     {
-        $reportPath = $this->config['report_path'];
+        $reportPath = $this->config['migrations_path'];
 
         if (! File::exists($reportPath)) {
             return 0;

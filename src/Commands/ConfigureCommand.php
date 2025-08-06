@@ -166,17 +166,12 @@ class ConfigureCommand extends Command
             'Nombre de patterns' => \count($this->tempConfig['exclude_patterns'] ?? []),
         ]);
 
-        // Styles Pro (si applicable)
+        // Styles Pro gérés automatiquement par les mappers
         if (($this->tempConfig['license_type'] ?? 'free') === 'pro') {
-            $proStyles = $this->tempConfig['pro_styles'] ?? [];
-            $enabledStyles = collect($proStyles)->filter()->keys()->join(', ');
-
-            $this->displayConfigSection('⭐ Styles Pro', [
-                'Styles activés' => $enabledStyles ?: 'Aucun',
-                'Light' => ($proStyles['light'] ?? false) ? '✅' : '❌',
-                'Duotone' => ($proStyles['duotone'] ?? false) ? '✅' : '❌',
-                'Thin' => ($proStyles['thin'] ?? false) ? '✅' : '❌',
-                'Sharp' => ($proStyles['sharp'] ?? false) ? '✅' : '❌',
+            $this->displayConfigSection('⭐ Licence Pro', [
+                'Statut' => '✅ Activée',
+                'Styles' => 'Gestion automatique par mappers',
+                'Fallbacks' => 'Free ← Pro automatiques',
             ]);
         }
 
@@ -200,7 +195,6 @@ class ConfigureCommand extends Command
                 'extensions' => '📄 Extensions de fichiers',
                 'exclusions' => '🚫 Patterns d\'exclusion',
                 'options' => '⚙️ Options générales',
-                'pro_styles' => '⭐ Styles Pro (licence Pro uniquement)',
             ]
         );
 
@@ -210,7 +204,6 @@ class ConfigureCommand extends Command
             'extensions' => $this->editFileExtensions(),
             'exclusions' => $this->editExcludePatterns(),
             'options' => $this->editGeneralOptions(),
-            'pro_styles' => $this->editProStyles(),
             default => Command::SUCCESS
         };
     }
@@ -237,11 +230,7 @@ class ConfigureCommand extends Command
             $this->updateTempConfigValue('license_type', $newLicense);
 
             if ($newLicense === 'pro') {
-                info('✅ Licence Pro configurée. Vous pouvez maintenant configurer les styles Pro.');
-
-                if (confirm('Configurer les styles Pro maintenant ?', true)) {
-                    return $this->editProStyles();
-                }
+                info('✅ Licence Pro configurée.');
             } else {
                 info('✅ Licence Free configurée.');
             }
@@ -701,59 +690,6 @@ class ConfigureCommand extends Command
     }
 
     /**
-     * Modifier les styles Pro
-     */
-    protected function editProStyles(): int
-    {
-        $licenseType = $this->tempConfig['license_type'] ?? 'free';
-
-        if ($licenseType !== 'pro') {
-            warning("Les styles Pro ne sont disponibles qu'avec une licence Pro.");
-
-            if (confirm('Configurer une licence Pro maintenant ?', false)) {
-                return $this->editLicenseType();
-            }
-
-            return Command::SUCCESS;
-        }
-
-        $currentStyles = $this->tempConfig['pro_styles'] ?? [];
-
-        note("Styles Pro actuels:\n".
-             '  • Light: '.(($currentStyles['light'] ?? false) ? '✅' : '❌')."\n".
-             '  • Duotone: '.(($currentStyles['duotone'] ?? false) ? '✅' : '❌')."\n".
-             '  • Thin: '.(($currentStyles['thin'] ?? false) ? '✅' : '❌')."\n".
-             '  • Sharp: '.(($currentStyles['sharp'] ?? false) ? '✅' : '❌'));
-
-        $this->showMultiselectInstructions();
-
-        $stylesToEnable = multiselect(
-            'Styles Pro à activer',
-            [
-                'light' => 'Light (fa-light)',
-                'duotone' => 'Duotone (fa-duotone)',
-                'thin' => 'Thin (fa-thin)',
-                'sharp' => 'Sharp (fa-sharp)',
-            ],
-            default: collect($currentStyles)->filter()->keys()->toArray()
-        );
-
-        $newStyles = [
-            'light' => \in_array('light', $stylesToEnable),
-            'duotone' => \in_array('duotone', $stylesToEnable),
-            'thin' => \in_array('thin', $stylesToEnable),
-            'sharp' => \in_array('sharp', $stylesToEnable),
-        ];
-
-        $this->updateTempConfigValue('pro_styles', $newStyles);
-
-        $enabledCount = \count(array_filter($newStyles));
-        info(\sprintf('✅ Styles Pro configurés: %d/4 activés.', $enabledCount));
-
-        return Command::SUCCESS;
-    }
-
-    /**
      * Réinitialiser la configuration
      */
     protected function resetConfiguration(): int
@@ -835,16 +771,6 @@ class ConfigureCommand extends Command
 
         if (empty($extensions)) {
             $warnings[] = 'Aucune extension de fichier configurée';
-        }
-
-        // Validation des styles Pro
-        if ($licenseType === 'pro') {
-            $proStyles = $this->tempConfig['pro_styles'] ?? [];
-            $enabledStyles = array_filter($proStyles);
-
-            if ($enabledStyles === []) {
-                $warnings[] = 'Licence Pro configurée mais aucun style Pro activé';
-            }
         }
 
         // Affichage des résultats

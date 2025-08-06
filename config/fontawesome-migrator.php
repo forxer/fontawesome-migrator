@@ -15,23 +15,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Styles Font Awesome Pro
-    |--------------------------------------------------------------------------
-    |
-    | Configuration des styles disponibles avec Font Awesome Pro
-    | Uniquement utilisé si license_type = 'pro'
-    |
-    */
-
-    'pro_styles' => [
-        'light' => true,
-        'duotone' => true,
-        'thin' => false,
-        'sharp' => false,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Stratégie de fallback
     |--------------------------------------------------------------------------
     |
@@ -41,6 +24,23 @@ return [
     */
 
     'fallback_strategy' => 'solid',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Migrations multi-versions
+    |--------------------------------------------------------------------------
+    |
+    | Configuration pour les migrations entre différentes versions FontAwesome
+    | Supporté : 4→5, 5→6, 6→7, et migrations chaînées (ex: 4→5→6→7)
+    |
+    */
+
+    'auto_detect_version' => true,
+
+    'supported_versions' => [
+        'from' => [4, 5, 6],
+        'to' => [5, 6, 7],
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -73,6 +73,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Fichiers à exclure
+    |--------------------------------------------------------------------------
+    |
+    | Patterns de fichiers/dossiers à ignorer lors du scan
+    |
+    */
+
+    'exclude_patterns' => [
+        'node_modules',
+        'vendor',
+        '.git',
+        'storage',
+        'bootstrap/cache',
+        '*.min.js',
+        '*.min.css',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Extensions de fichiers
     |--------------------------------------------------------------------------
     |
@@ -96,25 +115,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Fichiers à exclure
-    |--------------------------------------------------------------------------
-    |
-    | Patterns de fichiers/dossiers à ignorer lors du scan
-    |
-    */
-
-    'exclude_patterns' => [
-        'node_modules',
-        'vendor',
-        '.git',
-        'storage',
-        'bootstrap/cache',
-        '*.min.js',
-        '*.min.css',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Sauvegarde automatique
     |--------------------------------------------------------------------------
     |
@@ -126,14 +126,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Répertoire des sessions de migration
+    | Répertoire des migrations
     |--------------------------------------------------------------------------
     |
-    | Où stocker les sessions de migration (rapports, métadonnées, sauvegardes)
+    | Où stocker les migrations (métadonnées, sauvegardes)
     |
     */
 
-    'sessions_path' => storage_path('app/fontawesome-migrator'),
+    'migrations_path' => storage_path('app/fontawesome-migrator'),
 
     /*
     |--------------------------------------------------------------------------
@@ -146,15 +146,4 @@ return [
 
     'verbose' => false,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Chemin du rapport
-    |--------------------------------------------------------------------------
-    |
-    | Où sauvegarder le rapport de migration
-    | Par défaut dans storage/app/public pour accès web via Storage::url()
-    |
-    */
-
-    'report_path' => storage_path('app/public/fontawesome-migrator/reports'),
 ];

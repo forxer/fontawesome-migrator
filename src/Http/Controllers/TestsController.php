@@ -20,7 +20,7 @@ class TestsController extends Controller
      */
     public function index()
     {
-        $sessions = MetadataManager::getAvailableSessions();
+        $sessions = MetadataManager::getAvailableMigrations();
         $backupStats = $this->getBackupStats();
 
         // Ajouter les informations de migration multi-versions
@@ -122,25 +122,25 @@ class TestsController extends Controller
     }
 
     /**
-     * Inspecter une session spécifique
+     * Inspecter une migration spécifique
      */
-    public function inspectSession(string $sessionId)
+    public function inspectMigration(string $migrationId)
     {
-        $baseBackupDir = config('fontawesome-migrator.sessions_path');
-        $sessionDir = $baseBackupDir.'/session-'.$sessionId;
+        $baseBackupDir = config('fontawesome-migrator.migrations_path');
+        $migrationDir = $baseBackupDir.'/migration-'.$migrationId;
 
-        if (! File::exists($sessionDir)) {
-            return response()->json(['error' => 'Session non trouvée'], 404);
+        if (! File::exists($migrationDir)) {
+            return response()->json(['error' => 'Migration non trouvée'], 404);
         }
 
-        $metadataPath = $sessionDir.'/metadata.json';
+        $metadataPath = $migrationDir.'/metadata.json';
         $metadata = [];
 
         if (File::exists($metadataPath)) {
             $metadata = json_decode(File::get($metadataPath), true);
         }
 
-        $files = File::files($sessionDir);
+        $files = File::files($migrationDir);
         $backupFiles = [];
 
         foreach ($files as $file) {
@@ -154,8 +154,8 @@ class TestsController extends Controller
         }
 
         return response()->json([
-            'session_id' => $sessionId,
-            'session_dir' => $sessionDir,
+            'session_id' => $migrationId,
+            'session_dir' => $migrationDir,
             'metadata' => $metadata,
             'backup_files' => $backupFiles,
             'files_count' => \count($backupFiles),
@@ -182,7 +182,7 @@ class TestsController extends Controller
      */
     protected function getBackupStats(): array
     {
-        $baseBackupDir = config('fontawesome-migrator.sessions_path');
+        $baseBackupDir = config('fontawesome-migrator.migrations_path');
 
         if (! File::exists($baseBackupDir)) {
             return [
@@ -193,7 +193,7 @@ class TestsController extends Controller
             ];
         }
 
-        $sessions = MetadataManager::getAvailableSessions();
+        $sessions = MetadataManager::getAvailableMigrations();
         $totalBackups = 0;
         $totalSize = 0;
 
