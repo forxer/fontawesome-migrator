@@ -6,10 +6,10 @@ namespace FontAwesome\Migrator\Commands;
 
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
-use FontAwesome\Migrator\Services\AssetMigrator;
-use FontAwesome\Migrator\Services\IconReplacer;
-use FontAwesome\Migrator\Services\MigrationReporter;
-use FontAwesome\Migrator\Services\MigrationVersionManager;
+use FontAwesome\Migrator\Services\Core\AssetMigrator;
+use FontAwesome\Migrator\Services\Core\IconReplacer;
+use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
+use FontAwesome\Migrator\Services\Reports\MigrationReporter;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Console\Command;
 

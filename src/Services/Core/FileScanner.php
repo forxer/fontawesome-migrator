@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Core;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;

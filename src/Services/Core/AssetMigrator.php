@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Core;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Services\Configuration\AssetReplacementService;
 use Illuminate\Support\Facades\File;
 
 class AssetMigrator
@@ -100,7 +101,6 @@ class AssetMigrator
 
         $assets = [];
 
-        // Patterns pour détecter les assets FA5
         $patterns = $this->getAssetPatterns($extension);
 
         foreach ($patterns as $type => $pattern) {
@@ -110,7 +110,7 @@ class AssetMigrator
                         'type' => $type,
                         'original' => $match[0][0],
                         'offset' => $match[0][1],
-                        'line' => substr_count(substr($content, 0, $match[0][1]), "\n") + 1,
+                        'line' => substr_count(substr($content, 0, \intval($match[0][1])), "\n") + 1,
                         'is_pro' => $this->isProAsset($match[0][0]),
                     ];
                 }

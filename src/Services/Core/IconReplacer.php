@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Core;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\BackupManagerInterface;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
 use Illuminate\Support\Facades\File;
 
 class IconReplacer

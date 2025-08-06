@@ -6,7 +6,7 @@ namespace FontAwesome\Migrator\Services\Mappers;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
-use FontAwesome\Migrator\Services\ConfigurationLoader;
+use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 use RuntimeException;
 
 abstract class BaseVersionMapper implements VersionMapperInterface

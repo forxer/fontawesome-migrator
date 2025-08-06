@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Metadata;
 
 /**
  * Service dédié à la gestion des résultats de migration

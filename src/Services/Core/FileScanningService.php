@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Core;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
+use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
 
 /**
  * Service orchestrateur pour le scan de fichiers

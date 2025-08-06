@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Http\Controllers;
 
 use Carbon\Carbon;
-use FontAwesome\Migrator\Services\MetadataManager;
+use FontAwesome\Migrator\Services\Metadata\MetadataManager;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Metadata;
 
+use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
 use FontAwesome\Migrator\Support\FormatterHelper;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Configuration;
 
 use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;

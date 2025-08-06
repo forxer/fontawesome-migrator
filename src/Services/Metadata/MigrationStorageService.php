@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Metadata;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;

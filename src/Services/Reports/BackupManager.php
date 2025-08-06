@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Reports;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\BackupManagerInterface;

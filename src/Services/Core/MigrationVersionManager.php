@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Services;
+namespace FontAwesome\Migrator\Services\Core;
 
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
+use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
 use FontAwesome\Migrator\Services\Mappers\FontAwesome4To5Mapper;
 use FontAwesome\Migrator\Services\Mappers\FontAwesome5To6Mapper;
 use FontAwesome\Migrator\Services\Mappers\FontAwesome6To7Mapper;
