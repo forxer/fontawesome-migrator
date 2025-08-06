@@ -19,7 +19,8 @@ class MetadataManager implements MetadataManagerInterface
         protected ConfigurationInterface $config,
         protected MigrationSessionService $sessionService,
         protected MigrationResultsService $resultsService,
-        protected MigrationStorageService $storageService
+        protected MigrationStorageService $storageService,
+        protected MetadataBuilder $metadataBuilder
     ) {}
 
     /**
@@ -32,108 +33,10 @@ class MetadataManager implements MetadataManagerInterface
         $sessionData = $this->sessionService->getSessionData();
 
         // Construire la structure unifiée avec données de session
-        $this->metadata = array_merge($sessionData, $this->buildDefaultMetadata());
+        $defaultMetadata = $this->metadataBuilder->buildDefaultMetadata();
+        $this->metadata = array_merge($sessionData, $defaultMetadata);
 
         return $this;
-    }
-
-    /**
-     * Construire la structure de métadonnées par défaut
-     */
-    private function buildDefaultMetadata(): array
-    {
-        return array_merge(
-            $this->buildMigrationConfig(),
-            $this->buildResultsDefaults(),
-            $this->buildDetailedDataDefaults(),
-            $this->buildBackupDefaults(),
-            $this->buildEnvironmentData(),
-            $this->buildScanConfiguration()
-        );
-    }
-
-    /**
-     * Configuration de migration de base
-     */
-    private function buildMigrationConfig(): array
-    {
-        return [
-            'license_type' => $this->config->getLicenseType(),
-            'icons_only' => false,
-            'assets_only' => false,
-            'custom_path' => null,
-        ];
-    }
-
-    /**
-     * Valeurs par défaut des résultats de migration
-     */
-    private function buildResultsDefaults(): array
-    {
-        return [
-            'total_files' => 0,
-            'modified_files' => 0,
-            'total_changes' => 0,
-            'warnings' => 0,
-            'errors' => 0,
-            'assets_migrated' => 0,
-            'icons_migrated' => 0,
-            'migration_success' => true,
-        ];
-    }
-
-    /**
-     * Structure par défaut des données détaillées
-     */
-    private function buildDetailedDataDefaults(): array
-    {
-        return [
-            'files' => [],
-            'warnings_details' => [],
-            'changes_by_type' => [],
-            'asset_types' => [],
-        ];
-    }
-
-    /**
-     * Configuration par défaut des backups
-     */
-    private function buildBackupDefaults(): array
-    {
-        return [
-            'backup_files' => [],
-            'backup_count' => 0,
-            'backup_size' => 0,
-        ];
-    }
-
-    /**
-     * Données d'environnement d'exécution
-     */
-    private function buildEnvironmentData(): array
-    {
-        return [
-            'environment' => [
-                'php_version' => PHP_VERSION,
-                'laravel_version' => app()->version(),
-                'timezone' => Carbon::now()->timezoneName,
-            ],
-        ];
-    }
-
-    /**
-     * Configuration de scan depuis ConfigurationInterface
-     */
-    private function buildScanConfiguration(): array
-    {
-        return [
-            'scan_config' => [
-                'paths' => $this->config->getScanPaths(),
-                'extensions' => $this->config->getFileExtensions(),
-                'backup_enabled' => $this->config->isBackupEnabled(),
-                'migrations_path' => $this->config->getMigrationsPath(),
-            ],
-        ];
     }
 
     /**

@@ -48,84 +48,155 @@ class IconReplacer
     public function processFile(string $filePath, bool $isDryRun = false): array
     {
         try {
-            if (! File::exists($filePath)) {
-                return [
+            $fileValidation = $this->validateFile($filePath);
+
+            if (! $fileValidation['valid']) {
+                return $fileValidation['result'];
+            }
+
+            $content = $fileValidation['content'];
+            $icons = $this->patternService->extractIconsWithPositions($content);
+
+            if ($icons === []) {
+                return $this->buildEmptyResult();
+            }
+
+            $processResult = $this->processIconReplacements($content, $icons);
+            $backupInfo = $this->handleFileSave($filePath, $processResult['content'], $processResult['changes'], $isDryRun);
+
+            return $this->buildSuccessResult($processResult, $backupInfo);
+
+        } catch (Exception $exception) {
+            return $this->buildErrorResult($exception);
+        }
+    }
+
+    /**
+     * Valider l'existence et lisibilité du fichier
+     */
+    private function validateFile(string $filePath): array
+    {
+        if (! File::exists($filePath)) {
+            return [
+                'valid' => false,
+                'result' => [
                     'success' => false,
                     'error' => 'File not found: '.$filePath,
                     'changes' => [],
                     'warnings' => [],
-                ];
-            }
-
-            $content = File::get($filePath);
-            $icons = $this->patternService->extractIconsWithPositions($content);
-
-            if ($icons === []) {
-                return [
-                    'success' => true,
-                    'changes' => [],
-                    'warnings' => [],
-                ];
-            }
-
-            $changes = [];
-            $warnings = [];
-            $modifiedContent = $content;
-
-            // Trier les icônes par offset décroissant pour éviter les décalages
-            $icons = collect($icons)->sortByDesc('offset')->values()->all();
-
-            foreach ($icons as $icon) {
-                $replacement = $this->getIconReplacement($icon);
-
-                if ($replacement['warning']) {
-                    $warnings[] = $replacement['warning'];
-                }
-
-                if ($replacement['new_string'] !== $icon['full_match']) {
-                    $changes[] = [
-                        'from' => $icon['full_match'],
-                        'to' => $replacement['new_string'],
-                        'line' => $icon['line'],
-                        'type' => $replacement['type'],
-                    ];
-
-                    // Appliquer le remplacement dans le contenu
-                    $modifiedContent = substr_replace(
-                        $modifiedContent,
-                        $replacement['new_string'],
-                        $icon['offset'],
-                        \strlen((string) $icon['full_match'])
-                    );
-                }
-            }
-
-            $backupInfo = null;
-
-            // Sauvegarder le fichier si ce n'est pas un dry-run
-            if (! $isDryRun && $changes !== []) {
-
-                $saveResult = $this->saveFile($filePath, $modifiedContent);
-                $backupInfo = $saveResult['backup'];
-            }
-
-            return [
-                'success' => true,
-                'changes' => $changes,
-                'warnings' => $warnings,
-                'content' => $modifiedContent,
-                'backup' => $backupInfo,
-            ];
-        } catch (Exception $exception) {
-
-            return [
-                'success' => false,
-                'error' => $exception->getMessage(),
-                'changes' => [],
-                'warnings' => [],
-                'backup' => null,
+                ],
             ];
         }
+
+        return [
+            'valid' => true,
+            'content' => File::get($filePath),
+        ];
+    }
+
+    /**
+     * Construire résultat vide quand aucune icône trouvée
+     */
+    private function buildEmptyResult(): array
+    {
+        return [
+            'success' => true,
+            'changes' => [],
+            'warnings' => [],
+        ];
+    }
+
+    /**
+     * Traiter tous les remplacements d'icônes dans le contenu
+     */
+    private function processIconReplacements(string $content, array $icons): array
+    {
+        $changes = [];
+        $warnings = [];
+        $modifiedContent = $content;
+
+        // Trier les icônes par offset décroissant pour éviter les décalages
+        $icons = collect($icons)->sortByDesc('offset')->values()->all();
+
+        foreach ($icons as $icon) {
+            $replacement = $this->getIconReplacement($icon);
+
+            if ($replacement['warning']) {
+                $warnings[] = $replacement['warning'];
+            }
+
+            if ($replacement['new_string'] !== $icon['full_match']) {
+                $changes[] = [
+                    'from' => $icon['full_match'],
+                    'to' => $replacement['new_string'],
+                    'line' => $icon['line'],
+                    'type' => $replacement['type'],
+                ];
+
+                $modifiedContent = $this->applyReplacement($modifiedContent, $icon, $replacement['new_string']);
+            }
+        }
+
+        return [
+            'content' => $modifiedContent,
+            'changes' => $changes,
+            'warnings' => $warnings,
+        ];
+    }
+
+    /**
+     * Appliquer un remplacement dans le contenu
+     */
+    private function applyReplacement(string $content, array $icon, string $newString): string
+    {
+        return substr_replace(
+            $content,
+            $newString,
+            $icon['offset'],
+            \strlen((string) $icon['full_match'])
+        );
+    }
+
+    /**
+     * Gérer la sauvegarde conditionnelle du fichier
+     */
+    private function handleFileSave(string $filePath, string $content, array $changes, bool $isDryRun): ?array
+    {
+        if ($isDryRun || $changes === []) {
+            return null;
+        }
+
+        $saveResult = $this->saveFile($filePath, $content);
+
+        return $saveResult['backup'];
+    }
+
+    /**
+     * Construire résultat de succès
+     */
+    private function buildSuccessResult(array $processResult, ?array $backupInfo): array
+    {
+        return [
+            'success' => true,
+            'changes' => $processResult['changes'],
+            'warnings' => $processResult['warnings'],
+            'content' => $processResult['content'],
+            'backup' => $backupInfo,
+        ];
+    }
+
+    /**
+     * Construire résultat d'erreur
+     */
+    private function buildErrorResult(Exception $exception): array
+    {
+        return [
+            'success' => false,
+            'error' => $exception->getMessage(),
+            'changes' => [],
+            'warnings' => [],
+            'backup' => null,
+        ];
     }
 
     /**
@@ -133,61 +204,153 @@ class IconReplacer
      */
     protected function getIconReplacement(array $icon): array
     {
+        $mappingData = $this->prepareMappingData($icon);
+        $replacementResult = $this->determineReplacementType($mappingData);
+
+        $finalWarning = $this->buildFinalWarning(
+            $replacementResult['warning'],
+            $mappingData['iconMapping']['warnings']
+        );
+
+        return [
+            'new_string' => $replacementResult['new_string'],
+            'warning' => $finalWarning,
+            'type' => $replacementResult['type'],
+        ];
+    }
+
+    /**
+     * Préparer les données de mapping pour une icône
+     */
+    private function prepareMappingData(array $icon): array
+    {
         $style = $icon['style'];
         $iconName = $icon['name'];
         $originalString = $icon['full_match'];
 
-        // Mapper le style avec le nouveau système
         $newStyle = $this->mapper->mapStyle($style);
-
-        // Mapper l'icône avec informations détaillées
         $iconMapping = $this->mapper->mapIcon($iconName, $style);
         $newIconName = $iconMapping['new_name'];
 
-        // Construire la nouvelle chaîne
-        $newString = str_replace(
+        $baseNewString = str_replace(
             [$style, $iconName],
             [$newStyle, $newIconName],
             $originalString
         );
 
-        $warning = null;
-        $type = 'style_update';
+        return [
+            'style' => $style,
+            'iconName' => $iconName,
+            'originalString' => $originalString,
+            'newStyle' => $newStyle,
+            'newIconName' => $newIconName,
+            'baseNewString' => $baseNewString,
+            'iconMapping' => $iconMapping,
+        ];
+    }
 
-        // Analyser les résultats du mapping pour déterminer le type et warning
+    /**
+     * Déterminer le type de remplacement et construire le résultat
+     */
+    private function determineReplacementType(array $mappingData): array
+    {
+        $iconMapping = $mappingData['iconMapping'];
+
         if ($iconMapping['renamed']) {
-            $type = 'renamed_icon';
-            $warning = \sprintf("Icône renommée '%s' → '%s'", $iconName, $newIconName);
-        } elseif ($iconMapping['deprecated']) {
-            $type = 'deprecated_icon';
-            $warning = \sprintf("Icône dépréciée '%s' → '%s'", $iconName, $newIconName);
-        } elseif ($iconMapping['pro_only'] && ! $this->config->isProLicense()) {
-            $type = 'pro_fallback';
-            $alternative = $this->mapper->getFreeAlternative($iconName);
-
-            if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
-                $newIconName = $alternative;
-                $newString = str_replace(
-                    [$style, $iconName],
-                    [$newStyle, $newIconName],
-                    $originalString
-                );
-                $warning = \sprintf("Icône Pro '%s' → alternative Free '%s'", $iconName, $alternative);
-            } else {
-                $warning = \sprintf("Icône Pro '%s' sans alternative Free disponible", $iconName);
-            }
+            return $this->buildRenamedReplacement($mappingData);
         }
 
-        // Ajouter les warnings du mapper
-        if (! empty($iconMapping['warnings'])) {
-            $warning = $warning !== null && $warning !== '' && $warning !== '0' ? $warning.' | '.implode(' | ', $iconMapping['warnings']) : implode(' | ', $iconMapping['warnings']);
+        if ($iconMapping['deprecated']) {
+            return $this->buildDeprecatedReplacement($mappingData);
+        }
+
+        if ($iconMapping['pro_only'] && ! $this->config->isProLicense()) {
+            return $this->buildProFallbackReplacement($mappingData);
+        }
+
+        return $this->buildStyleUpdateReplacement($mappingData);
+    }
+
+    /**
+     * Construire remplacement pour icône renommée
+     */
+    private function buildRenamedReplacement(array $mappingData): array
+    {
+        return [
+            'new_string' => $mappingData['baseNewString'],
+            'warning' => \sprintf("Icône renommée '%s' → '%s'", $mappingData['iconName'], $mappingData['newIconName']),
+            'type' => 'renamed_icon',
+        ];
+    }
+
+    /**
+     * Construire remplacement pour icône dépréciée
+     */
+    private function buildDeprecatedReplacement(array $mappingData): array
+    {
+        return [
+            'new_string' => $mappingData['baseNewString'],
+            'warning' => \sprintf("Icône dépréciée '%s' → '%s'", $mappingData['iconName'], $mappingData['newIconName']),
+            'type' => 'deprecated_icon',
+        ];
+    }
+
+    /**
+     * Construire remplacement pour icône Pro avec fallback Free
+     */
+    private function buildProFallbackReplacement(array $mappingData): array
+    {
+        $alternative = $this->mapper->getFreeAlternative($mappingData['iconName']);
+
+        if ($alternative !== null && $alternative !== '' && $alternative !== '0') {
+            $newString = str_replace(
+                [$mappingData['style'], $mappingData['iconName']],
+                [$mappingData['newStyle'], $alternative],
+                $mappingData['originalString']
+            );
+
+            return [
+                'new_string' => $newString,
+                'warning' => \sprintf("Icône Pro '%s' → alternative Free '%s'", $mappingData['iconName'], $alternative),
+                'type' => 'pro_fallback',
+            ];
         }
 
         return [
-            'new_string' => $newString,
-            'warning' => $warning,
-            'type' => $type,
+            'new_string' => $mappingData['baseNewString'],
+            'warning' => \sprintf("Icône Pro '%s' sans alternative Free disponible", $mappingData['iconName']),
+            'type' => 'pro_fallback',
         ];
+    }
+
+    /**
+     * Construire remplacement pour mise à jour de style simple
+     */
+    private function buildStyleUpdateReplacement(array $mappingData): array
+    {
+        return [
+            'new_string' => $mappingData['baseNewString'],
+            'warning' => null,
+            'type' => 'style_update',
+        ];
+    }
+
+    /**
+     * Construire le warning final en fusionnant tous les warnings
+     */
+    private function buildFinalWarning(?string $primaryWarning, array $mapperWarnings): ?string
+    {
+        if (empty($mapperWarnings)) {
+            return $primaryWarning;
+        }
+
+        $mapperWarningsStr = implode(' | ', $mapperWarnings);
+
+        if ($primaryWarning === null || $primaryWarning === '' || $primaryWarning === '0') {
+            return $mapperWarningsStr;
+        }
+
+        return $primaryWarning.' | '.$mapperWarningsStr;
     }
 
     /**

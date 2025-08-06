@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services;
 
-use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use Illuminate\Support\Facades\File;
@@ -15,9 +14,7 @@ class FileScanner implements FileScannerInterface
 {
     public function __construct(
         protected ConfigurationInterface $config,
-        protected MigrationVersionManager $versionManager,
-        protected ConfigurationLoader $configLoader,
-        protected FontAwesomePatternService $patternService
+        protected FileScanningService $scanningService
     ) {}
 
     /**
@@ -112,7 +109,7 @@ class FileScanner implements FileScannerInterface
         $finder->files()->in(base_path($path));
 
         // Ajouter les extensions de fichiers
-        $extensions = $this->config->getFileExtensions();
+        $extensions = $this->scanningService->getSupportedExtensions();
 
         if ($extensions !== []) {
             $patterns = array_map(fn ($ext): string => '*.'.$ext, $extensions);
@@ -120,7 +117,7 @@ class FileScanner implements FileScannerInterface
         }
 
         // Exclure les patterns configurés
-        $excludePatterns = $this->config->getExcludePatterns();
+        $excludePatterns = $this->scanningService->getExcludePatterns();
 
         foreach ($excludePatterns as $pattern) {
             if (str_contains((string) $pattern, '/') || str_contains((string) $pattern, '\\')) {
@@ -143,7 +140,7 @@ class FileScanner implements FileScannerInterface
      */
     protected function isFileExtensionAllowed(string $extension): bool
     {
-        $extensions = $this->config->getFileExtensions();
+        $extensions = $this->scanningService->getSupportedExtensions();
 
         if ($extensions === []) {
             return true; // Si aucune extension configurée, accepter tous les fichiers
@@ -157,96 +154,21 @@ class FileScanner implements FileScannerInterface
      */
     public function analyzeFile(string $filePath): array
     {
-        if (! File::exists($filePath)) {
+        $analysisResult = $this->scanningService->analyzeFileForFontAwesome($filePath);
+
+        if (isset($analysisResult['error'])) {
             return [
                 'icons' => [],
-                'error' => 'Fichier non trouvé',
+                'error' => $analysisResult['error'],
             ];
         }
-
-        $content = File::get($filePath);
-
-        // Détecter la version FontAwesome via le PatternService centralisé
-        $detectedVersion = $this->patternService->detectVersion($content);
-
-        if ($detectedVersion === 'unknown') {
-            return [
-                'icons' => [],
-                'content' => $content,
-                'error' => null,
-                'detected_version' => 'unknown',
-            ];
-        }
-
-        // Utiliser la configuration existante pour analyser les icônes
-        $icons = $this->extractIconsUsingConfiguration($content, $detectedVersion);
 
         return [
-            'icons' => $icons,
-            'content' => $content,
+            'icons' => $analysisResult['icons'],
+            'content' => file_exists($filePath) ? file_get_contents($filePath) : '',
             'error' => null,
-            'detected_version' => $detectedVersion,
+            'detected_version' => $analysisResult['version'] ?? 'unknown',
         ];
-    }
-
-    /**
-     * Extraire les icônes FontAwesome en utilisant la configuration existante
-     */
-    protected function extractIconsUsingConfiguration(string $content, string $version): array
-    {
-        $icons = [];
-
-        try {
-            // Utiliser le PatternService centralisé pour extraire les icônes
-            $versionIcons = $this->patternService->extractVersionIcons($content, $version);
-
-            // Enrichir avec les données de mapping si une version cible existe
-            $targetVersion = $this->getNextVersion($version);
-
-            if ($targetVersion !== null && $targetVersion !== '' && $targetVersion !== '0') {
-                $styleMappings = $this->configLoader->loadStyleMappings($version, $targetVersion);
-
-                foreach ($versionIcons as $iconData) {
-                    $parsedIcon = $this->patternService->parseIconWithStyleMappings($iconData['full_match'], $styleMappings);
-
-                    $icons[] = $parsedIcon !== null ? array_merge($iconData, $parsedIcon) : $iconData;
-                }
-            } else {
-                $icons = $versionIcons;
-            }
-        } catch (Exception) {
-            // Si erreur de configuration, utiliser fallback
-            return [];
-        }
-
-        return array_unique($icons, SORT_REGULAR);
-    }
-
-    /**
-     * Obtenir la version cible pour une version source donnée
-     */
-    protected function getNextVersion(string $version): ?string
-    {
-        return match ($version) {
-            '4' => '5',
-            '5' => '6',
-            '6' => '7',
-            default => null,
-        };
-    }
-
-    /**
-     * Vérifier si un fichier contient des icônes Font Awesome 5 (compatibilité interface)
-     */
-    public function hasFontAwesome5Icons(string $filePath): bool
-    {
-        if (! File::exists($filePath)) {
-            return false;
-        }
-
-        $content = File::get($filePath);
-
-        return $this->patternService->hasVersionIcons($content, '5');
     }
 
     /**
