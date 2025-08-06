@@ -2,10 +2,10 @@
 
 namespace FontAwesome\Migrator\Commands;
 
+use FontAwesome\Migrator\Contracts\FileScannerInterface;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\AssetMigrator;
-use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\IconReplacer;
-use FontAwesome\Migrator\Services\MetadataManager;
 use FontAwesome\Migrator\Services\MigrationReporter;
 use FontAwesome\Migrator\Services\MigrationVersionManager;
 use FontAwesome\Migrator\Support\DirectoryHelper;
@@ -27,7 +27,7 @@ class MigrateCommand extends Command
      */
     protected array $createdBackups = [];
 
-    protected FileScanner $scanner;
+    protected FileScannerInterface $scanner;
 
     protected IconReplacer $replacer;
 
@@ -35,7 +35,7 @@ class MigrateCommand extends Command
 
     protected AssetMigrator $assetMigrator;
 
-    protected MetadataManager $metadata;
+    protected MetadataManagerInterface $metadata;
 
     protected MigrationVersionManager $versionManager;
 
@@ -64,11 +64,11 @@ class MigrateCommand extends Command
      * Execute the console command.
      */
     public function handle(
-        FileScanner $scanner,
+        FileScannerInterface $scanner,
         IconReplacer $replacer,
         MigrationReporter $reporter,
         AssetMigrator $assetMigrator,
-        MetadataManager $metadata,
+        MetadataManagerInterface $metadata,
         MigrationVersionManager $versionManager
     ): int {
         // Assigner les services aux propriétés de classe
@@ -319,26 +319,14 @@ class MigrateCommand extends Command
         $this->displayResults($results, $isDryRun);
 
         // Finaliser les métadonnées avec les statistiques
-        $totalFiles = \count($results);
-        $modifiedFiles = collect($results)->filter(fn ($result): bool => ! empty($result['changes']))->count();
-        $totalChanges = collect($results)->sum(fn ($result): int => \count($result['changes']));
-        $totalWarnings = collect($results)->sum(fn ($result): int => \count($result['warnings'] ?? []));
-
-        $this->metadata
-            ->updateStatistics([
-                'files_scanned' => $totalFiles,
-                'files_modified' => $modifiedFiles,
-                'changes_made' => $totalChanges,
-                'warnings_generated' => $totalWarnings,
-            ])
-            ->completeMigration();
+        $this->metadata->completeMigration();
 
         // Sauvegarder les métadonnées dans le répertoire de session
         $this->metadata->saveToFile();
         $sessionDir = $this->metadata->getMigrationDirectory();
         $this->line('📋 Session sauvegardée : '.basename($sessionDir));
 
-        $reporterWithMetadata = new MigrationReporter($this->metadata);
+        $reporterWithMetadata = app()->make(MigrationReporter::class);
         $reportInfo = $reporterWithMetadata->generateMetadata($results);
 
         // Sauvegarder les métadonnées mises à jour avec les chemins des rapports

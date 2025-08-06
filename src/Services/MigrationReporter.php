@@ -2,13 +2,15 @@
 
 namespace FontAwesome\Migrator\Services;
 
-use FontAwesome\Migrator\Support\ConfigHelper;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use Illuminate\Support\Facades\File;
 
 class MigrationReporter
 {
     public function __construct(
-        protected MetadataManager $metadata
+        protected MetadataManagerInterface $metadata,
+        protected ConfigurationInterface $config
     ) {}
 
     /**
@@ -27,7 +29,7 @@ class MigrationReporter
 
         return [
             'success' => true,
-            'session_id' => $this->metadata->get('session')['short_id'] ?? 'unknown',
+            'session_id' => $this->metadata->getAll()['short_id'] ?? 'unknown',
             'metadata_path' => $this->metadata->saveToFile(),
             'web_url' => url('/fontawesome-migrator/migrations'),
             'filename' => 'metadata.json', // Source unique des données
@@ -215,7 +217,7 @@ class MigrationReporter
      */
     public function generateComparisonReport(array $beforeStats, array $afterStats): string
     {
-        $reportPath = ConfigHelper::getMigrationsPath();
+        $reportPath = $this->config->getMigrationsPath();
         $timestamp = date('Y-m-d_H-i-s');
         $filename = \sprintf('fontawesome-comparison-%s.json', $timestamp);
         $fullPath = $reportPath.'/'.$filename;
@@ -244,7 +246,7 @@ class MigrationReporter
      */
     public function cleanOldReports(int $daysToKeep = 30): int
     {
-        $reportPath = ConfigHelper::getMigrationsPath();
+        $reportPath = $this->config->getMigrationsPath();
 
         if (! File::exists($reportPath)) {
             return 0;

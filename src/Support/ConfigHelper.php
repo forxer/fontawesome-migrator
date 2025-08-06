@@ -5,56 +5,57 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Support;
 
 use Exception;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 
 /**
  * Helper pour la gestion centralisée de la configuration
  */
-class ConfigHelper
+class ConfigHelper implements ConfigurationInterface
 {
-    private static ?array $config = null;
+    private ?array $config = null;
 
-    private static ?array $defaultConfig = null;
+    private ?array $defaultConfig = null;
 
     /**
      * Obtenir la configuration complète du package
      */
-    public static function getConfig(): array
+    public function getConfig(): array
     {
-        if (self::$config === null) {
+        if ($this->config === null) {
             try {
-                self::$config = config('fontawesome-migrator', []);
+                $this->config = config('fontawesome-migrator', []);
 
                 // Si la config Laravel est vide, utiliser les défauts du package
-                if (self::$config === []) {
-                    self::$config = self::getDefaultConfig();
+                if ($this->config === []) {
+                    $this->config = $this->getDefaultConfig();
                 }
             } catch (Exception) {
                 // Fallback pour les tests ou environnements sans configuration
-                self::$config = self::getDefaultConfig();
+                $this->config = $this->getDefaultConfig();
             }
         }
 
-        return self::$config;
+        return $this->config;
     }
 
     /**
      * Obtenir la configuration par défaut depuis le package
      */
-    public static function getDefaultConfig(): array
+    public function getDefaultConfig(): array
     {
-        if (self::$defaultConfig === null) {
-            self::$defaultConfig = require __DIR__.'/../../config/fontawesome-migrator.php';
+        if ($this->defaultConfig === null) {
+            $this->defaultConfig = require __DIR__.'/../../config/fontawesome-migrator.php';
         }
 
-        return self::$defaultConfig;
+        return $this->defaultConfig;
     }
 
     /**
      * Obtenir une valeur de configuration spécifique
      */
-    public static function get(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        $config = self::getConfig();
+        $config = $this->getConfig();
 
         return data_get($config, $key, $default);
     }
@@ -64,7 +65,7 @@ class ConfigHelper
      */
     public static function has(string $key): bool
     {
-        $config = self::getConfig();
+        $config = $this->getConfig();
 
         return data_get($config, $key) !== null;
     }
@@ -72,75 +73,75 @@ class ConfigHelper
     /**
      * Obtenir la licence (free/pro)
      */
-    public static function getLicenseType(): string
+    public function getLicenseType(): string
     {
-        return self::get('license_type', 'free');
+        return $this->get('license_type', 'free');
     }
 
     /**
      * Vérifier si c'est une licence Pro
      */
-    public static function isProLicense(): bool
+    public function isProLicense(): bool
     {
-        return self::getLicenseType() === 'pro';
+        return $this->getLicenseType() === 'pro';
     }
 
     /**
      * Obtenir les chemins de scan
      */
-    public static function getScanPaths(): array
+    public function getScanPaths(): array
     {
-        return self::get('scan_paths', []);
+        return $this->get('scan_paths', []);
     }
 
     /**
      * Obtenir les extensions de fichiers autorisées
      */
-    public static function getFileExtensions(): array
+    public function getFileExtensions(): array
     {
-        return self::get('file_extensions', []);
+        return $this->get('file_extensions', []);
     }
 
     /**
      * Obtenir les patterns d'exclusion
      */
-    public static function getExcludePatterns(): array
+    public function getExcludePatterns(): array
     {
-        return self::get('exclude_patterns', []);
+        return $this->get('exclude_patterns', []);
     }
 
     /**
      * Vérifier si les sauvegardes sont activées
      */
-    public static function isBackupEnabled(): bool
+    public function isBackupEnabled(): bool
     {
-        return self::get('backup_files', true);
+        return $this->get('backup_files', true);
     }
 
     /**
      * Obtenir le chemin des migrations
      */
-    public static function getMigrationsPath(): string
+    public function getMigrationsPath(): string
     {
-        return self::get('migrations_path', storage_path('app/fontawesome-migrator/migrations'));
+        return $this->get('migrations_path', storage_path('app/fontawesome-migrator/migrations'));
     }
 
     /**
      * Réinitialiser le cache de configuration
      */
-    public static function clearCache(): void
+    public function clearCache(): void
     {
-        self::$config = null;
-        self::$defaultConfig = null;
+        $this->config = null;
+        $this->defaultConfig = null;
     }
 
     /**
      * Valider la configuration
      */
-    public static function validate(): array
+    public function validate(): array
     {
         $errors = [];
-        $config = self::getConfig();
+        $config = $this->getConfig();
 
         // Vérifier les champs requis
         $requiredFields = ['license_type', 'scan_paths', 'file_extensions'];
@@ -157,7 +158,7 @@ class ConfigHelper
         }
 
         // Valider que migrations_path est défini et accessible en écriture
-        $migrationsPath = self::getMigrationsPath();
+        $migrationsPath = $this->getMigrationsPath();
 
         if (! is_dir($migrationsPath) && ! mkdir($migrationsPath, 0755, true)) {
             $errors[] = 'Le répertoire migrations_path n\'est pas accessible en écriture : '.$migrationsPath;

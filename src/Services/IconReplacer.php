@@ -3,16 +3,19 @@
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
+use FontAwesome\Migrator\Contracts\BackupManagerInterface;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
-use FontAwesome\Migrator\Support\ConfigHelper;
 use Illuminate\Support\Facades\File;
 
 class IconReplacer
 {
     public function __construct(
         protected VersionMapperInterface $mapper,
-        protected FileScanner $fileScanner,
-        protected BackupManager $backupManager
+        protected FileScannerInterface $fileScanner,
+        protected BackupManagerInterface $backupManager,
+        protected ConfigurationInterface $config
     ) {}
 
     /**
@@ -197,7 +200,7 @@ class IconReplacer
         } elseif ($iconMapping['deprecated']) {
             $type = 'deprecated_icon';
             $warning = \sprintf("Icône dépréciée '%s' → '%s'", $iconName, $newIconName);
-        } elseif ($iconMapping['pro_only'] && ! ConfigHelper::isProLicense()) {
+        } elseif ($iconMapping['pro_only'] && ! $this->config->isProLicense()) {
             $type = 'pro_fallback';
             $alternative = $this->mapper->getFreeAlternative($iconName);
 
@@ -234,7 +237,7 @@ class IconReplacer
         $backupInfo = null;
 
         // Créer une sauvegarde si configuré
-        if (ConfigHelper::isBackupEnabled()) {
+        if ($this->config->isBackupEnabled()) {
             $backupResult = $this->createBackup($filePath);
 
             if (\is_array($backupResult)) {

@@ -3,13 +3,18 @@
 namespace FontAwesome\Migrator\Services;
 
 use Carbon\Carbon;
-use FontAwesome\Migrator\Support\ConfigHelper;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Support\FormatterHelper;
 use Illuminate\Support\Facades\File;
 
-class MetadataManager
+class MetadataManager implements MetadataManagerInterface
 {
     protected array $metadata = [];
+
+    public function __construct(
+        protected ConfigurationInterface $config
+    ) {}
 
     /**
      * Initialiser les métadonnées de base
@@ -35,7 +40,7 @@ class MetadataManager
             // === MIGRATION CONFIG ===
             'source_version' => null,
             'target_version' => null,
-            'license_type' => ConfigHelper::getLicenseType(),
+            'license_type' => $this->config->getLicenseType(),
             'icons_only' => false,
             'assets_only' => false,
             'custom_path' => null,
@@ -70,10 +75,10 @@ class MetadataManager
 
             // === CONFIGURATION (groupé) ===
             'scan_config' => [
-                'paths' => ConfigHelper::getScanPaths(),
-                'extensions' => ConfigHelper::getFileExtensions(),
-                'backup_enabled' => ConfigHelper::isBackupEnabled(),
-                'migrations_path' => ConfigHelper::getMigrationsPath(),
+                'paths' => $this->config->getScanPaths(),
+                'extensions' => $this->config->getFileExtensions(),
+                'backup_enabled' => $this->config->isBackupEnabled(),
+                'migrations_path' => $this->config->getMigrationsPath(),
             ],
 
             // === COMMAND TRACE (groupé) ===
@@ -362,7 +367,7 @@ class MetadataManager
     {
         $migrationId = $this->metadata['session_id'] ?? 'unknown';
 
-        return ConfigHelper::getMigrationsPath().'/migration-'.$migrationId;
+        return $this->config->getMigrationsPath().'/migration-'.$migrationId;
     }
 
     /**
@@ -370,7 +375,7 @@ class MetadataManager
      */
     public static function cleanOldSessions(int $daysToKeep = 30): int
     {
-        $migrationsDir = ConfigHelper::getMigrationsPath();
+        $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
 
         if (! File::exists($migrationsDir)) {
             return 0;
@@ -406,7 +411,7 @@ class MetadataManager
      */
     public static function getAvailableMigrations(): array
     {
-        $migrationsDir = ConfigHelper::getMigrationsPath();
+        $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
         $migrations = [];
 
         if (! File::exists($migrationsDir)) {

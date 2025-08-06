@@ -6,6 +6,10 @@ use Carbon\Carbon;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
+use FontAwesome\Migrator\Contracts\BackupManagerInterface;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
+use FontAwesome\Migrator\Contracts\FileScannerInterface;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\BackupManager;
@@ -15,6 +19,7 @@ use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MetadataManager;
 use FontAwesome\Migrator\Services\MigrationReporter;
 use FontAwesome\Migrator\Services\MigrationVersionManager;
+use FontAwesome\Migrator\Support\ConfigHelper;
 use FontAwesome\Migrator\View\Components\PageHeader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
@@ -98,60 +103,45 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerBindings(): void
     {
+        // === Interfaces Core ===
+
+        // Configuration en singleton
+        $this->app->singleton(ConfigurationInterface::class, ConfigHelper::class);
+
         // === Services singleton (état partagé) ===
 
         // MetadataManager en singleton pour partager la session
-        $this->app->singleton(MetadataManager::class);
+        $this->app->singleton(MetadataManagerInterface::class, MetadataManager::class);
+        $this->app->singleton(MetadataManager::class, MetadataManager::class);
 
         // MigrationVersionManager en singleton
         $this->app->singleton(MigrationVersionManager::class);
 
-        // BackupManager en singleton qui utilise le MetadataManager singleton
-        $this->app->singleton(
-            BackupManager::class,
-            fn ($app): BackupManager => new BackupManager(
-                $app->make(MetadataManager::class)
-            )
-        );
+        // BackupManager en singleton
+        $this->app->singleton(BackupManagerInterface::class, BackupManager::class);
+        $this->app->singleton(BackupManager::class, BackupManager::class);
 
         // === Services avec injection automatique ===
 
         // ConfigurationLoader - pas de dépendances
         $this->app->bind(ConfigurationLoader::class);
 
-        // FileScanner - pas de dépendances externes
-        $this->app->bind(FileScanner::class);
+        // FileScanner avec interface
+        $this->app->bind(FileScannerInterface::class, FileScanner::class);
+        $this->app->bind(FileScanner::class, FileScanner::class);
+
+        // AssetMigrator
+        $this->app->bind(AssetMigrator::class, AssetMigrator::class);
 
         // PackageVersionService - service statique, pas besoin de binding
 
         // === Services avec dépendances spécifiques ===
 
-        // MigrationReporter avec MetadataManager
-        $this->app->bind(
-            MigrationReporter::class,
-            fn ($app): MigrationReporter => new MigrationReporter(
-                $app->make(MetadataManager::class)
-            )
-        );
+        // MigrationReporter avec interfaces
+        $this->app->bind(MigrationReporter::class, MigrationReporter::class);
 
-        // AssetMigrator - injection automatique
-        $this->app->bind(AssetMigrator::class);
-
-        // IconReplacer avec dépendances complexes
-        $this->app->bind(
-            IconReplacer::class,
-            function ($app): IconReplacer {
-                // Obtenir le mapper par défaut (FA5→6) ou utiliser le contexte
-                $versionManager = $app->make(MigrationVersionManager::class);
-                $mapper = $versionManager->createMapper('5', '6'); // Par défaut
-
-                return new IconReplacer(
-                    $mapper,
-                    $app->make(FileScanner::class),
-                    $app->make(BackupManager::class)
-                );
-            }
-        );
+        // IconReplacer avec injection automatique
+        $this->app->bind(IconReplacer::class, IconReplacer::class);
 
         // === Interface bindings ===
 

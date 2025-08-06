@@ -2,11 +2,15 @@
 
 namespace FontAwesome\Migrator\Services;
 
-use FontAwesome\Migrator\Support\ConfigHelper;
+use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use Illuminate\Support\Facades\File;
 
 class AssetMigrator
 {
+    public function __construct(
+        protected ConfigurationInterface $config
+    ) {}
+
     /**
      * Migrer les références d'assets FontAwesome dans un fichier
      */
@@ -30,7 +34,7 @@ class AssetMigrator
      */
     protected function migrateStylesheetAssets(string $content): string
     {
-        $isPro = ConfigHelper::isProLicense();
+        $isPro = $this->config->isProLicense();
 
         $replacements = [
             // CDN URLs - Free (patterns plus spécifiques)
@@ -86,7 +90,7 @@ class AssetMigrator
      */
     protected function migrateJavaScriptAssets(string $content): string
     {
-        $isPro = ConfigHelper::isProLicense();
+        $isPro = $this->config->isProLicense();
 
         $replacements = [
             // Package managers - Free packages
@@ -184,7 +188,7 @@ class AssetMigrator
      */
     protected function migrateHtmlAssets(string $content): string
     {
-        $isPro = ConfigHelper::isProLicense();
+        $isPro = $this->config->isProLicense();
 
         $replacements = [
             // CDN links - Free
@@ -240,7 +244,7 @@ class AssetMigrator
      */
     protected function migratePackageJsonAssets(string $content): string
     {
-        $isPro = ConfigHelper::isProLicense();
+        $isPro = $this->config->isProLicense();
 
         $replacements = [
             // NPM packages - Free

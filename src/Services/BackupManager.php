@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
+use FontAwesome\Migrator\Contracts\BackupManagerInterface;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use Illuminate\Support\Facades\File;
 
 /**
  * Service de gestion des sauvegardes de fichiers
  */
-class BackupManager
+class BackupManager implements BackupManagerInterface
 {
     public function __construct(
-        protected MetadataManager $metadataManager
+        protected MetadataManagerInterface $metadataManager
     ) {}
 
     /**
