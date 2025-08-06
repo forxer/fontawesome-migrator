@@ -31,7 +31,7 @@ class AssetReplacementService
             $configPath = __DIR__.'/../../config/fontawesome-migrator/assets/replacements.json';
 
             if (! File::exists($configPath)) {
-                throw new Exception("Configuration des remplacements d'assets non trouvée: {$configPath}");
+                throw new Exception('Configuration des remplacements d\'assets non trouvée: '.$configPath);
             }
 
             $config = json_decode(File::get($configPath), true);
@@ -43,7 +43,7 @@ class AssetReplacementService
             $this->replacements = $config['replacements'] ?? [];
             $this->excludedPatterns = $config['excluded_patterns'] ?? [];
 
-        } catch (Exception $e) {
+        } catch (Exception) {
             // En cas d'erreur, utiliser des remplacements vides pour éviter les crashes
             $this->replacements = [];
             $this->excludedPatterns = [];
@@ -147,7 +147,7 @@ class AssetReplacementService
      */
     private function filterExcludedPatterns(array $replacements): array
     {
-        return array_filter($replacements, function ($replacement, $pattern) {
+        return array_filter($replacements, function ($replacement, $pattern): bool {
             // Exclure si le pattern est dans la liste d'exclusion
             if (\in_array($pattern, $this->excludedPatterns)) {
                 return false;
@@ -188,8 +188,8 @@ class AssetReplacementService
             if ($type === 'package_json') {
                 $typeTotal = \count($categories['dependencies'] ?? []);
             } else {
-                foreach ($categories as $license => $licenseCategories) {
-                    foreach ($licenseCategories as $category => $patterns) {
+                foreach ($categories as $licenseCategories) {
+                    foreach ($licenseCategories as $patterns) {
                         $typeTotal += \count($patterns);
                     }
                 }
@@ -209,7 +209,7 @@ class AssetReplacementService
      */
     public function isConfigurationLoaded(): bool
     {
-        return ! empty($this->replacements);
+        return $this->replacements !== [];
     }
 
     /**

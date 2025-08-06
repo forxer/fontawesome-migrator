@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services;
 
+use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use Illuminate\Support\Facades\File;
@@ -202,22 +203,18 @@ class FileScanner implements FileScannerInterface
             // Enrichir avec les données de mapping si une version cible existe
             $targetVersion = $this->getNextVersion($version);
 
-            if ($targetVersion) {
+            if ($targetVersion !== null && $targetVersion !== '' && $targetVersion !== '0') {
                 $styleMappings = $this->configLoader->loadStyleMappings($version, $targetVersion);
 
                 foreach ($versionIcons as $iconData) {
                     $parsedIcon = $this->patternService->parseIconWithStyleMappings($iconData['full_match'], $styleMappings);
 
-                    if ($parsedIcon !== null) {
-                        $icons[] = array_merge($iconData, $parsedIcon);
-                    } else {
-                        $icons[] = $iconData;
-                    }
+                    $icons[] = $parsedIcon !== null ? array_merge($iconData, $parsedIcon) : $iconData;
                 }
             } else {
                 $icons = $versionIcons;
             }
-        } catch (\Exception) {
+        } catch (Exception) {
             // Si erreur de configuration, utiliser fallback
             return [];
         }

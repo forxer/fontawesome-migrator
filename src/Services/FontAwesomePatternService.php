@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services;
 
+use Exception;
+
 /**
  * Service centralisé pour la gestion des patterns FontAwesome
  * Évite la duplication dans FileScanner, IconReplacer, MigrationVersionManager
@@ -70,7 +72,7 @@ class FontAwesomePatternService
         try {
             $styleMappings = $this->configLoader->loadStyleMappings($version, $targetVersion);
 
-            if (empty($styleMappings)) {
+            if ($styleMappings === []) {
                 return [];
             }
 
@@ -85,7 +87,7 @@ class FontAwesomePatternService
                 // Pattern dans data-icon ou autres attributs
                 '/(?:data-icon|data-prefix)=["\'][^"\']*\b('.$stylesPattern.')\s+(fa-[a-zA-Z0-9-]+)[^"\']*["\']/',
             ];
-        } catch (\Exception) {
+        } catch (Exception) {
             return [];
         }
     }
@@ -95,7 +97,7 @@ class FontAwesomePatternService
      */
     public function parseIconWithStyleMappings(string $iconString, array $styleMappings): ?array
     {
-        if (empty($styleMappings)) {
+        if ($styleMappings === []) {
             return null;
         }
 

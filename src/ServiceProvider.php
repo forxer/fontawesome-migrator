@@ -14,9 +14,11 @@ use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
 use FontAwesome\Migrator\Services\AssetMigrator;
+use FontAwesome\Migrator\Services\AssetReplacementService;
 use FontAwesome\Migrator\Services\BackupManager;
 use FontAwesome\Migrator\Services\ConfigurationLoader;
 use FontAwesome\Migrator\Services\FileScanner;
+use FontAwesome\Migrator\Services\FontAwesomePatternService;
 use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MetadataManager;
 use FontAwesome\Migrator\Services\MigrationReporter;
@@ -129,10 +131,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind(ConfigurationLoader::class);
 
         // FontAwesomePatternService en singleton pour réutiliser les patterns
-        $this->app->singleton(\FontAwesome\Migrator\Services\FontAwesomePatternService::class);
+        $this->app->singleton(FontAwesomePatternService::class);
 
         // AssetReplacementService en singleton pour réutiliser les configurations
-        $this->app->singleton(\FontAwesome\Migrator\Services\AssetReplacementService::class);
+        $this->app->singleton(AssetReplacementService::class);
 
         // FileScanner avec interface
         $this->app->bind(FileScannerInterface::class, FileScanner::class);
