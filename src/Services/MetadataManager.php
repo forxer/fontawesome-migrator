@@ -15,7 +15,10 @@ class MetadataManager implements MetadataManagerInterface
     protected array $metadata = [];
 
     public function __construct(
-        protected ConfigurationInterface $config
+        protected ConfigurationInterface $config,
+        protected MigrationSessionService $sessionService,
+        protected MigrationResultsService $resultsService,
+        protected MigrationStorageService $storageService
     ) {}
 
     /**
@@ -23,25 +26,13 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function initialize(): self
     {
-        $migrationId = uniqid('migration_', true);
-        $shortId = FormatterHelper::generateShortId('migration_');
+        // Initialiser la session via le service dédié
+        $this->sessionService->initializeSession();
+        $sessionData = $this->sessionService->getSessionData();
 
-        $this->metadata = [
-            // === IDENTIFICATION ===
-            'session_id' => $migrationId,
-            'short_id' => $shortId,
-            'package_version' => PackageVersionService::getVersion(),
-
-            // === EXECUTION ===
-            'started_at' => Carbon::now()->toIso8601String(),
-            'completed_at' => null,
-            'duration' => null,
-            'dry_run' => false,
-            'migration_source' => 'command_line',
-
+        // Construire la structure unifiée avec données de session
+        $this->metadata = array_merge($sessionData, [
             // === MIGRATION CONFIG ===
-            'source_version' => null,
-            'target_version' => null,
             'license_type' => $this->config->getLicenseType(),
             'icons_only' => false,
             'assets_only' => false,
@@ -82,10 +73,7 @@ class MetadataManager implements MetadataManagerInterface
                 'backup_enabled' => $this->config->isBackupEnabled(),
                 'migrations_path' => $this->config->getMigrationsPath(),
             ],
-
-            // === COMMAND TRACE (groupé) ===
-            'command_options' => [],
-        ];
+        ]);
 
         return $this;
     }
@@ -95,10 +83,12 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function setMigrationOptions(array $options): self
     {
-        // Mapper vers la nouvelle structure simplifiée
-        $this->metadata['source_version'] = $options['source_version'] ?? null;
-        $this->metadata['target_version'] = $options['target_version'] ?? null;
-        $this->metadata['migration_source'] = $options['migration_source'] ?? 'command_line';
+        // Déléguer au service de session
+        $this->sessionService->setMigrationOptions($options);
+
+        // Synchroniser avec metadata local
+        $sessionData = $this->sessionService->getSessionData();
+        $this->metadata = array_merge($this->metadata, $sessionData);
 
         return $this;
     }
@@ -108,6 +98,10 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function setDryRun(bool $isDryRun): self
     {
+        // Déléguer au service de session
+        $this->sessionService->setDryRun($isDryRun);
+
+        // Synchroniser avec metadata local
         $this->metadata['dry_run'] = $isDryRun;
 
         return $this;
@@ -118,13 +112,13 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function completeMigration(): self
     {
-        $this->metadata['completed_at'] = Carbon::now()->toIso8601String();
+        // Déléguer au service de session
+        $this->sessionService->completeSession();
 
-        if ($this->metadata['started_at']) {
-            $start = Carbon::parse($this->metadata['started_at']);
-            $end = Carbon::parse($this->metadata['completed_at']);
-            $this->metadata['duration'] = $start->diffInSeconds($end);
-        }
+        // Synchroniser avec metadata local
+        $sessionData = $this->sessionService->getSessionData();
+        $this->metadata['completed_at'] = $sessionData['completed_at'] ?? null;
+        $this->metadata['duration'] = $sessionData['duration'] ?? null;
 
         return $this;
     }
@@ -134,9 +128,14 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function addBackup(array $backupInfo): self
     {
-        $this->metadata['backup_files'][] = $backupInfo;
-        $this->metadata['backup_count'] = \count($this->metadata['backup_files']);
-        $this->metadata['backup_size'] += $backupInfo['size'] ?? 0;
+        // Déléguer au service de résultats
+        $this->resultsService->addBackup($backupInfo);
+
+        // Synchroniser avec metadata local
+        $backups = $this->resultsService->getBackups();
+        $this->metadata['backup_files'] = $backups;
+        $this->metadata['backup_count'] = \count($backups);
+        $this->metadata['backup_size'] = array_sum(array_column($backups, 'size'));
 
         return $this;
     }
@@ -146,12 +145,16 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function storeMigrationResults(array $results, array $stats, array $enrichedWarnings = []): self
     {
-        // === RESULTS (direct access) ===
-        $this->metadata['total_files'] = $stats['total_files'] ?? 0;
-        $this->metadata['modified_files'] = $stats['modified_files'] ?? 0;
+        // Déléguer au service de résultats
+        $this->resultsService->storeResults($results, $stats, $enrichedWarnings);
+
+        // Synchroniser avec metadata local
+        $resultsData = $this->resultsService->getResults();
+        $this->metadata['total_files'] = $resultsData['total_files'] ?? 0;
+        $this->metadata['modified_files'] = $resultsData['modified_files'] ?? 0;
         $this->metadata['total_changes'] = $stats['total_changes'] ?? 0;
-        $this->metadata['warnings'] = $stats['warnings'] ?? 0;
-        $this->metadata['errors'] = $stats['errors'] ?? 0;
+        $this->metadata['warnings'] = \count($resultsData['warnings'] ?? []);
+        $this->metadata['errors'] = \count($resultsData['errors'] ?? []);
         $this->metadata['assets_migrated'] = $stats['assets_migrated'] ?? 0;
         $this->metadata['icons_migrated'] = $stats['icons_migrated'] ?? 0;
         $this->metadata['migration_success'] = $stats['migration_success'] ?? true;
@@ -180,6 +183,9 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function getMigrationResults(): array
     {
+        // Déléguer au service de résultats pour la structure principale
+        // Note: $resultsData disponible si besoin pour enrichir la structure
+
         // Reconstituer la structure attendue pour compatibilité
         return [
             'summary' => [
@@ -204,6 +210,9 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function addCustomData(string $key, mixed $value): self
     {
+        // Déléguer au service de résultats pour les données custom
+        $this->resultsService->addCustomData($key, $value);
+
         // Mapper les données vers la nouvelle structure
         if ($key === 'command_options') {
             $this->metadata['command_options'] = $value;
@@ -276,15 +285,8 @@ class MetadataManager implements MetadataManagerInterface
             $filePath = $migrationDir.'/metadata.json';
         }
 
-        $directory = \dirname($filePath);
-
-        if (! File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
-
-        File::put($filePath, json_encode($this->metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-        return $filePath;
+        // Déléguer au service de stockage
+        return $this->storageService->saveToFile($this->metadata, $filePath);
     }
 
     /**
@@ -292,10 +294,8 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function loadFromFile(string $filePath): self
     {
-        if (File::exists($filePath)) {
-            $content = File::get($filePath);
-            $this->metadata = json_decode($content, true) ?? [];
-        }
+        // Déléguer au service de stockage
+        $this->metadata = $this->storageService->loadFromFile($filePath);
 
         return $this;
     }

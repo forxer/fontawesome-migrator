@@ -81,7 +81,6 @@ class AssetMigrator
      */
     protected function migratePackageJsonAssets(string $content): string
     {
-        $this->config->isProLicense();
         $replacements = $this->replacementService->getPackageJsonReplacements();
 
         return $this->replacementService->applyReplacements($content, $replacements);

@@ -27,19 +27,13 @@ class IconReplacer
     {
         $results = [];
 
-        foreach ($files as $filePath) {
-            // Gérer les deux formats possibles (string ou array)
-            if (\is_array($filePath)) {
-                $actualPath = $filePath['path'];
-                $relativePath = $filePath['relative_path'] ?? basename((string) $actualPath);
-            } else {
-                $actualPath = $filePath;
-                $relativePath = basename((string) $filePath);
-            }
+        foreach ($files as $fileInfo) {
+            $actualPath = $fileInfo['path'];
+            $relativePath = $fileInfo['relative_path'] ?? basename((string) $actualPath);
 
             $result = $this->processFile($actualPath, $isDryRun);
-            $result['file'] = $actualPath;  // Garder le chemin complet
-            $result['relative_path'] = $relativePath;  // Ajouter le chemin relatif séparément
+            $result['file'] = $actualPath;
+            $result['relative_path'] = $relativePath;
 
             $results[] = $result;
         }
