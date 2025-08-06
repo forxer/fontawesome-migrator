@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\File;
  */
 class TestsController extends Controller
 {
+    public function __construct(
+        private readonly MigrationVersionManager $versionManager
+    ) {}
+
     /**
      * Afficher la page d'index des tests
      */
@@ -26,8 +30,7 @@ class TestsController extends Controller
         $backupStats = $this->getBackupStats();
 
         // Ajouter les informations de migration multi-versions
-        $versionManager = new MigrationVersionManager();
-        $supportedMigrations = $versionManager->getSupportedMigrations();
+        $supportedMigrations = $this->versionManager->getSupportedMigrations();
 
         return view('fontawesome-migrator::tests.index', [
             'sessions' => $sessions,

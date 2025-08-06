@@ -19,15 +19,11 @@ class MigrationVersionManager
 
     private array $versionMappers = [];
 
-    private readonly ConfigurationLoader $configLoader;
-
-    private readonly FontAwesomePatternService $patternService;
-
-    public function __construct(?ConfigurationLoader $configLoader = null, ?FontAwesomePatternService $patternService = null)
-    {
+    public function __construct(
+        private readonly ConfigurationLoader $configLoader,
+        private readonly FontAwesomePatternService $patternService,
+    ) {
         $this->config = config('fontawesome-migrator', []);
-        $this->configLoader = $configLoader ?? new ConfigurationLoader();
-        $this->patternService = $patternService ?? new FontAwesomePatternService();
     }
 
     /**

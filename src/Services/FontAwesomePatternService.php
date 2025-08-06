@@ -12,12 +12,9 @@ use Exception;
  */
 class FontAwesomePatternService
 {
-    private readonly ConfigurationLoader $configLoader;
-
-    public function __construct(?ConfigurationLoader $configLoader = null)
-    {
-        $this->configLoader = $configLoader ?? new ConfigurationLoader();
-    }
+    public function __construct(
+        private readonly ConfigurationLoader $configLoader,
+    ) {}
 
     /**
      * Obtenir les patterns de détection pour une version spécifique

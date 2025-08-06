@@ -27,11 +27,10 @@ class FontAwesome6To7Mapper implements VersionMapperInterface
 
     private array $alternatives;
 
-    private readonly ConfigurationLoader $configLoader;
-
-    public function __construct(private array $config = [], ?ConfigurationLoader $configLoader = null)
-    {
-        $this->configLoader = $configLoader ?? new ConfigurationLoader();
+    public function __construct(
+        private array $config,
+        private readonly ConfigurationLoader $configLoader,
+    ) {
         $this->loadMappings();
     }
 

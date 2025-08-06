@@ -13,15 +13,12 @@ use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
-use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\AssetReplacementService;
 use FontAwesome\Migrator\Services\BackupManager;
 use FontAwesome\Migrator\Services\ConfigurationLoader;
 use FontAwesome\Migrator\Services\FileScanner;
 use FontAwesome\Migrator\Services\FontAwesomePatternService;
-use FontAwesome\Migrator\Services\IconReplacer;
 use FontAwesome\Migrator\Services\MetadataManager;
-use FontAwesome\Migrator\Services\MigrationReporter;
 use FontAwesome\Migrator\Services\MigrationVersionManager;
 use FontAwesome\Migrator\Support\ConfigHelper;
 use FontAwesome\Migrator\View\Components\PageHeader;
@@ -107,12 +104,8 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerBindings(): void
     {
-        // === Interfaces Core ===
-
         // Configuration en singleton
         $this->app->singleton(ConfigurationInterface::class, ConfigHelper::class);
-
-        // === Services singleton (état partagé) ===
 
         // MetadataManager en singleton pour partager la session
         $this->app->singleton(MetadataManagerInterface::class, MetadataManager::class);
@@ -125,10 +118,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(BackupManagerInterface::class, BackupManager::class);
         $this->app->singleton(BackupManager::class, BackupManager::class);
 
-        // === Services avec injection automatique ===
-
-        // ConfigurationLoader - pas de dépendances
-        $this->app->bind(ConfigurationLoader::class);
+        // ConfigurationLoader en singleton (chemin de configuration par défaut)
+        $this->app->singleton(ConfigurationLoader::class, function (): ConfigurationLoader {
+            return new ConfigurationLoader(); // Utilise le chemin par défaut
+        });
 
         // FontAwesomePatternService en singleton pour réutiliser les patterns
         $this->app->singleton(FontAwesomePatternService::class);
@@ -138,22 +131,6 @@ class ServiceProvider extends BaseServiceProvider
 
         // FileScanner avec interface
         $this->app->bind(FileScannerInterface::class, FileScanner::class);
-        $this->app->bind(FileScanner::class, FileScanner::class);
-
-        // AssetMigrator
-        $this->app->bind(AssetMigrator::class, AssetMigrator::class);
-
-        // PackageVersionService - service statique, pas besoin de binding
-
-        // === Services avec dépendances spécifiques ===
-
-        // MigrationReporter avec interfaces
-        $this->app->bind(MigrationReporter::class, MigrationReporter::class);
-
-        // IconReplacer avec injection automatique
-        $this->app->bind(IconReplacer::class, IconReplacer::class);
-
-        // === Interface bindings ===
 
         // Liaison pour VersionMapperInterface - utiliser FA5→6 par défaut
         $this->app->bind(
