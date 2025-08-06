@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator\View\Components;
 
 use Illuminate\View\Component;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator;
 
 use Carbon\Carbon;
@@ -125,6 +127,12 @@ class ServiceProvider extends BaseServiceProvider
 
         // ConfigurationLoader - pas de dépendances
         $this->app->bind(ConfigurationLoader::class);
+
+        // FontAwesomePatternService en singleton pour réutiliser les patterns
+        $this->app->singleton(\FontAwesome\Migrator\Services\FontAwesomePatternService::class);
+
+        // AssetReplacementService en singleton pour réutiliser les configurations
+        $this->app->singleton(\FontAwesome\Migrator\Services\AssetReplacementService::class);
 
         // FileScanner avec interface
         $this->app->bind(FileScannerInterface::class, FileScanner::class);

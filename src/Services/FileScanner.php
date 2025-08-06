@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator\Services;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
@@ -11,7 +13,10 @@ use Symfony\Component\Finder\Finder;
 class FileScanner implements FileScannerInterface
 {
     public function __construct(
-        protected ConfigurationInterface $config
+        protected ConfigurationInterface $config,
+        protected MigrationVersionManager $versionManager,
+        protected ConfigurationLoader $configLoader,
+        protected FontAwesomePatternService $patternService
     ) {}
 
     /**
@@ -159,98 +164,98 @@ class FileScanner implements FileScannerInterface
         }
 
         $content = File::get($filePath);
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+        // Détecter la version FontAwesome via le PatternService centralisé
+        $detectedVersion = $this->patternService->detectVersion($content);
+
+        if ($detectedVersion === 'unknown') {
+            return [
+                'icons' => [],
+                'content' => $content,
+                'error' => null,
+                'detected_version' => 'unknown',
+            ];
+        }
+
+        // Utiliser la configuration existante pour analyser les icônes
+        $icons = $this->extractIconsUsingConfiguration($content, $detectedVersion);
 
         return [
-            'icons' => $this->extractFontAwesome5Icons($content, $extension),
+            'icons' => $icons,
             'content' => $content,
             'error' => null,
+            'detected_version' => $detectedVersion,
         ];
     }
 
     /**
-     * Extraire les icônes Font Awesome 5 d'un contenu
+     * Extraire les icônes FontAwesome en utilisant la configuration existante
      */
-    protected function extractFontAwesome5Icons(string $content, string $extension): array
+    protected function extractIconsUsingConfiguration(string $content, string $version): array
     {
         $icons = [];
-        $patterns = $this->getFontAwesome5Patterns($extension);
 
-        foreach ($patterns as $pattern) {
-            if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
-                foreach ($matches as $match) {
-                    $fullMatch = $match[0][0];
-                    $offset = $match[0][1];
+        try {
+            // Utiliser le PatternService centralisé pour extraire les icônes
+            $versionIcons = $this->patternService->extractVersionIcons($content, $version);
 
-                    // Extraire le style et le nom de l'icône
-                    $iconData = $this->parseIconString($fullMatch, $extension);
+            // Enrichir avec les données de mapping si une version cible existe
+            $targetVersion = $this->getNextVersion($version);
 
-                    if ($iconData !== null && $iconData !== []) {
-                        $iconData['full_match'] = $fullMatch;
-                        $iconData['offset'] = $offset;
-                        $iconData['line'] = substr_count(substr($content, 0, $offset), "\n") + 1;
+            if ($targetVersion) {
+                $styleMappings = $this->configLoader->loadStyleMappings($version, $targetVersion);
 
+                foreach ($versionIcons as $iconData) {
+                    $parsedIcon = $this->patternService->parseIconWithStyleMappings($iconData['full_match'], $styleMappings);
+
+                    if ($parsedIcon !== null) {
+                        $icons[] = array_merge($iconData, $parsedIcon);
+                    } else {
                         $icons[] = $iconData;
                     }
                 }
+            } else {
+                $icons = $versionIcons;
             }
+        } catch (\Exception) {
+            // Si erreur de configuration, utiliser fallback
+            return [];
         }
 
-        // Supprimer les doublons
         return array_unique($icons, SORT_REGULAR);
     }
 
     /**
-     * Obtenir les patterns regex pour Font Awesome 5 selon le type de fichier
+     * Obtenir la version cible pour une version source donnée
      */
-    protected function getFontAwesome5Patterns(string $extension): array
+    protected function getNextVersion(string $version): ?string
     {
-        $basePatterns = [
-            // Classes CSS classiques (fa[s|r|l|b|d] fa-icon-name)
-            '/\b(fa[slrbad])\s+(fa-[a-zA-Z0-9-]+)\b/',
-
-            // Classes avec préfixes complets
-            '/\b(fas|far|fal|fab|fad)\s+(fa-[a-zA-Z0-9-]+)\b/',
-
-            // Dans les attributs class
-            '/class=["\']([^"\']*\b(?:fa[slrbad]|fas|far|fal|fab|fad)\s+fa-[a-zA-Z0-9-]+[^"\']*)["\']/',
-        ];
-
-        return match ($extension) {
-            'vue', 'js', 'ts' => array_merge($basePatterns, [
-                // Font Awesome Vue/React components
-                '/<FontAwesome[^>]*icon=["\']([^"\']+)["\'][^>]*>/',
-                '/icon:\s*["\']([^"\']+)["\']/',
-            ]),
-            'php', 'blade.php' => array_merge($basePatterns, [
-                // Blade/PHP avec échappement
-                '/\{\{\s*["\']([^"\']*(?:fa[slrbad]|fas|far|fal|fab|fad)\s+fa-[a-zA-Z0-9-]+[^"\']*)["\']/',
-            ]),
-            default => $basePatterns,
+        return match ($version) {
+            '4' => '5',
+            '5' => '6',
+            '6' => '7',
+            default => null,
         };
     }
 
     /**
-     * Parser une chaîne d'icône pour extraire le style et le nom
+     * Vérifier si un fichier contient des icônes Font Awesome 5 (compatibilité interface)
      */
-    protected function parseIconString(string $iconString, string $extension): ?array
+    public function hasFontAwesome5Icons(string $filePath): bool
     {
-        // Pattern pour capturer style et nom d'icône
-        if (preg_match('/\b(fa[slrbad]|fas|far|fal|fab|fad)\s+(fa-[a-zA-Z0-9-]+)\b/', $iconString, $matches)) {
-            return [
-                'style' => $matches[1],
-                'name' => $matches[2],
-                'original' => $iconString,
-            ];
+        if (! File::exists($filePath)) {
+            return false;
         }
 
-        return null;
+        $content = File::get($filePath);
+
+        return $this->patternService->hasVersionIcons($content, '5');
     }
 
     /**
-     * Vérifier si un fichier contient des icônes Font Awesome 5
+     * Vérifier si un fichier contient des icônes Font Awesome (générique)
      */
-    public function hasFontAwesome5Icons(string $filePath): bool
+    public function hasFontAwesomeIcons(string $filePath): bool
     {
         $analysis = $this->analyzeFile($filePath);
 

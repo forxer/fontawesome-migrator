@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator\Services;
 
 use Exception;
@@ -79,7 +81,7 @@ class IconReplacer
             $icons = collect($icons)->sortByDesc('offset')->values()->all();
 
             foreach ($icons as $icon) {
-                $replacement = $this->getReplacement($icon);
+                $replacement = $this->getIconReplacement($icon);
 
                 if ($replacement['warning']) {
                     $warnings[] = $replacement['warning'];
@@ -170,7 +172,7 @@ class IconReplacer
     /**
      * Obtenir le remplacement pour une icône donnée
      */
-    protected function getReplacement(array $icon): array
+    protected function getIconReplacement(array $icon): array
     {
         $style = $icon['style'];
         $iconName = $icon['name'];

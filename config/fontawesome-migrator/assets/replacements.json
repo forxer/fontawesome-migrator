@@ -1,0 +1,122 @@
+{
+  "description": "Configuration des remplacements d'assets FontAwesome pour la migration",
+  "version": "5-to-6",
+  "replacements": {
+    "stylesheets": {
+      "free": {
+        "cdn_urls": {
+          "font-awesome/5.": "font-awesome/6.",
+          "/font-awesome/5.": "/font-awesome/6.",
+          "https://use.fontawesome.com/releases/v5.": "https://use.fontawesome.com/releases/v6.",
+          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.",
+          "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.",
+          "https://maxcdn.bootstrapcdn.com/font-awesome/5.": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6."
+        },
+        "local_paths": {
+          "/fontawesome-free-5.": "/fontawesome-free-6.",
+          "/font-awesome-5.": "/font-awesome-6.",
+          "node_modules/@fortawesome/fontawesome-free-": "node_modules/@fortawesome/fontawesome-free/"
+        }
+      },
+      "pro": {
+        "cdn_urls": {
+          "https://pro.fontawesome.com/releases/v5.": "https://pro.fontawesome.com/releases/v6."
+        },
+        "local_paths": {
+          "node_modules/@fortawesome/fontawesome-pro-": "node_modules/@fortawesome/fontawesome-pro/",
+          "/fontawesome-pro-5.": "/fontawesome-pro-6."
+        }
+      }
+    },
+    "javascript": {
+      "free": {
+        "es6_imports": {
+          "from \"@fortawesome/fontawesome-free-solid\"": "from \"@fortawesome/free-solid-svg-icons\"",
+          "from \"@fortawesome/fontawesome-free-regular\"": "from \"@fortawesome/free-regular-svg-icons\"",
+          "from \"@fortawesome/fontawesome-free-brands\"": "from \"@fortawesome/free-brands-svg-icons\""
+        },
+        "dynamic_imports": {
+          "import(\"@fortawesome/fontawesome-free-solid\")": "import(\"@fortawesome/free-solid-svg-icons\")",
+          "import(\"@fortawesome/fontawesome-free-regular\")": "import(\"@fortawesome/free-regular-svg-icons\")",
+          "import(\"@fortawesome/fontawesome-free-brands\")": "import(\"@fortawesome/free-brands-svg-icons\")"
+        },
+        "commonjs": {
+          "require(\"@fortawesome/fontawesome-free-solid\")": "require(\"@fortawesome/free-solid-svg-icons\")",
+          "require(\"@fortawesome/fontawesome-free-regular\")": "require(\"@fortawesome/free-regular-svg-icons\")",
+          "require(\"@fortawesome/fontawesome-free-brands\")": "require(\"@fortawesome/free-brands-svg-icons\")"
+        },
+        "cdn_urls": {
+          "https://use.fontawesome.com/releases/v5.": "https://use.fontawesome.com/releases/v6."
+        }
+      },
+      "pro": {
+        "es6_imports": {
+          "from \"@fortawesome/fontawesome-pro-solid\"": "from \"@fortawesome/pro-solid-svg-icons\"",
+          "from \"@fortawesome/fontawesome-pro-regular\"": "from \"@fortawesome/pro-regular-svg-icons\"",
+          "from \"@fortawesome/fontawesome-pro-light\"": "from \"@fortawesome/pro-light-svg-icons\"",
+          "from \"@fortawesome/fontawesome-pro-duotone\"": "from \"@fortawesome/pro-duotone-svg-icons\"",
+          "from \"@fortawesome/fontawesome-pro-thin\"": "from \"@fortawesome/pro-thin-svg-icons\"",
+          "from \"@fortawesome/fontawesome-pro-brands\"": "from \"@fortawesome/free-brands-svg-icons\""
+        },
+        "dynamic_imports": {
+          "import(\"@fortawesome/fontawesome-pro-solid\")": "import(\"@fortawesome/pro-solid-svg-icons\")",
+          "import(\"@fortawesome/fontawesome-pro-regular\")": "import(\"@fortawesome/pro-regular-svg-icons\")",
+          "import(\"@fortawesome/fontawesome-pro-light\")": "import(\"@fortawesome/pro-light-svg-icons\")",
+          "import(\"@fortawesome/fontawesome-pro-duotone\")": "import(\"@fortawesome/pro-duotone-svg-icons\")",
+          "import(\"@fortawesome/fontawesome-pro-thin\")": "import(\"@fortawesome/pro-thin-svg-icons\")"
+        },
+        "commonjs": {
+          "require(\"@fortawesome/fontawesome-pro-solid\")": "require(\"@fortawesome/pro-solid-svg-icons\")",
+          "require(\"@fortawesome/fontawesome-pro-regular\")": "require(\"@fortawesome/pro-regular-svg-icons\")",
+          "require(\"@fortawesome/fontawesome-pro-light\")": "require(\"@fortawesome/pro-light-svg-icons\")",
+          "require(\"@fortawesome/fontawesome-pro-duotone\")": "require(\"@fortawesome/pro-duotone-svg-icons\")",
+          "require(\"@fortawesome/fontawesome-pro-thin\")": "require(\"@fortawesome/pro-thin-svg-icons\")"
+        }
+      }
+    },
+    "html": {
+      "free": {
+        "cdn_links": {
+          "href=\"https://use.fontawesome.com/releases/v5.": "href=\"https://use.fontawesome.com/releases/v6.",
+          "href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.": "href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.",
+          "src=\"https://use.fontawesome.com/releases/v5.": "src=\"https://use.fontawesome.com/releases/v6."
+        },
+        "local_paths": {
+          "href=\"/fontawesome-free-5.": "href=\"/fontawesome-free-6.",
+          "src=\"/fontawesome-free-5.": "src=\"/fontawesome-free-6."
+        }
+      },
+      "pro": {
+        "cdn_links": {
+          "href=\"https://pro.fontawesome.com/releases/v5.": "href=\"https://pro.fontawesome.com/releases/v6.",
+          "src=\"https://pro.fontawesome.com/releases/v5.": "src=\"https://pro.fontawesome.com/releases/v6."
+        }
+      }
+    },
+    "package_json": {
+      "dependencies": {
+        "\"@fortawesome/fontawesome-free\": \"^5.": "\"@fortawesome/fontawesome-free\": \"^6.",
+        "\"@fortawesome/fontawesome-pro\": \"^5.": "\"@fortawesome/fontawesome-pro\": \"^6.",
+        "\"@fortawesome/fontawesome-svg-core\": \"^1.": "\"@fortawesome/fontawesome-svg-core\": \"^6."
+      }
+    }
+  },
+  "excluded_patterns": [
+    "https://kit.fontawesome.com/",
+    "@import \"~@fortawesome/fontawesome-free/scss/fontawesome\";",
+    "@import \"~@fortawesome/fontawesome-free/scss/solid\";",
+    "@import \"~@fortawesome/fontawesome-free/scss/regular\";",
+    "@import \"~@fortawesome/fontawesome-free/scss/brands\";",
+    "from \"@fortawesome/fontawesome-free/js/all\"",
+    "from \"@fortawesome/fontawesome-free/js/fontawesome\"",
+    "@fortawesome/fontawesome-free/js/brands.js",
+    "@fortawesome/fontawesome-free/js/solid.js",
+    "@fortawesome/fontawesome-free/js/regular.js",
+    "@fortawesome/fontawesome-free/js/fontawesome.js"
+  ],
+  "notes": {
+    "excluded_patterns": "Ces patterns sont exclus car ils restent identiques entre FA5 et FA6",
+    "kit_urls": "Les URLs de kit FontAwesome ne changent pas",
+    "scss_imports": "Les imports SCSS restent identiques en FA6"
+  }
+}

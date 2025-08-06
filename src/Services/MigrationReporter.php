@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator\Services;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;

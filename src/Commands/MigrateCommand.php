@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator\Commands;
 
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
@@ -323,6 +325,7 @@ class MigrateCommand extends Command
 
         // Sauvegarder les métadonnées dans le répertoire de session
         $this->metadata->saveToFile();
+
         $sessionDir = $this->metadata->getMigrationDirectory();
         $this->line('📋 Session sauvegardée : '.basename($sessionDir));
 

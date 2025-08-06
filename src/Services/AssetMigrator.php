@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FontAwesome\Migrator\Services;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
@@ -8,7 +10,8 @@ use Illuminate\Support\Facades\File;
 class AssetMigrator
 {
     public function __construct(
-        protected ConfigurationInterface $config
+        protected ConfigurationInterface $config,
+        protected AssetReplacementService $replacementService,
     ) {}
 
     /**
@@ -35,54 +38,9 @@ class AssetMigrator
     protected function migrateStylesheetAssets(string $content): string
     {
         $isPro = $this->config->isProLicense();
+        $replacements = $this->replacementService->getStylesheetReplacements($isPro);
 
-        $replacements = [
-            // CDN URLs - Free (patterns plus spécifiques)
-            'font-awesome/5.' => 'font-awesome/6.',
-            '/font-awesome/5.' => '/font-awesome/6.',
-            'https://use.fontawesome.com/releases/v5.' => 'https://use.fontawesome.com/releases/v6.',
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.',
-            'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.' => 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.',
-            'https://maxcdn.bootstrapcdn.com/font-awesome/5.' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.',
-
-            // Local asset paths
-            '/fontawesome-free-5.' => '/fontawesome-free-6.',
-            '/font-awesome-5.' => '/font-awesome-6.',
-
-            // SCSS imports - Free
-            '@import "~@fortawesome/fontawesome-free/scss/fontawesome";' => '@import "~@fortawesome/fontawesome-free/scss/fontawesome";',
-            '@import "~@fortawesome/fontawesome-free/scss/solid";' => '@import "~@fortawesome/fontawesome-free/scss/solid";',
-            '@import "~@fortawesome/fontawesome-free/scss/regular";' => '@import "~@fortawesome/fontawesome-free/scss/regular";',
-            '@import "~@fortawesome/fontawesome-free/scss/brands";' => '@import "~@fortawesome/fontawesome-free/scss/brands";',
-
-            // Node modules paths
-            'node_modules/@fortawesome/fontawesome-free-' => 'node_modules/@fortawesome/fontawesome-free/',
-        ];
-
-        // Ajout des remplacements Pro si activé
-        if ($isPro) {
-            $proReplacements = [
-                // Pro CDN (si existe)
-                'https://pro.fontawesome.com/releases/v5.' => 'https://pro.fontawesome.com/releases/v6.',
-
-                // Pro SCSS imports
-                '@import "~@fortawesome/fontawesome-pro/scss/fontawesome";' => '@import "~@fortawesome/fontawesome-pro/scss/fontawesome";',
-                '@import "~@fortawesome/fontawesome-pro/scss/solid";' => '@import "~@fortawesome/fontawesome-pro/scss/solid";',
-                '@import "~@fortawesome/fontawesome-pro/scss/regular";' => '@import "~@fortawesome/fontawesome-pro/scss/regular";',
-                '@import "~@fortawesome/fontawesome-pro/scss/light";' => '@import "~@fortawesome/fontawesome-pro/scss/light";',
-                '@import "~@fortawesome/fontawesome-pro/scss/duotone";' => '@import "~@fortawesome/fontawesome-pro/scss/duotone";',
-                '@import "~@fortawesome/fontawesome-pro/scss/thin";' => '@import "~@fortawesome/fontawesome-pro/scss/thin";',
-                '@import "~@fortawesome/fontawesome-pro/scss/brands";' => '@import "~@fortawesome/fontawesome-pro/scss/brands";',
-
-                // Pro package paths
-                'node_modules/@fortawesome/fontawesome-pro-' => 'node_modules/@fortawesome/fontawesome-pro/',
-                '/fontawesome-pro-5.' => '/fontawesome-pro-6.',
-            ];
-
-            $replacements = array_merge($replacements, $proReplacements);
-        }
-
-        return $this->applyReplacements($content, $replacements);
+        return $this->replacementService->applyReplacements($content, $replacements);
     }
 
     /**
@@ -91,96 +49,9 @@ class AssetMigrator
     protected function migrateJavaScriptAssets(string $content): string
     {
         $isPro = $this->config->isProLicense();
+        $replacements = $this->replacementService->getJavaScriptReplacements($isPro);
 
-        $replacements = [
-            // Package managers - Free packages
-            'from "@fortawesome/fontawesome-free-solid"' => 'from "@fortawesome/free-solid-svg-icons"',
-            'from "@fortawesome/fontawesome-free-regular"' => 'from "@fortawesome/free-regular-svg-icons"',
-            'from "@fortawesome/fontawesome-free-brands"' => 'from "@fortawesome/free-brands-svg-icons"',
-            'from "@fortawesome/fontawesome-free/js/all"' => 'from "@fortawesome/fontawesome-free/js/all"',
-            'from "@fortawesome/fontawesome-free/js/fontawesome"' => 'from "@fortawesome/fontawesome-free/js/fontawesome"',
-
-            // Free webpack.mix.js et autres bundlers - Fichiers JS individuels
-            '@fortawesome/fontawesome-free/js/brands.js' => '@fortawesome/fontawesome-free/js/brands.js',
-            '@fortawesome/fontawesome-free/js/solid.js' => '@fortawesome/fontawesome-free/js/solid.js',
-            '@fortawesome/fontawesome-free/js/regular.js' => '@fortawesome/fontawesome-free/js/regular.js',
-            '@fortawesome/fontawesome-free/js/fontawesome.js' => '@fortawesome/fontawesome-free/js/fontawesome.js',
-
-            // Free webpack.mix.js avec concaténation de variables
-            "'@fortawesome/fontawesome-free/js/brands.js'" => "'@fortawesome/fontawesome-free/js/brands.js'",
-            "'@fortawesome/fontawesome-free/js/solid.js'" => "'@fortawesome/fontawesome-free/js/solid.js'",
-            "'@fortawesome/fontawesome-free/js/regular.js'" => "'@fortawesome/fontawesome-free/js/regular.js'",
-            "'@fortawesome/fontawesome-free/js/fontawesome.js'" => "'@fortawesome/fontawesome-free/js/fontawesome.js'",
-
-            // Dynamic imports
-            'import("@fortawesome/fontawesome-free-solid")' => 'import("@fortawesome/free-solid-svg-icons")',
-            'import("@fortawesome/fontawesome-free-regular")' => 'import("@fortawesome/free-regular-svg-icons")',
-            'import("@fortawesome/fontawesome-free-brands")' => 'import("@fortawesome/free-brands-svg-icons")',
-
-            // CommonJS require
-            'require("@fortawesome/fontawesome-free-solid")' => 'require("@fortawesome/free-solid-svg-icons")',
-            'require("@fortawesome/fontawesome-free-regular")' => 'require("@fortawesome/free-regular-svg-icons")',
-            'require("@fortawesome/fontawesome-free-brands")' => 'require("@fortawesome/free-brands-svg-icons")',
-            'require("@fortawesome/fontawesome-free/js/all")' => 'require("@fortawesome/fontawesome-free/js/all")',
-
-            // CDN imports
-            'https://use.fontawesome.com/releases/v5.' => 'https://use.fontawesome.com/releases/v6.',
-            'https://kit.fontawesome.com/' => 'https://kit.fontawesome.com/', // Kit URLs restent identiques
-        ];
-
-        // Ajout des remplacements Pro si activé
-        if ($isPro) {
-            $proReplacements = [
-                // Pro packages ES6 imports
-                'from "@fortawesome/fontawesome-pro-solid"' => 'from "@fortawesome/pro-solid-svg-icons"',
-                'from "@fortawesome/fontawesome-pro-regular"' => 'from "@fortawesome/pro-regular-svg-icons"',
-                'from "@fortawesome/fontawesome-pro-light"' => 'from "@fortawesome/pro-light-svg-icons"',
-                'from "@fortawesome/fontawesome-pro-duotone"' => 'from "@fortawesome/pro-duotone-svg-icons"',
-                'from "@fortawesome/fontawesome-pro-thin"' => 'from "@fortawesome/pro-thin-svg-icons"',
-                'from "@fortawesome/fontawesome-pro-brands"' => 'from "@fortawesome/free-brands-svg-icons"', // Brands reste free
-                'from "@fortawesome/fontawesome-pro/js/all"' => 'from "@fortawesome/fontawesome-pro/js/all"',
-
-                // Pro webpack.mix.js et autres bundlers - Fichiers JS individuels
-                '@fortawesome/fontawesome-pro/js/brands.js' => '@fortawesome/fontawesome-pro/js/brands.js', // Brands reste identique
-                '@fortawesome/fontawesome-pro/js/solid.js' => '@fortawesome/fontawesome-pro/js/solid.js',
-                '@fortawesome/fontawesome-pro/js/regular.js' => '@fortawesome/fontawesome-pro/js/regular.js',
-                '@fortawesome/fontawesome-pro/js/light.js' => '@fortawesome/fontawesome-pro/js/light.js',
-                '@fortawesome/fontawesome-pro/js/duotone.js' => '@fortawesome/fontawesome-pro/js/duotone.js',
-                '@fortawesome/fontawesome-pro/js/thin.js' => '@fortawesome/fontawesome-pro/js/thin.js',
-                '@fortawesome/fontawesome-pro/js/fontawesome.js' => '@fortawesome/fontawesome-pro/js/fontawesome.js',
-
-                // Pro webpack.mix.js avec concaténation de variables (vendor + '@fortawesome/...')
-                "'@fortawesome/fontawesome-pro/js/brands.js'" => "'@fortawesome/fontawesome-pro/js/brands.js'",
-                "'@fortawesome/fontawesome-pro/js/solid.js'" => "'@fortawesome/fontawesome-pro/js/solid.js'",
-                "'@fortawesome/fontawesome-pro/js/regular.js'" => "'@fortawesome/fontawesome-pro/js/regular.js'",
-                "'@fortawesome/fontawesome-pro/js/light.js'" => "'@fortawesome/fontawesome-pro/js/light.js'",
-                "'@fortawesome/fontawesome-pro/js/duotone.js'" => "'@fortawesome/fontawesome-pro/js/duotone.js'",
-                "'@fortawesome/fontawesome-pro/js/thin.js'" => "'@fortawesome/fontawesome-pro/js/thin.js'",
-                "'@fortawesome/fontawesome-pro/js/fontawesome.js'" => "'@fortawesome/fontawesome-pro/js/fontawesome.js'",
-
-                // Pro dynamic imports
-                'import("@fortawesome/fontawesome-pro-solid")' => 'import("@fortawesome/pro-solid-svg-icons")',
-                'import("@fortawesome/fontawesome-pro-regular")' => 'import("@fortawesome/pro-regular-svg-icons")',
-                'import("@fortawesome/fontawesome-pro-light")' => 'import("@fortawesome/pro-light-svg-icons")',
-                'import("@fortawesome/fontawesome-pro-duotone")' => 'import("@fortawesome/pro-duotone-svg-icons")',
-                'import("@fortawesome/fontawesome-pro-thin")' => 'import("@fortawesome/pro-thin-svg-icons")',
-
-                // Pro CommonJS require
-                'require("@fortawesome/fontawesome-pro-solid")' => 'require("@fortawesome/pro-solid-svg-icons")',
-                'require("@fortawesome/fontawesome-pro-regular")' => 'require("@fortawesome/pro-regular-svg-icons")',
-                'require("@fortawesome/fontawesome-pro-light")' => 'require("@fortawesome/pro-light-svg-icons")',
-                'require("@fortawesome/fontawesome-pro-duotone")' => 'require("@fortawesome/pro-duotone-svg-icons")',
-                'require("@fortawesome/fontawesome-pro-thin")' => 'require("@fortawesome/pro-thin-svg-icons")',
-                'require("@fortawesome/fontawesome-pro/js/all")' => 'require("@fortawesome/fontawesome-pro/js/all")',
-
-                // Pro CDN
-                'https://pro.fontawesome.com/releases/v5.' => 'https://pro.fontawesome.com/releases/v6.',
-            ];
-
-            $replacements = array_merge($replacements, $proReplacements);
-        }
-
-        return $this->applyReplacements($content, $replacements);
+        return $this->replacementService->applyReplacements($content, $replacements);
     }
 
     /**
@@ -189,43 +60,9 @@ class AssetMigrator
     protected function migrateHtmlAssets(string $content): string
     {
         $isPro = $this->config->isProLicense();
+        $replacements = $this->replacementService->getHtmlReplacements($isPro);
 
-        $replacements = [
-            // CDN links - Free
-            'https://use.fontawesome.com/releases/v5.' => 'https://use.fontawesome.com/releases/v6.',
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.',
-            'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.' => 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.',
-            'https://maxcdn.bootstrapcdn.com/font-awesome/5.' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.',
-
-            // Local asset references
-            '/css/fontawesome.min.css' => '/css/fontawesome.min.css',
-            '/css/all.min.css' => '/css/all.min.css',
-            '/js/fontawesome.min.js' => '/js/fontawesome.min.js',
-            '/js/all.min.js' => '/js/all.min.js',
-
-            // Asset helper functions (Laravel)
-            "asset('fontawesome-free-5" => "asset('fontawesome-free-6",
-            "asset('font-awesome-5" => "asset('font-awesome-6",
-            'public/fontawesome-free-5' => 'public/fontawesome-free-6',
-            'public/font-awesome-5' => 'public/font-awesome-6',
-        ];
-
-        // Ajout des remplacements Pro si activé
-        if ($isPro) {
-            $proReplacements = [
-                // Pro CDN links
-                'https://pro.fontawesome.com/releases/v5.' => 'https://pro.fontawesome.com/releases/v6.',
-
-                // Pro local assets
-                "asset('fontawesome-pro-5" => "asset('fontawesome-pro-6",
-                'public/fontawesome-pro-5' => 'public/fontawesome-pro-6',
-                '/fontawesome-pro-5.' => '/fontawesome-pro-6.',
-            ];
-
-            $replacements = array_merge($replacements, $proReplacements);
-        }
-
-        return $this->applyReplacements($content, $replacements);
+        return $this->replacementService->applyReplacements($content, $replacements);
     }
 
     /**
@@ -233,10 +70,10 @@ class AssetMigrator
      */
     protected function migrateVueAssets(string $content): string
     {
-        // Combiner les migrations HTML et JavaScript pour Vue
-        $content = $this->migrateHtmlAssets($content);
+        $isPro = $this->config->isProLicense();
+        $replacements = $this->replacementService->getVueReplacements($isPro);
 
-        return $this->migrateJavaScriptAssets($content);
+        return $this->replacementService->applyReplacements($content, $replacements);
     }
 
     /**
@@ -245,68 +82,9 @@ class AssetMigrator
     protected function migratePackageJsonAssets(string $content): string
     {
         $isPro = $this->config->isProLicense();
+        $replacements = $this->replacementService->getPackageJsonReplacements($isPro);
 
-        $replacements = [
-            // NPM packages - Free
-            '"@fortawesome/fontawesome-free": "^5.' => '"@fortawesome/fontawesome-free": "^6.',
-            '"@fortawesome/fontawesome-free-solid": "^5.' => '"@fortawesome/free-solid-svg-icons": "^6.',
-            '"@fortawesome/fontawesome-free-regular": "^5.' => '"@fortawesome/free-regular-svg-icons": "^6.',
-            '"@fortawesome/fontawesome-free-brands": "^5.' => '"@fortawesome/free-brands-svg-icons": "^6.',
-            '"@fortawesome/fontawesome-svg-core": "^1.' => '"@fortawesome/fontawesome-svg-core": "^6.',
-            '"@fortawesome/fontawesome-svg-core": "^5.' => '"@fortawesome/fontawesome-svg-core": "^6.',
-
-            // Vue/React FontAwesome packages
-            '"@fortawesome/vue-fontawesome": "^2.' => '"@fortawesome/vue-fontawesome": "^3.',
-            '"@fortawesome/react-fontawesome": "^0.' => '"@fortawesome/react-fontawesome": "^0.',
-
-            // Yarn/pnpm versions (sans ^)
-            '"@fortawesome/fontawesome-free": "5.' => '"@fortawesome/fontawesome-free": "6.',
-            '"@fortawesome/fontawesome-svg-core": "1.' => '"@fortawesome/fontawesome-svg-core": "6.',
-        ];
-
-        // Ajout des remplacements Pro si activé
-        if ($isPro) {
-            $proReplacements = [
-                // Pro packages
-                '"@fortawesome/fontawesome-pro": "^5.' => '"@fortawesome/fontawesome-pro": "^6.',
-                '"@fortawesome/pro-solid-svg-icons": "^5.' => '"@fortawesome/pro-solid-svg-icons": "^6.',
-                '"@fortawesome/pro-regular-svg-icons": "^5.' => '"@fortawesome/pro-regular-svg-icons": "^6.',
-                '"@fortawesome/pro-light-svg-icons": "^5.' => '"@fortawesome/pro-light-svg-icons": "^6.',
-                '"@fortawesome/pro-duotone-svg-icons": "^5.' => '"@fortawesome/pro-duotone-svg-icons": "^6.',
-                '"@fortawesome/pro-thin-svg-icons": "^5.' => '"@fortawesome/pro-thin-svg-icons": "^6.',
-
-                // Legacy Pro packages
-                '"@fortawesome/fontawesome-pro-solid": "^5.' => '"@fortawesome/pro-solid-svg-icons": "^6.',
-                '"@fortawesome/fontawesome-pro-regular": "^5.' => '"@fortawesome/pro-regular-svg-icons": "^6.',
-                '"@fortawesome/fontawesome-pro-light": "^5.' => '"@fortawesome/pro-light-svg-icons": "^6.',
-                '"@fortawesome/fontawesome-pro-duotone": "^5.' => '"@fortawesome/pro-duotone-svg-icons": "^6.',
-                '"@fortawesome/fontawesome-pro-thin": "^5.' => '"@fortawesome/pro-thin-svg-icons": "^6.',
-
-                // Sans version caret
-                '"@fortawesome/fontawesome-pro": "5.' => '"@fortawesome/fontawesome-pro": "6.',
-                '"@fortawesome/pro-solid-svg-icons": "5.' => '"@fortawesome/pro-solid-svg-icons": "6.',
-                '"@fortawesome/pro-regular-svg-icons": "5.' => '"@fortawesome/pro-regular-svg-icons": "6.',
-                '"@fortawesome/pro-light-svg-icons": "5.' => '"@fortawesome/pro-light-svg-icons": "6.',
-                '"@fortawesome/pro-duotone-svg-icons": "5.' => '"@fortawesome/pro-duotone-svg-icons": "6.',
-                '"@fortawesome/pro-thin-svg-icons": "5.' => '"@fortawesome/pro-thin-svg-icons": "6.',
-            ];
-
-            $replacements = array_merge($replacements, $proReplacements);
-        }
-
-        return $this->applyReplacements($content, $replacements);
-    }
-
-    /**
-     * Appliquer un ensemble de remplacements à un contenu
-     */
-    protected function applyReplacements(string $content, array $replacements): string
-    {
-        foreach ($replacements as $search => $replace) {
-            $content = str_replace($search, $replace, $content);
-        }
-
-        return $content;
+        return $this->replacementService->applyReplacements($content, $replacements);
     }
 
     /**

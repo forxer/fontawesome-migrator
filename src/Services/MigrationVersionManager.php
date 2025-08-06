@@ -17,14 +17,17 @@ class MigrationVersionManager
 {
     private readonly array $config;
 
-    private array $mappers = [];
+    private array $versionMappers = [];
 
     private readonly ConfigurationLoader $configLoader;
 
-    public function __construct(?ConfigurationLoader $configLoader = null)
+    private readonly FontAwesomePatternService $patternService;
+
+    public function __construct(?ConfigurationLoader $configLoader = null, ?FontAwesomePatternService $patternService = null)
     {
         $this->config = config('fontawesome-migrator', []);
         $this->configLoader = $configLoader ?? new ConfigurationLoader();
+        $this->patternService = $patternService ?? new FontAwesomePatternService();
     }
 
     /**
@@ -39,8 +42,8 @@ class MigrationVersionManager
     {
         $migrationKey = \sprintf('%sto%s', $fromVersion, $toVersion);
 
-        if (isset($this->mappers[$migrationKey])) {
-            return $this->mappers[$migrationKey];
+        if (isset($this->versionMappers[$migrationKey])) {
+            return $this->versionMappers[$migrationKey];
         }
 
         $mapperClass = $this->getMapperClassName($fromVersion, $toVersion);
@@ -52,58 +55,21 @@ class MigrationVersionManager
             );
         }
 
-        $this->mappers[$migrationKey] = new $mapperClass($this->config, $this->configLoader);
+        $this->versionMappers[$migrationKey] = new $mapperClass($this->config, $this->configLoader);
 
-        return $this->mappers[$migrationKey];
+        return $this->versionMappers[$migrationKey];
     }
 
     /**
      * Détecter automatiquement la version FontAwesome dans le contenu
+     * Délègue au FontAwesomePatternService centralisé
      *
      * @param  string  $content  Contenu à analyser
      * @return string Version détectée ("4", "5", "6", "7", "unknown")
      */
     public function detectVersion(string $content): string
     {
-        $detectionRules = [
-            '7' => [
-                '/\bfa-solid\s+fa-[a-zA-Z0-9-]+\b/',  // FA7 syntax
-                '/fontawesome\.com\/releases\/v7/',    // CDN v7
-                '/font-awesome\/7\.\d+\.\d+/',         // Package v7
-            ],
-            '6' => [
-                '/\bfa-solid\s+fa-[a-zA-Z0-9-]+\b/',  // FA6 syntax
-                '/fontawesome\.com\/releases\/v6/',    // CDN v6
-                '/font-awesome\/6\.\d+\.\d+/',         // Package v6
-                '/fa-house\b/',                        // Icône spécifique FA6
-                '/fa-magnifying-glass\b/',             // Icône spécifique FA6
-            ],
-            '5' => [
-                '/\bfas\s+fa-[a-zA-Z0-9-]+\b/',      // FA5 syntax
-                '/\bfar\s+fa-[a-zA-Z0-9-]+\b/',      // FA5 syntax
-                '/\bfal\s+fa-[a-zA-Z0-9-]+\b/',      // FA5 Pro
-                '/fontawesome\.com\/releases\/v5/',    // CDN v5
-                '/font-awesome\/5\.\d+\.\d+/',         // Package v5
-            ],
-            '4' => [
-                '/\bfa\s+fa-[a-zA-Z0-9-]+\b/',       // FA4 syntax (pas de préfixe style)
-                '/fontawesome\.com\/font-awesome-4/', // CDN v4
-                '/font-awesome\/4\.\d+\.\d+/',        // Package v4
-                '/fa-envelope-o\b/',                   // Icône spécifique FA4 (-o suffix)
-                '/fa-star-o\b/',                       // Icône spécifique FA4 (-o suffix)
-            ],
-        ];
-
-        // Tester chaque version par ordre de priorité
-        foreach ($detectionRules as $version => $patterns) {
-            foreach ($patterns as $pattern) {
-                if (preg_match($pattern, $content)) {
-                    return (string) $version;
-                }
-            }
-        }
-
-        return 'unknown';
+        return $this->patternService->detectVersion($content);
     }
 
     /**
@@ -269,7 +235,7 @@ class MigrationVersionManager
      *
      * @return array{total_migrations: int, versions_supported: array, detection_patterns: int}
      */
-    public function getManagerStats(): array
+    public function getMigrationStatistics(): array
     {
         $migrations = $this->getSupportedMigrations();
         $versions = array_unique(array_merge(
