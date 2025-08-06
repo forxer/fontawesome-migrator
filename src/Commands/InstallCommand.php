@@ -4,17 +4,17 @@ namespace FontAwesome\Migrator\Commands;
 
 use Exception;
 use FontAwesome\Migrator\Commands\Traits\ConfigurationHelpers;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
-
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\warning;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 
 class InstallCommand extends Command
 {
@@ -100,8 +100,8 @@ class InstallCommand extends Command
 
             File::copy($stubPath, $configPath);
             info('✅ Configuration publiée');
-        } catch (Exception $e) {
-            error('❌ Erreur lors de la publication : '.$e->getMessage());
+        } catch (Exception $exception) {
+            error('❌ Erreur lors de la publication : '.$exception->getMessage());
             warning('Vérifiez que le package est correctement installé');
         }
     }

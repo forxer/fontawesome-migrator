@@ -2,16 +2,15 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use FontAwesome\Migrator\Support\ConfigHelper;
 use Illuminate\Support\Facades\File;
 
 class MigrationReporter
 {
-    protected array $config;
-
     public function __construct(
         protected MetadataManager $metadata
     ) {
-        $this->config = config('fontawesome-migrator');
+        // Configuration chargée via ConfigHelper
     }
 
     /**
@@ -218,7 +217,7 @@ class MigrationReporter
      */
     public function generateComparisonReport(array $beforeStats, array $afterStats): string
     {
-        $reportPath = $this->config['migrations_path'];
+        $reportPath = ConfigHelper::getMigrationsPath();
         $timestamp = date('Y-m-d_H-i-s');
         $filename = \sprintf('fontawesome-comparison-%s.json', $timestamp);
         $fullPath = $reportPath.'/'.$filename;
@@ -247,7 +246,7 @@ class MigrationReporter
      */
     public function cleanOldReports(int $daysToKeep = 30): int
     {
-        $reportPath = $this->config['migrations_path'];
+        $reportPath = ConfigHelper::getMigrationsPath();
 
         if (! File::exists($reportPath)) {
             return 0;

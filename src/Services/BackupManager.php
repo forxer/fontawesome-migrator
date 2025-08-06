@@ -22,7 +22,7 @@ class BackupManager
      */
     public function createBackup(string $filePath): array|bool
     {
-        $sessionDirectory = $this->metadataManager->getSessionDirectory();
+        $sessionDirectory = $this->metadataManager->getMigrationDirectory();
         $backupDir = $sessionDirectory.'/backups';
 
         // S'assurer que le répertoire et le .gitignore existent
@@ -57,7 +57,7 @@ class BackupManager
      */
     public function getSessionBackups(): array
     {
-        $sessionDirectory = $this->metadataManager->getSessionDirectory();
+        $sessionDirectory = $this->metadataManager->getMigrationDirectory();
         $backupDir = $sessionDirectory.'/backups';
 
         if (! File::isDirectory($backupDir)) {
@@ -87,7 +87,7 @@ class BackupManager
      */
     public function clearSessionBackups(): bool
     {
-        $sessionDirectory = $this->metadataManager->getSessionDirectory();
+        $sessionDirectory = $this->metadataManager->getMigrationDirectory();
         $backupDir = $sessionDirectory.'/backups';
 
         if (! File::isDirectory($backupDir)) {
@@ -116,23 +116,9 @@ class BackupManager
         return [
             'count' => $count,
             'total_size' => $totalSize,
-            'total_size_human' => $this->formatBytes($totalSize),
+            'total_size_human' => human_readable_bytes_size($totalSize),
             'oldest' => $count > 0 ? min(array_column($backups, 'modified')) : null,
             'newest' => $count > 0 ? max(array_column($backups, 'modified')) : null,
         ];
-    }
-
-    /**
-     * Formater une taille en octets en format humain
-     */
-    protected function formatBytes(int $bytes, int $precision = 2): string
-    {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-
-        for ($i = 0; $bytes > 1024 && $i < \count($units) - 1; $i++) {
-            $bytes /= 1024;
-        }
-
-        return round($bytes, $precision).' '.$units[$i];
     }
 }

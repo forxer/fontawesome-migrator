@@ -2,17 +2,16 @@
 
 namespace FontAwesome\Migrator\Services;
 
+use FontAwesome\Migrator\Support\ConfigHelper;
 use Illuminate\Support\Facades\File;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 class FileScanner
 {
-    protected array $config;
-
     public function __construct()
     {
-        $this->config = config('fontawesome-migrator');
+        // Configuration chargée via ConfigHelper
     }
 
     /**
@@ -107,7 +106,7 @@ class FileScanner
         $finder->files()->in(base_path($path));
 
         // Ajouter les extensions de fichiers
-        $extensions = $this->config['file_extensions'];
+        $extensions = ConfigHelper::getFileExtensions();
 
         if (! empty($extensions)) {
             $patterns = array_map(fn ($ext): string => '*.'.$ext, $extensions);
@@ -115,7 +114,7 @@ class FileScanner
         }
 
         // Exclure les patterns configurés
-        $excludePatterns = $this->config['exclude_patterns'];
+        $excludePatterns = ConfigHelper::getExcludePatterns();
 
         foreach ($excludePatterns as $pattern) {
             if (str_contains((string) $pattern, '/') || str_contains((string) $pattern, '\\')) {
@@ -138,7 +137,7 @@ class FileScanner
      */
     protected function isFileExtensionAllowed(string $extension): bool
     {
-        $extensions = $this->config['file_extensions'];
+        $extensions = ConfigHelper::getFileExtensions();
 
         if (empty($extensions)) {
             return true; // Si aucune extension configurée, accepter tous les fichiers

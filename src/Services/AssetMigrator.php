@@ -2,32 +2,14 @@
 
 namespace FontAwesome\Migrator\Services;
 
-use Exception;
+use FontAwesome\Migrator\Support\ConfigHelper;
 use Illuminate\Support\Facades\File;
 
 class AssetMigrator
 {
     public function __construct()
     {
-        // Configuration chargée dynamiquement pour les tests
-    }
-
-    /**
-     * Obtenir la configuration actuelle
-     */
-    protected function getConfig(): array
-    {
-        try {
-            return config('fontawesome-migrator', []);
-        } catch (Exception) {
-            // Fallback pour les tests ou environnements sans configuration
-            return [
-                'license_type' => 'free',
-                'scan_paths' => [],
-                'generate_report' => true,
-                'backup_files' => true,
-            ];
-        }
+        // Configuration chargée via ConfigHelper
     }
 
     /**
@@ -53,8 +35,7 @@ class AssetMigrator
      */
     protected function migrateStylesheetAssets(string $content): string
     {
-        $config = $this->getConfig();
-        $isPro = ($config['license_type'] ?? 'free') === 'pro';
+        $isPro = ConfigHelper::isProLicense();
 
         $replacements = [
             // CDN URLs - Free (patterns plus spécifiques)
@@ -110,8 +91,7 @@ class AssetMigrator
      */
     protected function migrateJavaScriptAssets(string $content): string
     {
-        $config = $this->getConfig();
-        $isPro = ($config['license_type'] ?? 'free') === 'pro';
+        $isPro = ConfigHelper::isProLicense();
 
         $replacements = [
             // Package managers - Free packages
@@ -209,8 +189,7 @@ class AssetMigrator
      */
     protected function migrateHtmlAssets(string $content): string
     {
-        $config = $this->getConfig();
-        $isPro = ($config['license_type'] ?? 'free') === 'pro';
+        $isPro = ConfigHelper::isProLicense();
 
         $replacements = [
             // CDN links - Free
@@ -266,8 +245,7 @@ class AssetMigrator
      */
     protected function migratePackageJsonAssets(string $content): string
     {
-        $config = $this->getConfig();
-        $isPro = ($config['license_type'] ?? 'free') === 'pro';
+        $isPro = ConfigHelper::isProLicense();
 
         $replacements = [
             // NPM packages - Free

@@ -3,13 +3,13 @@
 namespace FontAwesome\Migrator\Commands\Traits;
 
 use Exception;
-use function Laravel\Prompts\confirm;
+use Illuminate\Support\Facades\File;
 
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
-use Illuminate\Support\Facades\File;
 
 trait ConfigurationHelpers
 {

@@ -4,18 +4,17 @@ namespace FontAwesome\Migrator\Services;
 
 use Exception;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Support\ConfigHelper;
 use Illuminate\Support\Facades\File;
 
 class IconReplacer
 {
-    protected array $config;
-
     public function __construct(
         protected VersionMapperInterface $mapper,
         protected FileScanner $fileScanner,
         protected BackupManager $backupManager
     ) {
-        $this->config = config('fontawesome-migrator');
+        // Configuration chargée via ConfigHelper
     }
 
     /**
@@ -200,7 +199,7 @@ class IconReplacer
         } elseif ($iconMapping['deprecated']) {
             $type = 'deprecated_icon';
             $warning = \sprintf("Icône dépréciée '%s' → '%s'", $iconName, $newIconName);
-        } elseif ($iconMapping['pro_only'] && ($this->config['license_type'] ?? 'free') === 'free') {
+        } elseif ($iconMapping['pro_only'] && ! ConfigHelper::isProLicense()) {
             $type = 'pro_fallback';
             $alternative = $this->mapper->getFreeAlternative($iconName);
 
@@ -237,7 +236,7 @@ class IconReplacer
         $backupInfo = null;
 
         // Créer une sauvegarde si configuré
-        if ($this->config['backup_files']) {
+        if (ConfigHelper::isBackupEnabled()) {
             $backupResult = $this->createBackup($filePath);
 
             if (\is_array($backupResult)) {

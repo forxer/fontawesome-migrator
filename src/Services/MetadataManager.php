@@ -3,17 +3,17 @@
 namespace FontAwesome\Migrator\Services;
 
 use Carbon\Carbon;
+use FontAwesome\Migrator\Support\ConfigHelper;
+use FontAwesome\Migrator\Support\FormatterHelper;
 use Illuminate\Support\Facades\File;
 
 class MetadataManager
 {
-    protected array $config;
-
     protected array $metadata = [];
 
     public function __construct()
     {
-        $this->config = config('fontawesome-migrator');
+        // Configuration chargée via ConfigHelper
     }
 
     /**
@@ -22,8 +22,7 @@ class MetadataManager
     public function initialize(): self
     {
         $migrationId = uniqid('migration_', true);
-        // Extraire les 8 premiers caractères après 'migration_' pour le short_id
-        $shortId = substr($migrationId, strpos($migrationId, '_') + 1, 8);
+        $shortId = FormatterHelper::generateShortId('migration_');
 
         $this->metadata = [
             // === IDENTIFICATION ===
@@ -41,7 +40,7 @@ class MetadataManager
             // === MIGRATION CONFIG ===
             'source_version' => null,
             'target_version' => null,
-            'license_type' => $this->config['license_type'],
+            'license_type' => ConfigHelper::getLicenseType(),
             'icons_only' => false,
             'assets_only' => false,
             'custom_path' => null,
@@ -76,10 +75,10 @@ class MetadataManager
 
             // === CONFIGURATION (groupé) ===
             'scan_config' => [
-                'paths' => $this->config['scan_paths'] ?? [],
-                'extensions' => $this->config['file_extensions'] ?? [],
-                'backup_enabled' => $this->config['backup_files'] ?? true,
-                'migrations_path' => $this->config['migrations_path'] ?? null,
+                'paths' => ConfigHelper::getScanPaths(),
+                'extensions' => ConfigHelper::getFileExtensions(),
+                'backup_enabled' => ConfigHelper::isBackupEnabled(),
+                'migrations_path' => ConfigHelper::getMigrationsPath(),
             ],
 
             // === COMMAND TRACE (groupé) ===
@@ -368,7 +367,7 @@ class MetadataManager
     {
         $migrationId = $this->metadata['session_id'] ?? 'unknown';
 
-        return config('fontawesome-migrator.migrations_path').'/migration-'.$migrationId;
+        return ConfigHelper::getMigrationsPath().'/migration-'.$migrationId;
     }
 
     /**
@@ -376,7 +375,7 @@ class MetadataManager
      */
     public static function cleanOldSessions(int $daysToKeep = 30): int
     {
-        $migrationsDir = config('fontawesome-migrator.migrations_path');
+        $migrationsDir = ConfigHelper::getMigrationsPath();
 
         if (! File::exists($migrationsDir)) {
             return 0;
@@ -412,7 +411,7 @@ class MetadataManager
      */
     public static function getAvailableMigrations(): array
     {
-        $migrationsDir = config('fontawesome-migrator.migrations_path');
+        $migrationsDir = ConfigHelper::getMigrationsPath();
         $migrations = [];
 
         if (! File::exists($migrationsDir)) {
@@ -430,7 +429,7 @@ class MetadataManager
             $metadataPath = $directory.'/metadata.json';
 
             // Calculer le short_id à partir du session_id
-            $shortId = substr($migrationId, strpos($migrationId, '_') + 1, 8);
+            $shortId = FormatterHelper::generateShortId('migration_');
 
             $migrationInfo = [
                 'session_id' => $migrationId,
