@@ -22,6 +22,14 @@ class IconReplacer
     ) {}
 
     /**
+     * Changer le mapper de version (pour migrations dynamiques)
+     */
+    public function setMapper(VersionMapperInterface $mapper): void
+    {
+        $this->mapper = $mapper;
+    }
+
+    /**
      * Traiter une liste de fichiers pour la migration
      */
     public function processFiles(array $files, bool $isDryRun = false): array
@@ -340,7 +348,7 @@ class IconReplacer
      */
     private function buildFinalWarning(?string $primaryWarning, array $mapperWarnings): ?string
     {
-        if (empty($mapperWarnings)) {
+        if ($mapperWarnings === []) {
             return $primaryWarning;
         }
 

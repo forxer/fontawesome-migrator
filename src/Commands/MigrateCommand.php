@@ -290,9 +290,7 @@ class MigrateCommand extends Command
 
             // S'assurer que l'IconReplacer utilise le bon mapper
             $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
-            $this->replacer = app()->make(IconReplacer::class, [
-                'mapper' => $mapper,
-            ]);
+            $this->replacer->setMapper($mapper);
 
             $this->info(\sprintf('🔍 Recherche des icônes FontAwesome %s...', $fromVersion));
             $iconResults = $this->replacer->processFiles($files, $isDryRun);
@@ -329,8 +327,7 @@ class MigrateCommand extends Command
         $sessionDir = $this->metadata->getMigrationDirectory();
         $this->line('📋 Session sauvegardée : '.basename($sessionDir));
 
-        $reporterWithMetadata = app()->make(MigrationReporter::class);
-        $reportInfo = $reporterWithMetadata->generateMetadata($results);
+        $reportInfo = $this->reporter->generateMetadata($results);
 
         // Sauvegarder les métadonnées mises à jour avec les chemins des rapports
         $this->metadata->saveToFile();
@@ -658,10 +655,8 @@ class MigrateCommand extends Command
         // Configurer le IconReplacer avec le bon mapper pour les versions spécifiées
         $mapper = $this->versionManager->createMapper($fromVersion, $toVersion);
 
-        // Recréer IconReplacer avec le bon mapper
-        $this->replacer = app()->make(IconReplacer::class, [
-            'mapper' => $mapper,
-        ]);
+        // Configurer IconReplacer avec le bon mapper
+        $this->replacer->setMapper($mapper);
 
         // Stocker dans les métadonnées
         $this->metadata->setMigrationOptions([
@@ -699,7 +694,7 @@ class MigrateCommand extends Command
         $baseBackupDir = config('fontawesome-migrator.migrations_path');
 
         // Créer le répertoire de migration basé sur l'ID de migration des métadonnées
-        $migrationId = $this->metadata->get('session')['id'] ?? 'unknown';
+        $migrationId = $this->metadata->get('session_id') ?? 'unknown';
         $migrationDir = $baseBackupDir.'/migration-'.$migrationId;
 
         // S'assurer que le répertoire de migration et le .gitignore existent

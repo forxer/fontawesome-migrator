@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services;
 
+use Exception;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 
 /**
@@ -46,12 +47,12 @@ class FileScanningService
 
             return $this->performContentAnalysis($content);
 
-        } catch (\Exception $e) {
+        } catch (Exception $exception) {
             return [
                 'has_icons' => false,
                 'version' => null,
                 'icons' => [],
-                'error' => $e->getMessage(),
+                'error' => $exception->getMessage(),
             ];
         }
     }
@@ -76,7 +77,7 @@ class FileScanningService
         $icons = $this->extractVersionSpecificIcons($content, $detectedVersion);
 
         return [
-            'has_icons' => ! empty($icons),
+            'has_icons' => $icons !== [],
             'version' => $detectedVersion,
             'icons' => $icons,
         ];
@@ -89,7 +90,7 @@ class FileScanningService
     {
         $versionIcons = $this->patternService->extractVersionIcons($content, $version);
 
-        if (empty($versionIcons)) {
+        if ($versionIcons === []) {
             return [];
         }
 
@@ -117,7 +118,7 @@ class FileScanningService
                 );
                 $iconData = array_merge($iconData, $parsedIcon);
             }
-        } catch (\Exception) {
+        } catch (Exception) {
             // En cas d'erreur de mapping, retourner les icônes brutes
         }
 

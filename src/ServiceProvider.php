@@ -13,12 +13,17 @@ use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\AssetMigrator;
 use FontAwesome\Migrator\Services\AssetReplacementService;
 use FontAwesome\Migrator\Services\BackupManager;
 use FontAwesome\Migrator\Services\ConfigurationLoader;
 use FontAwesome\Migrator\Services\FileScanner;
+use FontAwesome\Migrator\Services\FileScanningService;
 use FontAwesome\Migrator\Services\FontAwesomePatternService;
+use FontAwesome\Migrator\Services\IconReplacer;
+use FontAwesome\Migrator\Services\MetadataBuilder;
 use FontAwesome\Migrator\Services\MetadataManager;
+use FontAwesome\Migrator\Services\MigrationReporter;
 use FontAwesome\Migrator\Services\MigrationResultsService;
 use FontAwesome\Migrator\Services\MigrationSessionService;
 use FontAwesome\Migrator\Services\MigrationStorageService;
@@ -112,14 +117,12 @@ class ServiceProvider extends BaseServiceProvider
 
         // MetadataManager en singleton pour partager la session
         $this->app->singleton(MetadataManagerInterface::class, MetadataManager::class);
-        $this->app->singleton(MetadataManager::class, MetadataManager::class);
 
         // MigrationVersionManager en singleton
         $this->app->singleton(MigrationVersionManager::class);
 
         // BackupManager en singleton
         $this->app->singleton(BackupManagerInterface::class, BackupManager::class);
-        $this->app->singleton(BackupManager::class, BackupManager::class);
 
         // ConfigurationLoader en singleton (chemin de configuration par défaut)
         $this->app->singleton(ConfigurationLoader::class, function (): ConfigurationLoader {
@@ -137,8 +140,17 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(MigrationResultsService::class);
         $this->app->singleton(MigrationStorageService::class);
 
-        // FileScanner avec interface
-        $this->app->bind(FileScannerInterface::class, FileScanner::class);
+        // Services de refactoring Phase 2 - nouvelles extractions
+        $this->app->singleton(FileScanningService::class);
+        $this->app->singleton(MetadataBuilder::class);
+
+        // Services core manquants - CRITIQUES pour fonctionnement
+        $this->app->singleton(AssetMigrator::class);
+        $this->app->singleton(IconReplacer::class);
+        $this->app->singleton(MigrationReporter::class);
+
+        // FileScanner avec interface (singleton pour performance scanning)
+        $this->app->singleton(FileScannerInterface::class, FileScanner::class);
 
         // Liaison pour VersionMapperInterface - utiliser FA5→6 par défaut
         $this->app->bind(
