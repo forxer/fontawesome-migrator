@@ -60,4 +60,14 @@ interface MetadataManagerInterface
      * Ajouter une sauvegarde
      */
     public function addBackup(array $backupInfo): self;
+
+    /**
+     * Obtenir toutes les migrations disponibles
+     */
+    public function getAvailableMigrations(): array;
+
+    /**
+     * Nettoyer les anciennes sessions
+     */
+    public function cleanOldSessions(int $daysToKeep = 30): int;
 }

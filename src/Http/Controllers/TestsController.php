@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Http\Controllers;
 
 use Exception;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
-use FontAwesome\Migrator\Services\Metadata\MetadataManager;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
@@ -24,10 +24,10 @@ class TestsController extends Controller
     /**
      * Afficher la page d'index des tests
      */
-    public function index()
+    public function index(MetadataManagerInterface $metadataManager)
     {
-        $sessions = MetadataManager::getAvailableMigrations();
-        $backupStats = $this->getBackupStats();
+        $sessions = $metadataManager->getAvailableMigrations();
+        $backupStats = $this->getBackupStats($metadataManager);
 
         // Ajouter les informations de migration multi-versions
         $supportedMigrations = $this->versionManager->getSupportedMigrations();
@@ -170,10 +170,10 @@ class TestsController extends Controller
     /**
      * Nettoyer les sessions de test
      */
-    public function cleanupSessions(Request $request)
+    public function cleanupSessions(Request $request, MetadataManagerInterface $metadataManager)
     {
         $days = $request->input('days', 7);
-        $deleted = MetadataManager::cleanOldSessions($days);
+        $deleted = $metadataManager->cleanOldSessions($days);
 
         return response()->json([
             'message' => 'Nettoyage des sessions terminé',
@@ -185,7 +185,7 @@ class TestsController extends Controller
     /**
      * Obtenir les statistiques des sauvegardes pour le test
      */
-    protected function getBackupStats(): array
+    protected function getBackupStats(MetadataManagerInterface $metadataManager): array
     {
         $baseBackupDir = config('fontawesome-migrator.migrations_path');
 
@@ -198,7 +198,7 @@ class TestsController extends Controller
             ];
         }
 
-        $sessions = MetadataManager::getAvailableMigrations();
+        $sessions = $metadataManager->getAvailableMigrations();
         $totalBackups = 0;
         $totalSize = 0;
 

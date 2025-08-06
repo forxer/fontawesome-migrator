@@ -9,7 +9,7 @@ Documentation pour l'utilisation programmatique du système de migration multi-v
 Gestionnaire central pour les migrations multi-versions.
 
 ```php
-use FontAwesome\Migrator\Services\MigrationVersionManager;
+use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
 
 $manager = new MigrationVersionManager();
 ```
@@ -70,7 +70,7 @@ $report = $manager->getCompatibilityReport('6', '7');
 Service de chargement des configurations JSON.
 
 ```php
-use FontAwesome\Migrator\Services\ConfigurationLoader;
+use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 
 $loader = new ConfigurationLoader('/custom/config/path');
 ```
@@ -236,9 +236,9 @@ $stats = $mapper->getMappingStats();
 ### Migration programmatique complète
 
 ```php
-use FontAwesome\Migrator\Services\MigrationVersionManager;
-use FontAwesome\Migrator\Services\FileScanner;
-use FontAwesome\Migrator\Services\IconReplacer;
+use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
+use FontAwesome\Migrator\Services\Core\FileScanner;
+use FontAwesome\Migrator\Services\Core\IconReplacer;
 
 // 1. Initialiser le gestionnaire
 $manager = new MigrationVersionManager();
@@ -267,7 +267,7 @@ foreach ($files as $file) {
 ⭐ **NOUVEAU v2.0** - Service de chargement des configurations JSON.
 
 ```php
-use FontAwesome\Migrator\Services\ConfigurationLoader;
+use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 
 $loader = new ConfigurationLoader();
 

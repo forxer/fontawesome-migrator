@@ -336,7 +336,7 @@ class MetadataManager implements MetadataManagerInterface
     /**
      * Nettoyer les anciens répertoires de migration
      */
-    public static function cleanOldSessions(int $daysToKeep = 30): int
+    public function cleanOldSessions(int $daysToKeep = 30): int
     {
         $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
 
@@ -372,7 +372,7 @@ class MetadataManager implements MetadataManagerInterface
     /**
      * Lister tous les répertoires de migration disponibles
      */
-    public static function getAvailableMigrations(): array
+    public function getAvailableMigrations(): array
     {
         $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
         $migrations = [];

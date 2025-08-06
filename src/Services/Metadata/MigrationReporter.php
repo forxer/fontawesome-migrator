@@ -6,8 +6,6 @@ namespace FontAwesome\Migrator\Services\Metadata;
 
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
-use FontAwesome\Migrator\Support\JsonFileHelper;
-use Illuminate\Support\Facades\File;
 
 class MigrationReporter
 {
@@ -213,65 +211,5 @@ class MigrationReporter
         }
 
         return $enrichedWarnings;
-    }
-
-    /**
-     * Générer un rapport de comparaison avant/après
-     */
-    public function generateComparisonReport(array $beforeStats, array $afterStats): string
-    {
-        $reportPath = $this->config->getMigrationsPath();
-        $timestamp = date('Y-m-d_H-i-s');
-        $filename = \sprintf('fontawesome-comparison-%s.json', $timestamp);
-        $fullPath = $reportPath.'/'.$filename;
-
-        $comparison = [
-            'meta' => [
-                'generated_at' => date('c'),
-                'type' => 'comparison_report',
-            ],
-            'before' => $beforeStats,
-            'after' => $afterStats,
-            'improvements' => [
-                'fa6_compliance' => $afterStats['fa6_icons'] ?? 0,
-                'deprecated_removed' => ($beforeStats['deprecated_icons'] ?? 0) - ($afterStats['deprecated_icons'] ?? 0),
-                'styles_updated' => $afterStats['modern_styles'] ?? 0,
-            ],
-        ];
-
-        JsonFileHelper::saveJson($fullPath, $comparison);
-
-        return $fullPath;
-    }
-
-    /**
-     * Nettoyer les anciens rapports
-     */
-    public function cleanOldReports(int $daysToKeep = 30): int
-    {
-        $reportPath = $this->config->getMigrationsPath();
-
-        if (! File::exists($reportPath)) {
-            return 0;
-        }
-
-        $cutoffTime = time() - ($daysToKeep * 24 * 60 * 60);
-        $deleted = 0;
-
-        $files = File::files($reportPath);
-
-        foreach ($files as $file) {
-            if ($file->getMTime() >= $cutoffTime) {
-                continue;
-            }
-
-            if (! File::delete($file->getRealPath())) {
-                continue;
-            }
-
-            $deleted++;
-        }
-
-        return $deleted;
     }
 }

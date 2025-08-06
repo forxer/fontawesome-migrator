@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Http\Controllers;
 
 use Carbon\Carbon;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
-use FontAwesome\Migrator\Services\Metadata\MetadataManager;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
@@ -18,10 +18,10 @@ class HomeController extends Controller
     /**
      * Afficher la page d'accueil
      */
-    public function index()
+    public function index(MetadataManagerInterface $metadataManager)
     {
         // Récupérer les statistiques globales depuis les métadonnées de sessions
-        $sessions = MetadataManager::getAvailableMigrations();
+        $sessions = $metadataManager->getAvailableMigrations();
         $totalSize = 0;
         $lastActivity = null;
         $successfulMigrations = 0;

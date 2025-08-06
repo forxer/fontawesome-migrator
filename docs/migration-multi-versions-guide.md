@@ -212,7 +212,7 @@ Vous pouvez modifier les fichiers JSON pour :
 Le service `ConfigurationLoader` gère le chargement des configurations :
 
 ```php
-use FontAwesome\Migrator\Services\ConfigurationLoader;
+use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 
 $loader = new ConfigurationLoader();
 

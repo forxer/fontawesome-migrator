@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Http\Controllers;
 
 use Carbon\Carbon;
-use FontAwesome\Migrator\Services\Metadata\MetadataManager;
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
@@ -15,10 +15,10 @@ class MigrationsController extends Controller
     /**
      * Afficher la liste des rapports
      */
-    public function index()
+    public function index(MetadataManagerInterface $metadataManager)
     {
         // Récupérer les sessions qui contiennent des rapports
-        $sessions = MetadataManager::getAvailableMigrations();
+        $sessions = $metadataManager->getAvailableMigrations();
         $reports = [];
 
         foreach ($sessions as $session) {
@@ -90,10 +90,10 @@ class MigrationsController extends Controller
     /**
      * Afficher un rapport spécifique (depuis métadonnées)
      */
-    public function show(string $sessionId)
+    public function show(string $sessionId, MetadataManagerInterface $metadataManager)
     {
         // Chercher la session par ID (court ou complet)
-        $sessions = MetadataManager::getAvailableMigrations();
+        $sessions = $metadataManager->getAvailableMigrations();
         $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
 
         if (! $sessionInfo) {
@@ -159,10 +159,10 @@ class MigrationsController extends Controller
     /**
      * Supprimer une session complète
      */
-    public function destroy(string $sessionId)
+    public function destroy(string $sessionId, MetadataManagerInterface $metadataManager)
     {
         // Chercher la session par ID (court ou complet)
-        $sessions = MetadataManager::getAvailableMigrations();
+        $sessions = $metadataManager->getAvailableMigrations();
         $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
 
         if (! $sessionInfo) {
@@ -182,10 +182,10 @@ class MigrationsController extends Controller
     /**
      * Nettoyer les anciennes sessions
      */
-    public function cleanup(Request $request)
+    public function cleanup(Request $request, MetadataManagerInterface $metadataManager)
     {
         $days = $request->input('days', 30);
-        $deleted = MetadataManager::cleanOldSessions($days);
+        $deleted = $metadataManager->cleanOldSessions($days);
 
         return response()->json([
             'message' => 'Nettoyage terminé',
