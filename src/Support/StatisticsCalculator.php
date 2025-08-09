@@ -118,7 +118,7 @@ class StatisticsCalculator
         foreach ($backups as $backup) {
             $stats['total_size'] += $backup['size'] ?? 0;
 
-            $date = isset($backup['created_at']) ? date('Y-m-d', strtotime((string) $backup['created_at'])) : 'unknown';
+            $date = isset($backup['created_at']) ? now()->parse($backup['created_at'])->format('Y-m-d') : 'unknown';
             $stats['by_date'][$date] = ($stats['by_date'][$date] ?? 0) + 1;
         }
 

@@ -184,7 +184,8 @@ class FontAwesomePatternService
         $lines = explode("\n", $content);
         $offset = 0;
 
-        $pattern = '/\b(fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone|fa-thin|fa-sharp)\s+(fa-[a-zA-Z0-9-]+)\b/';
+        // Pattern simple pour détecter fas/far/etc + fa-xxx
+        $pattern = '/(fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone|fa-thin|fa-sharp)\s+(fa-[a-zA-Z0-9-]+)/';
 
         foreach ($lines as $lineNumber => $line) {
             if (preg_match_all($pattern, $line, $matches, PREG_OFFSET_CAPTURE)) {

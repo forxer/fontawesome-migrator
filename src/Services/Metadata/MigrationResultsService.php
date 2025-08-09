@@ -41,7 +41,7 @@ class MigrationResultsService
         $this->backups[] = [
             'file' => $backupInfo['original_file'],
             'backup_path' => $backupInfo['backup_path'],
-            'created_at' => $backupInfo['created_at'] ?? now()->toISOString(),
+            'created_at' => $backupInfo['created_at'] ?? now()->toDateTimeString(),
             'size' => $backupInfo['size'] ?? 0,
         ];
 

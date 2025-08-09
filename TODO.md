@@ -14,5 +14,6 @@ remonter à Claude :
 
 à faire/voir :
 
+- les dates ne sont plus correctement formatées
 - vérifier la modification dans packages.json "version 6.x" indisponible
 - ...

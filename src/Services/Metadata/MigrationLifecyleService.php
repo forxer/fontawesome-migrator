@@ -31,7 +31,7 @@ class MigrationLifecyleService
             'migration_id' => $migrationId,
             'short_id' => $shortId,
             'package_version' => $this->packageVersionService->getVersion(),
-            'started_at' => now()->toISOString(),
+            'started_at' => now()->toDateTimeString(),
             'status' => 'initialized',
             'dry_run' => false,
             'migration_options' => [],
@@ -47,7 +47,7 @@ class MigrationLifecyleService
     public function completeMigration(): self
     {
         $this->migrationData['status'] = 'completed';
-        $this->migrationData['completed_at'] = now()->toISOString();
+        $this->migrationData['completed_at'] = now()->toDateTimeString();
         $this->migrationData['duration'] = $this->calculateDuration();
 
         return $this;

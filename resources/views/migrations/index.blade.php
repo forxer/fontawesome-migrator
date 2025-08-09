@@ -67,7 +67,7 @@
                             <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
                                 @if($stats['last_migration'])
-                                    {{ $stats['last_migration']['created_at']->format('d/m') }}
+                                    {{ $stats['last_migration']['created_at']->isoFormat('DD/MM') }}
                                 @else
                                     -
                                 @endif
@@ -90,7 +90,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center gap-3">
                                 <h5 class="card-title mb-1 text-truncate">
                                     <i class="bi bi-file-text text-primary fs-4"></i>
-                                   {{ $report['created_at']->format('d/m à H:i') }}
+                                   {{ $report['created_at']->isoFormat('DD/MM [à] HH:mm') }}
                                 </h5>
                                 @if ($report['dry_run'])
                                     <span class="badge bg-warning text-dark">DRY-RUN</span>

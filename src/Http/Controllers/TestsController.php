@@ -115,14 +115,14 @@ class TestsController extends Controller
                 'from_version' => $request->input('from'),
                 'to_version' => $request->input('to'),
                 'mode' => $request->input('mode'),
-                'timestamp' => date('Y-m-d H:i:s'),
+                'timestamp' => now()->toDateTimeString(),
             ]);
 
         } catch (Exception $exception) {
             return response()->json([
                 'success' => false,
                 'error' => $exception->getMessage(),
-                'timestamp' => date('Y-m-d H:i:s'),
+                'timestamp' => now()->toDateTimeString(),
             ], 500);
         }
     }
@@ -154,7 +154,7 @@ class TestsController extends Controller
                 $backupFiles[] = [
                     'name' => $file->getFilename(),
                     'size' => $file->getSize(),
-                    'modified' => date('Y-m-d H:i:s', $file->getMTime()),
+                    'modified' => now()->createFromTimestamp($file->getMTime())->toDateTimeString(),
                 ];
             }
         }

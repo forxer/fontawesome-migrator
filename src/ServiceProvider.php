@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator;
 
-use Carbon\Carbon;
 use FontAwesome\Migrator\Commands\ConfigureCommand;
 use FontAwesome\Migrator\Commands\InstallCommand;
 use FontAwesome\Migrator\Commands\MigrateCommand;
@@ -54,9 +53,6 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(): void
     {
-        // Configuration de Carbon pour la localisation française
-        Carbon::setLocale('fr');
-
         // Enregistrer les vues
         $this->loadViewsFrom($this->basePath.'resources/views', 'fontawesome-migrator');
 

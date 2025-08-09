@@ -714,7 +714,7 @@ class MigrateCommand extends Command
             'backup_filename' => $backupFilename,
             'migration_dir' => $migrationDir,
             'migration_id' => $migrationId,
-            'created_at' => date('Y-m-d H:i:s'),
+            'created_at' => now()->toDateTimeString(),
             'size' => filesize($backupPath),
         ];
 

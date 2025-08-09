@@ -812,7 +812,7 @@ class ConfigureCommand extends Command
             return Command::FAILURE;
         }
 
-        $timestamp = date('Y-m-d_H-i-s');
+        $timestamp = now()->format('Y-m-d_H-i-s');
         $backupPath = config_path(\sprintf('fontawesome-migrator.backup.%s.php', $timestamp));
 
         try {

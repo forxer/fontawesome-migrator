@@ -681,7 +681,7 @@
             <div class="backup-item">
                 <div class="backup-header">
                     <span class="backup-file"><i class="bi bi-download"></i> {{ $backup['relative_path'] }}</span>
-                    <span class="backup-date">{{ $backup['created_at'] }}</span>
+                    <span class="backup-date">{{ $backup['created_at']->isoFormat('DD/MM/YYYY [à] HH:mm') }}</span>
                 </div>
                 <div class="backup-details">
                     <span class="backup-size">Taille: {{ human_readable_bytes_size($backup['size'], 2) }}</span>

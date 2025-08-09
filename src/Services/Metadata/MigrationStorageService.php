@@ -128,7 +128,7 @@ class MigrationStorageService
     private function generateFilePath(array $migrationData): string
     {
         $migrationId = $migrationData['migration_id'] ?? uniqid('migration_');
-        $timestamp = date('Y-m-d_H-i-s');
+        $timestamp = now()->format('Y-m-d_H-i-s');
         $filename = \sprintf('migration_%s_%s.json', $timestamp, $migrationId);
 
         return $this->getMigrationDirectory().'/'.$filename;

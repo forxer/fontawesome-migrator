@@ -67,7 +67,7 @@
                             <i class="bi bi-clock fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
                                 @if($backupStats['last_migration'])
-                                    {{ $backupStats['last_migration']['created_at']->format('d/m') }}
+                                    {{ $backupStats['last_migration']['created_at']->isoFormat('DD/MM') }}
                                 @else
                                     -
                                 @endif
