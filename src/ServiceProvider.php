@@ -25,7 +25,7 @@ use FontAwesome\Migrator\Services\Core\IconReplacer;
 use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
 use FontAwesome\Migrator\Services\Metadata\MetadataBuilder;
 use FontAwesome\Migrator\Services\Metadata\MetadataManager;
-use FontAwesome\Migrator\Services\Metadata\MigrationMigrationService;
+use FontAwesome\Migrator\Services\Metadata\MigrationLifecyleService;
 use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
 use FontAwesome\Migrator\Services\Metadata\MigrationResultsService;
 use FontAwesome\Migrator\Services\Metadata\MigrationStorageService;
@@ -140,7 +140,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(PackageVersionService::class);
 
         // Services spécialisés pour MetadataManager - séparation des responsabilités
-        $this->app->singleton(MigrationMigrationService::class);
+        $this->app->singleton(MigrationLifecyleService::class);
         $this->app->singleton(MigrationResultsService::class);
         $this->app->singleton(MigrationStorageService::class);
 

@@ -8,10 +8,10 @@ use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
 use FontAwesome\Migrator\Support\FormatterHelper;
 
 /**
- * Service dédié à la gestion des migrations de migration
+ * Service dédié à la gestion des du cycle de de migration
  * Responsabilité unique : gestion du cycle de vie des migrations
  */
-class MigrationMigrationService
+class MigrationLifecyleService
 {
     private array $migrationData = [];
 

@@ -22,7 +22,7 @@ class PackageVersionService
             return $this->cachedVersion;
         }
 
-        $changelogPath = __DIR__.'/../../CHANGELOG.md';
+        $changelogPath = __DIR__.'/../../../CHANGELOG.md';
 
         if (File::exists($changelogPath)) {
             $content = File::get($changelogPath);

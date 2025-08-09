@@ -17,7 +17,7 @@ class MetadataManager implements MetadataManagerInterface
 
     public function __construct(
         protected ConfigurationInterface $config,
-        protected MigrationMigrationService $migrationService,
+        protected MigrationLifecyleService $migrationService,
         protected MigrationResultsService $resultsService,
         protected MigrationStorageService $storageService,
         protected MetadataBuilder $metadataBuilder

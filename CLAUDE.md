@@ -101,7 +101,7 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **AssetMigrator simplifié**: Toutes méthodes 3-4 lignes (vs 40-50 avant), délègue à AssetReplacementService, patterns externalisés
 - **0 erreur diagnostique PHP**: Architecture complète validée, type casting corrigé, injection cohérente, code production-ready
 - **Août 2025 - Services utilitaires anti-duplication**: JsonFileHelper, StatisticsCalculator, FileValidator, CleanupManager créés pour éliminer 16 duplications
-- **MetadataManager modulaire**: Délègue à MigrationMigrationService, MigrationResultsService, MigrationStorageService - séparation responsabilités stricte
+- **MetadataManager modulaire**: Délègue à MigrationLifecyleService, MigrationResultsService, MigrationStorageService - séparation responsabilités stricte
 - **IconReplacer optimisé**: Utilise FontAwesomePatternService au lieu de patterns dupliqués, méthode findFontAwesomeIcons() supprimée (~35 lignes)
 - **Code mort supprimé**: SERVICES_ANALYSIS.md, SERVICES_ANALYSIS_v2.md éliminés (~11KB documentation technique temporaire obsolète)
 - **200+ lignes dupliquées supprimées**: Architecture DRY respectée, services réutilisables, maintenabilité maximale

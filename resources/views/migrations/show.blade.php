@@ -46,10 +46,10 @@
                                 <i class="bi bi-graph-up text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold">Statistiques</div>
-                                    <small class="text-muted">{{ number_format($stats['total_files'], 0, ',', ' ') }} fichiers</small>
+                                    <small class="text-muted">{{ number_formatted($stats['total_files']) }} fichiers</small>
                                 </div>
                                 @if ($stats['total_changes'] > 0)
-                                    <span class="badge bg-success">{{ number_format($stats['total_changes'], 0, ',', ' ') }}</span>
+                                    <span class="badge bg-success">{{ number_formatted($stats['total_changes']) }}</span>
                                 @endif
                             </div>
                         </div>
@@ -211,7 +211,7 @@
                                     <div class="fw-semibold">Détails</div>
                                     <small class="text-muted">Modifications par fichier</small>
                                 </div>
-                                <span class="badge bg-primary">{{ number_format($stats['modified_files'], 0, ',', ' ') }}</span>
+                                <span class="badge bg-primary">{{ number_formatted($stats['modified_files']) }}</span>
                             </div>
                         </div>
                     </a>
@@ -259,7 +259,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3">{{ number_format($stats['total_files'], 0, ',', ' ') }}</h2>
+                    <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['total_files']) }}</h2>
                     <h5 class="card-subtitle text-muted">Fichiers analysés</h5>
                     @if ($stats['total_files'] > 0)
                         <div class="mt-3 text-primary small">
@@ -273,12 +273,12 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3">{{ number_format($stats['modified_files'], 0, ',', ' ') }}</h2>
+                    <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['modified_files']) }}</h2>
                     <h5 class="card-subtitle text-muted">Fichiers modifiés</h5>
                     @if ($stats['modified_files'] > 0)
                         <div class="mt-3 text-success small">
                             <i class="bi bi-pencil-square"></i>
-                            {{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) optimisé(s)
+                            {{ number_formatted($stats['modified_files']) }} fichier(s) optimisé(s)
                         </div>
                     @endif
                 </div>
@@ -288,7 +288,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3">{{ number_format($stats['total_changes'], 0, ',', ' ') }}</h2>
+                    <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['total_changes']) }}</h2>
                     <h5 class="card-subtitle text-muted">Total des changements</h5>
                     @if ($stats['total_changes'] > 0)
                         <div class="mt-3 text-success small">
@@ -302,7 +302,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3">{{ number_format($stats['icons_migrated'] ?? 0, 0, ',', ' ') }}</h2>
+                    <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['icons_migrated']) }}</h2>
                     <h5 class="card-subtitle text-muted">Icônes migrées</h5>
                     @if (($stats['icons_migrated'] ?? 0) > 0)
                         <div class="mt-3 text-primary small">
@@ -317,7 +317,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3">{{ number_format($stats['assets_migrated'], 0, ',', ' ') }}</h2>
+                    <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['assets_migrated']) }}</h2>
                     <h5 class="card-subtitle text-muted">Assets migrés</h5>
                     <div class="mt-3 text-info small">
                         <i class="bi bi-box"></i> CDN + NPM
@@ -331,7 +331,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 border-warning border-2">
                 <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3 text-warning">{{ number_format($stats['warnings'], 0, ',', ' ') }}</h2>
+                    <h2 class="card-title display-6 mb-3 text-warning">{{ number_formatted($stats['warnings']) }}</h2>
                     <h5 class="card-subtitle text-muted">Avertissements</h5>
                     <div class="mt-3 text-warning small">
                         <i class="bi bi-exclamation-triangle"></i> Icônes renommées/dépréciées
@@ -351,7 +351,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4 class="section-title"><i class="bi bi-search"></i> Analyse effectuée</h4>
-                    <p>{{ number_format($stats['total_files'], 0, ',', ' ') }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
+                    <p>{{ number_formatted($stats['total_files']) }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
                     <small>{{ $timestamp }}</small>
                 </div>
             </div>
@@ -360,7 +360,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4 class="section-title"><i class="bi bi-bullseye"></i> Fichiers ciblés</h4>
-                    <p>{{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s) contenant du code Font Awesome 5</p>
+                    <p>{{ number_formatted($stats['modified_files']) }} fichier(s) contenant du code Font Awesome 5</p>
                     <small>Détection automatique</small>
                 </div>
             </div>
@@ -368,7 +368,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4 class="section-title"><i class="bi bi-arrow-left-right"></i> Migration appliquée</h4>
-                    <p>{{ number_format($stats['total_changes'], 0, ',', ' ') }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
+                    <p>{{ number_formatted($stats['total_changes']) }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
                     <small>{{ $isDryRun ? 'Mode prévisualisation' : 'Modifications effectives' }}</small>
                 </div>
             </div>
@@ -378,7 +378,7 @@
             <div class="timeline-item">
                 <div class="timeline-content">
                     <h4 class="section-title"><i class="bi bi-box"></i> Assets migrés</h4>
-                    <p>{{ number_format($stats['assets_migrated'], 0, ',', ' ') }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
+                    <p>{{ number_formatted($stats['assets_migrated']) }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
                     <small>Packages et liens modernisés</small>
                 </div>
             </div>
@@ -413,7 +413,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Prêt pour la migration</h5>
-                                <p class="card-text">Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ number_format($stats['total_changes'], 0, ',', ' ') }} changements.</p>
+                                <p class="card-text">Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ number_formatted($stats['total_changes']) }} changements.</p>
                                 <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')"><i class="bi bi-clipboard"></i> Copier la commande</button>
                             </div>
                         </div>
@@ -447,7 +447,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Icônes à vérifier</h5>
-                                <p class="card-text">{{ number_format($stats['warnings'], 0, ',', ' ') }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
+                                <p class="card-text">{{ number_formatted($stats['warnings']) }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
                                 <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()"><i class="bi bi-exclamation-triangle"></i> Voir les avertissements</button>
                             </div>
                         </div>
@@ -488,7 +488,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Excellent score de migration</h5>
-                                <p class="card-text">{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code a été optimisé pour Font Awesome 6 !</p>
+                                <p class="card-text">{{ number_formatted($migrationScore, 1) }} % de votre code a été optimisé pour Font Awesome 6 !</p>
                             </div>
                         </div>
                     </div>
@@ -502,7 +502,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Bonne migration</h5>
-                                <p class="card-text">{{ number_format($migrationScore, 1, ',', ' ') }} % de votre code utilise maintenant Font Awesome 6.</p>
+                                <p class="card-text">{{ number_formatted($migrationScore, 1) }} % de votre code utilise maintenant Font Awesome 6.</p>
                             </div>
                         </div>
                     </div>
@@ -585,7 +585,7 @@
                         @if (isset($migrationOptions['backups_count']) && $migrationOptions['backups_count'] > 0)
                         <tr><td><strong>Sauvegardes créées</strong></td><td>
                             <span class="text-success fw-bold">
-                                {{ number_format($migrationOptions['backups_count'], 0, ',', ' ') }} fichier(s) sauvegardé(s)
+                                {{ number_formatted($migrationOptions['backups_count']) }} fichier(s) sauvegardé(s)
                             </span>
                         </td></tr>
                         @endif
@@ -726,7 +726,7 @@
 
             @if ($stats['migration_success'])
                 <div class="alert alert-success">
-                    <i class="bi bi-check-square"></i> Migration terminée avec succès ! {{ number_format($stats['total_changes'], 0, ',', ' ') }} changement(s) appliqué(s) sur {{ number_format($stats['modified_files'], 0, ',', ' ') }} fichier(s).
+                    <i class="bi bi-check-square"></i> Migration terminée avec succès ! {{ number_formatted($stats['total_changes']) }} changement(s) appliqué(s) sur {{ number_formatted($stats['modified_files']) }} fichier(s).
                 </div>
             @else
                 <div class="alert alert-warning">
@@ -760,8 +760,8 @@
                                         @default {{ ucfirst(str_replace('_', ' ', $type)) }}
                                     @endswitch
                                 </td>
-                                <td class="text-end">{{ number_format($count, 0, ',', ' ') }}</td>
-                                <td class="text-end">{{ number_format($percentage, 1, ',', ' ') }} %</td>
+                                <td class="text-end">{{ number_formatted($count) }}</td>
+                                <td class="text-end">{{ number_formatted($percentage, 1) }} %</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -782,7 +782,7 @@
                             @foreach($stats['asset_types'] as $assetType => $count)
                                 <tr>
                                     <td><strong>{{ $assetType }}</strong></td>
-                                    <td>{{ number_format($count, 0, ',', ' ') }}</td>
+                                    <td>{{ number_formatted($count) }}</td>
                                     <td>{{ ucfirst(str_replace('_', ' ', $assetType)) }}</td>
                                 </tr>
                             @endforeach

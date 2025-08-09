@@ -83,9 +83,9 @@
     <div id="alerts"></div>
 
     @if (count($reports) > 0)
-        <div class="row g-4 mb-4">
+        <div class="row g-4">
             @foreach ($reports as $report)
-                <div class="col-md-6 col-xl-4">
+                <div class="col-md-6 col-xl-4 mb-4">
                     <div class="card h-100 shadow-sm" data-migration="{{ $report['migration_id'] }}">
                         <div class="card-header d-flex justify-content-between align-items-center gap-3">
                                 <h5 class="card-title mb-1 text-truncate">
@@ -102,14 +102,20 @@
                             <div class="row g-3 text-center">
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold">{{ $report['backup_count'] }}</div>
-                                        <div class="text-muted small"><i class="bi bi-files"></i> Fichiers</div>
+                                        <div class="fw-semibold">{{ number_formatted($report['statistics']['total_files']) }}</div>
+                                        <div class="text-muted small"><i class="bi bi-file-code"></i> Fichier(s) analisé(s)</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold">{{ $report['package_version'] ?? 'v?' }}</div>
-                                        <div class="text-muted small"><i class="bi bi-tag"></i> Version</div>
+                                        <div class="fw-semibold">
+                                            @if(isset($report['migration_summary']['total_changes']))
+                                                {{ number_formatted($report['migration_summary']['total_changes']) }}
+                                            @else
+                                                -
+                                            @endif
+                                        </div>
+                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Changement(s)</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -129,19 +135,7 @@
                                         <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['migration_id'] }}">
                                             {{ $report['short_id'] }}
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Migration</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="border rounded p-3">
-                                        <div class="fw-semibold">
-                                            @if(isset($report['migration_summary']['total_changes']))
-                                                {{ $report['migration_summary']['total_changes'] }}
-                                            @else
-                                                -
-                                            @endif
-                                        </div>
-                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Changements</div>
+                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Migration ID</div>
                                     </div>
                                 </div>
                             </div>

@@ -100,7 +100,7 @@
 - [x] **FontAwesomePatternService**: Patterns FA centralisés dans IconReplacer (élimine 1 duplication)
 
 ## 🔄 Refactorisation modulaire MetadataManager
-- [x] **MigrationMigrationService**: Gestion cycle de vie migrations
+- [x] **MigrationLifecyleService**: Gestion cycle de vie migrations
 - [x] **MigrationResultsService**: Stockage et traitement résultats
 - [x] **MigrationStorageService**: Persistance données migrations
 - [x] **Séparation responsabilités**: Architecture SOLID respectée
