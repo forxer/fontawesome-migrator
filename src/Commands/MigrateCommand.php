@@ -321,11 +321,11 @@ class MigrateCommand extends Command
         // Finaliser les métadonnées avec les statistiques
         $this->metadata->completeMigration();
 
-        // Sauvegarder les métadonnées dans le répertoire de session
+        // Sauvegarder les métadonnées dans le répertoire de migration
         $this->metadata->saveToFile();
 
-        $sessionDir = $this->metadata->getMigrationDirectory();
-        $this->line('📋 Session sauvegardée : '.basename($sessionDir));
+        $migrationDir = $this->metadata->getMigrationDirectory();
+        $this->line('📋 Migration sauvegardée : '.basename($migrationDir));
 
         $reportInfo = $this->reporter->generateMetadata($results);
 
@@ -333,7 +333,7 @@ class MigrateCommand extends Command
         $this->metadata->saveToFile();
 
         $this->info('📊 Rapport généré automatiquement :');
-        $this->line('   • Session : '.$reportInfo['session_id']);
+        $this->line('   • Migration : '.$reportInfo['migration_id']);
         $this->line('   • Métadonnées : '.$reportInfo['filename']);
         $this->line('   • Interface web : '.$reportInfo['web_url']);
 
@@ -687,14 +687,14 @@ class MigrateCommand extends Command
     }
 
     /**
-     * Créer une sauvegarde d'un fichier dans le répertoire de session
+     * Créer une sauvegarde d'un fichier dans le répertoire de migration
      */
     protected function createBackup(string $filePath): void
     {
         $baseBackupDir = config('fontawesome-migrator.migrations_path');
 
         // Créer le répertoire de migration basé sur l'ID de migration des métadonnées
-        $migrationId = $this->metadata->get('session_id') ?? 'unknown';
+        $migrationId = $this->metadata->get('migration_id') ?? 'unknown';
         $migrationDir = $baseBackupDir.'/migration-'.$migrationId;
 
         // S'assurer que le répertoire de migration et le .gitignore existent
@@ -712,8 +712,8 @@ class MigrateCommand extends Command
             'relative_path' => $relativePath,
             'backup_path' => $backupPath,
             'backup_filename' => $backupFilename,
-            'session_dir' => $migrationDir,
-            'session_id' => $migrationId,
+            'migration_dir' => $migrationDir,
+            'migration_id' => $migrationId,
             'created_at' => date('Y-m-d H:i:s'),
             'size' => filesize($backupPath),
         ];
@@ -848,8 +848,8 @@ class MigrateCommand extends Command
             );
         }
 
-        // Valider et configurer
-        $this->configureVersions($fromVersion, $toVersion);
+        // Valider et configurer (forcer en string car select() peut retourner des int)
+        $this->configureVersions((string) $fromVersion, (string) $toVersion);
     }
 
     /**

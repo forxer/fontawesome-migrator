@@ -20,8 +20,8 @@ class HomeController extends Controller
      */
     public function index(MetadataManagerInterface $metadataManager, PackageVersionService $packageVersionService)
     {
-        // Récupérer les statistiques globales depuis les métadonnées de sessions
-        $sessions = $metadataManager->getAvailableMigrations();
+        // Récupérer les statistiques globales depuis les métadonnées de migrations
+        $migrations = $metadataManager->getAvailableMigrations();
         $totalSize = 0;
         $lastActivity = null;
         $successfulMigrations = 0;
@@ -29,29 +29,29 @@ class HomeController extends Controller
         $dryRunCount = 0;
         $realRunCount = 0;
 
-        foreach ($sessions as $session) {
-            $sessionMetadata = $session['metadata'] ?? null;
+        foreach ($migrations as $migration) {
+            $migrationMetadata = $migration['metadata'] ?? null;
 
-            // Calculer la taille totale des fichiers de session
-            $files = File::files($session['directory']);
+            // Calculer la taille totale des fichiers de migration
+            $files = File::files($migration['directory']);
 
             foreach ($files as $file) {
                 $totalSize += $file->getSize();
             }
 
-            if ($sessionMetadata) {
+            if ($migrationMetadata) {
                 // Dernière activité depuis les métadonnées
-                if (isset($sessionMetadata['started_at'])) {
-                    $sessionTime = Carbon::parse($sessionMetadata['started_at'])->timestamp;
+                if (isset($migrationMetadata['started_at'])) {
+                    $migrationTime = Carbon::parse($migrationMetadata['started_at'])->timestamp;
 
-                    if ($lastActivity === null || $sessionTime > $lastActivity) {
-                        $lastActivity = $sessionTime;
+                    if ($lastActivity === null || $migrationTime > $lastActivity) {
+                        $lastActivity = $migrationTime;
                     }
                 }
 
                 // Compter les migrations réussies (non dry-run)
-                if (isset($sessionMetadata['dry_run'])) {
-                    if ($sessionMetadata['dry_run']) {
+                if (isset($migrationMetadata['dry_run'])) {
+                    if ($migrationMetadata['dry_run']) {
                         $dryRunCount++;
                     } else {
                         $realRunCount++;
@@ -60,14 +60,14 @@ class HomeController extends Controller
                 }
 
                 // Accumuler le total des changements
-                if (isset($sessionMetadata['total_changes'])) {
-                    $totalChanges += $sessionMetadata['total_changes'];
+                if (isset($migrationMetadata['total_changes'])) {
+                    $totalChanges += $migrationMetadata['total_changes'];
                 }
             }
         }
 
         // Calculer les nouvelles métriques
-        $totalMigrations = \count($sessions);
+        $totalMigrations = \count($migrations);
         $successRate = $totalMigrations > 0 ? round(($successfulMigrations / $totalMigrations) * 100) : 0;
         $avgChanges = $totalMigrations > 0 ? round($totalChanges / $totalMigrations) : 0;
 
@@ -86,19 +86,19 @@ class HomeController extends Controller
         // Dernières migrations (depuis métadonnées)
         $recentMigrations = [];
 
-        foreach ($sessions as $session) {
-            $sessionMetadata = $session['metadata'] ?? null;
+        foreach ($migrations as $migration) {
+            $migrationMetadata = $migration['metadata'] ?? null;
 
-            if ($sessionMetadata && isset($sessionMetadata['total_files'])) {
+            if ($migrationMetadata && isset($migrationMetadata['total_files'])) {
                 $recentMigrations[] = [
-                    'name' => 'Migration '.($session['short_id'] ?? 'inconnue'),
-                    'session_id' => $session['session_id'],
-                    'short_id' => $session['short_id'],
-                    'created_at' => Carbon::parse($sessionMetadata['started_at']),
-                    'size' => File::size($session['directory'].'/metadata.json'),
-                    'dry_run' => $sessionMetadata['dry_run'] ?? false,
-                    'files_modified' => $sessionMetadata['modified_files'] ?? 0,
-                    'total_changes' => $sessionMetadata['total_changes'] ?? 0,
+                    'name' => 'Migration '.($migration['short_id'] ?? 'inconnue'),
+                    'migration_id' => $migration['migration_id'],
+                    'short_id' => $migration['short_id'],
+                    'created_at' => Carbon::parse($migrationMetadata['started_at']),
+                    'size' => File::size($migration['directory'].'/metadata.json'),
+                    'dry_run' => $migrationMetadata['dry_run'] ?? false,
+                    'files_modified' => $migrationMetadata['modified_files'] ?? 0,
+                    'total_changes' => $migrationMetadata['total_changes'] ?? 0,
                 ];
             }
         }

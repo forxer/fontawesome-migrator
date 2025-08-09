@@ -4,26 +4,26 @@
 // Format des tailles de fichiers (équivalent PHP human_readable_bytes_size)
 function formatFileSize(bytes, decimals = 2) {
     if (bytes === 0) return '0 B';
-    
+
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 async function runTest(type) {
     const button = document.querySelector(`[data-type="${type}"]`);
     const output = document.getElementById('test-output');
     const result = document.getElementById('test-result');
-    
+
     // Désactiver le bouton et afficher le loading
     button.disabled = true;
     button.classList.add('loading');
     output.style.display = 'block';
     result.innerHTML = `<i class="bi bi-rocket"></i> Lancement du test ${type}...\n`;
-    
+
     try {
         const response = await fetch('/fontawesome-migrator/tests/migration', {
             method: 'POST',
@@ -33,9 +33,9 @@ async function runTest(type) {
             },
             body: JSON.stringify({ type: type })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             result.innerHTML = `<i class="bi bi-check-square"></i> Test ${type} terminé avec succès!
 
@@ -48,14 +48,14 @@ ${JSON.stringify(data.options, null, 2)}
 <strong>📤 Sortie de la commande (avec debug) :</strong>
 ${data.output}
 
-<strong><i class="bi bi-graph-up"></i> Sessions disponibles :</strong> ${data.sessions.length}
+<strong><i class="bi bi-graph-up"></i> Migrations disponibles :</strong> ${data.migrations.length}
 
 <i class="bi bi-clock"></i> Test terminé à ${data.timestamp}`;
-            
+
             // Ne pas recharger automatiquement, laisser l'utilisateur voir le résultat
             // Ajouter un bouton pour recharger manuellement
             const reloadBtn = document.createElement('button');
-            reloadBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Recharger la page pour voir les nouvelles sessions';
+            reloadBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Recharger la page pour voir les nouvelles migrations';
             reloadBtn.className = 'btn-primary';
             reloadBtn.style.marginTop = '10px';
             reloadBtn.onclick = () => location.reload();
@@ -82,49 +82,49 @@ ${data.error || data.output}
     }
 }
 
-async function inspectSession(sessionId) {
+async function inspectMigration(migrationId) {
     try {
-        const response = await fetch(`/fontawesome-migrator/tests/session/${sessionId}`);
+        const response = await fetch(`/fontawesome-migrator/tests/migration/${migrationId}`);
         const data = await response.json();
-        
+
         if (data.error) {
             alert('Erreur: ' + data.error);
             return;
         }
-        
-        const details = document.getElementById('session-details');
+
+        const details = document.getElementById('migration-details');
         details.innerHTML = `
-            <h4 class="section-title">Session: ${data.session_id}</h4>
-            <p><strong>Répertoire:</strong> ${data.session_dir}</p>
+            <h4 class="section-title">Migration: ${data.migration_id}</h4>
+            <p><strong>Répertoire:</strong> ${data.migration_dir}</p>
             <p><strong>Nombre de fichiers:</strong> ${data.files_count}</p>
-            
+
             <h5 class="section-title"><i class="bi bi-clipboard"></i> Métadonnées:</h5>
             <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto;">${JSON.stringify(data.metadata, null, 2)}</pre>
-            
+
             <h5 class="section-title"><i class="bi bi-folder"></i> Fichiers de sauvegarde:</h5>
             <ul>
                 ${data.backup_files.map(file => `
                     <li>
-                        <strong>${file.name}</strong> 
+                        <strong>${file.name}</strong>
                         (${formatFileSize(file.size)}, ${file.modified})
                     </li>
                 `).join('')}
             </ul>
         `;
-        
-        document.getElementById('session-modal').style.display = 'flex';
+
+        document.getElementById('migration-modal').style.display = 'flex';
     } catch (error) {
         alert('Erreur lors de l\'inspection: ' + error.message);
     }
 }
 
-async function cleanupSessions(days) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les sessions de plus de ${days} jour(s) ?`)) {
+async function cleanupMigrations(days) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les migrations de plus de ${days} jour(s) ?`)) {
         return;
     }
-    
+
     try {
-        const response = await fetch('/fontawesome-migrator/tests/cleanup-sessions', {
+        const response = await fetch('/fontawesome-migrator/tests/cleanup-migrations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -132,10 +132,10 @@ async function cleanupSessions(days) {
             },
             body: JSON.stringify({ days: days })
         });
-        
+
         const data = await response.json();
-        alert(`${data.message}\nSessions supprimées: ${data.deleted}`);
-        
+        alert(`${data.message}\nMigrations supprimées: ${data.deleted}`);
+
         // Recharger la page
         location.reload();
     } catch (error) {
@@ -159,9 +159,9 @@ window.addEventListener('click', function(event) {
 
 // Délégation d'événements pour les boutons d'inspection (fonctionne après rechargement)
 document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('inspect-session-btn')) {
-        const sessionId = event.target.getAttribute('data-session-id');
-        inspectSession(sessionId);
+    if (event.target.classList.contains('inspect-migration-btn')) {
+        const migrationId = event.target.getAttribute('data-migration-id');
+        inspectMigration(migrationId);
     }
 });
 </script>

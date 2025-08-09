@@ -20,12 +20,12 @@ class BackupManager implements BackupManagerInterface
     ) {}
 
     /**
-     * Créer une sauvegarde d'un fichier dans le répertoire de session
+     * Créer une sauvegarde d'un fichier dans le répertoire de migration
      */
     public function createBackup(string $filePath): array|bool
     {
-        $sessionDirectory = $this->metadataManager->getMigrationDirectory();
-        $backupDir = $sessionDirectory.'/backups';
+        $migrationDirectory = $this->metadataManager->getMigrationDirectory();
+        $backupDir = $migrationDirectory.'/backups';
 
         // S'assurer que le répertoire et le .gitignore existent
         DirectoryHelper::ensureExistsWithGitignore($backupDir);
@@ -55,12 +55,12 @@ class BackupManager implements BackupManagerInterface
     }
 
     /**
-     * Obtenir la liste des sauvegardes pour la session courante
+     * Obtenir la liste des sauvegardes pour la migration courante
      */
-    public function getSessionBackups(): array
+    public function getMigrationBackups(): array
     {
-        $sessionDirectory = $this->metadataManager->getMigrationDirectory();
-        $backupDir = $sessionDirectory.'/backups';
+        $migrationDirectory = $this->metadataManager->getMigrationDirectory();
+        $backupDir = $migrationDirectory.'/backups';
 
         if (! File::isDirectory($backupDir)) {
             return [];
@@ -85,12 +85,12 @@ class BackupManager implements BackupManagerInterface
     }
 
     /**
-     * Supprimer toutes les sauvegardes d'une session
+     * Supprimer toutes les sauvegardes d'une migration
      */
-    public function clearSessionBackups(): bool
+    public function clearMigrationBackups(): bool
     {
-        $sessionDirectory = $this->metadataManager->getMigrationDirectory();
-        $backupDir = $sessionDirectory.'/backups';
+        $migrationDirectory = $this->metadataManager->getMigrationDirectory();
+        $backupDir = $migrationDirectory.'/backups';
 
         if (! File::isDirectory($backupDir)) {
             return true;
@@ -106,11 +106,11 @@ class BackupManager implements BackupManagerInterface
     }
 
     /**
-     * Obtenir les statistiques des sauvegardes pour la session courante
+     * Obtenir les statistiques des sauvegardes pour la migration courante
      */
     public function getBackupStats(): array
     {
-        $backups = $this->getSessionBackups();
+        $backups = $this->getMigrationBackups();
 
         $totalSize = array_sum(array_column($backups, 'size'));
         $count = \count($backups);

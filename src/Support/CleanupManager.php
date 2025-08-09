@@ -60,7 +60,7 @@ class CleanupManager
         return $deleted;
     }
 
-    public static function cleanupMigrationSessions(string $migrationsPath, int $daysToKeep = 30): int
+    public static function cleanupMigrationMigrations(string $migrationsPath, int $daysToKeep = 30): int
     {
         return self::cleanupOldDirectories($migrationsPath, '/^migration-/', $daysToKeep);
     }

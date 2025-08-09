@@ -122,7 +122,7 @@ class MetadataBuilder
     public function buildSummaryStructure(array $metadata): array
     {
         return [
-            'session_id' => $metadata['session_id'] ?? null,
+            'migration_id' => $metadata['migration_id'] ?? null,
             'started_at' => $metadata['started_at'] ?? null,
             'completed_at' => $metadata['completed_at'] ?? null,
             'duration' => $metadata['duration'] ?? null,
@@ -142,9 +142,9 @@ class MetadataBuilder
     }
 
     /**
-     * Merger des données de session dans les métadonnées existantes
+     * Merger des données de migration dans les métadonnées existantes
      */
-    public function mergeSessionData(array $existingMetadata, array $sessionData): array
+    public function mergeMigrationData(array $existingMetadata, array $migrationData): array
     {
         // Préserver les sections importantes lors de la fusion
         $preservedSections = [
@@ -156,13 +156,13 @@ class MetadataBuilder
             'asset_types',
         ];
 
-        $merged = array_merge($existingMetadata, $sessionData);
+        $merged = array_merge($existingMetadata, $migrationData);
 
         foreach ($preservedSections as $section) {
             if (isset($existingMetadata[$section]) && \is_array($existingMetadata[$section])) {
                 $merged[$section] = array_merge(
                     $existingMetadata[$section],
-                    $sessionData[$section] ?? []
+                    $migrationData[$section] ?? []
                 );
             }
         }

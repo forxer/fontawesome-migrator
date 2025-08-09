@@ -17,7 +17,7 @@ Breadcrumbs::for('fontawesome-migrator.migrations.index', function (BreadcrumbTr
 });
 
 // Migration - Détail
-Breadcrumbs::for('fontawesome-migrator.migrations.show', function (BreadcrumbTrail $trail, string $sessionId): void {
+Breadcrumbs::for('fontawesome-migrator.migrations.show', function (BreadcrumbTrail $trail, string $migrationId): void {
     $trail->parent('fontawesome-migrator.migrations.index');
     $trail->push('Rapport');
 });

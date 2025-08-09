@@ -20,8 +20,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Migrations
 Route::prefix('migrations')->name('migrations.')->group(function () {
     Route::get('/', [MigrationsController::class, 'index'])->name('index');
-    Route::get('/{sessionId}', [MigrationsController::class, 'show'])->name('show');
-    Route::delete('/{sessionId}', [MigrationsController::class, 'destroy'])->name('destroy');
+    Route::get('/{migrationId}', [MigrationsController::class, 'show'])->name('show');
+    Route::delete('/{migrationId}', [MigrationsController::class, 'destroy'])->name('destroy');
     Route::post('/cleanup', [MigrationsController::class, 'cleanup'])->name('cleanup');
 });
 
@@ -29,6 +29,6 @@ Route::prefix('migrations')->name('migrations.')->group(function () {
 Route::prefix('tests')->name('tests.')->group(function () {
     Route::get('/', [TestsController::class, 'index'])->name('index');
     Route::post('/migration-multi-version', [TestsController::class, 'runMultiVersionMigration'])->name('migration-multi-version');
-    Route::get('/session/{sessionId}', [TestsController::class, 'inspectSession'])->name('session');
-    Route::post('/cleanup-sessions', [TestsController::class, 'cleanupSessions'])->name('cleanup');
+    Route::get('/migration/{migrationId}', [TestsController::class, 'inspectMigration'])->name('migration');
+    Route::post('/cleanup-migrations', [TestsController::class, 'cleanupMigrations'])->name('cleanup');
 });

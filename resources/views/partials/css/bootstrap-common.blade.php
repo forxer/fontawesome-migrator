@@ -265,7 +265,7 @@
         color: var(--bs-white);
     }
 
-    .status-badge-session {
+    .status-badge-migration {
         background-color: var(--bs-info);
         color: var(--bs-white);
     }

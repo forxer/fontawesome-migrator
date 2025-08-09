@@ -21,7 +21,7 @@
                 <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
             </a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupSessions(); return false;">
+            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupMigrations(); return false;">
                 <i class="bi bi-trash"></i> Nettoyer (30j+)
             </a></li>
         </x-slot>
@@ -66,8 +66,8 @@
                         <div class="card-body">
                             <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
-                                @if($stats['last_session'])
-                                    {{ $stats['last_session']['created_at']->format('d/m') }}
+                                @if($stats['last_migration'])
+                                    {{ $stats['last_migration']['created_at']->format('d/m') }}
                                 @else
                                     -
                                 @endif
@@ -86,7 +86,7 @@
         <div class="row g-4 mb-4">
             @foreach ($reports as $report)
                 <div class="col-md-6 col-xl-4">
-                    <div class="card h-100 shadow-sm" data-session="{{ $report['session_id'] }}">
+                    <div class="card h-100 shadow-sm" data-migration="{{ $report['migration_id'] }}">
                         <div class="card-header d-flex justify-content-between align-items-center gap-3">
                                 <h5 class="card-title mb-1 text-truncate">
                                     <i class="bi bi-file-text text-primary fs-4"></i>
@@ -126,7 +126,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['session_id'] }}">
+                                        <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['migration_id'] }}">
                                             {{ $report['short_id'] }}
                                         </div>
                                         <div class="text-muted small"><i class="bi bi-file-text"></i> Migration</div>
@@ -155,7 +155,7 @@
                                 <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}?format=json" target="_blank" class="btn btn-outline-primary">
                                     <i class="bi bi-database"></i> JSON
                                 </a>
-                                <button onclick="inspectSession('{{ $report['short_id'] }}')" class="btn btn-outline-secondary">
+                                <button onclick="inspectMigration('{{ $report['short_id'] }}')" class="btn btn-outline-secondary">
                                     <i class="bi bi-search"></i> Inspecter
                                 </button>
                                 <button onclick="deleteReport('{{ $report['short_id'] }}')" class="btn btn-outline-danger">
@@ -209,13 +209,13 @@
         }, 500);
     }
 
-    async function deleteReport(sessionId) {
+    async function deleteReport(migrationId) {
         if (!confirm('Êtes-vous sûr de vouloir supprimer cette migration ?')) {
             return;
         }
 
         try {
-            const response = await fetch(`/fontawesome-migrator/migrations/${sessionId}`, {
+            const response = await fetch(`/fontawesome-migrator/migrations/${migrationId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': window.csrfToken,
@@ -227,8 +227,8 @@
 
             if (response.ok) {
                 showAlert('Migration supprimée avec succès');
-                // Masquer la carte de la session
-                const card = document.querySelector(`[data-session="${sessionId}"]`);
+                // Masquer la carte de la migration
+                const card = document.querySelector(`[data-migration="${migrationId}"]`);
                 if (card) {
                     card.style.opacity = '0.5';
                     card.style.pointerEvents = 'none';
@@ -242,7 +242,7 @@
         }
     }
 
-    async function cleanupSessions() {
+    async function cleanupMigrations() {
         if (!confirm('Supprimer toutes les migrations de plus de 30 jours ?')) {
             return;
         }
@@ -272,9 +272,9 @@
         }
     }
 
-    async function inspectSession(sessionId) {
+    async function inspectMigration(migrationId) {
         try {
-            const response = await fetch(`/fontawesome-migrator/tests/session/${sessionId}`, {
+            const response = await fetch(`/fontawesome-migrator/tests/migration/${migrationId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -284,10 +284,10 @@
             const data = await response.json();
 
             if (response.ok) {
-                // Afficher les détails de session dans une modale ou une nouvelle fenêtre
+                // Afficher les détails de migration dans une modale ou une nouvelle fenêtre
                 const details = `
-Session: ${data.session_id}
-Répertoire: ${data.session_dir}
+Migration: ${data.migration_id}
+Répertoire: ${data.migration_dir}
 Fichiers de sauvegarde: ${data.files_count}
 Métadonnées: ${JSON.stringify(data.metadata, null, 2)}
                 `;
@@ -295,7 +295,7 @@ Métadonnées: ${JSON.stringify(data.metadata, null, 2)}
                 // Pour l'instant, afficher dans une alerte - on pourrait améliorer avec une vraie modale
                 alert(details);
             } else {
-                showAlert('Erreur lors de l\'inspection de la session', 'error');
+                showAlert('Erreur lors de l\'inspection de la migration', 'error');
             }
         } catch (error) {
             showAlert('Erreur de connexion', 'error');

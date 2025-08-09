@@ -12,14 +12,14 @@ interface BackupManagerInterface
     public function createBackup(string $filePath): array|bool;
 
     /**
-     * Obtenir la liste des sauvegardes pour la session courante
+     * Obtenir la liste des sauvegardes pour la migration courante
      */
-    public function getSessionBackups(): array;
+    public function getMigrationBackups(): array;
 
     /**
-     * Supprimer toutes les sauvegardes d'une session
+     * Supprimer toutes les sauvegardes d'une migration
      */
-    public function clearSessionBackups(): bool;
+    public function clearMigrationBackups(): bool;
 
     /**
      * Obtenir les statistiques des sauvegardes

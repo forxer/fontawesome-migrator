@@ -75,7 +75,7 @@ class MigrationStorageService
                     $migrations[] = [
                         'file' => $file->getFilename(),
                         'path' => $file->getPathname(),
-                        'session_id' => $data['session_id'] ?? 'unknown',
+                        'migration_id' => $data['migration_id'] ?? 'unknown',
                         'started_at' => $data['started_at'] ?? null,
                         'status' => $data['status'] ?? 'unknown',
                     ];
@@ -127,9 +127,9 @@ class MigrationStorageService
      */
     private function generateFilePath(array $migrationData): string
     {
-        $sessionId = $migrationData['session_id'] ?? uniqid('migration_');
+        $migrationId = $migrationData['migration_id'] ?? uniqid('migration_');
         $timestamp = date('Y-m-d_H-i-s');
-        $filename = \sprintf('migration_%s_%s.json', $timestamp, $sessionId);
+        $filename = \sprintf('migration_%s_%s.json', $timestamp, $migrationId);
 
         return $this->getMigrationDirectory().'/'.$filename;
     }

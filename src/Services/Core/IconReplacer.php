@@ -111,6 +111,7 @@ class IconReplacer
         return [
             'success' => true,
             'changes' => [],
+            'changes_count' => 0,
             'warnings' => [],
         ];
     }
@@ -188,6 +189,7 @@ class IconReplacer
         return [
             'success' => true,
             'changes' => $processResult['changes'],
+            'changes_count' => \count($processResult['changes']),
             'warnings' => $processResult['warnings'],
             'content' => $processResult['content'],
             'backup' => $backupInfo,
@@ -203,6 +205,7 @@ class IconReplacer
             'success' => false,
             'error' => $exception->getMessage(),
             'changes' => [],
+            'changes_count' => 0,
             'warnings' => [],
             'backup' => null,
         ];

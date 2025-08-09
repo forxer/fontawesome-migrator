@@ -36,12 +36,12 @@
 - ✅ **Configurateur multi-versions** : Interface web `/tests` avec sélecteur interactif FA4→5→6→7
 - ✅ **Validation dynamique** : Vérification des migrations supportées en temps réel
 - ✅ **Aperçu de compatibilité** : Breaking changes et recommandations par migration
-- ✅ **Interface web complète** : Dashboard, rapports, sessions avec navigation moderne
+- ✅ **Interface web complète** : Dashboard, rapports, migrations avec navigation moderne
 - ✅ **Documentation complète** : Guide multi-versions, API reference, Quick reference
 - ✅ **Architecture JSON** : Configuration externalisée avec ConfigurationLoader et fallbacks
 - ✅ **Mode dry-run** : Prévisualisation des changements avant application
 - ✅ **Rapports détaillés** : HTML interactifs et JSON avec métadonnées complètes
-- ✅ **Traçabilité complète** : Origine CLI/Web, sessions avec short IDs
+- ✅ **Traçabilité complète** : Origine CLI/Web, migrations avec short IDs
 - ✅ **Design system Bootstrap 5** : Interface moderne, responsive et accessible
 
 ## Installation
@@ -511,7 +511,7 @@ Les rapports sont automatiquement sauvegardés dans `storage/app/public/fontawes
 ```bash
 # Après migration, la commande affiche :
 📊 Rapport généré automatiquement :
-   • Session : migration_abc123
+   • Migration : migration_abc123
    • Métadonnées : metadata.json
    • Interface web : http://localhost/fontawesome-migrator/migrations
 ```
@@ -521,7 +521,7 @@ Les rapports sont automatiquement sauvegardés dans `storage/app/public/fontawes
 Le package inclut une **interface web moderne** avec plusieurs sections :
 
 #### 🏠 Dashboard principal (`/fontawesome-migrator/`)
-- **📊 Statistiques** : Vue d'ensemble des migrations et sessions
+- **📊 Statistiques** : Vue d'ensemble des migrations et migrations
 - **🚀 Actions rapides** : Liens vers les fonctionnalités principales
 - **📈 Activité récente** : Dernières migrations et rapports
 
@@ -586,9 +586,9 @@ Accessible à `/fontawesome-migrator/test/panel` depuis l'interface de gestion d
 
 ### 🎯 Fonctionnalités du panneau
 
-**📊 Dashboard des sessions**
-- Statistiques en temps réel des sessions de migration
-- Nombre total de sessions et sauvegardes
+**📊 Dashboard des migrations**
+- Statistiques en temps réel des migrations de migration
+- Nombre total de migrations et sauvegardes
 - Taille totale utilisée et dernière activité
 - Aperçu visuel de l'activité de migration
 
@@ -601,39 +601,39 @@ Accessible à `/fontawesome-migrator/test/panel` depuis l'interface de gestion d
 ⚡ Migration réelle  # Migration complète (attention !)
 ```
 
-**📋 Gestion des sessions**
-- Liste complète des sessions de migration créées
+**📋 Gestion des migrations**
+- Liste complète des migrations de migration créées
 - Inspection détaillée avec visualiseur JSON intégré
 - Métadonnées complètes : durée, type, fichiers sauvegardés
-- Navigation fluide entre sessions
+- Navigation fluide entre migrations
 
 **🧹 Nettoyage intelligent**
-- Suppression des sessions anciennes (> 7 jours ou > 1 jour)
+- Suppression des migrations anciennes (> 7 jours ou > 1 jour)
 - Nettoyage automatique avec confirmation
 - Statistiques de nettoyage en temps réel
 
-### 🏗️ Architecture par sessions
+### 🏗️ Architecture par migrations
 
 La v2.0 utilise une nouvelle organisation des sauvegardes :
 
 ```
 storage/app/fontawesome-backups/
-├── session-migration_66ba1234abcd5678/
+├── migration-migration_66ba1234abcd5678/
 │   ├── .gitignore
 │   ├── metadata.json
 │   ├── resources_views_file1.blade.php
 │   └── public_css_file2.css
-└── session-migration_66ba9876efgh9012/
+└── migration-migration_66ba9876efgh9012/
     ├── .gitignore
     ├── metadata.json
     └── resources_js_file3.js
 ```
 
 **Avantages :**
-- ⚡ **Traçabilité parfaite** : 1 session = 1 répertoire avec toutes ses sauvegardes
-- 📋 **Métadonnées intégrées** : Fichier `metadata.json` dans chaque session
+- ⚡ **Traçabilité parfaite** : 1 migration = 1 répertoire avec toutes ses sauvegardes
+- 📋 **Métadonnées intégrées** : Fichier `metadata.json` dans chaque migration
 - 🔗 **Liaison directe** : Correspondance exacte métadonnées ↔ sauvegardes
-- 🧹 **Nettoyage facilité** : Suppression par session complète
+- 🧹 **Nettoyage facilité** : Suppression par migration complète
 - 🔍 **Inspection avancée** : Exploration détaillée via interface web
 
 ### 💡 Cas d'usage
@@ -646,7 +646,7 @@ storage/app/fontawesome-backups/
 **👥 Pour les équipes :**
 - Formation et démonstration des migrations
 - Validation collaborative des résultats
-- Partage des sessions de migration
+- Partage des migrations de migration
 
 **🏢 Pour la production :**
 - Validation avant déploiement
@@ -836,9 +836,9 @@ Les contributions sont les bienvenues ! Veuillez :
 - ✅ **Interface web avancée** : Configurateur multi-versions interactif `/tests`
 - ✅ **Documentation complète** : Guide multi-versions, API reference, Quick reference
 - ✅ **Injection de dépendances modernisée** dans les commandes Laravel
-- ✅ **Système de métadonnées centralisé** avec gestion des sessions
+- ✅ **Système de métadonnées centralisé** avec gestion des migrations
 - ✅ **Interface web reorganisée** avec contrôleurs spécialisés
-- ✅ **Navigation fluide** entre rapports, sessions et tests
+- ✅ **Navigation fluide** entre rapports, migrations et tests
 - ✅ **Migration Bootstrap 5** : Design system moderne et cohérent
 - ✅ **Traçabilité complète** : Origine CLI/Web dans métadonnées et rapports
 

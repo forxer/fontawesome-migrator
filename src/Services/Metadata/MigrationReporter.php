@@ -30,7 +30,7 @@ class MigrationReporter
 
         return [
             'success' => true,
-            'session_id' => $this->metadata->getAll()['short_id'] ?? 'unknown',
+            'migration_id' => $this->metadata->getAll()['short_id'] ?? 'unknown',
             'metadata_path' => $this->metadata->saveToFile(),
             'web_url' => url('/fontawesome-migrator/migrations'),
             'filename' => 'metadata.json', // Source unique des données

@@ -8,27 +8,27 @@ use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
 use FontAwesome\Migrator\Support\FormatterHelper;
 
 /**
- * Service dédié à la gestion des sessions de migration
- * Responsabilité unique : gestion du cycle de vie des sessions
+ * Service dédié à la gestion des migrations de migration
+ * Responsabilité unique : gestion du cycle de vie des migrations
  */
-class MigrationSessionService
+class MigrationMigrationService
 {
-    private array $sessionData = [];
+    private array $migrationData = [];
 
     public function __construct(
         private readonly PackageVersionService $packageVersionService
     ) {}
 
     /**
-     * Initialiser une nouvelle session de migration
+     * Initialiser une nouvelle migration de migration
      */
-    public function initializeSession(): string
+    public function initializeMigration(): string
     {
-        $sessionId = uniqid('migration_', true);
+        $migrationId = uniqid('migration_', true);
         $shortId = FormatterHelper::generateShortId('migration_');
 
-        $this->sessionData = [
-            'session_id' => $sessionId,
+        $this->migrationData = [
+            'migration_id' => $migrationId,
             'short_id' => $shortId,
             'package_version' => $this->packageVersionService->getVersion(),
             'started_at' => now()->toISOString(),
@@ -38,17 +38,17 @@ class MigrationSessionService
             'command_options' => [],
         ];
 
-        return $sessionId;
+        return $migrationId;
     }
 
     /**
-     * Marquer la session comme complétée
+     * Marquer la migration comme complétée
      */
-    public function completeSession(): self
+    public function completeMigration(): self
     {
-        $this->sessionData['status'] = 'completed';
-        $this->sessionData['completed_at'] = now()->toISOString();
-        $this->sessionData['duration'] = $this->calculateDuration();
+        $this->migrationData['status'] = 'completed';
+        $this->migrationData['completed_at'] = now()->toISOString();
+        $this->migrationData['duration'] = $this->calculateDuration();
 
         return $this;
     }
@@ -58,7 +58,7 @@ class MigrationSessionService
      */
     public function setMigrationOptions(array $options): self
     {
-        $this->sessionData['migration_options'] = $options;
+        $this->migrationData['migration_options'] = $options;
 
         return $this;
     }
@@ -68,43 +68,43 @@ class MigrationSessionService
      */
     public function setDryRun(bool $isDryRun): self
     {
-        $this->sessionData['dry_run'] = $isDryRun;
+        $this->migrationData['dry_run'] = $isDryRun;
 
         return $this;
     }
 
     /**
-     * Obtenir l'ID de session
+     * Obtenir l'ID de migration
      */
-    public function getSessionId(): string
+    public function getmigrationId(): string
     {
-        return $this->sessionData['session_id'] ?? '';
+        return $this->migrationData['migration_id'] ?? '';
     }
 
     /**
-     * Obtenir les données de session
+     * Obtenir les données de migration
      */
-    public function getSessionData(): array
+    public function getMigrationData(): array
     {
-        return $this->sessionData;
+        return $this->migrationData;
     }
 
     /**
-     * Charger une session depuis les données
+     * Charger une migration depuis les données
      */
-    public function loadSession(array $sessionData): self
+    public function loadMigration(array $migrationData): self
     {
-        $this->sessionData = $sessionData;
+        $this->migrationData = $migrationData;
 
         return $this;
     }
 
     /**
-     * Réinitialiser la session
+     * Réinitialiser la migration
      */
-    public function resetSession(): self
+    public function resetMigration(): self
     {
-        $this->sessionData = [];
+        $this->migrationData = [];
 
         return $this;
     }
@@ -114,44 +114,44 @@ class MigrationSessionService
      */
     private function calculateDuration(): ?int
     {
-        if (empty($this->sessionData['started_at']) || empty($this->sessionData['completed_at'])) {
+        if (empty($this->migrationData['started_at']) || empty($this->migrationData['completed_at'])) {
             return null;
         }
 
-        $startTime = strtotime((string) $this->sessionData['started_at']);
-        $endTime = strtotime((string) $this->sessionData['completed_at']);
+        $startTime = strtotime((string) $this->migrationData['started_at']);
+        $endTime = strtotime((string) $this->migrationData['completed_at']);
 
         return $endTime - $startTime;
     }
 
     /**
-     * Obtenir un résumé de la session
+     * Obtenir un résumé de la migration
      */
-    public function getSessionSummary(): array
+    public function getMigrationSummary(): array
     {
         return [
-            'session_id' => $this->sessionData['session_id'] ?? null,
-            'short_id' => $this->sessionData['short_id'] ?? null,
-            'status' => $this->sessionData['status'] ?? 'unknown',
-            'started_at' => $this->sessionData['started_at'] ?? null,
-            'completed_at' => $this->sessionData['completed_at'] ?? null,
-            'duration' => $this->sessionData['duration'] ?? null,
-            'dry_run' => $this->sessionData['dry_run'] ?? false,
+            'migration_id' => $this->migrationData['migration_id'] ?? null,
+            'short_id' => $this->migrationData['short_id'] ?? null,
+            'status' => $this->migrationData['status'] ?? 'unknown',
+            'started_at' => $this->migrationData['started_at'] ?? null,
+            'completed_at' => $this->migrationData['completed_at'] ?? null,
+            'duration' => $this->migrationData['duration'] ?? null,
+            'dry_run' => $this->migrationData['dry_run'] ?? false,
         ];
     }
 
     /**
-     * Valider les données de session
+     * Valider les données de migration
      */
-    public function validateSession(): array
+    public function validateMigration(): array
     {
         $errors = [];
 
-        if (empty($this->sessionData['session_id'])) {
-            $errors[] = 'Session ID is required';
+        if (empty($this->migrationData['migration_id'])) {
+            $errors[] = 'Migration ID is required';
         }
 
-        if (empty($this->sessionData['started_at'])) {
+        if (empty($this->migrationData['started_at'])) {
             $errors[] = 'Start time is required';
         }
 

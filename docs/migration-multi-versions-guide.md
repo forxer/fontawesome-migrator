@@ -49,7 +49,7 @@ FA4To5Mapper    FA5To6Mapper    FA6To7Mapper    [Future]
 - **Renommages** : `fa-home` → `fa-house`, `fa-times` → `fa-xmark`
 - **Nouveautés** : Styles Pro (`fal`, `fad`), nouvelles icônes
 
-#### FontAwesome 5 → 6  
+#### FontAwesome 5 → 6
 - **Préfixes longs** : `fas` → `fa-solid`, `far` → `fa-regular`
 - **Renommages massifs** : `fa-sort-alpha-down` → `fa-arrow-down-a-z`
 - **Nouvelles icônes** : `fa-house`, `fa-magnifying-glass`, `fa-user-group`
@@ -123,7 +123,7 @@ http://votre-app.local/fontawesome-migrator/
 | **Accueil** | `/fontawesome-migrator/` | Dashboard avec statistiques et actions rapides |
 | **Tests** | `/fontawesome-migrator/tests` | **Configurateur multi-versions interactif** |
 | **Rapports** | `/fontawesome-migrator/reports` | Visualisation des rapports de migration |
-| **Sessions** | `/fontawesome-migrator/sessions` | Gestion des sessions de migration |
+| **Migrations** | `/fontawesome-migrator/migrations` | Gestion des migrations de migration |
 
 ### Configurateur multi-versions (`/tests`)
 
@@ -238,7 +238,7 @@ $errors = $loader->validateMigrationConfig('6', '7');
 **Après (FA5) :**
 ```html
 <i class="far fa-envelope"></i>
-<i class="far fa-star"></i>  
+<i class="far fa-star"></i>
 <i class="fas fa-house"></i>
 ```
 
@@ -258,7 +258,7 @@ php artisan fontawesome:migrate --from=5 --to=6 --verbose --path=resources/views
 - Fichiers analysés : 45
 - Icônes transformées : 127
 - Avertissements : 8 (icônes Pro détectées)
-- Nouveau rapport : `storage/app/fontawesome-migrator/session_abc12345/`
+- Nouveau rapport : `storage/app/fontawesome-migrator/migration_abc12345/`
 
 ### Exemple 3 : Migration FA6 → FA7 via interface web
 
@@ -336,7 +336,7 @@ php artisan fontawesome:migrate --dry-run --path=resources/views/test.blade.php
 
 Les migrations génèrent des logs détaillés dans :
 - `storage/logs/laravel.log`
-- Rapports de session : `storage/app/fontawesome-migrator/`
+- Rapports de migration : `storage/app/fontawesome-migrator/`
 
 #### Mode verbose
 
@@ -368,6 +368,6 @@ Affiche :
 
 ---
 
-**Version du guide :** Compatible avec FontAwesome Migrator v2.0.0+  
-**Dernière mise à jour :** Août 2025  
+**Version du guide :** Compatible avec FontAwesome Migrator v2.0.0+
+**Dernière mise à jour :** Août 2025
 **Architecture :** Multi-versions FA4→5→6→7

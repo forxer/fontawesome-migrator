@@ -67,7 +67,7 @@ interface MetadataManagerInterface
     public function getAvailableMigrations(): array;
 
     /**
-     * Nettoyer les anciennes sessions
+     * Nettoyer les anciennes migrations
      */
-    public function cleanOldSessions(int $daysToKeep = 30): int;
+    public function cleanOldMigrations(int $daysToKeep = 30): int;
 }

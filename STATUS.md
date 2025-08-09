@@ -20,7 +20,7 @@
 
 ### Phase 2: Tests 🚧
 - 🚧 Suite de tests en cours de refonte pour la version 2.0.0
-- 🚧 Adaptation aux nouvelles architectures (MetadataManager, sessions)
+- 🚧 Adaptation aux nouvelles architectures (MetadataManager, migrations)
 - 🚧 Mise à jour des tests d'intégration avec les nouveaux contrôleurs
 - 🚧 Réorganisation des tests selon la nouvelle structure
 
@@ -100,7 +100,7 @@
 - [x] **FontAwesomePatternService**: Patterns FA centralisés dans IconReplacer (élimine 1 duplication)
 
 ## 🔄 Refactorisation modulaire MetadataManager
-- [x] **MigrationSessionService**: Gestion cycle de vie sessions
+- [x] **MigrationMigrationService**: Gestion cycle de vie migrations
 - [x] **MigrationResultsService**: Stockage et traitement résultats
 - [x] **MigrationStorageService**: Persistance données migrations
 - [x] **Séparation responsabilités**: Architecture SOLID respectée
@@ -131,7 +131,7 @@
 - ✅ **Dashboard principal** (`/fontawesome-migrator/`): Statistiques et actions rapides
 - ✅ **Configurateur multi-versions** (`/fontawesome-migrator/tests`): Sélecteur interactif FA4→5→6→7
 - ✅ **Gestion des rapports** (`/fontawesome-migrator/reports`): Visualisation et analyse
-- ✅ **Gestion des sessions** (`/fontawesome-migrator/sessions`): Historique et métadonnées
+- ✅ **Gestion des migrations** (`/fontawesome-migrator/migrations`): Historique et métadonnées
 - ✅ **Design Bootstrap 5**: Interface moderne, responsive et accessible
 - ✅ **Navigation unifiée**: Menu principal avec breadcrumbs
 
@@ -196,7 +196,7 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 - **MigrationVersionManager**: Orchestration des migrations multi-versions
 - **ConfigurationLoader**: Chargement JSON avec cache et fallbacks
 - **Mappers spécialisés**: Un mapper par migration (4→5, 5→6, 6→7)
-- **Interface web moderne**: Dashboard, tests, rapports, sessions
+- **Interface web moderne**: Dashboard, tests, rapports, migrations
 - **Documentation complète**: Guides utilisateur et API reference
 
 ### Nettoyage Architectural Août 2025 ✅
@@ -204,12 +204,12 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 - **Architecture pure v2.0**: Suppression complète rétrocompatibilité, services consolidés
 - **Bug critique résolu**: Erreur "migration_results" corrigée dans MetadataManager
 - **Services actifs**: MigrateCommand, ConfigureCommand, InstallCommand (BackupCommand supprimé)
-- **Structure garantie**: Métadonnées complètes dès l'initialisation des sessions
+- **Structure garantie**: Métadonnées complètes dès l'initialisation des migrations
 
 ### Refactorisation InstallCommand & Configuration Août 2025 ✅
 - **InstallCommand v2.0 complet**: Backup version actuelle → réécriture depuis zéro, simplification 4→2 étapes
 - **Configuration modernisée**: Suppression sections obsolètes (`report_path`, `pro_styles`), ajout multi-versions
-- **Architecture cohérente**: `sessions_path` → `migrations_path` (9 occurrences corrigées), terminologie unifiée
+- **Architecture cohérente**: `migrations_path` → `migrations_path` (9 occurrences corrigées), terminologie unifiée
 - **Trait ConfigurationHelpers adapté**: Suppression références obsolètes, préservation logique pour compatibilité
 - **Nettoyage exhaustif**: MigrationReporter corrigé, ConfigureCommand identifié (todo), références validées
 - **État production-ready**: InstallCommand fonctionnel, configuration v2.0 cohérente, prêt pour tests

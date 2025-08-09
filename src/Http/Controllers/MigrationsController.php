@@ -17,60 +17,61 @@ class MigrationsController extends Controller
      */
     public function index(MetadataManagerInterface $metadataManager)
     {
-        // Récupérer les sessions qui contiennent des rapports
-        $sessions = $metadataManager->getAvailableMigrations();
+        // Récupérer les migrations qui contiennent des rapports
+        $migrations = $metadataManager->getAvailableMigrations();
         $reports = [];
 
-        foreach ($sessions as $session) {
-            $sessionDir = $session['directory'];
-            $sessionId = $session['session_id'];
-            $shortId = $session['short_id'];
-            $sessionMetadata = $session['metadata'];
+        foreach ($migrations as $migration) {
+            $migrationDir = $migration['directory'];
+            $migrationId = $migration['migration_id'];
+            $shortId = $migration['short_id'];
+            $migrationMetadata = $migration['metadata'];
 
-            // Métadonnées de la session
-            // Ignorer les sessions sans données de migration
-            if (! $sessionMetadata) {
+            // Métadonnées de la migration
+            // Ignorer les migrations sans données de migration
+            if (! $migrationMetadata) {
                 continue;
             }
 
-            if (! isset($sessionMetadata['migration_results'])) {
+            // Vérifier qu'il y a bien des données de migration (files ou total_files)
+            if (! isset($migrationMetadata['total_files']) && ! isset($migrationMetadata['files'])) {
                 continue;
             }
 
             $reports[] = [
                 'name' => 'Migration Report',
                 'filename' => 'metadata.json',
-                'session_id' => $sessionId,
+                'migration_id' => $migrationId,
                 'short_id' => $shortId,
-                'created_at' => Carbon::parse($sessionMetadata['started_at']),
-                'size' => File::size($sessionDir.'/metadata.json'),
-                'metadata_path' => $sessionDir.'/metadata.json',
+                'created_at' => Carbon::parse($migrationMetadata['started_at']),
+                'size' => File::size($migrationDir.'/metadata.json'),
+                'metadata_path' => $migrationDir.'/metadata.json',
                 'has_json' => true,
-                'dry_run' => $sessionMetadata['dry_run'] ?? false,
-                'metadata' => $sessionMetadata,
+                'dry_run' => $migrationMetadata['dry_run'] ?? false,
+                'metadata' => $migrationMetadata,
 
-                // Données enrichies de session
-                'backup_count' => $session['backup_count'] ?? 0,
-                'package_version' => $sessionMetadata['package_version'] ?? 'unknown',
-                'duration' => $sessionMetadata['duration'] ?? null,
-                'migration_origin' => $sessionMetadata['migration_source'] ?? 'unknown',
+                // Données enrichies de migration
+                'backup_count' => $migration['backup_count'] ?? 0,
+                'package_version' => $migrationMetadata['package_version'] ?? 'unknown',
+                'duration' => $migrationMetadata['duration'] ?? null,
+                'migration_origin' => $migrationMetadata['migration_source'] ?? 'unknown',
                 'migration_options' => [
-                    'source_version' => $sessionMetadata['source_version'],
-                    'target_version' => $sessionMetadata['target_version'],
-                    'icons_only' => $sessionMetadata['icons_only'],
-                    'assets_only' => $sessionMetadata['assets_only'],
+                    'source_version' => $migrationMetadata['source_version'] ?? '5',
+                    'target_version' => $migrationMetadata['target_version'] ?? '6',
+                    'icons_only' => $migrationMetadata['icons_only'] ?? false,
+                    'assets_only' => $migrationMetadata['assets_only'] ?? false,
                 ],
                 'statistics' => [
-                    'total_files' => $sessionMetadata['total_files'] ?? 0,
-                    'modified_files' => $sessionMetadata['modified_files'] ?? 0,
-                    'total_changes' => $sessionMetadata['total_changes'] ?? 0,
-                    'warnings' => $sessionMetadata['warnings'] ?? 0,
-                    'errors' => $sessionMetadata['errors'] ?? 0,
+                    'total_files' => $migrationMetadata['total_files'] ?? 0,
+                    'modified_files' => $migrationMetadata['modified_files'] ?? 0,
+                    'total_changes' => $migrationMetadata['total_changes'] ?? 0,
+                    'warnings' => $migrationMetadata['warnings'] ?? 0,
+                    'errors' => $migrationMetadata['errors'] ?? 0,
                 ],
                 'migration_summary' => [
-                    'total_files' => $sessionMetadata['total_files'] ?? 0,
-                    'modified_files' => $sessionMetadata['modified_files'] ?? 0,
-                    'total_changes' => $sessionMetadata['total_changes'] ?? 0,
+                    'total_files' => $migrationMetadata['total_files'] ?? 0,
+                    'modified_files' => $migrationMetadata['modified_files'] ?? 0,
+                    'total_changes' => $migrationMetadata['total_changes'] ?? 0,
                 ],
             ];
         }
@@ -79,7 +80,7 @@ class MigrationsController extends Controller
         usort($reports, fn ($a, $b): int => $b['created_at'] <=> $a['created_at']);
 
         // Calculer les statistiques globales
-        $stats = $this->getSessionStats($sessions);
+        $stats = $this->getMigrationStats($migrations);
 
         return view('fontawesome-migrator::migrations.index', [
             'reports' => $reports,
@@ -90,102 +91,102 @@ class MigrationsController extends Controller
     /**
      * Afficher un rapport spécifique (depuis métadonnées)
      */
-    public function show(string $sessionId, MetadataManagerInterface $metadataManager)
+    public function show(string $migrationId, MetadataManagerInterface $metadataManager)
     {
-        // Chercher la session par ID (court ou complet)
-        $sessions = $metadataManager->getAvailableMigrations();
-        $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
+        // Chercher la migration par ID (court ou complet)
+        $migrations = $metadataManager->getAvailableMigrations();
+        $migrationInfo = array_find($migrations, fn ($migration): bool => $migration['short_id'] === $migrationId || $migration['migration_id'] === $migrationId);
 
-        if (! $sessionInfo) {
-            abort(404, 'Session de migration non trouvée');
+        if (! $migrationInfo) {
+            abort(404, 'Migration non trouvée');
         }
 
-        $sessionMetadata = $sessionInfo['metadata'] ?? null;
+        $migrationMetadata = $migrationInfo['metadata'] ?? null;
 
-        if (! $sessionMetadata) {
-            abort(404, 'Métadonnées de session non trouvées');
+        if (! $migrationMetadata) {
+            abort(404, 'Métadonnées de migration non trouvées');
         }
 
         // Retourner JSON si demandé
         if (request()->wantsJson()) {
-            return response()->json($sessionMetadata['migration_results']);
+            return response()->json($migrationMetadata);
         }
 
         // Toutes les données proviennent de metadata.json
-        $sessionMetadata = $sessionInfo['metadata'] ?? null;
+        $migrationMetadata = $migrationInfo['metadata'] ?? null;
 
-        if (! $sessionMetadata) {
-            abort(404, 'Métadonnées de session non trouvées');
+        if (! $migrationMetadata) {
+            abort(404, 'Métadonnées de migration non trouvées');
         }
 
         // Préparer les données pour la vue - TOUT depuis metadata.json simplifiée
         $viewData = [
             // Données métier
-            'results' => $sessionMetadata['files'] ?? [],
+            'results' => $migrationMetadata['files'] ?? [],
             'stats' => [
-                'total_files' => $sessionMetadata['total_files'] ?? 0,
-                'modified_files' => $sessionMetadata['modified_files'] ?? 0,
-                'total_changes' => $sessionMetadata['total_changes'] ?? 0,
-                'warnings' => $sessionMetadata['warnings'] ?? 0,
-                'errors' => $sessionMetadata['errors'] ?? 0,
-                'assets_migrated' => $sessionMetadata['assets_migrated'] ?? 0,
-                'icons_migrated' => $sessionMetadata['icons_migrated'] ?? 0,
-                'migration_success' => $sessionMetadata['migration_success'] ?? true,
-                'changes_by_type' => $sessionMetadata['changes_by_type'] ?? [],
-                'asset_types' => $sessionMetadata['asset_types'] ?? [],
+                'total_files' => $migrationMetadata['total_files'] ?? 0,
+                'modified_files' => $migrationMetadata['modified_files'] ?? 0,
+                'total_changes' => $migrationMetadata['total_changes'] ?? 0,
+                'warnings' => $migrationMetadata['warnings'] ?? 0,
+                'errors' => $migrationMetadata['errors'] ?? 0,
+                'assets_migrated' => $migrationMetadata['assets_migrated'] ?? 0,
+                'icons_migrated' => $migrationMetadata['icons_migrated'] ?? 0,
+                'migration_success' => $migrationMetadata['migration_success'] ?? true,
+                'changes_by_type' => $migrationMetadata['changes_by_type'] ?? [],
+                'asset_types' => $migrationMetadata['asset_types'] ?? [],
             ],
-            'enrichedWarnings' => $sessionMetadata['warnings_details'] ?? [],
+            'enrichedWarnings' => $migrationMetadata['warnings_details'] ?? [],
 
             // Données de contexte
-            'timestamp' => Carbon::parse($sessionMetadata['started_at'])->format('Y-m-d H:i:s'),
-            'isDryRun' => $sessionMetadata['dry_run'],
+            'timestamp' => Carbon::parse($migrationMetadata['started_at'] ?? now())->format('Y-m-d H:i:s'),
+            'isDryRun' => $migrationMetadata['dry_run'] ?? false,
             'migrationOptions' => [
-                'source_version' => $sessionMetadata['source_version'],
-                'target_version' => $sessionMetadata['target_version'],
-                'icons_only' => $sessionMetadata['icons_only'],
-                'assets_only' => $sessionMetadata['assets_only'],
+                'source_version' => $migrationMetadata['source_version'] ?? '5',
+                'target_version' => $migrationMetadata['target_version'] ?? '6',
+                'icons_only' => $migrationMetadata['icons_only'] ?? false,
+                'assets_only' => $migrationMetadata['assets_only'] ?? false,
             ],
-            'configuration' => $sessionMetadata['scan_config'] ?? [],
-            'packageVersion' => $sessionMetadata['package_version'],
-            'sessionId' => $sessionMetadata['session_id'],
-            'shortId' => $sessionMetadata['short_id'],
-            'duration' => $sessionMetadata['duration'],
-            'metadata' => $sessionMetadata, // Toutes les métadonnées pour accès aux données custom
+            'configuration' => $migrationMetadata['scan_config'] ?? [],
+            'packageVersion' => $migrationMetadata['package_version'] ?? 'unknown',
+            'migrationId' => $migrationMetadata['migration_id'] ?? 'unknown',
+            'shortId' => $migrationMetadata['short_id'] ?? substr($migrationMetadata['migration_id'] ?? 'unknown', 0, 8),
+            'duration' => $migrationMetadata['duration'] ?? null,
+            'metadata' => $migrationMetadata, // Toutes les métadonnées pour accès aux données custom
         ];
 
         return view('fontawesome-migrator::migrations.show', $viewData);
     }
 
     /**
-     * Supprimer une session complète
+     * Supprimer une migration complète
      */
-    public function destroy(string $sessionId, MetadataManagerInterface $metadataManager)
+    public function destroy(string $migrationId, MetadataManagerInterface $metadataManager)
     {
-        // Chercher la session par ID (court ou complet)
-        $sessions = $metadataManager->getAvailableMigrations();
-        $sessionInfo = array_find($sessions, fn ($session): bool => $session['short_id'] === $sessionId || $session['session_id'] === $sessionId);
+        // Chercher la migration par ID (court ou complet)
+        $migrations = $metadataManager->getAvailableMigrations();
+        $migrationInfo = array_find($migrations, fn ($migration): bool => $migration['short_id'] === $migrationId || $migration['migration_id'] === $migrationId);
 
-        if (! $sessionInfo) {
-            return response()->json(['error' => 'Session non trouvée'], 404);
+        if (! $migrationInfo) {
+            return response()->json(['error' => 'Migration non trouvée'], 404);
         }
 
-        // Supprimer tout le répertoire de session
-        $deleted = File::deleteDirectory($sessionInfo['directory']);
+        // Supprimer tout le répertoire de migration
+        $deleted = File::deleteDirectory($migrationInfo['directory']);
 
         if ($deleted) {
-            return response()->json(['message' => 'Session supprimée avec succès']);
+            return response()->json(['message' => 'Migration supprimée avec succès']);
         }
 
         return response()->json(['error' => 'Erreur lors de la suppression'], 500);
     }
 
     /**
-     * Nettoyer les anciennes sessions
+     * Nettoyer les anciennes migrations
      */
     public function cleanup(Request $request, MetadataManagerInterface $metadataManager)
     {
         $days = $request->input('days', 30);
-        $deleted = $metadataManager->cleanOldSessions($days);
+        $deleted = $metadataManager->cleanOldMigrations($days);
 
         return response()->json([
             'message' => 'Nettoyage terminé',
@@ -195,18 +196,18 @@ class MigrationsController extends Controller
     }
 
     /**
-     * Obtenir les statistiques des sessions
+     * Obtenir les statistiques des migrations
      */
-    protected function getSessionStats(array $sessions): array
+    protected function getMigrationStats(array $migrations): array
     {
         $totalBackups = 0;
         $totalSize = 0;
 
-        foreach ($sessions as $session) {
-            $totalBackups += $session['backup_count'];
+        foreach ($migrations as $migration) {
+            $totalBackups += $migration['backup_count'];
 
             // Calculer la taille totale des fichiers
-            $files = File::files($session['directory']);
+            $files = File::files($migration['directory']);
 
             foreach ($files as $file) {
                 $totalSize += $file->getSize();
@@ -214,10 +215,10 @@ class MigrationsController extends Controller
         }
 
         return [
-            'total_migrations' => \count($sessions),
+            'total_migrations' => \count($migrations),
             'total_backups' => $totalBackups,
             'total_size' => $totalSize,
-            'last_migration' => $sessions[0] ?? null,
+            'last_migration' => $migrations[0] ?? null,
         ];
     }
 }

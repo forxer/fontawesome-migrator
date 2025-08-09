@@ -712,7 +712,7 @@
         color: var(--gray-800);
     }
 
-    /* Classes communes partagées par les vues reports et sessions */
+    /* Classes communes partagées par les vues reports et migrations */
     .reports-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));

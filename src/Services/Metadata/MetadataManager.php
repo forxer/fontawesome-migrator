@@ -17,7 +17,7 @@ class MetadataManager implements MetadataManagerInterface
 
     public function __construct(
         protected ConfigurationInterface $config,
-        protected MigrationSessionService $sessionService,
+        protected MigrationMigrationService $migrationService,
         protected MigrationResultsService $resultsService,
         protected MigrationStorageService $storageService,
         protected MetadataBuilder $metadataBuilder
@@ -28,13 +28,13 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function initialize(): self
     {
-        // Initialiser la session via le service dédié
-        $this->sessionService->initializeSession();
-        $sessionData = $this->sessionService->getSessionData();
+        // Initialiser la migration via le service dédié
+        $this->migrationService->initializeMigration();
+        $migrationData = $this->migrationService->getMigrationData();
 
-        // Construire la structure unifiée avec données de session
+        // Construire la structure unifiée avec données de migration
         $defaultMetadata = $this->metadataBuilder->buildDefaultMetadata();
-        $this->metadata = array_merge($sessionData, $defaultMetadata);
+        $this->metadata = array_merge($migrationData, $defaultMetadata);
 
         return $this;
     }
@@ -44,12 +44,12 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function setMigrationOptions(array $options): self
     {
-        // Déléguer au service de session
-        $this->sessionService->setMigrationOptions($options);
+        // Déléguer au service de migration
+        $this->migrationService->setMigrationOptions($options);
 
         // Synchroniser avec metadata local
-        $sessionData = $this->sessionService->getSessionData();
-        $this->metadata = array_merge($this->metadata, $sessionData);
+        $migrationData = $this->migrationService->getMigrationData();
+        $this->metadata = array_merge($this->metadata, $migrationData);
 
         return $this;
     }
@@ -59,8 +59,8 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function setDryRun(bool $isDryRun): self
     {
-        // Déléguer au service de session
-        $this->sessionService->setDryRun($isDryRun);
+        // Déléguer au service de migration
+        $this->migrationService->setDryRun($isDryRun);
 
         // Synchroniser avec metadata local
         $this->metadata['dry_run'] = $isDryRun;
@@ -73,13 +73,13 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function completeMigration(): self
     {
-        // Déléguer au service de session
-        $this->sessionService->completeSession();
+        // Déléguer au service de migration
+        $this->migrationService->completeMigration();
 
         // Synchroniser avec metadata local
-        $sessionData = $this->sessionService->getSessionData();
-        $this->metadata['completed_at'] = $sessionData['completed_at'] ?? null;
-        $this->metadata['duration'] = $sessionData['duration'] ?? null;
+        $migrationData = $this->migrationService->getMigrationData();
+        $this->metadata['completed_at'] = $migrationData['completed_at'] ?? null;
+        $this->metadata['duration'] = $migrationData['duration'] ?? null;
 
         return $this;
     }
@@ -211,7 +211,7 @@ class MetadataManager implements MetadataManagerInterface
     {
         return [
             'meta' => [
-                'session_id' => $this->metadata['session_id'],
+                'migration_id' => $this->metadata['migration_id'],
                 'generated_at' => $this->metadata['started_at'],
                 'package_version' => $this->metadata['package_version'],
                 'dry_run' => $this->metadata['dry_run'],
@@ -269,7 +269,7 @@ class MetadataManager implements MetadataManagerInterface
         $errors = [];
 
         // Vérifier les champs obligatoires de la nouvelle structure
-        $requiredFields = ['session_id', 'started_at', 'package_version'];
+        $requiredFields = ['migration_id', 'started_at', 'package_version'];
 
         foreach ($requiredFields as $field) {
             if (! isset($this->metadata[$field])) {
@@ -296,7 +296,7 @@ class MetadataManager implements MetadataManagerInterface
     public function getSummary(): array
     {
         return [
-            'session_id' => $this->metadata['session_id'] ?? null,
+            'migration_id' => $this->metadata['migration_id'] ?? null,
             'version' => $this->metadata['package_version'] ?? null,
             'dry_run' => $this->metadata['dry_run'] ?? false,
             'backups_count' => $this->metadata['backup_count'] ?? 0,
@@ -318,7 +318,7 @@ class MetadataManager implements MetadataManagerInterface
         $gitignorePath = $migrationDir.'/.gitignore';
 
         if (! File::exists($gitignorePath)) {
-            $gitignoreContent = "# FontAwesome Migrator - Session Backups\n*\n!.gitignore\n!metadata.json\n";
+            $gitignoreContent = "# FontAwesome Migrator - Migration Backups\n*\n!.gitignore\n!metadata.json\n";
             File::put($gitignorePath, $gitignoreContent);
         }
     }
@@ -328,7 +328,7 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function getMigrationDirectory(): string
     {
-        $migrationId = $this->metadata['session_id'] ?? 'unknown';
+        $migrationId = $this->metadata['migration_id'] ?? 'unknown';
 
         return $this->config->getMigrationsPath().'/migration-'.$migrationId;
     }
@@ -336,7 +336,7 @@ class MetadataManager implements MetadataManagerInterface
     /**
      * Nettoyer les anciens répertoires de migration
      */
-    public function cleanOldSessions(int $daysToKeep = 30): int
+    public function cleanOldMigrations(int $daysToKeep = 30): int
     {
         $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
 
@@ -391,11 +391,11 @@ class MetadataManager implements MetadataManagerInterface
             $migrationId = $matches[1];
             $metadataPath = $directory.'/metadata.json';
 
-            // Calculer le short_id à partir du session_id
+            // Calculer le short_id à partir du migration_id
             $shortId = FormatterHelper::generateShortId('migration_');
 
             $migrationInfo = [
-                'session_id' => $migrationId,
+                'migration_id' => $migrationId,
                 'short_id' => $shortId,
                 'directory' => $directory,
                 'created_at' => Carbon::createFromTimestamp(filemtime($directory)),
@@ -428,7 +428,7 @@ class MetadataManager implements MetadataManagerInterface
                     $migrationInfo['short_id'] = $metadata['short_id'];
                 }
             } else {
-                // Session sans métadonnées - ignorer
+                // Migration sans métadonnées - ignorer
                 continue;
             }
 

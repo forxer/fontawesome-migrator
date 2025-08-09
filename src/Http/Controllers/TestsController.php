@@ -27,14 +27,14 @@ class TestsController extends Controller
      */
     public function index(MetadataManagerInterface $metadataManager, ConfigurationInterface $config)
     {
-        $sessions = $metadataManager->getAvailableMigrations();
+        $migrations = $metadataManager->getAvailableMigrations();
         $backupStats = $this->getBackupStats($metadataManager, $config);
 
         // Ajouter les informations de migration multi-versions
         $supportedMigrations = $this->versionManager->getSupportedMigrations();
 
         return view('fontawesome-migrator::tests.index', [
-            'sessions' => $sessions,
+            'migrations' => $migrations,
             'backupStats' => $backupStats,
             'supportedMigrations' => $supportedMigrations,
         ]);
@@ -160,8 +160,8 @@ class TestsController extends Controller
         }
 
         return response()->json([
-            'session_id' => $migrationId,
-            'session_dir' => $migrationDir,
+            'migration_id' => $migrationId,
+            'migration_dir' => $migrationDir,
             'metadata' => $metadata,
             'backup_files' => $backupFiles,
             'files_count' => \count($backupFiles),
@@ -169,15 +169,15 @@ class TestsController extends Controller
     }
 
     /**
-     * Nettoyer les sessions de test
+     * Nettoyer les migrations de test
      */
-    public function cleanupSessions(Request $request, MetadataManagerInterface $metadataManager)
+    public function cleanupMigrations(Request $request, MetadataManagerInterface $metadataManager)
     {
         $days = $request->input('days', 7);
-        $deleted = $metadataManager->cleanOldSessions($days);
+        $deleted = $metadataManager->cleanOldMigrations($days);
 
         return response()->json([
-            'message' => 'Nettoyage des sessions terminé',
+            'message' => 'Nettoyage des migrations terminé',
             'deleted' => $deleted,
             'days' => $days,
         ]);
@@ -195,19 +195,19 @@ class TestsController extends Controller
                 'total_migrations' => 0,
                 'total_backups' => 0,
                 'total_size' => 0,
-                'last_session' => null,
+                'last_migration' => null,
             ];
         }
 
-        $sessions = $metadataManager->getAvailableMigrations();
+        $migrations = $metadataManager->getAvailableMigrations();
         $totalBackups = 0;
         $totalSize = 0;
 
-        foreach ($sessions as $session) {
-            $totalBackups += $session['backup_count'];
+        foreach ($migrations as $migration) {
+            $totalBackups += $migration['backup_count'];
 
             // Calculer la taille totale des fichiers
-            $files = File::files($session['directory']);
+            $files = File::files($migration['directory']);
 
             foreach ($files as $file) {
                 $totalSize += $file->getSize();
@@ -215,10 +215,10 @@ class TestsController extends Controller
         }
 
         return [
-            'total_migrations' => \count($sessions),
+            'total_migrations' => \count($migrations),
             'total_backups' => $totalBackups,
             'total_size' => $totalSize,
-            'last_migration' => $sessions[0] ?? null,
+            'last_migration' => $migrations[0] ?? null,
         ];
     }
 }

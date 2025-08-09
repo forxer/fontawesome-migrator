@@ -31,12 +31,12 @@ CHANGELOG
 - **Source Traceability**: Traçabilité CLI/Web dans métadonnées et rapports pour audit complet
 - **MetadataManager Service**: Nouveau service centralisé pour la gestion des métadonnées de migration
 - **Separated Metadata Files**: Sauvegarde automatique des métadonnées dans des fichiers JSON séparés
-- **Enhanced Metadata Structure**: Métadonnées enrichies avec session, environment, runtime, backups, statistics
+- **Enhanced Metadata Structure**: Métadonnées enrichies avec migration, environment, runtime, backups, statistics
 - **Real-time Data Collection**: Collecte des sauvegardes et statistiques en temps réel pendant la migration
-- **Metadata Persistence**: Sauvegarde automatique des métadonnées avec session ID unique
+- **Metadata Persistence**: Sauvegarde automatique des métadonnées avec migration ID unique
 - **Homepage**: Page d'accueil avec dashboard statistiques et actions rapides
 - **Navigation System**: Menu de navigation et fil d'ariane sur toutes les pages
-- **Short Session IDs**: Affichage simplifié des IDs de session (8 caractères)
+- **Short Migration IDs**: Affichage simplifié des IDs de migration (8 caractères)
 - **Unified Architecture**: Organisation cohérente des partials CSS/JS à la racine
 - **FontAwesome 7.0.0**: Migration complète vers FontAwesome 7.0.0 avec CDN officiel
 - **Modern UI Design**: Remplacement systématique des emojis par icônes FontAwesome sémantiquement cohérentes
@@ -59,14 +59,14 @@ CHANGELOG
 - **MigrateCommand**: Services injectés via `handle(FileScanner, IconReplacer, MigrationReporter, AssetMigrator, MetadataManager)`
 - **BackupCommand**: Service IconReplacer injecté via `handle(IconReplacer)` et assigné à la propriété de classe
 - **MigrationReporter**: Constructor injection du `MetadataManager` pour consommer les métadonnées séparées
-- **Report Generation**: Rapports HTML/JSON enrichis avec métadonnées complètes (environment, session, backups)
-- **Storage Path**: `backup_path` → `sessions_path` (`storage/app/fontawesome-migrator`)
-- **Report Naming**: Fichiers sans suffixe date/heure pour organisation par session
+- **Report Generation**: Rapports HTML/JSON enrichis avec métadonnées complètes (environment, migration, backups)
+- **Storage Path**: `backup_path` → `migrations_path` (`storage/app/fontawesome-migrator`)
+- **Report Naming**: Fichiers sans suffixe date/heure pour organisation par migration
 - **RESTful Routes**: Toutes les sections utilisent le pattern `index`/`show` cohérent
 - **CSS Architecture**: Partials réorganisés avec séparation commun/spécifique
 
 ### Enhanced
-- **Metadata Traceability**: Traçabilité complète avec session ID, timestamps, durée de migration
+- **Metadata Traceability**: Traçabilité complète avec migration ID, timestamps, durée de migration
 - **Backup Integration**: Collecte automatique des informations de sauvegarde en temps réel
 - **Statistics Calculation**: Calcul et stockage automatique des statistiques de migration
 - **Report Enrichment**: Rapports enrichis avec métadonnées séparées et données d'environnement
@@ -83,35 +83,35 @@ CHANGELOG
 - **Complete Documentation**: Guide complet pour chaque type de migration
 - **Breaking Changes Info**: Documentation des changements majeurs par version
 
-### Session-Based Features
-- **Session-Based Backup Architecture**: Nouvelle organisation des sauvegardes par session
-- **Session Directories**: Chaque migration crée son propre répertoire `session-migration_xxxxx/`
-- **Metadata Integration**: Fichier `metadata.json` intégré dans chaque répertoire de session
+### Migration-Based Features
+- **Migration-Based Backup Architecture**: Nouvelle organisation des sauvegardes par migration
+- **Migration Directories**: Chaque migration crée son propre répertoire `migration-migration_xxxxx/`
+- **Metadata Integration**: Fichier `metadata.json` intégré dans chaque répertoire de migration
 - **Web Testing Panel**: Interface web complète pour tester et déboguer les migrations (`/fontawesome-migrator/tests`)
-- **Session Management**: API complète pour lister, inspecter et nettoyer les sessions de migration
-- **Advanced Session Inspection**: Inspection détaillée des sessions avec métadonnées et fichiers de sauvegarde
-- **Session Cleanup**: Nettoyage automatique des sessions anciennes avec seuils configurables
+- **Migration Management**: API complète pour lister, inspecter et nettoyer les migrations de migration
+- **Advanced Migration Inspection**: Inspection détaillée des migrations avec métadonnées et fichiers de sauvegarde
+- **Migration Cleanup**: Nettoyage automatique des migrations anciennes avec seuils configurables
 
 ### Web Interface Enhancements
 - **Test Panel Interface**: Panneau de test interactif avec boutons pour tous les types de migration
 - **Real-time Testing**: Exécution des commandes Artisan directement depuis l'interface web
-- **Session Statistics**: Dashboard complet des statistiques de sessions et sauvegardes
-- **Session Inspector**: Modal d'inspection détaillée des sessions avec JSON viewer
-- **Interactive Cleanup**: Boutons de nettoyage pour les sessions avec confirmation
-- **Session Navigation**: Navigation fluide entre liste des sessions et inspection détaillée
+- **Migration Statistics**: Dashboard complet des statistiques de migrations et sauvegardes
+- **Migration Inspector**: Modal d'inspection détaillée des migrations avec JSON viewer
+- **Interactive Cleanup**: Boutons de nettoyage pour les migrations avec confirmation
+- **Migration Navigation**: Navigation fluide entre liste des migrations et inspection détaillée
 
 ### Architecture Improvements
-- **Session-Directory Structure**: `storage/app/fontawesome-backups/session-migration_xxxxx/`
-- **Integrated Metadata**: Métadonnées sauvegardées dans le répertoire de session
-- **Git Integration**: Fichiers `.gitignore` automatiques dans chaque session
-- **Session Traceability**: Traçabilité parfaite entre métadonnées et sauvegardes
-- **API Enhancement**: Nouvelles méthodes `getAvailableSessions()`, `cleanOldSessions()`, `getSessionDirectory()`
+- **Migration-Directory Structure**: `storage/app/fontawesome-backups/migration-migration_xxxxx/`
+- **Integrated Metadata**: Métadonnées sauvegardées dans le répertoire de migration
+- **Git Integration**: Fichiers `.gitignore` automatiques dans chaque migration
+- **Migration Traceability**: Traçabilité parfaite entre métadonnées et sauvegardes
+- **API Enhancement**: Nouvelles méthodes `getAvailableMigrations()`, `cleanOldMigrations()`, `getMigrationDirectory()`
 
 ### Testing Infrastructure
 - **Web-based Testing**: Tests complets via interface web sans ligne de commande
 - **Multiple Test Types**: Dry-run, icons-only, assets-only, migrations réelles
 - **Real-time Feedback**: Sortie des commandes en temps réel dans l'interface
-- **Session Creation**: Création automatique de sessions lors des tests
+- **Migration Creation**: Création automatique de migrations lors des tests
 - **Debug Capabilities**: Outils de débogage intégrés pour diagnostiquer les problèmes
 
 ### Technical Architecture
@@ -126,8 +126,8 @@ CHANGELOG
 - **Service Management**: Gestion des services via propriétés de classe assignées dans `handle()`
 - **Laravel Pattern**: Adoption du pattern d'injection Laravel dans les méthodes plutôt que constructors
 - **Metadata Architecture**: Architecture séparée MetadataManager → MigrationReporter
-- **Data Structure**: Structure de métadonnées unifiée avec session, environment, runtime, backups, statistics
-- **File Organization**: Organisation par session avec métadonnées intégrées
+- **Data Structure**: Structure de métadonnées unifiée avec migration, environment, runtime, backups, statistics
+- **File Organization**: Organisation par migration avec métadonnées intégrées
 - **ServiceProvider Fix**: Correction de l'enregistrement des commandes pour `Artisan::call()` depuis le web
 
 ### Package Status

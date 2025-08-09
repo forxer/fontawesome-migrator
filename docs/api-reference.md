@@ -275,7 +275,7 @@ $loader = new ConfigurationLoader();
 $alternatives = $loader->loadAlternatives('5', '6');
 // ['fa-home' => 'fa-house', 'fa-analytics' => 'fa-chart-line', ...]
 
-// Charger les mappings d'icônes  
+// Charger les mappings d'icônes
 $iconMappings = $loader->loadIconMappings('5', '6');
 
 // Charger les mappings de styles
@@ -353,15 +353,15 @@ $result = $mapper->mapIcon('fa-envelope-o');
 return [
     'license_type' => 'free', // ou 'pro'
     'fallback_strategy' => 'solid', // 'regular', 'brands'
-    'sessions_path' => storage_path('app/fontawesome-migrator'),
-    
+    'migrations_path' => storage_path('app/fontawesome-migrator'),
+
     // Chemins de scan par défaut
     'scan_paths' => [
         'resources/views',
         'resources/js',
         'resources/css',
     ],
-    
+
     // Extensions supportées
     'file_extensions' => [
         'blade.php', 'php', 'vue', 'js', 'ts', 'css', 'scss'
@@ -423,7 +423,7 @@ foreach ($batches as $batch) {
     foreach ($batch as $file) {
         $replacer->processFile($file);
     }
-    
+
     // Libérer la mémoire entre les lots
     gc_collect_cycles();
 }

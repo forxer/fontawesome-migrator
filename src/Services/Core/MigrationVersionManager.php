@@ -17,16 +17,12 @@ use InvalidArgumentException;
  */
 class MigrationVersionManager
 {
-    private readonly array $config;
-
     private array $versionMappers = [];
 
     public function __construct(
         private readonly ConfigurationLoader $configLoader,
         private readonly FontAwesomePatternService $patternService,
-    ) {
-        $this->config = config('fontawesome-migrator', []);
-    }
+    ) {}
 
     /**
      * Créer un mapper pour une migration spécifique
@@ -53,7 +49,7 @@ class MigrationVersionManager
             );
         }
 
-        $this->versionMappers[$migrationKey] = new $mapperClass($this->config, $this->configLoader);
+        $this->versionMappers[$migrationKey] = new $mapperClass($this->configLoader);
 
         return $this->versionMappers[$migrationKey];
     }

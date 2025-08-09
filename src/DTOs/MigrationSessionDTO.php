@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\DTOs;
 
 /**
- * DTO pour les sessions de migration
- * Simplifie la structure des métadonnées de session
+ * DTO pour les migrations de migration
+ * Simplifie la structure des métadonnées de migration
  */
-readonly class MigrationSessionDTO
+readonly class MigrationMigrationDTO
 {
     public function __construct(
-        public string $sessionId,
+        public string $migrationId,
         public string $shortId,
         public string $status,
         public string $startedAt,
@@ -28,7 +28,7 @@ readonly class MigrationSessionDTO
     public static function fromArray(array $data): self
     {
         return new self(
-            sessionId: $data['session_id'] ?? '',
+            migrationId: $data['migration_id'] ?? '',
             shortId: $data['short_id'] ?? '',
             status: $data['status'] ?? 'unknown',
             startedAt: $data['started_at'] ?? '',
@@ -46,7 +46,7 @@ readonly class MigrationSessionDTO
     public function toArray(): array
     {
         return [
-            'session_id' => $this->sessionId,
+            'migration_id' => $this->migrationId,
             'short_id' => $this->shortId,
             'status' => $this->status,
             'started_at' => $this->startedAt,
@@ -59,7 +59,7 @@ readonly class MigrationSessionDTO
     }
 
     /**
-     * Vérifier si la session est complétée
+     * Vérifier si la migration est complétée
      */
     public function isCompleted(): bool
     {

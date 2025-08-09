@@ -21,7 +21,7 @@
                 <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
             </a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupSessions(7); return false;">
+            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupMigrations(7); return false;">
                 <i class="bi bi-trash"></i> Nettoyer (7j+)
             </a></li>
         </x-slot>
@@ -66,8 +66,8 @@
                         <div class="card-body">
                             <i class="bi bi-clock fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
-                                @if($backupStats['last_session'])
-                                    {{ $backupStats['last_session']['created_at']->format('d/m') }}
+                                @if($backupStats['last_migration'])
+                                    {{ $backupStats['last_migration']['created_at']->format('d/m') }}
                                 @else
                                     -
                                 @endif
@@ -200,10 +200,10 @@
                 <i class="bi bi-trash text-primary"></i> Nettoyage
             </h2>
             <div class="d-flex flex-wrap gap-2">
-                <button onclick="cleanupSessions(7)" class="btn btn-outline-secondary">
+                <button onclick="cleanupMigrations(7)" class="btn btn-outline-secondary">
                     <i class="bi bi-trash"></i> Nettoyer > 7 jours
                 </button>
-                <button onclick="cleanupSessions(1)" class="btn btn-outline-danger">
+                <button onclick="cleanupMigrations(1)" class="btn btn-outline-danger">
                     <i class="bi bi-trash"></i> Nettoyer > 1 jour
                 </button>
             </div>
@@ -500,13 +500,13 @@ ${data.error || data.output}
 
 
 
-async function cleanupSessions(days) {
+async function cleanupMigrations(days) {
     if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les migrations de plus de ${days} jour(s) ?`)) {
         return;
     }
 
     try {
-        const response = await fetch('/fontawesome-migrator/tests/cleanup-sessions', {
+        const response = await fetch('/fontawesome-migrator/tests/cleanup-migrations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -516,7 +516,7 @@ async function cleanupSessions(days) {
         });
 
         const data = await response.json();
-        showAlert(`${data.message} - Sessions supprimées: ${data.deleted}`);
+        showAlert(`${data.message} - Migrations supprimées: ${data.deleted}`);
 
         if (data.deleted > 0) {
             setTimeout(() => location.reload(), 1500);
