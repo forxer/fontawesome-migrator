@@ -7,7 +7,6 @@ namespace FontAwesome\Migrator\Services\Metadata;
 use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
-use FontAwesome\Migrator\Support\FormatterHelper;
 use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;
 
@@ -391,8 +390,8 @@ class MetadataManager implements MetadataManagerInterface
             $migrationId = $matches[1];
             $metadataPath = $directory.'/metadata.json';
 
-            // Calculer le short_id à partir du migration_id
-            $shortId = FormatterHelper::generateShortId('migration_');
+            // Le short_id sera extrait du metadata.json ou du migration_id
+            $shortId = substr($migrationId, 0, 8); // Valeur par défaut
 
             $migrationInfo = [
                 'migration_id' => $migrationId,

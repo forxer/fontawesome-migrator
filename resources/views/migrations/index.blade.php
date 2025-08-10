@@ -146,9 +146,9 @@
                                 <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}" class="btn btn-primary">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}?format=json" target="_blank" class="btn btn-outline-primary">
+                                <button onclick="viewJSON('{{ $report['short_id'] }}')" class="btn btn-outline-primary">
                                     <i class="bi bi-database"></i> JSON
-                                </a>
+                                </button>
                                 <button onclick="inspectMigration('{{ $report['short_id'] }}')" class="btn btn-outline-secondary">
                                     <i class="bi bi-search"></i> Inspecter
                                 </button>
@@ -266,11 +266,39 @@
         }
     }
 
+    // Fonction pour voir le JSON
+    function viewJSON(migrationId) {
+        // Ouvrir dans une nouvelle fenêtre avec les headers appropriés
+        fetch(`/fontawesome-migrator/migrations/${migrationId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Créer une nouvelle fenêtre avec le JSON formaté
+            const jsonWindow = window.open('', '_blank');
+            jsonWindow.document.write('<html><head><title>Migration JSON</title></head><body>');
+            jsonWindow.document.write('<pre style="padding: 20px; font-family: monospace;">');
+            jsonWindow.document.write(JSON.stringify(data, null, 2));
+            jsonWindow.document.write('</pre></body></html>');
+            jsonWindow.document.close();
+        })
+        .catch(error => {
+            showAlert('Erreur lors de la récupération du JSON', 'error');
+            console.error('Erreur:', error);
+        });
+    }
+
+    // Fonction pour inspecter une migration
     async function inspectMigration(migrationId) {
         try {
-            const response = await fetch(`/fontawesome-migrator/tests/migration/${migrationId}`, {
+            const response = await fetch(`/fontawesome-migrator/migrations/${migrationId}/inspect`, {
                 method: 'GET',
                 headers: {
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 }
             });
@@ -278,21 +306,92 @@
             const data = await response.json();
 
             if (response.ok) {
-                // Afficher les détails de migration dans une modale ou une nouvelle fenêtre
-                const details = `
-Migration: ${data.migration_id}
-Répertoire: ${data.migration_dir}
-Fichiers de sauvegarde: ${data.files_count}
-Métadonnées: ${JSON.stringify(data.metadata, null, 2)}
+                // Créer une modal Bootstrap pour afficher les détails
+                const modalHtml = `
+                    <div class="modal fade" id="inspectModal" tabindex="-1" style="z-index: 9999;">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info bg-opacity-10">
+                                    <h5 class="modal-title">
+                                        <i class="bi bi-search text-info"></i> Inspection de la migration
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Identifiant</h6>
+                                        <p class="font-monospace">${data.migration_id}</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Répertoire</h6>
+                                        <p class="font-monospace small">${data.migration_dir}</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Fichiers de sauvegarde (${data.files_count})</h6>
+                                        ${data.backup_files && data.backup_files.length > 0 ? `
+                                            <div class="list-group">
+                                                ${data.backup_files.map(file => `
+                                                    <div class="list-group-item py-2">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="font-monospace small">${file.name}</span>
+                                                            <span class="badge bg-secondary">${(file.size / 1024).toFixed(2)} KB</span>
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : '<p class="text-muted">Aucun fichier de sauvegarde</p>'}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-muted">Métadonnées</h6>
+                                        <pre class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+${JSON.stringify(data.metadata, null, 2)}
+                                        </pre>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 `;
-
-                // Pour l'instant, afficher dans une alerte - on pourrait améliorer avec une vraie modale
-                alert(details);
+                
+                // Supprimer modal existante si présente
+                const existing = document.getElementById('inspectModal');
+                if (existing) existing.remove();
+                
+                // Supprimer backdrop existant si présent
+                const existingBackdrop = document.querySelector('.modal-backdrop');
+                if (existingBackdrop) existingBackdrop.remove();
+                
+                // Ajouter la nouvelle modal
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                // Créer et afficher la modal
+                const modalElement = document.getElementById('inspectModal');
+                const modal = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true,
+                    focus: true
+                });
+                modal.show();
+                
+                // Nettoyer après fermeture
+                modalElement.addEventListener('hidden.bs.modal', function() {
+                    this.remove();
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                });
+                
             } else {
-                showAlert('Erreur lors de l\'inspection de la migration', 'error');
+                showAlert(data.error || 'Erreur lors de l\'inspection de la migration', 'error');
             }
         } catch (error) {
             showAlert('Erreur de connexion', 'error');
+            console.error('Erreur:', error);
         }
     }
 </script>

@@ -234,7 +234,7 @@
                                     <div class="activity-meta">
                                         Migration <span data-bs-toggle="tooltip" title="ID complet : {{ $migration['migration_id'] }}">{{ $migration['short_id'] }}</span>
                                         • {{ $migration['created_at']->isoFormat('DD/MM/YYYY [à] HH:mm') }}
-                                        • {{ $migration['files_modified'] }} fichier(s) • {{ $migration['total_changes'] }} changement(s)
+                                        • {{ number_formatted($migration['files_modified']) }} fichier(s) • {{ number_formatted($migration['total_changes']) }} changement(s)
                                         @if($migration['dry_run'])
                                             • <span class="badge bg-warning text-dark">DRY-RUN</span>
                                         @else

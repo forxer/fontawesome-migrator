@@ -448,7 +448,7 @@
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Icônes à vérifier</h5>
                                 <p class="card-text">{{ number_formatted($stats['warnings']) }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
-                                <button class="btn btn-warning btn-sm" onclick="scrollToWarnings()"><i class="bi bi-exclamation-triangle"></i> Voir les avertissements</button>
+                                <button class="btn btn-warning btn-sm" onclick="showWarningsModal()"><i class="bi bi-exclamation-triangle"></i> Voir les avertissements</button>
                             </div>
                         </div>
                     </div>
@@ -1111,12 +1111,12 @@
         // Modal simple pour les conseils de test
         function showTestingTips() {
             const modalHtml = `
-                <div class="modal fade" id="testingTipsModal" tabindex="-1">
+                <div class="modal fade" id="testingTipsModal" tabindex="-1" style="z-index: 9999;">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title"><i class="bi bi-flask"></i> Conseils de test</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <ul class="list-unstyled">
@@ -1140,16 +1140,28 @@
             const existing = document.getElementById('testingTipsModal');
             if (existing) existing.remove();
 
+            // Supprimer backdrop existant si présent
+            const existingBackdrop = document.querySelector('.modal-backdrop');
+            if (existingBackdrop) existingBackdrop.remove();
+
             // Ajouter la nouvelle modal
             document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-            // Afficher la modal (Bootstrap 5)
-            const modal = new bootstrap.Modal(document.getElementById('testingTipsModal'));
+            // Créer et afficher la modal avec le backdrop
+            const modalElement = document.getElementById('testingTipsModal');
+            const modal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
             modal.show();
 
             // Nettoyer après fermeture
-            document.getElementById('testingTipsModal').addEventListener('hidden.bs.modal', function() {
+            modalElement.addEventListener('hidden.bs.modal', function() {
                 this.remove();
+                // Supprimer aussi le backdrop au cas où
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
             });
         }
 
@@ -1174,35 +1186,226 @@
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-        // Fonction simplifiée pour afficher les avertissements
-        function scrollToWarnings() {
-            // Chercher tous les éléments avec des avertissements
-            const warningElements = document.querySelectorAll('.border-warning');
+        // Fonction pour afficher les avertissements dans une modal
+        function showWarningsModal() {
+            // Collecter tous les avertissements depuis PHP
+            const warnings = [];
 
-            if (warningElements.length === 0) {
+            // Parcourir tous les résultats avec des changements
+            @foreach($results as $result)
+                @if(!empty($result['changes']))
+                    @foreach($result['changes'] as $change)
+                        @php
+                            $hasWarning = in_array($change['type'] ?? '', ['pro_fallback', 'renamed_icon', 'deprecated_icon', 'manual_review']);
+                            $warningMessage = null;
+
+                            if ($hasWarning && !empty($result['warnings'])) {
+                                foreach ($result['warnings'] as $warning) {
+                                    if (str_contains($warning, $change['from'] ?? '')) {
+                                        $warningMessage = $warning;
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp
+
+                        @if($hasWarning)
+                            warnings.push({
+                                file: '{{ addslashes($result['file']) }}',
+                                line: {{ $change['line'] ?? 0 }},
+                                from: '{{ addslashes($change['from']) }}',
+                                to: '{{ addslashes($change['to']) }}',
+                                type: '{{ $change['type'] ?? 'unknown' }}',
+                                message: '{{ addslashes($warningMessage ?? '') }}'
+                            });
+                        @endif
+                    @endforeach
+                @endif
+            @endforeach
+
+            if (warnings.length === 0) {
                 showNotification('Aucun avertissement trouvé', 'info');
                 return;
             }
 
-            // Développer tous les détails pour voir les avertissements
-            document.querySelectorAll('[id^="details-"]').forEach(detail => {
-                detail.classList.add('show');
-            });
-            document.querySelectorAll('[id^="toggle-icon-"]').forEach(icon => {
-                icon.className = 'bi bi-chevron-down';
+            // Grouper les avertissements par type
+            const warningsByType = {
+                'pro_fallback': [],
+                'renamed_icon': [],
+                'deprecated_icon': [],
+                'manual_review': [],
+                'other': []
+            };
+
+            warnings.forEach(warning => {
+                const type = warningsByType[warning.type] ? warning.type : 'other';
+                warningsByType[type].push(warning);
             });
 
-            // Faire défiler vers le premier avertissement
-            warningElements[0].scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
+            // Créer le contenu HTML de la modal
+            let warningsHtml = '';
+
+            // Pro fallback warnings
+            if (warningsByType.pro_fallback.length > 0) {
+                warningsHtml += `
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-3">
+                            <i class="bi bi-gem"></i> Icônes Pro (${warningsByType.pro_fallback.length})
+                        </h6>
+                        <div class="list-group">`;
+                warningsByType.pro_fallback.forEach(w => {
+                    warningsHtml += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="font-monospace small">
+                                        <span class="text-danger">- ${w.from}</span> →
+                                        <span class="text-success">+ ${w.to}</span>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="bi bi-info-circle"></i> ${w.message || 'Icône Pro remplacée par une alternative gratuite'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                warningsHtml += '</div></div>';
+            }
+
+            // Renamed icons
+            if (warningsByType.renamed_icon.length > 0) {
+                warningsHtml += `
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-3">
+                            <i class="bi bi-arrow-left-right"></i> Icônes renommées (${warningsByType.renamed_icon.length})
+                        </h6>
+                        <div class="list-group">`;
+                warningsByType.renamed_icon.forEach(w => {
+                    warningsHtml += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="font-monospace small">
+                                        <span class="text-danger">- ${w.from}</span> →
+                                        <span class="text-success">+ ${w.to}</span>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="bi bi-check-circle"></i> ${w.message || 'Nom d\'icône mis à jour automatiquement'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                warningsHtml += '</div></div>';
+            }
+
+            // Deprecated icons
+            if (warningsByType.deprecated_icon.length > 0) {
+                warningsHtml += `
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-3">
+                            <i class="bi bi-exclamation-triangle"></i> Icônes dépréciées (${warningsByType.deprecated_icon.length})
+                        </h6>
+                        <div class="list-group">`;
+                warningsByType.deprecated_icon.forEach(w => {
+                    warningsHtml += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="font-monospace small">
+                                        <span class="text-danger">- ${w.from}</span> →
+                                        <span class="text-success">+ ${w.to}</span>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="bi bi-eye"></i> ${w.message || 'Vérifiez le rendu de cette icône'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                warningsHtml += '</div></div>';
+            }
+
+            // Manual review
+            if (warningsByType.manual_review.length > 0) {
+                warningsHtml += `
+                    <div class="mb-4">
+                        <h6 class="text-warning mb-3">
+                            <i class="bi bi-hand-index"></i> Révision manuelle requise (${warningsByType.manual_review.length})
+                        </h6>
+                        <div class="list-group">`;
+                warningsByType.manual_review.forEach(w => {
+                    warningsHtml += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="font-monospace small">
+                                        <span class="text-danger">- ${w.from}</span> →
+                                        <span class="text-success">+ ${w.to}</span>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="bi bi-pencil"></i> ${w.message || 'Vérification manuelle recommandée'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                warningsHtml += '</div></div>';
+            }
+
+            const modalHtml = `
+                <div class="modal fade" id="warningsModal" tabindex="-1" style="z-index: 9999;">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning bg-opacity-10">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                                    Avertissements de migration (${warnings.length})
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${warningsHtml}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Supprimer modal existante si présente
+            const existing = document.getElementById('warningsModal');
+            if (existing) existing.remove();
+
+            // Supprimer backdrop existant si présent
+            const existingBackdrop = document.querySelector('.modal-backdrop');
+            if (existingBackdrop) existingBackdrop.remove();
+
+            // Ajouter la nouvelle modal
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // Créer et afficher la modal avec le backdrop
+            const modalElement = document.getElementById('warningsModal');
+            const modal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
             });
+            modal.show();
 
-            // Notification avec compteur
-            showNotification(`${warningElements.length} avertissement(s) trouvé(s)`, 'warning');
-
-            // Mise à jour de l'état global
-            allExpanded = true;
+            // Nettoyer après fermeture
+            modalElement.addEventListener('hidden.bs.modal', function() {
+                this.remove();
+                // Supprimer aussi le backdrop au cas où
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
+            });
         }
 
     </script>

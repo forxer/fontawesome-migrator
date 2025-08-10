@@ -128,47 +128,6 @@ class TestsController extends Controller
     }
 
     /**
-     * Inspecter une migration spécifique
-     */
-    public function inspectMigration(string $migrationId, ConfigurationInterface $config)
-    {
-        $baseBackupDir = $config->getMigrationsPath();
-        $migrationDir = $baseBackupDir.'/migration-'.$migrationId;
-
-        if (! File::exists($migrationDir)) {
-            return response()->json(['error' => 'Migration non trouvée'], 404);
-        }
-
-        $metadataPath = $migrationDir.'/metadata.json';
-        $metadata = [];
-
-        if (File::exists($metadataPath)) {
-            $metadata = File::json($metadataPath);
-        }
-
-        $files = File::files($migrationDir);
-        $backupFiles = [];
-
-        foreach ($files as $file) {
-            if ($file->getFilename() !== 'metadata.json' && $file->getFilename() !== '.gitignore') {
-                $backupFiles[] = [
-                    'name' => $file->getFilename(),
-                    'size' => $file->getSize(),
-                    'modified' => now()->createFromTimestamp($file->getMTime())->toDateTimeString(),
-                ];
-            }
-        }
-
-        return response()->json([
-            'migration_id' => $migrationId,
-            'migration_dir' => $migrationDir,
-            'metadata' => $metadata,
-            'backup_files' => $backupFiles,
-            'files_count' => \count($backupFiles),
-        ]);
-    }
-
-    /**
      * Nettoyer les migrations de test
      */
     public function cleanupMigrations(Request $request, MetadataManagerInterface $metadataManager)
