@@ -171,27 +171,16 @@
             <div id="test-output" class="test-output mt-4" style="display: none;">
                 <h3 class="section-title">Résultat de la migration :</h3>
                 <pre id="test-result" class="bg-dark text-light p-3 rounded"></pre>
+                <div id="migration-report-btn" class="mt-3" style="display: none;">
+                    <a id="view-report-link" href="#" class="btn btn-success" target="_blank">
+                        <i class="bi bi-file-text"></i> Voir le rapport de migration
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
 
-    <!-- Navigation vers les migrations -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="section-title">
-                <i class="bi bi-folder-open text-primary"></i> Voir les résultats
-            </h2>
-            <p class="text-muted mb-3">
-                Après avoir lancé un test, consultez les migrations effectuées pour analyser les résultats.
-            </p>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="btn btn-primary">
-                    <i class="bi bi-folder"></i> Voir les migrations
-                </a>
-            </div>
-        </div>
-    </div>
 
     <!-- Actions de nettoyage -->
     <div class="card mb-5">
@@ -441,6 +430,10 @@ async function runMultiVersionMigration() {
     startBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Migration en cours...';
     output.style.display = 'block';
     result.innerHTML = `<i class="bi bi-rocket"></i> Lancement de la migration ${fromVersion || 'auto'}→${toVersion || 'auto'}...\n`;
+    
+    // Masquer le bouton de rapport précédent
+    const reportBtn = document.getElementById('migration-report-btn');
+    reportBtn.style.display = 'none';
 
     try {
         const response = await fetch('/fontawesome-migrator/tests/migration-multi-version', {
@@ -470,7 +463,21 @@ ${data.output}
 
 <i class="bi bi-clock"></i> Terminé à ${data.timestamp}`;
 
+            // Afficher le bouton du rapport si on a un migration_id
+            const reportBtn = document.getElementById('migration-report-btn');
+            const reportLink = document.getElementById('view-report-link');
+            
+            if (data.migration_id) {
+                reportLink.href = `/fontawesome-migrator/migrations/${data.migration_id}`;
+                reportBtn.style.display = 'block';
+            }
+
             showAlert('Migration terminée avec succès');
+            
+            // Réinitialiser le formulaire après succès
+            setTimeout(() => {
+                resetMigrationForm();
+            }, 2000); // Attendre 2 secondes pour que l'utilisateur voit les résultats
         } else {
             result.innerHTML = `<i class="bi bi-x-square text-danger"></i> Erreur lors de la migration
 
@@ -494,6 +501,31 @@ ${data.error || data.output}
     }
 }
 
+// Fonction pour réinitialiser le formulaire de migration
+function resetMigrationForm() {
+    const fromVersionSelect = document.getElementById('fromVersion');
+    const toVersionSelect = document.getElementById('toVersion');
+    const migrationMode = document.getElementById('migrationMode');
+    const dryRun = document.getElementById('dryRun');
+    const migrationInfo = document.getElementById('migrationInfo');
+    const commandOutput = document.getElementById('commandOutput');
+    
+    // Réinitialiser les sélecteurs
+    fromVersionSelect.value = '';
+    toVersionSelect.innerHTML = '<option value="">Sélectionnez d\'abord la version source</option>';
+    toVersionSelect.disabled = true;
+    migrationMode.value = 'complete';
+    dryRun.checked = true;
+    
+    // Réinitialiser les informations
+    migrationInfo.innerHTML = '<i class="bi bi-info-circle"></i> Sélectionnez les versions pour voir les détails de migration';
+    
+    // Masquer la sortie de commande
+    commandOutput.style.display = 'none';
+    
+    // Remettre à jour l'état des boutons
+    updateButtonStates();
+}
 
 
 async function cleanupMigrations(days) {

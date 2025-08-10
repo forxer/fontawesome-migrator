@@ -77,12 +77,23 @@ class RunMultiVersionMigrationController extends Controller
             // Restaurer le répertoire de travail original
             chdir($originalCwd);
 
+            // Extraire l'ID de migration depuis la sortie
+            $migrationId = null;
+
+            // Pattern basé sur la sortie réelle: migration-migration_68985989b91592.72291576
+            // On extrait l'ID complet puis on prend les 8 premiers caractères (short ID)
+            if (preg_match('/📋 Migration sauvegardée : migration-migration_([a-zA-Z0-9\.]+)/', $output, $matches)) {
+                $fullId = $matches[1];
+                $migrationId = substr($fullId, 0, 8); // 8 premiers caractères
+            }
+
             return response()->json([
                 'success' => $exitCode === 0,
                 'exit_code' => $exitCode,
                 'command' => $commandString,
                 'options' => $commandOptions,
                 'output' => $output,
+                'migration_id' => $migrationId,
                 'from_version' => $request->input('from'),
                 'to_version' => $request->input('to'),
                 'mode' => $request->input('mode'),
