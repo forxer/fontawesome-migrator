@@ -1,8 +1,14 @@
 <?php
 
 use FontAwesome\Migrator\Http\Controllers\HomeController;
-use FontAwesome\Migrator\Http\Controllers\MigrationsController;
-use FontAwesome\Migrator\Http\Controllers\TestsController;
+use FontAwesome\Migrator\Http\Controllers\Migrations\CleanupController;
+use FontAwesome\Migrator\Http\Controllers\Migrations\DestroyController;
+use FontAwesome\Migrator\Http\Controllers\Migrations\IndexController;
+use FontAwesome\Migrator\Http\Controllers\Migrations\InspectController;
+use FontAwesome\Migrator\Http\Controllers\Migrations\ShowController;
+use FontAwesome\Migrator\Http\Controllers\Tests\CleanupMigrationsController;
+use FontAwesome\Migrator\Http\Controllers\Tests\IndexController as TestsIndexController;
+use FontAwesome\Migrator\Http\Controllers\Tests\RunMultiVersionMigrationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,16 +25,16 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Migrations
 Route::prefix('migrations')->name('migrations.')->group(function () {
-    Route::get('/', [MigrationsController::class, 'index'])->name('index');
-    Route::get('/{migrationId}', [MigrationsController::class, 'show'])->name('show');
-    Route::get('/{migrationId}/inspect', [MigrationsController::class, 'inspect'])->name('inspect');
-    Route::delete('/{migrationId}', [MigrationsController::class, 'destroy'])->name('destroy');
-    Route::post('/cleanup', [MigrationsController::class, 'cleanup'])->name('cleanup');
+    Route::get('/', IndexController::class)->name('index');
+    Route::get('/{migrationId}', ShowController::class)->name('show');
+    Route::get('/{migrationId}/inspect', InspectController::class)->name('inspect');
+    Route::delete('/{migrationId}', DestroyController::class)->name('destroy');
+    Route::post('/cleanup', CleanupController::class)->name('cleanup');
 });
 
 // Tests et debug
 Route::prefix('tests')->name('tests.')->group(function () {
-    Route::get('/', [TestsController::class, 'index'])->name('index');
-    Route::post('/migration-multi-version', [TestsController::class, 'runMultiVersionMigration'])->name('migration-multi-version');
-    Route::post('/cleanup-migrations', [TestsController::class, 'cleanupMigrations'])->name('cleanup');
+    Route::get('/', TestsIndexController::class)->name('index');
+    Route::post('/migration-multi-version', RunMultiVersionMigrationController::class)->name('migration-multi-version');
+    Route::post('/cleanup-migrations', CleanupMigrationsController::class)->name('cleanup');
 });

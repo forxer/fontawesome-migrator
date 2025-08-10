@@ -67,7 +67,7 @@
                             <i class="bi bi-clock fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
                                 @if($backupStats['last_migration'])
-                                    {{ $backupStats['last_migration']['created_at']->isoFormat('DD/MM') }}
+                                    {{ $backupStats['last_migration']->isoFormat('DD/MM') }}
                                 @else
                                     -
                                 @endif
@@ -194,7 +194,7 @@
     </div>
 
     <!-- Actions de nettoyage -->
-    <div class="card mb-4">
+    <div class="card mb-5">
         <div class="card-body">
             <h2 class="section-title">
                 <i class="bi bi-trash text-primary"></i> Nettoyage
@@ -212,10 +212,6 @@
 @endsection
 
 @section('scripts')
-<style>
-    /* Styles pour l'interface multi-versions */
-</style>
-
 <script>
 // Configuration CSRF pour les requêtes AJAX
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

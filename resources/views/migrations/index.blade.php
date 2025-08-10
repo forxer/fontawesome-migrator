@@ -67,7 +67,7 @@
                             <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
                                 @if($stats['last_migration'])
-                                    {{ $stats['last_migration']['created_at']->isoFormat('DD/MM') }}
+                                    {{ $stats['last_migration']->isoFormat('DD/MM') }}
                                 @else
                                     -
                                 @endif

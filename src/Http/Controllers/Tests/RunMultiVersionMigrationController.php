@@ -2,48 +2,19 @@
 
 declare(strict_types=1);
 
-namespace FontAwesome\Migrator\Http\Controllers;
+namespace FontAwesome\Migrator\Http\Controllers\Tests;
 
 use Exception;
-use FontAwesome\Migrator\Contracts\ConfigurationInterface;
-use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
-use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\File;
 
-/**
- * Contrôleur pour les tests et debug
- */
-class TestsController extends Controller
+class RunMultiVersionMigrationController extends Controller
 {
-    public function __construct(
-        private readonly MigrationVersionManager $versionManager
-    ) {}
-
-    /**
-     * Afficher la page d'index des tests
-     */
-    public function index(MetadataManagerInterface $metadataManager, ConfigurationInterface $config)
-    {
-        $migrations = $metadataManager->getAvailableMigrations();
-        $backupStats = $this->getBackupStats($metadataManager, $config);
-
-        // Ajouter les informations de migration multi-versions
-        $supportedMigrations = $this->versionManager->getSupportedMigrations();
-
-        return view('fontawesome-migrator::tests.index', [
-            'migrations' => $migrations,
-            'backupStats' => $backupStats,
-            'supportedMigrations' => $supportedMigrations,
-        ]);
-    }
-
     /**
      * Exécuter une migration multi-versions
      */
-    public function runMultiVersionMigration(Request $request)
+    public function __invoke(Request $request)
     {
         $request->validate([
             'from' => ['nullable', 'string', 'in:4,5,6'],
@@ -125,59 +96,5 @@ class TestsController extends Controller
                 'timestamp' => now()->toDateTimeString(),
             ], 500);
         }
-    }
-
-    /**
-     * Nettoyer les migrations de test
-     */
-    public function cleanupMigrations(Request $request, MetadataManagerInterface $metadataManager)
-    {
-        $days = $request->input('days', 7);
-        $deleted = $metadataManager->cleanOldMigrations($days);
-
-        return response()->json([
-            'message' => 'Nettoyage des migrations terminé',
-            'deleted' => $deleted,
-            'days' => $days,
-        ]);
-    }
-
-    /**
-     * Obtenir les statistiques des sauvegardes pour le test
-     */
-    protected function getBackupStats(MetadataManagerInterface $metadataManager, ConfigurationInterface $config): array
-    {
-        $baseBackupDir = $config->getMigrationsPath();
-
-        if (! File::exists($baseBackupDir)) {
-            return [
-                'total_migrations' => 0,
-                'total_backups' => 0,
-                'total_size' => 0,
-                'last_migration' => null,
-            ];
-        }
-
-        $migrations = $metadataManager->getAvailableMigrations();
-        $totalBackups = 0;
-        $totalSize = 0;
-
-        foreach ($migrations as $migration) {
-            $totalBackups += $migration['backup_count'];
-
-            // Calculer la taille totale des fichiers
-            $files = File::files($migration['directory']);
-
-            foreach ($files as $file) {
-                $totalSize += $file->getSize();
-            }
-        }
-
-        return [
-            'total_migrations' => \count($migrations),
-            'total_backups' => $totalBackups,
-            'total_size' => $totalSize,
-            'last_migration' => $migrations[0] ?? null,
-        ];
     }
 }
