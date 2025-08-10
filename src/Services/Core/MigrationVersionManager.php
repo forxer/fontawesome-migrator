@@ -78,19 +78,19 @@ class MigrationVersionManager
                 'from' => '4',
                 'to' => '5',
                 'mapper' => FontAwesome4To5Mapper::class,
-                'description' => 'Migration FontAwesome 4 → 5 (préfixes + noms)',
+                'description' => 'Migration FontAwesome 4 → 5',
             ],
             [
                 'from' => '5',
                 'to' => '6',
                 'mapper' => FontAwesome5To6Mapper::class,
-                'description' => 'Migration FontAwesome 5 → 6 (noms + nouveautés)',
+                'description' => 'Migration FontAwesome 5 → 6',
             ],
             [
                 'from' => '6',
                 'to' => '7',
                 'mapper' => FontAwesome6To7Mapper::class,
-                'description' => 'Migration FontAwesome 6 → 7 (modernisation + comportements)',
+                'description' => 'Migration FontAwesome 6 → 7',
             ],
         ];
     }
