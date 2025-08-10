@@ -27,3 +27,9 @@ Breadcrumbs::for('fontawesome-migrator.tests.index', function (BreadcrumbTrail $
     $trail->parent('fontawesome-migrator.home');
     $trail->push('Tests', route('fontawesome-migrator.tests.index'));
 });
+
+// Nettoyage
+Breadcrumbs::for('fontawesome-migrator.cleanup.index', function (BreadcrumbTrail $trail): void {
+    $trail->parent('fontawesome-migrator.home');
+    $trail->push('Nettoyage et Maintenance', route('fontawesome-migrator.cleanup.index'));
+});

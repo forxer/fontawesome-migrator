@@ -118,30 +118,6 @@ async function inspectMigration(migrationId) {
     }
 }
 
-async function cleanupMigrations(days) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les migrations de plus de ${days} jour(s) ?`)) {
-        return;
-    }
-
-    try {
-        const response = await fetch('/fontawesome-migrator/tests/cleanup-migrations', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-            },
-            body: JSON.stringify({ days: days })
-        });
-
-        const data = await response.json();
-        alert(`${data.message}\nMigrations supprimées: ${data.deleted}`);
-
-        // Recharger la page
-        location.reload();
-    } catch (error) {
-        alert('Erreur lors du nettoyage: ' + error.message);
-    }
-}
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';

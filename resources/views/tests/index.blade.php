@@ -20,10 +20,6 @@
             <li><a class="dropdown-item" href="#" onclick="refreshPage(); return false;">
                 <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
             </a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupMigrations(7); return false;">
-                <i class="bi bi-trash"></i> Nettoyer (7j+)
-            </a></li>
         </x-slot>
     </x-fontawesome-migrator::page-header>
 
@@ -182,22 +178,6 @@
 
 
 
-    <!-- Actions de nettoyage -->
-    <div class="card mb-5">
-        <div class="card-body">
-            <h2 class="section-title">
-                <i class="bi bi-trash text-primary"></i> Nettoyage
-            </h2>
-            <div class="d-flex flex-wrap gap-2">
-                <button onclick="cleanupMigrations(7)" class="btn btn-outline-secondary">
-                    <i class="bi bi-trash"></i> Nettoyer > 7 jours
-                </button>
-                <button onclick="cleanupMigrations(1)" class="btn btn-outline-danger">
-                    <i class="bi bi-trash"></i> Nettoyer > 1 jour
-                </button>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('scripts')
@@ -528,30 +508,5 @@ function resetMigrationForm() {
 }
 
 
-async function cleanupMigrations(days) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer toutes les migrations de plus de ${days} jour(s) ?`)) {
-        return;
-    }
-
-    try {
-        const response = await fetch('/fontawesome-migrator/tests/cleanup-migrations', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': window.csrfToken
-            },
-            body: JSON.stringify({ days: days })
-        });
-
-        const data = await response.json();
-        showAlert(`${data.message} - Migrations supprimées: ${data.deleted}`);
-
-        if (data.deleted > 0) {
-            setTimeout(() => location.reload(), 1500);
-        }
-    } catch (error) {
-        showAlert('Erreur lors du nettoyage: ' + error.message, 'error');
-    }
-}
 </script>
 @endsection

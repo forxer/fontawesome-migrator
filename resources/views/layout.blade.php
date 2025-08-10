@@ -39,6 +39,11 @@
                             <i class="bi bi-flask me-1"></i> Tests
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {{ request()->routeIs('fontawesome-migrator.cleanup.*') ? 'active' : '' }}" href="{{ route('fontawesome-migrator.cleanup.index') }}">
+                            <i class="bi bi-recycle me-1"></i> Nettoyage
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

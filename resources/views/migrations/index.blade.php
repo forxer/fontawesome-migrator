@@ -20,10 +20,6 @@
             <li><a class="dropdown-item" href="#" onclick="refreshReports(); return false;">
                 <span id="refresh-icon"><i class="bi bi-arrow-repeat"></i></span> Actualiser
             </a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#" onclick="cleanupMigrations(); return false;">
-                <i class="bi bi-trash"></i> Nettoyer (30j+)
-            </a></li>
         </x-slot>
     </x-fontawesome-migrator::page-header>
 
@@ -255,35 +251,6 @@
         }
     }
 
-    async function cleanupMigrations() {
-        if (!confirm('Supprimer toutes les migrations de plus de 30 jours ?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch('/fontawesome-migrator/migrations/cleanup', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': window.csrfToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ days: 30 })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showAlert(`${data.deleted} migration(s) supprimée(s)`);
-                if (data.deleted > 0) {
-                    setTimeout(() => window.location.reload(), 1500);
-                }
-            } else {
-                showAlert('Erreur lors du nettoyage', 'error');
-            }
-        } catch (error) {
-            showAlert('Erreur de connexion', 'error');
-        }
-    }
 
     // Fonction pour voir le JSON
     function viewJSON(migrationId) {
