@@ -33,7 +33,6 @@ class MigrationLifecyleService
             'package_version' => $this->packageVersionService->getVersion(),
             'started_at' => now()->toDateTimeString(),
             'status' => 'initialized',
-            'dry_run' => false,
             'migration_options' => [],
             'command_options' => [],
         ];
@@ -59,16 +58,6 @@ class MigrationLifecyleService
     public function setMigrationOptions(array $options): self
     {
         $this->migrationData['migration_options'] = $options;
-
-        return $this;
-    }
-
-    /**
-     * Configurer le mode dry run
-     */
-    public function setDryRun(bool $isDryRun): self
-    {
-        $this->migrationData['dry_run'] = $isDryRun;
 
         return $this;
     }
@@ -136,7 +125,6 @@ class MigrationLifecyleService
             'started_at' => $this->migrationData['started_at'] ?? null,
             'completed_at' => $this->migrationData['completed_at'] ?? null,
             'duration' => $this->migrationData['duration'] ?? null,
-            'dry_run' => $this->migrationData['dry_run'] ?? false,
         ];
     }
 

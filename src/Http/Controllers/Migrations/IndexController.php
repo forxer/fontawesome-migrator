@@ -46,7 +46,7 @@ class IndexController extends Controller
                 'size' => File::size($migrationDir.'/metadata.json'),
                 'metadata_path' => $migrationDir.'/metadata.json',
                 'has_json' => true,
-                'dry_run' => $migrationMetadata['dry_run'] ?? false,
+                'dry_run' => $migrationMetadata['migration_options']['dry_run'] ?? false,
                 'metadata' => $migrationMetadata,
 
                 // Données enrichies de migration
@@ -55,8 +55,8 @@ class IndexController extends Controller
                 'duration' => $migrationMetadata['duration'] ?? null,
                 'migration_origin' => $migrationMetadata['migration_source'] ?? 'unknown',
                 'migration_options' => [
-                    'source_version' => $migrationMetadata['source_version'] ?? '5',
-                    'target_version' => $migrationMetadata['target_version'] ?? '6',
+                    'source_version' => $migrationMetadata['migration_options']['source_version'] ?? '5',
+                    'target_version' => $migrationMetadata['migration_options']['target_version'] ?? '6',
                     'icons_only' => $migrationMetadata['icons_only'] ?? false,
                     'assets_only' => $migrationMetadata['assets_only'] ?? false,
                 ],
@@ -119,7 +119,7 @@ class IndexController extends Controller
 
             $stats['total_migrations']++;
 
-            if ($metadata['dry_run'] ?? false) {
+            if ($metadata['migration_options']['dry_run'] ?? false) {
                 $stats['dry_run_count']++;
             } else {
                 $stats['real_run_count']++;

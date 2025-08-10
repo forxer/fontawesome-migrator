@@ -1,0 +1,191 @@
+<?php
+
+declare(strict_types=1);
+
+namespace FontAwesome\Migrator\Services\Core;
+
+use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
+use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
+
+use function Laravel\Prompts\info;
+
+class MigrationProcessor
+{
+    public function __construct(
+        private IconReplacer $replacer,
+        private AssetMigrator $assetMigrator,
+        private MigrationVersionManager $versionManager,
+        private MetadataManagerInterface $metadata,
+        private MigrationReporter $reporter
+    ) {}
+
+    /**
+     * Traiter la migration des icônes
+     */
+    public function processIcons(array $files, array $options): array
+    {
+        // Skip si assets-only
+        if ($options['assets_only']) {
+            info('⏩ Migration des icônes ignorée (mode assets-only)');
+
+            return [];
+        }
+
+        if (empty($files)) {
+            return [];
+        }
+
+        $dryRun = $options['dry_run'];
+        $sourceVersion = $options['source_version'];
+        $targetVersion = $options['target_version'];
+
+        info("🔄 Migration des icônes FontAwesome {$sourceVersion} → {$targetVersion}".($dryRun ? ' (dry-run)' : ''));
+
+        // Traiter les fichiers
+        $fileResults = $this->replacer->processFiles($files, $dryRun);
+
+        // Calculer les statistiques
+        $totalChanges = 0;
+        $modifiedFiles = [];
+
+        foreach ($fileResults as $result) {
+            if ($result['success'] && $result['changes_count'] > 0) {
+                $totalChanges += $result['changes_count'];
+                $modifiedFiles[] = $result['file'];
+            }
+        }
+
+        // Afficher le résumé
+        if ($totalChanges > 0) {
+            info("✨ {$totalChanges} icône(s) migrée(s) dans ".\count($modifiedFiles).' fichier(s)');
+        } else {
+            info('ℹ️ Aucune icône FontAwesome trouvée nécessitant une migration');
+        }
+
+        return [
+            'file_results' => $fileResults,
+            'total_changes' => $totalChanges,
+            'modified_files' => $modifiedFiles,
+        ];
+    }
+
+    /**
+     * Traiter la migration des assets
+     */
+    public function processAssets(array $files, array $options): array
+    {
+        // Skip si icons-only
+        if ($options['icons_only']) {
+            info('⏩ Migration des assets ignorée (mode icons-only)');
+
+            return [];
+        }
+
+        $dryRun = $options['dry_run'];
+        $sourceVersion = $options['source_version'];
+        $targetVersion = $options['target_version'];
+
+        info("🎨 Migration des assets FontAwesome {$sourceVersion} → {$targetVersion}".($dryRun ? ' (dry-run)' : ''));
+
+        // Traiter les assets dans chaque fichier
+        $results = [
+            'total_assets' => 0,
+            'modified_files' => [],
+        ];
+
+        foreach ($files as $fileData) {
+            $filePath = $fileData['path'];
+            $content = file_get_contents($filePath);
+            $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
+
+            if ($migratedContent !== $content) {
+                $results['modified_files'][] = $filePath;
+                $results['total_assets']++;
+
+                if (! $dryRun) {
+                    file_put_contents($filePath, $migratedContent);
+                }
+            }
+        }
+
+        // Afficher le résumé
+        if ($results['total_assets'] > 0) {
+            info("📦 {$results['total_assets']} fichier(s) avec assets migrés");
+        } else {
+            info('ℹ️ Aucun asset FontAwesome trouvé nécessitant une migration');
+        }
+
+        return $results;
+    }
+
+    /**
+     * Traiter la migration complète
+     */
+    public function process(array $files, array $options): array
+    {
+        // Configurer le mapper pour cette migration
+        $mapper = $this->versionManager->createMapper(
+            $options['source_version'],
+            $options['target_version']
+        );
+        $this->replacer->setMapper($mapper);
+
+        $iconResults = $this->processIcons($files, $options);
+        $assetResults = $this->processAssets($files, $options);
+
+        // Consolider tous les file_results
+        $allFileResults = array_merge(
+            $iconResults['file_results'] ?? [],
+            // TODO: ajouter asset file_results quand disponible
+        );
+
+        $results = [
+            'icons' => $iconResults,
+            'assets' => $assetResults,
+            'file_results' => $allFileResults,
+            'total_files_processed' => \count($files),
+            'total_files_modified' => \count(array_unique(array_merge(
+                $iconResults['modified_files'] ?? [],
+                $assetResults['modified_files'] ?? []
+            ))),
+        ];
+
+        // Finaliser la migration
+        $this->finalizeMigration($results, $options);
+
+        return $results;
+    }
+
+    /**
+     * Finaliser et sauvegarder la migration
+     */
+    private function finalizeMigration(array $results, array $options): void
+    {
+        $dryRun = $options['dry_run'] ?? false;
+
+        // Récupérer les résultats par fichier
+        $fileResults = $results['icons']['file_results'] ?? [];
+
+        // Préparer les statistiques pour les métadonnées
+        $stats = [
+            'total_files' => $results['total_files_processed'],
+            'modified_files' => $results['total_files_modified'],
+            'total_changes' => ($results['icons']['total_changes'] ?? 0) + ($results['assets']['total_assets'] ?? 0),
+        ];
+
+        // Stocker les résultats dans les métadonnées (avec le format attendu par MigrationResultsService)
+        $this->metadata->storeMigrationResults($fileResults, $stats);
+        $this->metadata->completeMigration();
+
+        // Sauvegarder les métadonnées
+        $this->metadata->saveToFile();
+
+        // Générer le rapport si nécessaire
+        if (! $dryRun && $results['total_files_modified'] > 0) {
+            $this->reporter->generateMetadata($results);
+            info('');
+            info('✅ Migration terminée avec succès !');
+            info('📄 Rapport de migration disponible dans le dossier des migrations');
+        }
+    }
+}

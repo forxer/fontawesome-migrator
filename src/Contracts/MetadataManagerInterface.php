@@ -17,11 +17,6 @@ interface MetadataManagerInterface
     public function setMigrationOptions(array $options): self;
 
     /**
-     * Définir le mode dry-run
-     */
-    public function setDryRun(bool $isDryRun): self;
-
-    /**
      * Marquer la fin de la migration
      */
     public function completeMigration(): self;

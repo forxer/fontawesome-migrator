@@ -54,20 +54,6 @@ class MetadataManager implements MetadataManagerInterface
     }
 
     /**
-     * Définir le mode dry-run
-     */
-    public function setDryRun(bool $isDryRun): self
-    {
-        // Déléguer au service de migration
-        $this->migrationService->setDryRun($isDryRun);
-
-        // Synchroniser avec metadata local
-        $this->metadata['dry_run'] = $isDryRun;
-
-        return $this;
-    }
-
-    /**
      * Marquer la fin de la migration
      */
     public function completeMigration(): self
@@ -213,7 +199,6 @@ class MetadataManager implements MetadataManagerInterface
                 'migration_id' => $this->metadata['migration_id'],
                 'generated_at' => $this->metadata['started_at'],
                 'package_version' => $this->metadata['package_version'],
-                'dry_run' => $this->metadata['dry_run'],
                 'duration' => $this->metadata['duration'],
                 'source_version' => $this->metadata['source_version'],
                 'target_version' => $this->metadata['target_version'],
@@ -297,7 +282,6 @@ class MetadataManager implements MetadataManagerInterface
         return [
             'migration_id' => $this->metadata['migration_id'] ?? null,
             'version' => $this->metadata['package_version'] ?? null,
-            'dry_run' => $this->metadata['dry_run'] ?? false,
             'backups_count' => $this->metadata['backup_count'] ?? 0,
             'files_modified' => $this->metadata['modified_files'] ?? 0,
             'changes_made' => $this->metadata['total_changes'] ?? 0,
@@ -401,7 +385,6 @@ class MetadataManager implements MetadataManagerInterface
                 'has_metadata' => File::exists($metadataPath),
                 'backup_count' => max(0, \count(File::files($directory)) - 1), // -1 pour exclure metadata.json, minimum 0
                 'package_version' => 'unknown',
-                'dry_run' => false,
                 'duration' => null,
             ];
 
@@ -411,7 +394,6 @@ class MetadataManager implements MetadataManagerInterface
 
                 // Adapter à la nouvelle structure simplifiée
                 $migrationInfo['package_version'] = $metadata['package_version'] ?? 'unknown';
-                $migrationInfo['dry_run'] = $metadata['dry_run'] ?? false;
                 $migrationInfo['duration'] = $metadata['duration'] ?? null;
 
                 // Inclure les métadonnées complètes

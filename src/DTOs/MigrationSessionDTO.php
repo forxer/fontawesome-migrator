@@ -34,7 +34,7 @@ readonly class MigrationMigrationDTO
             startedAt: $data['started_at'] ?? '',
             completedAt: $data['completed_at'] ?? null,
             duration: $data['duration'] ?? null,
-            isDryRun: $data['dry_run'] ?? false,
+            isDryRun: $data['migration_options']['dry_run'] ?? false,
             migrationOptions: $data['migration_options'] ?? [],
             commandOptions: $data['command_options'] ?? []
         );
@@ -52,7 +52,6 @@ readonly class MigrationMigrationDTO
             'started_at' => $this->startedAt,
             'completed_at' => $this->completedAt,
             'duration' => $this->duration,
-            'dry_run' => $this->isDryRun,
             'migration_options' => $this->migrationOptions,
             'command_options' => $this->commandOptions,
         ];

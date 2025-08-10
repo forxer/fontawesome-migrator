@@ -144,9 +144,9 @@
                                             @endif
                                         </div>
                                         <div class="text-muted small">
-                                            <i class="bi bi-arrow-repeat"></i> 
+                                            <i class="bi bi-arrow-repeat"></i>
                                             @if($sourceVersion || $targetVersion)
-                                                Versions FontAwesome
+                                                Versions
                                             @else
                                                 Migration ID
                                             @endif
@@ -308,12 +308,12 @@
                                         <h6 class="text-muted">Identifiant</h6>
                                         <p class="font-monospace">${data.migration_id}</p>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <h6 class="text-muted">Répertoire</h6>
                                         <p class="font-monospace small">${data.migration_dir}</p>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <h6 class="text-muted">Fichiers de sauvegarde (${data.files_count})</h6>
                                         ${data.backup_files && data.backup_files.length > 0 ? `
@@ -329,7 +329,7 @@
                                             </div>
                                         ` : '<p class="text-muted">Aucun fichier de sauvegarde</p>'}
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <h6 class="text-muted">Métadonnées</h6>
                                         <pre class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
@@ -344,18 +344,18 @@ ${JSON.stringify(data.metadata, null, 2)}
                         </div>
                     </div>
                 `;
-                
+
                 // Supprimer modal existante si présente
                 const existing = document.getElementById('inspectModal');
                 if (existing) existing.remove();
-                
+
                 // Supprimer backdrop existant si présent
                 const existingBackdrop = document.querySelector('.modal-backdrop');
                 if (existingBackdrop) existingBackdrop.remove();
-                
+
                 // Ajouter la nouvelle modal
                 document.body.insertAdjacentHTML('beforeend', modalHtml);
-                
+
                 // Créer et afficher la modal
                 const modalElement = document.getElementById('inspectModal');
                 const modal = new bootstrap.Modal(modalElement, {
@@ -364,14 +364,14 @@ ${JSON.stringify(data.metadata, null, 2)}
                     focus: true
                 });
                 modal.show();
-                
+
                 // Nettoyer après fermeture
                 modalElement.addEventListener('hidden.bs.modal', function() {
                     this.remove();
                     const backdrop = document.querySelector('.modal-backdrop');
                     if (backdrop) backdrop.remove();
                 });
-                
+
             } else {
                 showAlert(data.error || 'Erreur lors de l\'inspection de la migration', 'error');
             }

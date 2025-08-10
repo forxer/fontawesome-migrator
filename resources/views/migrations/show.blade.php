@@ -306,7 +306,7 @@
                     <h5 class="card-subtitle text-muted">Icônes migrées</h5>
                     @if (($stats['icons_migrated'] ?? 0) > 0)
                         <div class="mt-3 text-primary small">
-                            <i class="bi bi-arrow-right"></i> FA5 → FA6
+                            <i class="bi bi-arrow-right"></i> FA{{ $migrationOptions['source_version'] }} → FA{{ $migrationOptions['target_version'] }}
                         </div>
                     @endif
                 </div>

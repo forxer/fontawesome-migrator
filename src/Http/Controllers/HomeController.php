@@ -50,13 +50,13 @@ class HomeController extends Controller
                 }
 
                 // Compter les migrations réussies (non dry-run)
-                if (isset($migrationMetadata['dry_run'])) {
-                    if ($migrationMetadata['dry_run']) {
-                        $dryRunCount++;
-                    } else {
-                        $realRunCount++;
-                        $successfulMigrations++;
-                    }
+                $isDryRun = $migrationMetadata['migration_options']['dry_run'] ?? false;
+
+                if ($isDryRun) {
+                    $dryRunCount++;
+                } else {
+                    $realRunCount++;
+                    $successfulMigrations++;
                 }
 
                 // Accumuler le total des changements
@@ -97,7 +97,7 @@ class HomeController extends Controller
                     'short_id' => $migration['short_id'],
                     'created_at' => Carbon::parse($migrationMetadata['started_at']),
                     'size' => File::size($migration['directory'].'/metadata.json'),
-                    'dry_run' => $migrationMetadata['dry_run'] ?? false,
+                    'dry_run' => $migrationMetadata['migration_options']['dry_run'] ?? false,
                     'files_modified' => $migrationMetadata['modified_files'] ?? 0,
                     'total_changes' => $migrationMetadata['total_changes'] ?? 0,
                 ];

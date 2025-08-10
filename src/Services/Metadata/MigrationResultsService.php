@@ -21,10 +21,12 @@ class MigrationResultsService
      */
     public function storeResults(array $results, array $stats, array $warnings = []): self
     {
+        $fileResults = $results['file_results'] ?? [];
+
         $this->results = [
-            'total_files' => \count($results),
-            'modified_files' => \count(array_filter($results, fn ($r): bool => $r['success'] && $r['changes_count'] > 0)),
-            'errors' => array_filter(array_column($results, 'error')),
+            'total_files' => $results['total_files_processed'] ?? 0,
+            'modified_files' => $results['total_files_modified'] ?? 0,
+            'errors' => array_filter(array_column($fileResults, 'error')),
             'warnings' => $warnings,
             'stats' => $stats,
             'details' => $results,

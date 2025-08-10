@@ -54,12 +54,12 @@ class ShowController extends Controller
 
             // Données de contexte
             'timestamp' => Carbon::parse($migrationMetadata['started_at'] ?? now())->format('Y-m-d H:i:s'),
-            'isDryRun' => $migrationMetadata['dry_run'] ?? false,
+            'isDryRun' => $migrationMetadata['migration_options']['dry_run'],
             'migrationOptions' => [
-                'source_version' => $migrationMetadata['source_version'] ?? '5',
-                'target_version' => $migrationMetadata['target_version'] ?? '6',
-                'icons_only' => $migrationMetadata['icons_only'] ?? false,
-                'assets_only' => $migrationMetadata['assets_only'] ?? false,
+                'source_version' => $migrationMetadata['migration_options']['source_version'],
+                'target_version' => $migrationMetadata['migration_options']['target_version'],
+                'icons_only' => $migrationMetadata['migration_options']['icons_only'],
+                'assets_only' => $migrationMetadata['migration_options']['assets_only'],
             ],
             'configuration' => $migrationMetadata['scan_config'] ?? [],
             'packageVersion' => $migrationMetadata['package_version'] ?? 'unknown',
