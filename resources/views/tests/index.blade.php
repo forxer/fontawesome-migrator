@@ -439,9 +439,15 @@ async function runMultiVersionMigration() {
 ${data.command}
 
 <strong><i class="bi bi-terminal"></i> Résultat :</strong>
-${data.output}
+<div style="padding: 10px; font-size: 0.9em; white-space: pre-wrap; max-height: 300px; overflow-y: auto; font-family: monospace;"></div>
 
 <i class="bi bi-clock"></i> Terminé à ${data.timestamp}`;
+
+            // Injecter le contenu de manière sécurisée
+            const outputDiv = result.querySelector('div[style*="font-family: monospace"]');
+            if (outputDiv) {
+                outputDiv.textContent = data.output;
+            }
 
             // Afficher le bouton du rapport si on a un migration_id
             const reportBtn = document.getElementById('migration-report-btn');

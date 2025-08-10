@@ -31,53 +31,62 @@ Créer une nouvelle commande MigrateCommand simplifiée et modulaire, en rempla�
 - Toute la logique complexe déplacée dans le service dédié
 - Architecture propre : commande = orchestration, services = logique métier
 
-## 📋 Étapes À Reprendre
+## 🚨 OPTIONS NON IMPLÉMENTÉES À REPRENDRE
 
-### 4. Scanner les fichiers à migrer
+### ❌ Options capturées mais PAS utilisées
+
+**CRITIQUE** : Toutes les options CLI sont capturées dans `captureCommandOptions()` mais la logique métier n'est pas implémentée !
+
+#### 1. Gestion des sauvegardes
 ```php
-// 5. Scanner les fichiers
-$paths = $this->migrationOptions['path'] ? [$this->migrationOptions['path']] : config('fontawesome-migrator.scan_paths');
-$files = $this->scanner->scanPaths($paths);
-```
-
-### 5. Configuration des mappers avec versions validées
-```php  
-// 6. Configurer les services avec les bonnes versions
-$mapper = $this->versionManager->createMapper(
-    $this->migrationOptions['source_version'], 
-    $this->migrationOptions['target_version']
-);
-$this->replacer->setMapper($mapper);
-```
-
-### 6. Migration des icônes
-```php
-// 7. Migration des icônes (si pas assets-only)
-if (!$this->migrationOptions['assets_only']) {
-    $iconResults = $this->replacer->processFiles($files, $this->migrationOptions['dry_run']);
+// Options: --backup / --no-backup
+// MANQUE: Logique de sauvegarde conditionnelle
+if ($this->migrationOptions['backup'] || (!$this->migrationOptions['no_backup'] && config('default'))) {
+    // Créer sauvegardes avant migration
 }
 ```
 
-### 7. Migration des assets  
+#### 2. Mode debug
 ```php
-// 8. Migration des assets (si pas icons-only)
-if (!$this->migrationOptions['icons_only']) {
-    $assetResults = $this->assetMigrator->migrateAssets($files, $this->migrationOptions['dry_run']);
+// Option: --debug
+// MANQUE: Affichage informations debug environnement
+if ($this->migrationOptions['debug']) {
+    $this->displayDebugInfo();
 }
 ```
 
-### 8. Affichage des résultats
-- Statistiques : fichiers analysés, modifiés, total changements
-- Détail des changements (si verbose ou < 20 changements)
-- Messages de statut selon dry-run
-
-### 9. Finalisation et sauvegarde
+#### 3. Mode non-interactif
 ```php
-// 10. Finaliser
-$this->metadata->completeMigration();
-$this->metadata->saveToFile();
-$reportInfo = $this->reporter->generateMetadata($results);
+// Option: --no-interactive
+// MANQUE: Désactiver prompts interactifs
+if ($this->migrationOptions['no_interactive']) {
+    // Pas de questions/confirmations utilisateur
+}
 ```
+
+#### 4. Filtrage icons-only / assets-only
+```php
+// Options: --icons-only / --assets-only
+// PARTIELLEMENT GÉRÉ: MigrationProcessor devrait respecter ces flags
+// Vérifier que les options sont transmises correctement
+```
+
+#### 5. Interface web marker
+```php
+// Option: --web-interface
+// MANQUE: Marquage source migration + comportement adapté
+if ($this->migrationOptions['web_interface']) {
+    // Comportement spécifique interface web
+}
+```
+
+### 🔧 Actions requises
+
+1. **Implémenter logique `--backup` / `--no-backup`**
+2. **Créer méthode `displayDebugInfo()` pour `--debug`**
+3. **Gérer `--no-interactive` dans prompts**
+4. **Vérifier transmission `--icons-only` / `--assets-only` à MigrationProcessor**
+5. **Implémenter marquage `--web-interface` dans métadonnées**
 
 ## 📁 Fichiers Concernés
 

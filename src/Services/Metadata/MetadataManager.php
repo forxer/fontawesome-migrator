@@ -106,16 +106,7 @@ class MetadataManager implements MetadataManagerInterface
         $this->metadata['migration_success'] = $stats['migration_success'] ?? true;
 
         // === DETAILED DATA ===
-        $this->metadata['files'] = array_map(fn ($result): array => [
-            'file' => $result['file'],
-            'success' => $result['success'] ?? true,
-            'changes_count' => \count($result['changes'] ?? []),
-            'warnings_count' => \count($result['warnings'] ?? []),
-            'assets_count' => \count($result['assets'] ?? []),
-            'changes' => $result['changes'] ?? [],
-            'warnings' => $result['warnings'] ?? [],
-            'assets' => $result['assets'] ?? [],
-        ], $results);
+        $this->metadata['files'] = $results['file_results'] ?? [];
 
         $this->metadata['warnings_details'] = $enrichedWarnings;
         $this->metadata['changes_by_type'] = $stats['changes_by_type'] ?? [];
