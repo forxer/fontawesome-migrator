@@ -104,7 +104,7 @@ class IndexController extends Controller
             'total_backups' => 0,
             'total_size' => 0,
             'avg_changes' => 0,
-            'success_rate' => 0,
+            'total_changes' => 0,
             'last_migration' => null,
         ];
 
@@ -145,16 +145,17 @@ class IndexController extends Controller
 
             $totalChanges += $metadata['total_changes'] ?? 0;
 
-            if ($stats['last_migration'] === null || Carbon::parse($metadata['started_at']) > $stats['last_migration']) {
+            if (! $stats['last_migration'] instanceof Carbon
+                || Carbon::parse($metadata['started_at']) > $stats['last_migration']) {
                 $stats['last_migration'] = Carbon::parse($metadata['started_at']);
             }
         }
 
         if ($stats['total_migrations'] > 0) {
             $stats['avg_changes'] = (int) round($totalChanges / $stats['total_migrations']);
-            $successfulMigrations = $stats['total_migrations'] - array_sum(array_map(fn ($m): int => ($m['metadata']['errors'] ?? 0) > 0 ? 1 : 0, $migrations));
-            $stats['success_rate'] = (int) round(($successfulMigrations / $stats['total_migrations']) * 100);
         }
+
+        $stats['total_changes'] = $totalChanges;
 
         return $stats;
     }

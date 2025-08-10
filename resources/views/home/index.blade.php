@@ -130,14 +130,14 @@
 
         <div class="row g-4 mb-5">
             <div class="col-lg-4 col-md-6">
-                <div class="card h-100 shadow-sm {{ $stats['success_rate'] > 70 ? 'border-success' : ($stats['success_rate'] > 40 ? 'border-warning' : 'border-danger') }}">
+                <div class="card h-100 shadow-sm border-info">
                     <div class="card-body text-center">
-                        <i class="bi bi-percent fs-1 {{ $stats['success_rate'] > 70 ? 'text-success' : ($stats['success_rate'] > 40 ? 'text-warning' : 'text-danger') }} mb-3"></i>
-                        <h3 class="card-title {{ $stats['success_rate'] > 70 ? 'text-success' : ($stats['success_rate'] > 40 ? 'text-warning' : 'text-danger') }}">{{ $stats['success_rate'] }}%</h3>
-                        <p class="card-text text-muted">Taux de réussite</p>
+                        <i class="bi bi-arrow-repeat fs-1 text-info mb-3"></i>
+                        <h3 class="card-title text-info">{{ number_formatted($stats['total_changes']) }}</h3>
+                        <p class="card-text text-muted">Total des changements</p>
                     </div>
                     @if($stats['total_migrations'] > 0)
-                        <div class="card-footer {{ $stats['success_rate'] > 70 ? 'bg-success' : ($stats['success_rate'] > 40 ? 'bg-warning' : 'bg-danger') }} bg-opacity-10 border-0"></div>
+                        <div class="card-footer bg-info bg-opacity-10 border-0"></div>
                     @endif
                 </div>
             </div>
@@ -146,7 +146,7 @@
                 <div class="card h-100 shadow-sm {{ $stats['avg_changes'] > 0 ? 'border-primary' : '' }}">
                     <div class="card-body text-center">
                         <i class="bi bi-graph-up fs-1 {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                        <h3 class="card-title {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['avg_changes'] }}</h3>
+                        <h3 class="card-title {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-muted' }}">{{ number_formatted($stats['avg_changes']) }}</h3>
                         <p class="card-text text-muted">Changements moyens</p>
                     </div>
                     @if($stats['avg_changes'] > 0)

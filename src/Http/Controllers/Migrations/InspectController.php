@@ -19,15 +19,7 @@ class InspectController extends Controller
         // Récupérer toutes les migrations disponibles
         $migrations = $metadataManager->getAvailableMigrations();
 
-        // Chercher la migration par short_id ou migration_id complet
-        $migrationInfo = null;
-
-        foreach ($migrations as $migration) {
-            if ($migration['short_id'] === $migrationId || $migration['migration_id'] === $migrationId) {
-                $migrationInfo = $migration;
-                break;
-            }
-        }
+        $migrationInfo = array_find($migrations, fn ($migration): bool => $migration['short_id'] === $migrationId || $migration['migration_id'] === $migrationId);
 
         if (! $migrationInfo) {
             return response()->json(['error' => 'Migration non trouvée'], 404);

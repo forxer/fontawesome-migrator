@@ -79,6 +79,7 @@ class HomeController extends Controller
             'package_version' => $packageVersionService->getVersion(),
             'success_rate' => $successRate,
             'avg_changes' => $avgChanges,
+            'total_changes' => $totalChanges,
             'dry_run_count' => $dryRunCount,
             'real_run_count' => $realRunCount,
         ];

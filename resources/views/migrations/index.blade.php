@@ -132,10 +132,29 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="border rounded p-3">
-                                        <div class="fw-semibold" data-bs-toggle="tooltip" title="ID complet : {{ $report['migration_id'] }}">
-                                            {{ $report['short_id'] }}
+                                        <div class="fw-semibold">
+                                            @php
+                                                $sourceVersion = $report['migration_options']['source_version'] ?? null;
+                                                $targetVersion = $report['migration_options']['target_version'] ?? null;
+                                            @endphp
+                                            @if($sourceVersion && $targetVersion)
+                                                FA{{ $sourceVersion }} → FA{{ $targetVersion }}
+                                            @elseif($sourceVersion)
+                                                Depuis FA{{ $sourceVersion }}
+                                            @elseif($targetVersion)
+                                                Vers FA{{ $targetVersion }}
+                                            @else
+                                                {{ $report['short_id'] }}
+                                            @endif
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Migration ID</div>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-arrow-repeat"></i> 
+                                            @if($sourceVersion || $targetVersion)
+                                                Versions FontAwesome
+                                            @else
+                                                Migration ID
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
