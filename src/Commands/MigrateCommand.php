@@ -10,6 +10,7 @@ use FontAwesome\Migrator\Services\Core\MigrationProcessor;
 use FontAwesome\Migrator\Services\Core\VersionConfigurationService;
 use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
 use Illuminate\Console\Command;
+use RuntimeException;
 
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
@@ -141,13 +142,13 @@ class MigrateCommand extends Command
             $this->migrationOptions['source_version'] = $versionConfig['source_version'];
             $this->migrationOptions['target_version'] = $versionConfig['target_version'];
 
-            info("🌐 Migration configurée : FontAwesome {$versionConfig['source_version']} → {$versionConfig['target_version']}");
+            info(\sprintf('🌐 Migration configurée : FontAwesome %s → %s', $versionConfig['source_version'], $versionConfig['target_version']));
 
             // Mettre à jour les métadonnées
             $this->metadata->setMigrationOptions($this->migrationOptions);
 
-        } catch (\RuntimeException $e) {
-            $this->error($e->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->error($runtimeException->getMessage());
 
             exit(Command::FAILURE);
         }
@@ -159,13 +160,13 @@ class MigrateCommand extends Command
         $paths = config('fontawesome-migrator.scan_paths', []);
 
         if (empty($paths)) {
-            throw new \RuntimeException('Aucun chemin configuré pour le scan. Vérifiez votre configuration fontawesome-migrator.scan_paths');
+            throw new RuntimeException('Aucun chemin configuré pour le scan. Vérifiez votre configuration fontawesome-migrator.scan_paths');
         }
 
         // Scanner les fichiers
         $files = $this->scanner->scanPaths($paths);
 
-        if (empty($files)) {
+        if ($files === []) {
             $this->warn('Aucun fichier trouvé dans les chemins configurés');
 
             return [];
@@ -267,21 +268,21 @@ class MigrateCommand extends Command
         info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
         // Statistiques globales
-        info("📁 Fichiers analysés : {$results['total_files_processed']}");
-        info("✏️  Fichiers modifiés : {$results['total_files_modified']}");
+        info('📁 Fichiers analysés : '.$results['total_files_processed']);
+        info('✏️  Fichiers modifiés : '.$results['total_files_modified']);
 
         // Détails icônes
         $iconChanges = $results['icons']['total_changes'] ?? 0;
 
         if ($iconChanges > 0) {
-            info("🔄 Icônes migrées : {$iconChanges}");
+            info('🔄 Icônes migrées : '.$iconChanges);
         }
 
         // Détails assets
         $assetChanges = $results['assets']['total_assets'] ?? 0;
 
         if ($assetChanges > 0) {
-            info("📦 Assets migrés : {$assetChanges}");
+            info('📦 Assets migrés : '.$assetChanges);
         }
 
         if ($dryRun) {

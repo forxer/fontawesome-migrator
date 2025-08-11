@@ -12,11 +12,11 @@ use function Laravel\Prompts\info;
 class MigrationProcessor
 {
     public function __construct(
-        private IconReplacer $replacer,
-        private AssetMigrator $assetMigrator,
-        private MigrationVersionManager $versionManager,
-        private MetadataManagerInterface $metadata,
-        private MigrationReporter $reporter
+        private readonly IconReplacer $replacer,
+        private readonly AssetMigrator $assetMigrator,
+        private readonly MigrationVersionManager $versionManager,
+        private readonly MetadataManagerInterface $metadata,
+        private readonly MigrationReporter $reporter
     ) {}
 
     /**
@@ -31,7 +31,7 @@ class MigrationProcessor
             return [];
         }
 
-        if (empty($files)) {
+        if ($files === []) {
             return [];
         }
 
@@ -39,7 +39,7 @@ class MigrationProcessor
         $sourceVersion = $options['source_version'];
         $targetVersion = $options['target_version'];
 
-        info("🔄 Migration des icônes FontAwesome {$sourceVersion} → {$targetVersion}".($dryRun ? ' (dry-run)' : ''));
+        info(\sprintf('🔄 Migration des icônes FontAwesome %s → %s', $sourceVersion, $targetVersion).($dryRun ? ' (dry-run)' : ''));
 
         // Traiter les fichiers
         $fileResults = $this->replacer->processFiles($files, $dryRun);
@@ -57,7 +57,7 @@ class MigrationProcessor
 
         // Afficher le résumé
         if ($totalChanges > 0) {
-            info("✨ {$totalChanges} icône(s) migrée(s) dans ".\count($modifiedFiles).' fichier(s)');
+            info(\sprintf('✨ %s icône(s) migrée(s) dans ', $totalChanges).\count($modifiedFiles).' fichier(s)');
         } else {
             info('ℹ️ Aucune icône FontAwesome trouvée nécessitant une migration');
         }
@@ -85,7 +85,7 @@ class MigrationProcessor
         $sourceVersion = $options['source_version'];
         $targetVersion = $options['target_version'];
 
-        info("🎨 Migration des assets FontAwesome {$sourceVersion} → {$targetVersion}".($dryRun ? ' (dry-run)' : ''));
+        info(\sprintf('🎨 Migration des assets FontAwesome %s → %s', $sourceVersion, $targetVersion).($dryRun ? ' (dry-run)' : ''));
 
         // Traiter les assets dans chaque fichier
         $results = [
@@ -110,7 +110,7 @@ class MigrationProcessor
 
         // Afficher le résumé
         if ($results['total_assets'] > 0) {
-            info("📦 {$results['total_assets']} fichier(s) avec assets migrés");
+            info(\sprintf('📦 %d fichier(s) avec assets migrés', $results['total_assets']));
         } else {
             info('ℹ️ Aucun asset FontAwesome trouvé nécessitant une migration');
         }

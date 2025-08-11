@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services\Core;
 
+use RuntimeException;
+
 class VersionConfigurationService
 {
     public function __construct(
-        private MigrationVersionManager $versionManager
+        private readonly MigrationVersionManager $versionManager
     ) {}
 
     /**
@@ -16,20 +18,20 @@ class VersionConfigurationService
     public function configureVersions(?string $sourceVersion, ?string $targetVersion): array
     {
         // Détecter automatiquement la version source si non fournie
-        if (! $sourceVersion) {
+        if ($sourceVersion === null || $sourceVersion === '' || $sourceVersion === '0') {
             $sourceVersion = $this->versionManager->detectCurrentVersion();
 
             if (! $sourceVersion) {
-                throw new \RuntimeException('Impossible de détecter automatiquement la version FontAwesome actuelle.');
+                throw new RuntimeException('Impossible de détecter automatiquement la version FontAwesome actuelle.');
             }
         }
 
         // Suggérer version cible si non fournie
-        if (! $targetVersion) {
+        if ($targetVersion === null || $targetVersion === '' || $targetVersion === '0') {
             $targetVersion = $this->versionManager->suggestTargetVersion($sourceVersion);
 
             if (! $targetVersion) {
-                throw new \RuntimeException("Aucune version cible disponible pour FontAwesome {$sourceVersion}.");
+                throw new RuntimeException(\sprintf('Aucune version cible disponible pour FontAwesome %s.', $sourceVersion));
             }
         }
 
@@ -41,9 +43,9 @@ class VersionConfigurationService
                 ->pluck('to')
                 ->join(', ');
 
-            throw new \RuntimeException(
-                "Migration FontAwesome {$sourceVersion}→{$targetVersion} non supportée. ".
-                "Versions cibles disponibles pour FA{$sourceVersion}: {$availableTargets}"
+            throw new RuntimeException(
+                \sprintf('Migration FontAwesome %s→%s non supportée. ', $sourceVersion, $targetVersion).
+                \sprintf('Versions cibles disponibles pour FA%s: %s', $sourceVersion, $availableTargets)
             );
         }
 

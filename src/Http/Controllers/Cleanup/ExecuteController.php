@@ -24,7 +24,7 @@ class ExecuteController extends Controller
                 $days = $request->input('days', 30);
                 $deleted = $metadataManager->cleanOldMigrations($days);
                 $results = [
-                    'message' => "Nettoyage terminé : {$deleted} migrations supprimées (plus de {$days} jours)",
+                    'message' => \sprintf('Nettoyage terminé : %d migrations supprimées (plus de %s jours)', $deleted, $days),
                     'deleted' => $deleted,
                     'type' => 'old_migrations',
                 ];
@@ -40,15 +40,13 @@ class ExecuteController extends Controller
                     $age = now()->diffInDays($migration['created_at']);
                     $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
 
-                    if ($age > $days && $isTestMigration) {
-                        if (File::deleteDirectory($migration['directory'])) {
-                            $deleted++;
-                        }
+                    if ($age > $days && $isTestMigration && File::deleteDirectory($migration['directory'])) {
+                        $deleted++;
                     }
                 }
 
                 $results = [
-                    'message' => "Migrations de test nettoyées : {$deleted} suppressions (plus de {$days} jours)",
+                    'message' => \sprintf('Migrations de test nettoyées : %d suppressions (plus de %s jours)', $deleted, $days),
                     'deleted' => $deleted,
                     'type' => 'test_migrations',
                 ];
@@ -84,15 +82,13 @@ class ExecuteController extends Controller
                     $age = now()->diffInDays($migration['created_at']);
                     $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
 
-                    if ($age > 7 && $isTestMigration) {
-                        if (File::deleteDirectory($migration['directory'])) {
-                            $deletedTests++;
-                        }
+                    if ($age > 7 && $isTestMigration && File::deleteDirectory($migration['directory'])) {
+                        $deletedTests++;
                     }
                 }
 
                 $results = [
-                    'message' => "Nettoyage complet : {$deletedOld} anciennes + {$deletedTests} tests supprimées",
+                    'message' => \sprintf('Nettoyage complet : %d anciennes + %d tests supprimées', $deletedOld, $deletedTests),
                     'deleted' => $deletedOld + $deletedTests,
                     'type' => 'complete_cleanup',
                 ];
@@ -110,7 +106,7 @@ class ExecuteController extends Controller
                 }
 
                 $results = [
-                    'message' => "⚠️ TOUT supprimé : {$deletedAll} migrations complètement effacées",
+                    'message' => \sprintf('⚠️ TOUT supprimé : %d migrations complètement effacées', $deletedAll),
                     'deleted' => $deletedAll,
                     'type' => 'nuclear_cleanup',
                 ];
