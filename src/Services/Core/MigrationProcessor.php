@@ -130,8 +130,19 @@ class MigrationProcessor
         );
         $this->replacer->setMapper($mapper);
 
-        $iconResults = $this->processIcons($files, $options);
-        $assetResults = $this->processAssets($files, $options);
+        // Traiter les icônes sauf si --assets-only
+        $iconResults = [];
+
+        if (! ($options['assets_only'] ?? false)) {
+            $iconResults = $this->processIcons($files, $options);
+        }
+
+        // Traiter les assets sauf si --icons-only
+        $assetResults = [];
+
+        if (! ($options['icons_only'] ?? false)) {
+            $assetResults = $this->processAssets($files, $options);
+        }
 
         // Consolider tous les file_results
         $allFileResults = array_merge(

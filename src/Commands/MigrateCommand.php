@@ -13,6 +13,7 @@ use Illuminate\Console\Command;
 
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
+use function Laravel\Prompts\table;
 
 class MigrateCommand extends Command
 {
@@ -82,6 +83,11 @@ class MigrateCommand extends Command
         // 2. Capturer les options de commande
         $this->captureCommandOptions();
 
+        // 2b. Afficher les informations de debug si demandé
+        if ($this->migrationOptions['debug']) {
+            $this->displayDebugInfo();
+        }
+
         // 3. Transmettre les options aux métadonnées
         $this->metadata->setMigrationOptions($this->migrationOptions);
 
@@ -93,7 +99,10 @@ class MigrateCommand extends Command
         // 5. Scanner les fichiers à migrer
         $files = $this->scanFiles();
 
-        // 6. Traiter les migrations (icônes et assets)
+        // 6. Déterminer si les sauvegardes sont nécessaires
+        $this->configureBackupOption();
+
+        // 7. Traiter les migrations (icônes et assets)
         $results = $this->processor->process($files, $this->migrationOptions);
 
         // 7. Afficher les résultats consolidés
@@ -165,6 +174,88 @@ class MigrateCommand extends Command
         info('📁 {'.\count($files).'} fichier(s) trouvé(s) à analyser');
 
         return $files;
+    }
+
+    private function displayDebugInfo(): void
+    {
+        info('');
+        info('🔍 Debug Information');
+        info('');
+
+        // Environnement
+        table(
+            ['📦 Environment', 'Value'],
+            [
+                ['Laravel Version', app()->version()],
+                ['PHP Version', PHP_VERSION],
+                ['FontAwesome Migrator', config('fontawesome-migrator.version', 'v2.0')],
+                ['Working Directory', getcwd()],
+            ]
+        );
+
+        // Options de commande
+        $commandOptions = [];
+
+        foreach ($this->migrationOptions as $key => $value) {
+            $displayValue = \is_bool($value) ? ($value ? '✅ true' : '❌ false') : ($value ?? '⚪ null');
+            $commandOptions[] = [str_replace('_', ' ', ucfirst($key)), $displayValue];
+        }
+
+        table(
+            ['⚙️  Command Option', 'Value'],
+            $commandOptions
+        );
+
+        // Configuration
+        table(
+            ['📋 Configuration', 'Value'],
+            [
+                ['Scan Paths', implode(', ', config('fontawesome-migrator.scan_paths', []))],
+                ['Migrations Path', config('fontawesome-migrator.migrations_path')],
+                ['Backup Enabled', config('fontawesome-migrator.backup_files') ? '✅ Yes' : '❌ No'],
+                ['Auto-detect Version', config('fontawesome-migrator.auto_detect_version') ? '✅ Yes' : '❌ No'],
+            ]
+        );
+
+        // Versions supportées
+        table(
+            ['🔄 Migration', 'Description'],
+            [
+                ['4 → 5', 'FontAwesome 4 to 5'],
+                ['5 → 6', 'FontAwesome 5 to 6'],
+                ['6 → 7', 'FontAwesome 6 to 7'],
+            ]
+        );
+
+        info('');
+    }
+
+    private function configureBackupOption(): void
+    {
+        // Priorité : --no-backup > --backup > config > default (true)
+        if ($this->migrationOptions['no_backup']) {
+            $this->migrationOptions['create_backups'] = false;
+            info('⚠️  Sauvegardes désactivées (--no-backup)');
+        } elseif ($this->migrationOptions['backup']) {
+            $this->migrationOptions['create_backups'] = true;
+            info('💾 Sauvegardes forcées (--backup)');
+        } else {
+            // Utiliser la config par défaut
+            $this->migrationOptions['create_backups'] = config('fontawesome-migrator.backup_files', true);
+
+            if ($this->migrationOptions['create_backups']) {
+                info('💾 Sauvegardes activées (configuration par défaut)');
+            }
+        }
+
+        // En mode dry-run, pas de sauvegardes
+        if ($this->migrationOptions['dry_run']) {
+            $this->migrationOptions['create_backups'] = false;
+            info('ℹ️  Mode dry-run : sauvegardes désactivées');
+        }
+
+        // Transmettre l'option aux métadonnées
+        $this->metadata->setMigrationOptions($this->migrationOptions);
     }
 
     private function displayResults(array $results): void

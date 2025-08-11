@@ -53,7 +53,7 @@ class IndexController extends Controller
                 'backup_count' => $migration['backup_count'] ?? 0,
                 'package_version' => $migrationMetadata['package_version'] ?? 'unknown',
                 'duration' => $migrationMetadata['duration'] ?? null,
-                'migration_origin' => $migrationMetadata['migration_source'] ?? 'unknown',
+                'migration_origin' => $migrationMetadata['source'] ?? 'cli',
                 'migration_options' => [
                     'source_version' => $migrationMetadata['migration_options']['source_version'] ?? '5',
                     'target_version' => $migrationMetadata['migration_options']['target_version'] ?? '6',

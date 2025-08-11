@@ -23,7 +23,7 @@ class IndexController extends Controller
         )->count();
 
         $old7Days = $migrations->filter(fn ($migration) => $now->diffInDays($migration['created_at']) > 7 &&
-            ($migration['migration_source'] ?? 'command_line') === 'web_interface' // migrations de test
+            ($migration['source'] ?? 'cli') === 'web_interface' // migrations de test
         )->count();
 
         // Calculer l'espace disque utilisé

@@ -191,17 +191,17 @@
                             <p class="card-text text-danger small mb-0">Option nucléaire - Supprimer TOUTES les migrations sans exception</p>
                         </div>
                     </div>
-                    
+
                     <div class="alert alert-danger mb-3">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             <div>
-                                <strong>ATTENTION :</strong> Cette action supprimera définitivement TOUTES les {{ $totalMigrations }} migrations, 
+                                <strong>ATTENTION :</strong> Cette action supprimera définitivement TOUTES les {{ $totalMigrations }} migrations,
                                 y compris les récentes et importantes. Cette action est IRRÉVERSIBLE !
                             </div>
                         </div>
                     </div>
-                    
+
                     <form class="cleanup-form" data-action="cleanup_everything">
                         <div class="mb-3">
                             <div class="form-check">
@@ -211,8 +211,8 @@
                                 </label>
                             </div>
                         </div>
-                        
-                        <button type="submit" 
+
+                        <button type="submit"
                                 class="btn btn-danger w-100"
                                 data-confirm-text="ÊTES-VOUS ABSOLUMENT CERTAIN de vouloir supprimer TOUTES les migrations ? Cette action est IRRÉVERSIBLE !">
                             <i class="bi bi-radioactive me-1"></i>
@@ -252,12 +252,12 @@
                                 </div>
                             </td>
                             <td>
-                                @if(($migration['migration_source'] ?? 'command_line') === 'web_interface')
-                                    <span class="badge bg-primary">
+                                @if(($migration['source'] ?? 'cli') === 'web_interface')
+                                    <span class="badge bg-info">
                                         <i class="bi bi-globe me-1"></i>Web
                                     </span>
                                 @else
-                                    <span class="badge bg-secondary">
+                                    <span class="badge bg-primary">
                                         <i class="bi bi-terminal me-1"></i>CLI
                                     </span>
                                 @endif
@@ -314,20 +314,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const action = form.dataset.action;
             const submitButton = form.querySelector('button[type="submit"]');
-            
+
             // Confirmation spéciale pour l'action nucléaire
             if (action === 'cleanup_everything') {
                 const confirmText = submitButton.dataset.confirmText;
                 if (!confirm(confirmText)) {
                     return;
                 }
-                
+
                 // Double confirmation pour l'option nucléaire
                 if (!confirm('DERNIÈRE CHANCE : Voulez-vous vraiment EFFACER TOUTES LES MIGRATIONS ?')) {
                     return;
                 }
             }
-            
+
             const formData = new FormData(form);
             formData.append('action', action);
             const originalText = submitButton.innerHTML;

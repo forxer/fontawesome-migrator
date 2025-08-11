@@ -35,7 +35,7 @@ class IndexController extends Controller
                 continue;
             }
 
-            $migrationSource = $metadata['migration_source'] ?? 'command_line';
+            $migrationSource = $metadata['source'] ?? 'cli';
 
             if ($migrationSource === 'web_interface') {
                 $webMigrations[] = $migration;

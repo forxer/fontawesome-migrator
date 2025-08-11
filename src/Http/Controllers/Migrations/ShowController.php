@@ -66,6 +66,9 @@ class ShowController extends Controller
             'migrationId' => $migrationMetadata['migration_id'] ?? 'unknown',
             'shortId' => $migrationMetadata['short_id'] ?? 'unknown',
             'duration' => $migrationMetadata['duration'] ?? null,
+            'migrationSource' => $migrationMetadata['source'] ?? 'cli',
+            'userAgent' => $migrationMetadata['user_agent'] ?? 'Unknown',
+            'ipAddress' => $migrationMetadata['ip_address'] ?? '127.0.0.1',
 
             // Compteurs calculés
             'filesCount' => \count($migrationMetadata['files'] ?? []),

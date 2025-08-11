@@ -59,6 +59,17 @@ class MigrationLifecyleService
     {
         $this->migrationData['migration_options'] = $options;
 
+        // Marquer explicitement la source de la migration
+        if ($options['web_interface'] ?? false) {
+            $this->migrationData['source'] = 'web_interface';
+            $this->migrationData['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
+            $this->migrationData['ip_address'] = request()->ip() ?? 'Unknown';
+        } else {
+            $this->migrationData['source'] = 'cli';
+            $this->migrationData['user_agent'] = 'CLI';
+            $this->migrationData['ip_address'] = '127.0.0.1';
+        }
+
         return $this;
     }
 

@@ -38,7 +38,7 @@ class ExecuteController extends Controller
 
                 foreach ($migrations as $migration) {
                     $age = now()->diffInDays($migration['created_at']);
-                    $isTestMigration = ($migration['migration_source'] ?? 'command_line') === 'web_interface';
+                    $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
 
                     if ($age > $days && $isTestMigration) {
                         if (File::deleteDirectory($migration['directory'])) {
@@ -82,7 +82,7 @@ class ExecuteController extends Controller
 
                 foreach ($migrations as $migration) {
                     $age = now()->diffInDays($migration['created_at']);
-                    $isTestMigration = ($migration['migration_source'] ?? 'command_line') === 'web_interface';
+                    $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
 
                     if ($age > 7 && $isTestMigration) {
                         if (File::deleteDirectory($migration['directory'])) {

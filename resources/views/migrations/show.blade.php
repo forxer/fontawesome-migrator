@@ -28,7 +28,7 @@
                     $stats['total_changes'] > 0 ? ['#timeline-section', 'Chronologie'] : null,
                     $stats['total_changes'] > 0 ? ['#recommendations-section', 'Recommandations'] : null,
                     ['#configuration-section', 'Configuration'],
-                    isset($metadata['custom']['migration_origin']) ? ['#environment-section', 'Environnement'] : null,
+                    ['#environment-section', 'Environnement'],
                     (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0) ? ['#backups-section', 'Sauvegardes'] : null,
                     ['#info-section', 'Informations'],
                     $stats['total_changes'] > 0 ? ['#summary-section', 'Résumé'] : null,
@@ -110,7 +110,6 @@
                     </a>
                 </div>
 
-                @if (isset($metadata['custom']['migration_origin']))
                 <!-- Environnement -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#environment-section" class="text-decoration-none">
@@ -121,14 +120,13 @@
                                     <div class="fw-semibold">Environnement</div>
                                     <small class="text-muted">Contexte d'exécution</small>
                                 </div>
-                                <span class="badge {{ $metadata['custom']['migration_origin']['source'] === 'web_interface' ? 'bg-success' : 'bg-info' }}">
-                                    {{ $metadata['custom']['migration_origin']['source'] === 'web_interface' ? 'Web' : 'CLI' }}
+                                <span class="badge {{ $migrationSource === 'web_interface' ? 'bg-info' : 'bg-primary' }}">
+                                    {{ $migrationSource === 'web_interface' ? 'Web' : 'CLI' }}
                                 </span>
                             </div>
                         </div>
                     </a>
                 </div>
-                @endif
 
                 @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
                 <!-- Sauvegardes -->
@@ -551,18 +549,16 @@
                         <h3 class="card-title section-title-sm mb-3"><i class="bi bi-sliders text-primary"></i> Options utilisées</h3>
                         <table class="table table-striped table-sm">
                         <tr><td><strong>Mode</strong></td><td>{{ $isDryRun ? 'Dry-run (prévisualisation)' : 'Migration complète' }}</td></tr>
-                        @if (isset($metadata['custom']['migration_origin']['source']))
                             <tr>
                                 <td><strong>Origine</strong></td>
                                 <td>
-                                    @if ($metadata['custom']['migration_origin']['source'] === 'web_interface')
-                                        <i class="bi bi-globe text-success"></i> Interface Web
+                                    @if ($migrationSource === 'web_interface')
+                                        <i class="bi bi-globe text-info"></i> Interface Web
                                     @else
-                                        <i class="bi bi-terminal text-info"></i> Ligne de commande
+                                        <i class="bi bi-terminal text-primary"></i> Ligne de commande
                                     @endif
                                 </td>
                             </tr>
-                        @endif
                         @if (!empty($migrationOptions['custom_path']))
                             <tr><td><strong>Chemin personnalisé</strong></td><td><code>{{ $migrationOptions['custom_path'] }}</code></td></tr>
                         @endif
@@ -625,7 +621,6 @@
         </div>
 
         <!-- Informations d'environnement et d'origine -->
-        @if (isset($metadata['custom']['migration_origin']))
         <div id="environment-section" class="row g-4 mt-2">
             <div class="col-12">
                 <div class="card">
@@ -634,14 +629,14 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <div class="d-flex align-items-center p-3 border rounded">
-                                    @if($metadata['custom']['migration_origin']['source'] === 'web_interface')
-                                        <i class="bi bi-globe text-success fs-4 me-3"></i>
+                                    @if($migrationSource === 'web_interface')
+                                        <i class="bi bi-globe text-info fs-4 me-3"></i>
                                         <div>
                                             <strong>Interface Web</strong>
                                             <small class="d-block text-muted">Migration lancée depuis l'interface web</small>
                                         </div>
                                     @else
-                                        <i class="bi bi-terminal text-info fs-4 me-3"></i>
+                                        <i class="bi bi-terminal text-primary fs-4 me-3"></i>
                                         <div>
                                             <strong>Ligne de Commande</strong>
                                             <small class="d-block text-muted">Migration lancée via CLI</small>
@@ -652,13 +647,13 @@
                             <div class="col-md-4">
                                 <div class="p-3 border rounded">
                                     <label class="small text-muted fw-bold">User Agent</label>
-                                    <div class="small">{{ $metadata['custom']['migration_origin']['user_agent'] }}</div>
+                                    <div class="small">{{ $userAgent }}</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="p-3 border rounded">
                                     <label class="small text-muted fw-bold">Adresse IP</label>
-                                    <div class="small">{{ $metadata['custom']['migration_origin']['ip_address'] }}</div>
+                                    <div class="small">{{ $ipAddress }}</div>
                                 </div>
                             </div>
                         </div>
@@ -666,8 +661,7 @@
                 </div>
             </div>
         </div>
-        @endif
-        </div>
+    </div>
 
     @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
     <!-- Section des sauvegardes créées -->

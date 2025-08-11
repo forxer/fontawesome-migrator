@@ -157,8 +157,6 @@ class MetadataManager implements MetadataManagerInterface
             $this->metadata['icons_only'] = $value['migrate_icons'] ?? false;
             $this->metadata['assets_only'] = $value['migrate_assets'] ?? false;
             $this->metadata['custom_path'] = $value['custom_path'] ?? null;
-        } elseif ($key === 'migration_origin') {
-            $this->metadata['migration_source'] = $value['source'] ?? 'command_line';
         }
 
         return $this;
