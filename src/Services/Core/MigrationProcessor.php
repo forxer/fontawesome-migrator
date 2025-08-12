@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services\Core;
 
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
-use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
 
 use function Laravel\Prompts\info;
 
@@ -15,8 +14,7 @@ class MigrationProcessor
         private readonly IconReplacer $replacer,
         private readonly AssetMigrator $assetMigrator,
         private readonly MigrationVersionManager $versionManager,
-        private readonly MetadataManagerInterface $metadata,
-        private readonly MigrationReporter $reporter
+        private readonly MetadataManagerInterface $metadata
     ) {}
 
     /**
@@ -202,9 +200,8 @@ class MigrationProcessor
         // Sauvegarder les métadonnées
         $this->metadata->saveToFile();
 
-        // Générer le rapport si nécessaire
+        // Afficher le message de succès si nécessaire
         if (! $dryRun && $results['total_files_modified'] > 0) {
-            $this->reporter->generateMetadata();
             info('');
             info('✅ Migration terminée avec succès !');
             info('📄 Rapport de migration disponible dans le dossier des migrations');

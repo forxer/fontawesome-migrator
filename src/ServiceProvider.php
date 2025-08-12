@@ -29,7 +29,6 @@ use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
 use FontAwesome\Migrator\Services\Metadata\MetadataBuilder;
 use FontAwesome\Migrator\Services\Metadata\MetadataManager;
 use FontAwesome\Migrator\Services\Metadata\MigrationLifecyleService;
-use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
 use FontAwesome\Migrator\Services\Metadata\MigrationResultsService;
 use FontAwesome\Migrator\Services\Metadata\MigrationStorageService;
 use FontAwesome\Migrator\Support\ConfigHelper;
@@ -157,7 +156,6 @@ class ServiceProvider extends BaseServiceProvider
         // Services core manquants - CRITIQUES pour fonctionnement
         $this->app->singleton(AssetMigrator::class);
         $this->app->singleton(IconReplacer::class);
-        $this->app->singleton(MigrationReporter::class);
 
         // FileScanner avec interface (singleton pour performance scanning)
         $this->app->singleton(FileScannerInterface::class, FileScanner::class);

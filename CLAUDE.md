@@ -2,6 +2,34 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Architecture Overview v2.0
+
+**Package**: Laravel FontAwesome Migrator v2.0 - Migration automatisée FA 4→5→6→7 (Free/Pro)
+
+### Flux de migration principal
+```
+MigrateCommand → CommandFlowService → FileScanner → MigrationProcessor → metadata.json
+                                                    ├── IconReplacer (icônes)
+                                                    └── AssetMigrator (assets)
+```
+
+### Services Core (responsabilités principales)
+- **MigrationProcessor**: Orchestration complète du processus de migration
+- **IconReplacer**: Remplacement des classes FontAwesome dans les fichiers
+- **FileScanner**: Détection des fichiers contenant FontAwesome
+- **MetadataManager**: Gestion centralisée des métadonnées (source unique de vérité)
+
+### Principe architectural fondamental
+**metadata.json = SOURCE UNIQUE DE VÉRITÉ**
+- Structure plate pour accès direct aux données
+- Un seul endroit calcule les stats (MigrationProcessor)
+- Tous les autres services/UI lisent depuis metadata.json
+- JAMAIS de recalcul des statistiques ailleurs
+
+### Points d'entrée
+- **CLI**: `php artisan fontawesome:migrate` (modes interactif/non-interactif)
+- **Web**: `/fontawesome-migrator` (dashboard, détails, tests, cleanup)
+
 ## Important Development Constraints
 
 **⚠️ PHP Execution Limitation**: Claude Code cannot execute PHP commands or any language interpreters (php, node, python, etc.). Only use Bash tool for basic system commands. Never attempt to run `php artisan`, `composer`, `npm`, or similar commands.
@@ -111,3 +139,5 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Août 2025 - Bug stats metadata.json résolu**: MigrationReporter recalculait et écrasait les bonnes stats. Double appel storeMigrationResults supprimé
 - **LEÇON CRITIQUE**: Toujours comprendre l'architecture globale avant modifications. Éviter développement "coup par coup" sans vision d'ensemble
 - **Refactorisation MigrateCommand v2.0 complète**: Mode interactif/non-interactif, services spécialisés (CommandFlowService, InteractivePromptService), architecture propre
+- **PRINCIPE ARCHITECTURAL v2.0**: metadata.json est LA source unique de vérité. Structure consistante, compréhensible, utilisée uniformément dans toute l'UI
+- **Règle d'or metadata.json**: Un seul endroit calcule/stocke les stats (MigrationProcessor), tous les autres services/UI lisent depuis metadata.json sans recalculer

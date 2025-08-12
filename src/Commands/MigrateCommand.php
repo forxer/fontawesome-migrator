@@ -7,7 +7,6 @@ namespace FontAwesome\Migrator\Commands;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Commands\CommandDisplayService;
 use FontAwesome\Migrator\Services\Commands\CommandFlowService;
-use FontAwesome\Migrator\Services\Metadata\MigrationReporter;
 use Illuminate\Console\Command;
 use RuntimeException;
 
@@ -15,8 +14,6 @@ use function Laravel\Prompts\intro;
 
 class MigrateCommand extends Command
 {
-    protected MigrationReporter $reporter;
-
     protected MetadataManagerInterface $metadata;
 
     protected CommandFlowService $flowService;
@@ -50,13 +47,11 @@ class MigrateCommand extends Command
      * Execute the console command.
      */
     public function handle(
-        MigrationReporter $reporter,
         MetadataManagerInterface $metadata,
         CommandFlowService $flowService,
         CommandDisplayService $displayService
     ): int {
         // Assigner les services aux propriétés de classe
-        $this->reporter = $reporter;
         $this->metadata = $metadata;
         $this->flowService = $flowService;
         $this->displayService = $displayService;
