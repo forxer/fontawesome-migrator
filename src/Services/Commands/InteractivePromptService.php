@@ -26,7 +26,7 @@ class InteractivePromptService
         if (! $migrationOptions['source_version']) {
             $migrationOptions['source_version'] = $this->promptForSourceVersion();
         } else {
-            info("📌 Version source : FontAwesome {$migrationOptions['source_version']} (depuis CLI)");
+            info(\sprintf('📌 Version source : FontAwesome %s (depuis CLI)', $migrationOptions['source_version']));
         }
 
         // Version cible
@@ -35,7 +35,7 @@ class InteractivePromptService
                 $migrationOptions['source_version']
             );
         } else {
-            info("🎯 Version cible : FontAwesome {$migrationOptions['target_version']} (depuis CLI)");
+            info(\sprintf('🎯 Version cible : FontAwesome %s (depuis CLI)', $migrationOptions['target_version']));
         }
     }
 
@@ -46,11 +46,11 @@ class InteractivePromptService
     {
         $detected = $this->versionConfigService->detectCurrentVersion();
 
-        if ($detected) {
+        if ($detected !== null && $detected !== '' && $detected !== '0') {
             $result = select(
-                label: "Version détectée : FontAwesome {$detected}. Est-ce correct ?",
+                label: \sprintf('Version détectée : FontAwesome %s. Est-ce correct ?', $detected),
                 options: [
-                    $detected => "✅ Oui, utiliser FontAwesome {$detected}",
+                    $detected => '✅ Oui, utiliser FontAwesome '.$detected,
                     '4' => 'FontAwesome 4',
                     '5' => 'FontAwesome 5',
                     '6' => 'FontAwesome 6',
@@ -82,18 +82,19 @@ class InteractivePromptService
     {
         $available = $this->versionConfigService->getAvailableTargetVersions($sourceVersion);
 
-        if (empty($available)) {
-            throw new RuntimeException("Aucune migration disponible depuis FontAwesome {$sourceVersion}");
+        if ($available === []) {
+            throw new RuntimeException('Aucune migration disponible depuis FontAwesome '.$sourceVersion);
         }
 
         $options = [];
 
         foreach ($available as $version) {
-            $label = "FontAwesome {$version}";
+            $label = 'FontAwesome '.$version;
 
             if ($version === '7') {
                 $label .= ' (dernière version)';
             }
+
             $options[$version] = $label;
         }
 

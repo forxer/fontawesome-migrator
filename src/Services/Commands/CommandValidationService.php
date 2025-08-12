@@ -31,7 +31,7 @@ class CommandValidationService
             $errors[] = 'Option --to requise en mode non-interactif';
         }
 
-        if (! empty($errors)) {
+        if ($errors !== []) {
             foreach ($errors as $error) {
                 $command->error($error);
             }
@@ -53,7 +53,7 @@ class CommandValidationService
         $migrationOptions['source_version'] = $versionConfig['source_version'];
         $migrationOptions['target_version'] = $versionConfig['target_version'];
 
-        info("✅ Configuration validée : FontAwesome {$versionConfig['source_version']} → {$versionConfig['target_version']}");
+        info(\sprintf('✅ Configuration validée : FontAwesome %s → %s', $versionConfig['source_version'], $versionConfig['target_version']));
     }
 
     /**
@@ -69,7 +69,7 @@ class CommandValidationService
         $migrationOptions['source_version'] = $versionConfig['source_version'];
         $migrationOptions['target_version'] = $versionConfig['target_version'];
 
-        info("✅ Migration : FontAwesome {$versionConfig['source_version']} → {$versionConfig['target_version']}");
+        info(\sprintf('✅ Migration : FontAwesome %s → %s', $versionConfig['source_version'], $versionConfig['target_version']));
     }
 
     /**
@@ -88,6 +88,6 @@ class CommandValidationService
         }
 
         $status = $migrationOptions['create_backups'] ? 'activées' : 'désactivées';
-        info("💾 Sauvegardes {$status}");
+        info('💾 Sauvegardes '.$status);
     }
 }

@@ -73,15 +73,15 @@ class CommandDisplayService
     {
         info('');
         info('📋 Résumé de la migration :');
-        info("   Version source : FontAwesome {$migrationOptions['source_version']}");
-        info("   Version cible  : FontAwesome {$migrationOptions['target_version']}");
+        info('   Version source : FontAwesome '.$migrationOptions['source_version']);
+        info('   Version cible  : FontAwesome '.$migrationOptions['target_version']);
         info('   Fichiers       : '.\count($files).' fichiers à analyser');
 
         if ($migrationOptions['dry_run']) {
             info('   Mode           : 🔍 Dry-run (prévisualisation uniquement)');
         } else {
             $backupStatus = $migrationOptions['create_backups'] ? '💾 Avec sauvegardes' : '⚡ Sans sauvegardes';
-            info("   Mode           : {$backupStatus}");
+            info('   Mode           : '.$backupStatus);
         }
 
         if ($migrationOptions['icons_only']) {

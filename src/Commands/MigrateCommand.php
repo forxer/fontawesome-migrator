@@ -78,11 +78,11 @@ class MigrateCommand extends Command
         try {
             if ($this->migrationOptions['no_interactive']) {
                 return $this->flowService->runNonInteractiveMode($this->migrationOptions, $this);
-            } else {
-                return $this->flowService->runInteractiveMode($this->migrationOptions, $this);
             }
-        } catch (RuntimeException $e) {
-            $this->error($e->getMessage());
+
+            return $this->flowService->runInteractiveMode($this->migrationOptions, $this);
+        } catch (RuntimeException $runtimeException) {
+            $this->error($runtimeException->getMessage());
 
             return Command::FAILURE;
         }

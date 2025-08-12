@@ -49,7 +49,7 @@ class CommandFlowService
         info('🔍 Analyse des fichiers...');
         $files = $this->scanFiles();
 
-        if (empty($files)) {
+        if ($files === []) {
             $command->warn('Aucun fichier trouvé à migrer.');
 
             return Command::SUCCESS;
@@ -58,13 +58,11 @@ class CommandFlowService
         // 4. Afficher un résumé et demander confirmation
         $this->displayService->displayMigrationSummary($files, $migrationOptions);
 
-        if (! $migrationOptions['dry_run']) {
-            if (! $this->promptService->askForFinalConfirmation()) {
-                info('');
-                info('❌ Migration annulée par l\'utilisateur');
+        if (! $migrationOptions['dry_run'] && ! $this->promptService->askForFinalConfirmation()) {
+            info('');
+            info('❌ Migration annulée par l\'utilisateur');
 
-                return Command::SUCCESS;
-            }
+            return Command::SUCCESS;
         }
 
         // 5. Sauvegarder configuration et exécuter
@@ -104,7 +102,7 @@ class CommandFlowService
         // 4. Scanner les fichiers
         $files = $this->scanFiles();
 
-        if (empty($files)) {
+        if ($files === []) {
             // En mode non-interactif, on ne pose pas de questions
             return Command::SUCCESS;
         }

@@ -68,7 +68,7 @@ class VersionConfigurationService
     {
         $availableTargets = $this->getAvailableTargetVersions($sourceVersion);
 
-        if (empty($availableTargets)) {
+        if ($availableTargets === []) {
             return null;
         }
 
@@ -82,7 +82,7 @@ class VersionConfigurationService
         if ($sourceVersion === null || $sourceVersion === '' || $sourceVersion === '0') {
             $sourceVersion = $this->detectCurrentVersion();
 
-            if (! $sourceVersion) {
+            if ($sourceVersion === null || $sourceVersion === '' || $sourceVersion === '0') {
                 throw new RuntimeException('Impossible de détecter automatiquement la version FontAwesome actuelle.');
             }
         }
@@ -91,7 +91,7 @@ class VersionConfigurationService
         if ($targetVersion === null || $targetVersion === '' || $targetVersion === '0') {
             $targetVersion = $this->suggestTargetVersion($sourceVersion);
 
-            if (! $targetVersion) {
+            if ($targetVersion === null || $targetVersion === '' || $targetVersion === '0') {
                 throw new RuntimeException(\sprintf('Aucune version cible disponible pour FontAwesome %s.', $sourceVersion));
             }
         }

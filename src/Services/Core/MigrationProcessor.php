@@ -235,7 +235,7 @@ class MigrationProcessor
                         } else {
                             // Fallback si pas de correspondance exacte
                             foreach ($result['warnings'] ?? [] as $warning) {
-                                if (str_contains($warning, $change['from'] ?? '')) {
+                                if (str_contains((string) $warning, $change['from'] ?? '')) {
                                     $warningMessage = $warning;
                                     break;
                                 }

@@ -61,7 +61,10 @@ class ShowController extends Controller
                 'icons_only' => $migrationMetadata['migration_options']['icons_only'],
                 'assets_only' => $migrationMetadata['migration_options']['assets_only'],
             ],
-            'configuration' => $migrationMetadata['scan_config'] ?? [],
+            'configuration' => array_merge(
+                $migrationMetadata['scan_config'] ?? [],
+                ['license_type' => $migrationMetadata['license_type'] ?? 'free']
+            ),
             'packageVersion' => $migrationMetadata['package_version'] ?? 'unknown',
             'migrationId' => $migrationMetadata['migration_id'] ?? 'unknown',
             'shortId' => $migrationMetadata['short_id'] ?? 'unknown',

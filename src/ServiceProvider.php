@@ -12,6 +12,10 @@ use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Contracts\VersionMapperInterface;
+use FontAwesome\Migrator\Services\Commands\CommandDisplayService;
+use FontAwesome\Migrator\Services\Commands\CommandFlowService;
+use FontAwesome\Migrator\Services\Commands\CommandValidationService;
+use FontAwesome\Migrator\Services\Commands\InteractivePromptService;
 use FontAwesome\Migrator\Services\Configuration\AssetReplacementService;
 use FontAwesome\Migrator\Services\Configuration\ConfigurationLoader;
 use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
@@ -136,10 +140,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton(PackageVersionService::class);
 
         // Services de commande - architecture modulaire
-        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\InteractivePromptService::class);
-        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\CommandDisplayService::class);
-        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\CommandValidationService::class);
-        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\CommandFlowService::class);
+        $this->app->singleton(InteractivePromptService::class);
+        $this->app->singleton(CommandDisplayService::class);
+        $this->app->singleton(CommandValidationService::class);
+        $this->app->singleton(CommandFlowService::class);
 
         // Services spécialisés pour MetadataManager - séparation des responsabilités
         $this->app->singleton(MigrationLifecyleService::class);
