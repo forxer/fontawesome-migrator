@@ -17,16 +17,10 @@ class MigrationReporter
     /**
      * Générer les métadonnées de migration
      */
-    public function generateMetadata(array $results): array
+    public function generateMetadata(): array
     {
-        // Calculer les statistiques
-        $stats = $this->calculateStats($results);
-
-        // Enrichir les avertissements
-        $enrichedWarnings = $this->extractWarnings($results);
-
-        // Stocker les résultats dans metadata.json
-        $this->metadata->storeMigrationResults($results, $stats, $enrichedWarnings);
+        // Ne PAS recalculer les statistiques ni rappeler storeMigrationResults
+        // car cela a déjà été fait par MigrationProcessor avec les bonnes valeurs
 
         return [
             'success' => true,

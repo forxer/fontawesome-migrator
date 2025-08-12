@@ -31,7 +31,7 @@ class BackupManager implements BackupManagerInterface
         DirectoryHelper::ensureExistsWithGitignore($backupDir);
 
         $relativePath = str_replace(base_path().'/', '', $filePath);
-        $backupPath = $backupDir.'/'.$relativePath;
+        $backupPath = $backupDir.'/'.$relativePath.'.backup';
 
         // Créer les dossiers nécessaires avec DirectoryHelper
         $backupDirectory = \dirname($backupPath);
@@ -44,7 +44,6 @@ class BackupManager implements BackupManagerInterface
                 'original_file' => $filePath,
                 'relative_path' => $relativePath,
                 'backup_path' => $backupPath,
-                'timestamp' => $timestamp,
                 'created_at' => now()->toDateTimeString(),
                 'size' => File::size($filePath),
             ];
@@ -69,7 +68,7 @@ class BackupManager implements BackupManagerInterface
         $files = File::allFiles($backupDir);
 
         foreach ($files as $file) {
-            if ($file->isFile()) {
+            if ($file->isFile() && str_ends_with($file->getFilename(), '.backup')) {
                 $backups[] = [
                     'path' => $file->getRealPath(),
                     'filename' => $file->getFilename(),

@@ -108,3 +108,6 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Refactorisation v2.0 terminée**: Services modulaires, injection pure, utilitaires centralisés, 0 duplication, prêt production
 - Claude Code must always be curious and eager to learn, understanding that technology is a journey of continuous improvement
 - **Mémoire ajoutée**: Toujours mémoriser les contraintes et lessons learned lors du développement de code
+- **Août 2025 - Bug stats metadata.json résolu**: MigrationReporter recalculait et écrasait les bonnes stats. Double appel storeMigrationResults supprimé
+- **LEÇON CRITIQUE**: Toujours comprendre l'architecture globale avant modifications. Éviter développement "coup par coup" sans vision d'ensemble
+- **Refactorisation MigrateCommand v2.0 complète**: Mode interactif/non-interactif, services spécialisés (CommandFlowService, InteractivePromptService), architecture propre

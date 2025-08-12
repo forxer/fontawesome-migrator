@@ -123,6 +123,7 @@ class MigrationProcessor
      */
     public function process(array $files, array $options): array
     {
+
         // Configurer le mapper pour cette migration
         $mapper = $this->versionManager->createMapper(
             $options['source_version'],
@@ -203,7 +204,7 @@ class MigrationProcessor
 
         // Générer le rapport si nécessaire
         if (! $dryRun && $results['total_files_modified'] > 0) {
-            $this->reporter->generateMetadata($results);
+            $this->reporter->generateMetadata();
             info('');
             info('✅ Migration terminée avec succès !');
             info('📄 Rapport de migration disponible dans le dossier des migrations');
