@@ -21,15 +21,17 @@ class MigrationResultsService
      */
     public function storeResults(array $results, array $stats, array $warnings = []): self
     {
-        $fileResults = $results['file_results'] ?? [];
+        // $results contient les file_results directs depuis MigrationProcessor::finalizeMigration
+        // $stats contient les statistiques globales
+        $fileResults = \is_array($results) && isset($results[0]) ? $results : ($results['file_results'] ?? []);
 
         $this->results = [
-            'total_files' => $results['total_files_processed'] ?? 0,
-            'modified_files' => $results['total_files_modified'] ?? 0,
+            'total_files' => $stats['total_files'] ?? 0,
+            'modified_files' => $stats['modified_files'] ?? 0,
             'errors' => array_filter(array_column($fileResults, 'error')),
             'warnings' => $warnings,
             'stats' => $stats,
-            'details' => $results,
+            'details' => ['file_results' => $fileResults],
         ];
 
         return $this;

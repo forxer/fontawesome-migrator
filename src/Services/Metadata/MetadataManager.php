@@ -63,6 +63,7 @@ class MetadataManager implements MetadataManagerInterface
 
         // Synchroniser avec metadata local
         $migrationData = $this->migrationService->getMigrationData();
+        $this->metadata['status'] = $migrationData['status'] ?? 'completed';
         $this->metadata['completed_at'] = $migrationData['completed_at'] ?? null;
         $this->metadata['duration'] = $migrationData['duration'] ?? null;
 
@@ -96,8 +97,8 @@ class MetadataManager implements MetadataManagerInterface
 
         // Synchroniser avec metadata local
         $resultsData = $this->resultsService->getResults();
-        $this->metadata['total_files'] = $resultsData['total_files'] ?? 0;
-        $this->metadata['modified_files'] = $resultsData['modified_files'] ?? 0;
+        $this->metadata['total_files'] = $stats['total_files'] ?? $resultsData['total_files'] ?? 0;
+        $this->metadata['modified_files'] = $stats['modified_files'] ?? $resultsData['modified_files'] ?? 0;
         $this->metadata['total_changes'] = $stats['total_changes'] ?? 0;
         $this->metadata['warnings'] = \count($resultsData['warnings'] ?? []);
         $this->metadata['errors'] = \count($resultsData['errors'] ?? []);
@@ -106,7 +107,8 @@ class MetadataManager implements MetadataManagerInterface
         $this->metadata['migration_success'] = $stats['migration_success'] ?? true;
 
         // === DETAILED DATA ===
-        $this->metadata['files'] = $results['file_results'] ?? [];
+        // $results contient maintenant directement les file_results depuis MigrationProcessor
+        $this->metadata['files'] = \is_array($results) && isset($results[0]) ? $results : ($results['file_results'] ?? []);
 
         $this->metadata['warnings_details'] = $enrichedWarnings;
         $this->metadata['changes_by_type'] = $stats['changes_by_type'] ?? [];
@@ -154,8 +156,6 @@ class MetadataManager implements MetadataManagerInterface
         if ($key === 'command_options') {
             $this->metadata['command_options'] = $value;
         } elseif ($key === 'migration_scope') {
-            $this->metadata['icons_only'] = $value['migrate_icons'] ?? false;
-            $this->metadata['assets_only'] = $value['migrate_assets'] ?? false;
             $this->metadata['custom_path'] = $value['custom_path'] ?? null;
         }
 

@@ -182,10 +182,20 @@ class MigrationProcessor
             'total_files' => $results['total_files_processed'],
             'modified_files' => $results['total_files_modified'],
             'total_changes' => ($results['icons']['total_changes'] ?? 0) + ($results['assets']['total_assets'] ?? 0),
+            'icons_migrated' => $results['icons']['total_changes'] ?? 0,
+            'assets_migrated' => $results['assets']['total_assets'] ?? 0,
+            'migration_success' => true,
+            'changes_by_type' => [
+                'icons' => $results['icons']['total_changes'] ?? 0,
+                'assets' => $results['assets']['total_assets'] ?? 0,
+            ],
         ];
 
+        // Enrichir les warnings avant stockage
+        $enrichedWarnings = $this->extractWarnings($fileResults);
+
         // Stocker les résultats dans les métadonnées (avec le format attendu par MigrationResultsService)
-        $this->metadata->storeMigrationResults($fileResults, $stats);
+        $this->metadata->storeMigrationResults($fileResults, $stats, $enrichedWarnings);
         $this->metadata->completeMigration();
 
         // Sauvegarder les métadonnées
@@ -198,5 +208,54 @@ class MigrationProcessor
             info('✅ Migration terminée avec succès !');
             info('📄 Rapport de migration disponible dans le dossier des migrations');
         }
+    }
+
+    /**
+     * Extraire et enrichir les warnings depuis les résultats
+     */
+    private function extractWarnings(array $results): array
+    {
+        $enrichedWarnings = [];
+
+        foreach ($results as $result) {
+            $filePath = $result['file'] ?? 'Fichier inconnu';
+
+            // Collecter les changements qui génèrent des avertissements
+            if (! empty($result['changes'])) {
+                foreach ($result['changes'] as $changeIndex => $change) {
+                    // Seulement les types qui génèrent des avertissements
+                    $warningTypes = ['pro_fallback', 'renamed_icon', 'deprecated_icon', 'manual_review'];
+
+                    if (\in_array($change['type'] ?? '', $warningTypes)) {
+                        // Chercher le warning correspondant dans la liste
+                        $warningMessage = null;
+
+                        if (! empty($result['warnings']) && isset($result['warnings'][$changeIndex])) {
+                            $warningMessage = $result['warnings'][$changeIndex];
+                        } else {
+                            // Fallback si pas de correspondance exacte
+                            foreach ($result['warnings'] ?? [] as $warning) {
+                                if (str_contains($warning, $change['from'] ?? '')) {
+                                    $warningMessage = $warning;
+                                    break;
+                                }
+                            }
+                        }
+
+                        $enrichedWarnings[] = [
+                            'file' => $filePath,
+                            'type' => $change['type'],
+                            'from' => $change['from'] ?? '',
+                            'to' => $change['to'] ?? '',
+                            'message' => $warningMessage ?? 'Avertissement générique',
+                            'line' => $change['line'] ?? null,
+                            'context' => $change['context'] ?? '',
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $enrichedWarnings;
     }
 }

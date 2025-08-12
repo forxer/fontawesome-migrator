@@ -59,6 +59,53 @@ class MigrationLifecyleService
     {
         $this->migrationData['migration_options'] = $options;
 
+        // Construire command_options avec seulement les options actives
+        $commandOptions = [];
+
+        // Versions
+        if (! empty($options['source_version'])) {
+            $commandOptions[] = '--from='.$options['source_version'];
+        }
+
+        if (! empty($options['target_version'])) {
+            $commandOptions[] = '--to='.$options['target_version'];
+        }
+
+        // Options booléennes actives
+        if ($options['dry_run'] ?? false) {
+            $commandOptions[] = '--dry-run';
+        }
+
+        if ($options['backup'] ?? false) {
+            $commandOptions[] = '--backup';
+        }
+
+        if ($options['no_backup'] ?? false) {
+            $commandOptions[] = '--no-backup';
+        }
+
+        if ($options['icons_only'] ?? false) {
+            $commandOptions[] = '--icons-only';
+        }
+
+        if ($options['assets_only'] ?? false) {
+            $commandOptions[] = '--assets-only';
+        }
+
+        if ($options['no_interactive'] ?? false) {
+            $commandOptions[] = '--no-interactive';
+        }
+
+        if ($options['debug'] ?? false) {
+            $commandOptions[] = '--debug';
+        }
+
+        if ($options['web_interface'] ?? false) {
+            $commandOptions[] = '--web-interface';
+        }
+
+        $this->migrationData['command_options'] = $commandOptions;
+
         // Marquer explicitement la source de la migration
         if ($options['web_interface'] ?? false) {
             $this->migrationData['source'] = 'web_interface';

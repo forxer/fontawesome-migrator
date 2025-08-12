@@ -39,8 +39,6 @@ class MetadataBuilder
     {
         return [
             'license_type' => $this->config->getLicenseType(),
-            'icons_only' => false,
-            'assets_only' => false,
             'custom_path' => null,
         ];
     }

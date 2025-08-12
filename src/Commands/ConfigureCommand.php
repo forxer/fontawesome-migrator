@@ -77,7 +77,7 @@ class ConfigureCommand extends Command
 
         // Boucle du menu principal
         do {
-            $action = select(
+            $action = (string) select(
                 'Que souhaitez-vous faire ?',
                 [
                     'show' => '👁️ Afficher la configuration actuelle',
@@ -189,7 +189,7 @@ class ConfigureCommand extends Command
      */
     protected function editConfiguration(): int
     {
-        $section = select(
+        $section = (string) select(
             'Quelle section souhaitez-vous modifier ?',
             [
                 'license' => '📝 Type de licence',
@@ -219,7 +219,7 @@ class ConfigureCommand extends Command
 
         note('Type de licence actuel: '.($currentLicense === 'pro' ? '⭐ Pro' : '🆓 Free'));
 
-        $newLicense = select(
+        $newLicense = (string) select(
             'Nouveau type de licence',
             [
                 'free' => '🆓 Free (gratuite)',
@@ -252,7 +252,7 @@ class ConfigureCommand extends Command
 
         note("Chemins actuels:\n".collect($currentPaths)->map(fn ($path): string => '  • '.$path)->join("\n"));
 
-        $action = select(
+        $action = (string) select(
             'Action à effectuer',
             [
                 'add' => '➕ Ajouter des chemins',
@@ -420,7 +420,7 @@ class ConfigureCommand extends Command
 
         note("Extensions actuelles:\n".collect($currentExtensions)->map(fn ($ext): string => '  • '.$ext)->join("\n"));
 
-        $action = select(
+        $action = (string) select(
             'Action à effectuer',
             [
                 'add' => '➕ Ajouter des extensions',
@@ -553,7 +553,7 @@ class ConfigureCommand extends Command
 
         note("Patterns actuels:\n".collect($currentPatterns)->map(fn ($pattern): string => '  • '.$pattern)->join("\n"));
 
-        $action = select(
+        $action = (string) select(
             'Action à effectuer',
             [
                 'add' => '➕ Ajouter des patterns',

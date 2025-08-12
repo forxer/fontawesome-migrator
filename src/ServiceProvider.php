@@ -135,6 +135,12 @@ class ServiceProvider extends BaseServiceProvider
         // PackageVersionService en singleton pour cache de version
         $this->app->singleton(PackageVersionService::class);
 
+        // Services de commande - architecture modulaire
+        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\InteractivePromptService::class);
+        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\CommandDisplayService::class);
+        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\CommandValidationService::class);
+        $this->app->singleton(\FontAwesome\Migrator\Services\Commands\CommandFlowService::class);
+
         // Services spécialisés pour MetadataManager - séparation des responsabilités
         $this->app->singleton(MigrationLifecyleService::class);
         $this->app->singleton(MigrationResultsService::class);

@@ -116,7 +116,7 @@ class InstallCommand extends Command
         note('⚙️ Configuration du package');
 
         // 1. Type de licence
-        $licenseType = select(
+        $licenseType = (string) select(
             'Type de licence FontAwesome ?',
             [
                 'free' => 'Free (gratuite)',
