@@ -73,7 +73,6 @@ class ShowController extends Controller
             'userAgent' => $migrationMetadata['user_agent'] ?? 'Unknown',
             'ipAddress' => $migrationMetadata['ip_address'] ?? '127.0.0.1',
 
-            // Compteur de backups depuis metadata.json
             'backupsCount' => $migrationMetadata['backups_count'] ?? 0,
 
             // Données pour la vue

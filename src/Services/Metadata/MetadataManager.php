@@ -271,7 +271,7 @@ class MetadataManager implements MetadataManagerInterface
         return [
             'migration_id' => $this->metadata['migration_id'] ?? null,
             'version' => $this->metadata['package_version'] ?? null,
-            'backups_count' => $this->metadata['backup_count'] ?? 0,
+            'backups_count' => $this->metadata['backups_count'] ?? 0,
             'files_modified' => $this->metadata['modified_files'] ?? 0,
             'changes_made' => $this->metadata['total_changes'] ?? 0,
             'duration' => $this->metadata['duration'] ?? null,
@@ -372,7 +372,6 @@ class MetadataManager implements MetadataManagerInterface
                 'directory' => $directory,
                 'created_at' => Carbon::createFromTimestamp(filemtime($directory)),
                 'has_metadata' => File::exists($metadataPath),
-                'backup_count' => max(0, \count(File::files($directory)) - 1), // -1 pour exclure metadata.json, minimum 0
                 'package_version' => 'unknown',
                 'duration' => null,
             ];
