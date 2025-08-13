@@ -21,9 +21,10 @@ Version 3.0
 - nettoyer les fichiers Blade
 - supprimer le code JS embarqué (ou au moin le revoir)
 - mettre à jour la documentation
+- implémentation des tests automatisés
+- implémentation de PHPStan
 
 
 Version 4.0
 -----------
-
-- implémentatyon multilingue
+- implémentation multilingue

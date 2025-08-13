@@ -17,6 +17,7 @@ CHANGELOG
 - **Metadata Architecture**: Refonte complète de la gestion des métadonnées avec séparation du reporting
 - **MigrationReporter API**: Suppression des méthodes `setDryRun()` et `setMigrationOptions()` - remplacées par injection de `MetadataManager`
 - **Report Generation**: Suppression de l'option `--report` et configuration `generate_report` - rapports automatiques via métadonnées
+- **Vue.js Support**: Suppression complète du support Vue.js - focus sur les frameworks natifs Laravel
 
 ### Added
 - **🎯 Multi-Version Architecture**: Support complet FA4→5→6→7 avec détection automatique de version
@@ -46,6 +47,10 @@ CHANGELOG
 - **Laravel Breadcrumbs**: Intégration du package diglactic/laravel-breadcrumbs pour navigation contextuelle
 - **Bootstrap Components**: Utilisation exclusive des composants Bootstrap (Cards, Tables, Navbar, etc.)
 - **Performance Optimization**: Suppression de Chart.js et optimisation CSS/JS inline
+- **Backup Counter**: Implémentation d'un compteur de backups dans BackupManager (singleton) avec réinitialisation par migration
+- **Command Flow Service**: Nouveau service CommandFlowService pour orchestrer le flux de migration interactif/non-interactif
+- **Asset Pattern System**: Conversion des patterns assets en regex avec support {target_version} pour migrations multi-versions
+- **Asset Configuration**: Centralisation dans `config/fontawesome-migrator/assets/replacements.json` avec patterns flexibles
 
 ### Changed
 - **🔄 Migration Strategy**: Passage de FA5→6 uniquement vers architecture multi-versions FA4→5→6→7
@@ -130,8 +135,16 @@ CHANGELOG
 - **File Organization**: Organisation par migration avec métadonnées intégrées
 - **ServiceProvider Fix**: Correction de l'enregistrement des commandes pour `Artisan::call()` depuis le web
 
+### Code Cleanup (Août 2025)
+- **Dead Code Removal**: Suppression de ~147 lignes de code mort dans AssetMigrator (analyzeAssets, getAssetStats, etc.)
+- **Vue.js Removal**: Suppression complète du support Vue.js et de tous les patterns associés
+- **Service Refactoring**: Nettoyage architectural massif avec ~450+ lignes de code mort supprimées au total
+- **Unused Imports**: Suppression des imports inutilisés après refactoring
+- **Architecture Simplification**: Élimination des méthodes et services redondants
+- **Metadata Consistency**: Restructuration pour garantir la cohérence des données metadata.json
+
 ### Package Status
-- **✅ Production Ready**: Version 2.0.0 fonctionnellement complète et robuste
+- **🚧 En développement**: Version 2.0.0 encore en phase de développement et d'optimisation
 - **🎯 Professional Quality**: Architecture moderne avec design Bootstrap 5
 - **📚 Complete Documentation**: Guide utilisateur, API reference, documentation Docker
 - **🔧 Extensible Architecture**: Configuration JSON pour personnalisations avancées
