@@ -1,5 +1,9 @@
 # FontAwesome Migrator - Référence Rapide
 
+---
+    /!\     DOIT ÊTRE MIS A JOUR
+---
+
 ## Commandes essentielles
 
 ```bash

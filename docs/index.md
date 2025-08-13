@@ -1,12 +1,16 @@
 # Documentation FontAwesome Migrator
 
+---
+    /!\     DOIT ÊTRE MIS A JOUR
+---
+
 ## 📑 Table des matières
 
 ### 📖 Guides utilisateurs
 - **[Guide Migration Multi-Versions](migration-multi-versions-guide.md)** - Documentation complète pour toutes les migrations FA4→5→6→7
 - **[Référence Rapide](quick-reference.md)** - Commandes essentielles et exemples pratiques
 
-### 👨‍💻 Documentation technique  
+### 👨‍💻 Documentation technique
 - **[API Reference](api-reference.md)** - Documentation programmatique pour développeurs
 - **[Système JSON Alternatives](json-alternatives-system.md)** - Architecture des alternatives Free pour icônes Pro/dépréciées
 
@@ -23,5 +27,5 @@
 
 ---
 
-**Version :** FontAwesome Migrator v2.0.0+  
+**Version :** FontAwesome Migrator v2.0.0+
 **Architecture :** Multi-versions FA4→5→6→7

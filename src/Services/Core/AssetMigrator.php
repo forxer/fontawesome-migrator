@@ -164,11 +164,6 @@ class AssetMigrator
                 'cdn_url' => '/https?:\/\/[^"\'\s]*font-?awesome[^"\'\s]*\/[v]?5\.[^"\'\s]*/i',
                 'asset_helper' => '/asset\s*\(\s*["\'][^"\']*font-?awesome-5[^"\']*["\']\s*\)/',
             ],
-            'vue' => [
-                'import' => '/from\s+["\'][^"\']*@fortawesome\/[^"\']*["\']/',
-                'link_tag' => '/<link[^>]*href=["\'][^"\']*font-?awesome[^"\']*\/[v]?5\.[^"\']*["\'][^>]*>/i',
-                'cdn_url' => '/https?:\/\/[^"\'\s]*font-?awesome[^"\'\s]*\/[v]?5\.[^"\'\s]*/i',
-            ],
             'json' => [
                 'npm_package' => '/"@fortawesome\/[^"]*":\s*"[^"]*5\.[^"]*"/',
                 'free_package' => '/"@fortawesome\/fontawesome-free[^"]*":\s*"[^"]*"/',

@@ -1,5 +1,9 @@
 # Guide de Migration Multi-Versions FontAwesome
 
+---
+    /!\     DOIT ÊTRE MIS A JOUR
+---
+
 Ce guide explique comment utiliser le système de migration multi-versions du package FontAwesome Migrator pour migrer entre les différentes versions de FontAwesome (4 → 5 → 6 → 7).
 
 ## Table des Matières

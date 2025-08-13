@@ -1,5 +1,9 @@
 # FontAwesome Migrator - API Reference
 
+---
+    /!\     DOIT ÊTRE MIS A JOUR
+---
+
 Documentation pour l'utilisation programmatique du système de migration multi-versions.
 
 ## Services principaux

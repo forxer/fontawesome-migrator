@@ -1,5 +1,9 @@
 # Système JSON Alternatives - FontAwesome Migrator v2.0
 
+---
+    /!\     DOIT ÊTRE MIS A JOUR
+---
+
 ## Vue d'ensemble
 
 Le système JSON alternatives permet de fournir des alternatives **Free** pour les icônes **Pro/dépréciées** lors des migrations FontAwesome. Ce système assure la **compatibilité FontAwesome** (pas la compatibilité du package).
@@ -11,7 +15,7 @@ Le système JSON alternatives permet de fournir des alternatives **Free** pour l
 ```
 config/fontawesome-migrator/alternatives/
 ├── 4-to-5.json    # Alternatives FA4 → FA5
-├── 5-to-6.json    # Alternatives FA5 → FA6  
+├── 5-to-6.json    # Alternatives FA5 → FA6
 └── 6-to-7.json    # Alternatives FA6 → FA7
 ```
 
@@ -112,17 +116,17 @@ $alternative = $alternatives['fa-home'] ?? null; // → 'fa-house'
 public function loadAlternatives(string $fromVersion, string $toVersion): array
 {
     $cacheKey = "alternatives_{$fromVersion}_to_{$toVersion}";
-    
+
     // Cache Redis-style
     if (isset($this->cache[$cacheKey])) {
         return $this->cache[$cacheKey];
     }
 
     $filePath = $this->configPath."/alternatives/{$fromVersion}-to-{$toVersion}.json";
-    
+
     // Chargement et validation JSON
     $data = json_decode(File::get($filePath), true);
-    
+
     // Fusion de toutes les alternatives
     $alternatives = array_merge(
         $data['alternatives'] ?? [],
@@ -154,7 +158,7 @@ $alt = $mapper->getFreeAlternative('fa-home');
 // → 'fa-house'
 
 // Icône Pro en licence Free
-$alt = $mapper->getFreeAlternative('fa-analytics');  
+$alt = $mapper->getFreeAlternative('fa-analytics');
 // → 'fa-chart-line'
 
 // Icône inexistante
@@ -229,7 +233,7 @@ private function getFreeFallback(string $proIcon): ?string
         'fa-apple-pay' => 'fa-credit-card',
         // ... 40+ lignes hardcodées
     ];
-    
+
     return $fallbacks[$proIcon] ?? null;
 }
 ```

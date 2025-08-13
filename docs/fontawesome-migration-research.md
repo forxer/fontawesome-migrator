@@ -1,5 +1,9 @@
 # Recherche des changements FontAwesome par version
 
+---
+    /!\     DOIT ÊTRE MIS A JOUR
+---
+
 ## FontAwesome 4 → 5
 
 ### Changements majeurs
@@ -83,11 +87,11 @@ Les icônes sans suffixe passent au style Solid :
 ## Patterns de migration identifiés
 
 ### 4 → 5 : Restructuration complète
-1. **Préfixe unique → Multiple** : `fa` → `fas/far/fal/fab`  
+1. **Préfixe unique → Multiple** : `fa` → `fas/far/fal/fab`
 2. **Suffixes `-o`** : Suppression + passage en `far`
 3. **Breaking changes** : Incompatibilité complète sans shims
 
-### 5 → 6 : Evolution incrémentale  
+### 5 → 6 : Evolution incrémentale
 1. **Noms d'icônes** : Nombreux renommages mais aliases conservés
 2. **Nouvelles icônes** : Ajouts massifs
 3. **Styles** : Améliorations esthétiques
