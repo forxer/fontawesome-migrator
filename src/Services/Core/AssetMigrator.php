@@ -16,6 +16,16 @@ class AssetMigrator
     ) {}
 
     /**
+     * Configurer la version cible pour la migration
+     */
+    public function setTargetVersion(string $targetVersion): self
+    {
+        $this->replacementService->setTargetVersion($targetVersion);
+
+        return $this;
+    }
+
+    /**
      * Migrer les références d'assets FontAwesome dans un fichier
      */
     public function migrateAssets(string $filePath, string $content): string

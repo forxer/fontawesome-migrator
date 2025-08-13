@@ -87,6 +87,9 @@ class MigrationProcessor
 
         info(\sprintf('🎨 Migration des assets FontAwesome %s → %s', $sourceVersion, $targetVersion).($dryRun ? ' (dry-run)' : ''));
 
+        // Configurer la version cible dans AssetMigrator
+        $this->assetMigrator->setTargetVersion($targetVersion);
+
         // Traiter les assets dans chaque fichier
         $results = [
             'total_assets' => 0,
@@ -95,7 +98,9 @@ class MigrationProcessor
 
         foreach ($files as $fileData) {
             $filePath = $fileData['path'];
+
             $content = file_get_contents($filePath);
+
             $migratedContent = $this->assetMigrator->migrateAssets($filePath, $content);
 
             if ($migratedContent !== $content) {

@@ -17,6 +17,8 @@ class AssetReplacementService
 
     private array $excludedPatterns = [];
 
+    private string $targetVersion = '6'; // Version par défaut
+
     public function __construct()
     {
         $this->loadReplacements();
@@ -28,7 +30,14 @@ class AssetReplacementService
     private function loadReplacements(): void
     {
         try {
-            $configPath = __DIR__.'/../../config/fontawesome-migrator/assets/replacements.json';
+            // Utiliser config_path() pour Laravel ou chemin relatif au package
+            $configPath = config_path('fontawesome-migrator/assets/replacements.json');
+
+            if (! file_exists($configPath)) {
+                // Fallback pour le développement du package
+                $configPath = __DIR__.'/../../../config/fontawesome-migrator/assets/replacements.json';
+            }
+
             $config = JsonFileHelper::loadJson($configPath);
 
             $this->replacements = $config['replacements'] ?? [];
@@ -155,9 +164,35 @@ class AssetReplacementService
     public function applyReplacements(string $content, array $replacements): string
     {
         foreach ($replacements as $search => $replace) {
-            $content = str_replace($search, $replace, $content);
+            // Vérifier si c'est un pattern regex (commence par /)
+            if (str_starts_with($search, '/') && str_ends_with($search, '/')) {
+                // Remplacer {target_version} par la version cible configurée
+                $processedReplace = str_replace('{target_version}', $this->getTargetVersion(), $replace);
+                $content = preg_replace($search, $processedReplace, $content);
+            } else {
+                // Utiliser str_replace classique pour les patterns exacts
+                $content = str_replace($search, $replace, $content);
+            }
         }
 
         return $content;
+    }
+
+    /**
+     * Définir la version cible pour la migration
+     */
+    public function setTargetVersion(string $targetVersion): self
+    {
+        $this->targetVersion = $targetVersion;
+
+        return $this;
+    }
+
+    /**
+     * Obtenir la version cible
+     */
+    protected function getTargetVersion(): string
+    {
+        return $this->targetVersion;
     }
 }

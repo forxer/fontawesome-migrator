@@ -95,9 +95,9 @@
     },
     "package_json": {
       "dependencies": {
-        "\"@fortawesome/fontawesome-free\": \"^5.": "\"@fortawesome/fontawesome-free\": \"^6.",
-        "\"@fortawesome/fontawesome-pro\": \"^5.": "\"@fortawesome/fontawesome-pro\": \"^6.",
-        "\"@fortawesome/fontawesome-svg-core\": \"^1.": "\"@fortawesome/fontawesome-svg-core\": \"^6."
+        "/\"@fortawesome\\/fontawesome-free\":\\s*\"[\\^~]?(\\d+)\\.[^\"]*\"/": "\"@fortawesome/fontawesome-free\": \"^{target_version}.0.0\"",
+        "/\"@fortawesome\\/fontawesome-pro\":\\s*\"[\\^~]?(\\d+)\\.[^\"]*\"/": "\"@fortawesome/fontawesome-pro\": \"^{target_version}.0.0\"",
+        "/\"@fortawesome\\/fontawesome-svg-core\":\\s*\"[\\^~]?(\\d+)\\.[^\"]*\"/": "\"@fortawesome/fontawesome-svg-core\": \"^{target_version}.0.0\""
       }
     }
   },
