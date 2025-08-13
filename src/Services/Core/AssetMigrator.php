@@ -37,7 +37,6 @@ class AssetMigrator
             'css', 'scss', 'sass' => $this->migrateStylesheetAssets($content),
             'js', 'ts' => $this->migrateJavaScriptAssets($content),
             'blade.php', 'php', 'html' => $this->migrateHtmlAssets($content),
-            'vue' => $this->migrateVueAssets($content),
             'json' => $this->migratePackageJsonAssets($content),
             default => $content,
         };
@@ -72,17 +71,6 @@ class AssetMigrator
     {
         $isPro = $this->config->isProLicense();
         $replacements = $this->replacementService->getHtmlReplacements($isPro);
-
-        return $this->replacementService->applyReplacements($content, $replacements);
-    }
-
-    /**
-     * Migrer les assets dans les fichiers Vue
-     */
-    protected function migrateVueAssets(string $content): string
-    {
-        $isPro = $this->config->isProLicense();
-        $replacements = $this->replacementService->getVueReplacements($isPro);
 
         return $this->replacementService->applyReplacements($content, $replacements);
     }

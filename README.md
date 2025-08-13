@@ -676,7 +676,6 @@ ls storage/fontawesome-migrator/backups/resources/views/
 Le package analyse intelligemment :
 
 - **Templates Blade** (`*.blade.php`)
-- **Composants Vue** (`*.vue`)
 - **JavaScript/TypeScript** (`*.js`, `*.ts`)
 - **Feuilles de style** (`*.css`, `*.scss`, `*.sass`, `*.less`)
 - **Fichiers HTML** (`*.html`)

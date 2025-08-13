@@ -131,18 +131,6 @@ class AssetReplacementService
     }
 
     /**
-     * Obtenir les remplacements pour Vue.js
-     */
-    public function getVueReplacements(bool $isPro = false): array
-    {
-        // Vue combine JavaScript et HTML, on merge les deux
-        return array_merge(
-            $this->getJavaScriptReplacements($isPro),
-            $this->getHtmlReplacements($isPro)
-        );
-    }
-
-    /**
      * Filtrer les patterns exclus (remplacements identiques)
      */
     private function filterExcludedPatterns(array $replacements): array

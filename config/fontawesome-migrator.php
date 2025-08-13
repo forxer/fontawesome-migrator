@@ -110,7 +110,6 @@ return [
         'sass',
         'scss',
         'ts',
-        'vue',
     ],
 
     /*
