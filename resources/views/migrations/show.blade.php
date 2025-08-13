@@ -793,9 +793,9 @@
                                     <div>
                                         <span><i class="bi bi-file-code text-primary"></i> {{ $result['file'] }}</span>
                                         @if(isset($result['backup']) && $result['backup'] !== null)
-                                            <span class="badge bg-secondary ms-2" title="Sauvegarde créée : {{ basename($result['backup']['backup_path']) }}">
-                                                <i class="bi bi-shield-check"></i> Sauvegardé
-                                            </span>
+                                            <small class="text-success ms-2">
+                                                <i class="bi bi-shield-check"></i>
+                                            </small>
                                         @endif
                                     </div>
                                     <button class="btn btn-outline-primary btn-sm" onclick="toggleFileDetails({{ $index }})">
@@ -904,6 +904,31 @@
                                                 <i class="bi bi-box text-primary"></i> {{ $asset['type'] ?? 'unknown' }}: <code>{{ $asset['original'] ?? '' }}</code>
                                             </div>
                                         @endforeach
+                                    </div>
+                                @endif
+
+                                @if(isset($result['backup']) && $result['backup'] !== null)
+                                    <div class="border-top pt-3 mt-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-shield-check text-success me-2"></i>
+                                                <span class="fw-semibold">Fichier sauvegardé</span>
+                                            </div>
+                                            <div class="d-flex align-items-center text-muted">
+                                                <small class="me-3">
+                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                    {{ \Carbon\Carbon::parse($result['backup']['created_at'])->format('d/m/Y à H:i:s') }}
+                                                </small>
+                                                <small>
+                                                    <i class="bi bi-file-earmark me-1"></i>
+                                                    {{ human_readable_bytes_size($result['backup']['size']) }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">
+                                            <i class="bi bi-folder me-1"></i>
+                                            {{ $result['backup']['backup_path'] }}
+                                        </small>
                                     </div>
                                 @endif
                                 </div>

@@ -25,4 +25,14 @@ interface BackupManagerInterface
      * Obtenir les statistiques des sauvegardes
      */
     public function getBackupStats(): array;
+
+    /**
+     * Obtenir le nombre de backups créés pendant la migration courante
+     */
+    public function getBackupCount(): int;
+
+    /**
+     * Réinitialiser le compteur de backups
+     */
+    public function resetBackupCount(): void;
 }

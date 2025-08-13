@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\File;
  */
 class BackupManager implements BackupManagerInterface
 {
+    private int $backupCount = 0;
+
     public function __construct(
         protected MetadataManagerInterface $metadataManager
     ) {}
@@ -40,6 +42,8 @@ class BackupManager implements BackupManagerInterface
         $success = File::copy($filePath, $backupPath);
 
         if ($success) {
+            $this->backupCount++;
+
             return [
                 'original_file' => $filePath,
                 'relative_path' => $relativePath,
@@ -120,5 +124,21 @@ class BackupManager implements BackupManagerInterface
             'oldest' => $count > 0 ? min(array_column($backups, 'modified')) : null,
             'newest' => $count > 0 ? max(array_column($backups, 'modified')) : null,
         ];
+    }
+
+    /**
+     * Obtenir le nombre de backups créés pendant la migration courante
+     */
+    public function getBackupCount(): int
+    {
+        return $this->backupCount;
+    }
+
+    /**
+     * Réinitialiser le compteur de backups (au début d'une nouvelle migration)
+     */
+    public function resetBackupCount(): void
+    {
+        $this->backupCount = 0;
     }
 }

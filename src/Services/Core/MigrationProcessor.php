@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services\Core;
 
+use FontAwesome\Migrator\Contracts\BackupManagerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 
 use function Laravel\Prompts\info;
@@ -14,7 +15,8 @@ class MigrationProcessor
         private readonly IconReplacer $replacer,
         private readonly AssetMigrator $assetMigrator,
         private readonly MigrationVersionManager $versionManager,
-        private readonly MetadataManagerInterface $metadata
+        private readonly MetadataManagerInterface $metadata,
+        private readonly BackupManagerInterface $backupManager
     ) {}
 
     /**
@@ -121,6 +123,8 @@ class MigrationProcessor
      */
     public function process(array $files, array $options): array
     {
+        // Réinitialiser le compteur de backups pour cette migration
+        $this->backupManager->resetBackupCount();
 
         // Configurer le mapper pour cette migration
         $mapper = $this->versionManager->createMapper(
@@ -183,6 +187,7 @@ class MigrationProcessor
             'total_changes' => ($results['icons']['total_changes'] ?? 0) + ($results['assets']['total_assets'] ?? 0),
             'icons_migrated' => $results['icons']['total_changes'] ?? 0,
             'assets_migrated' => $results['assets']['total_assets'] ?? 0,
+            'backups_count' => $this->backupManager->getBackupCount(),
             'migration_success' => true,
             'changes_by_type' => [
                 'icons' => $results['icons']['total_changes'] ?? 0,

@@ -104,6 +104,7 @@ class MetadataManager implements MetadataManagerInterface
         $this->metadata['errors'] = \count($resultsData['errors'] ?? []);
         $this->metadata['assets_migrated'] = $stats['assets_migrated'] ?? 0;
         $this->metadata['icons_migrated'] = $stats['icons_migrated'] ?? 0;
+        $this->metadata['backups_count'] = $stats['backups_count'] ?? 0;
         $this->metadata['migration_success'] = $stats['migration_success'] ?? true;
 
         // === DETAILED DATA ===
