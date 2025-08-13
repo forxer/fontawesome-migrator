@@ -29,9 +29,6 @@
                     $stats['total_changes'] > 0 ? ['#recommendations-section', 'Recommandations'] : null,
                     ['#configuration-section', 'Configuration'],
                     ['#environment-section', 'Environnement'],
-                    ['#info-section', 'Informations'],
-                    $stats['total_changes'] > 0 ? ['#summary-section', 'Résumé'] : null,
-                    (!empty($stats['asset_types']) && $stats['total_changes'] > 0) ? ['#assets-section', 'Assets'] : null,
                     $stats['total_changes'] > 0 ? ['#details-section', 'Détails'] : null
                 ])->filter()->count() }} sections</small>
             </div>
@@ -145,59 +142,6 @@
                     </div>
                 @endif
 
-                <!-- Informations -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="#info-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-info-circle text-primary fs-5 me-3"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">Informations</div>
-                                    <small class="text-muted">Détails techniques</small>
-                                </div>
-                                <span class="badge bg-outline-secondary">v{{ $packageVersion }}</span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                @if ($stats['total_changes'] > 0)
-                <!-- Résumé -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="#summary-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-clipboard-check text-primary fs-5 me-3"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">Résumé</div>
-                                    <small class="text-muted">Bilan migration</small>
-                                </div>
-                                <span class="badge {{ ($stats['migration_success'] ?? true) ? 'bg-success' : 'bg-warning' }}">
-                                    {{ ($stats['migration_success'] ?? true) ? 'OK' : 'Partiel' }}
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                @if (!empty($stats['asset_types']))
-                <!-- Assets -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="#assets-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-box text-primary fs-5 me-3"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">Assets</div>
-                                    <small class="text-muted">CDN, NPM détectés</small>
-                                </div>
-                                <span class="badge bg-info">{{ array_sum($stats['asset_types']) }}</span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                @endif
-
                 <!-- Détails -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#details-section" class="text-decoration-none">
@@ -213,7 +157,6 @@
                         </div>
                     </a>
                 </div>
-                @endif
             </div>
         </div>
     </div>
@@ -311,31 +254,31 @@
         </div>
 
         @if (($stats['assets_migrated'] ?? 0) > 0)
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['assets_migrated']) }}</h2>
-                    <h5 class="card-subtitle text-muted">Assets migrés</h5>
-                    <div class="mt-3 text-info small">
-                        <i class="bi bi-box"></i> CDN + NPM
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['assets_migrated']) }}</h2>
+                        <h5 class="card-subtitle text-muted">Assets migrés</h5>
+                        <div class="mt-3 text-info small">
+                            <i class="bi bi-box"></i> CDN + NPM
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
 
         @if (!empty($stats['warnings']) && $stats['warnings'] > 0)
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-warning border-2">
-                <div class="card-body text-center">
-                    <h2 class="card-title display-6 mb-3 text-warning">{{ number_formatted($stats['warnings']) }}</h2>
-                    <h5 class="card-subtitle text-muted">Avertissements</h5>
-                    <div class="mt-3 text-warning small">
-                        <i class="bi bi-exclamation-triangle"></i> Icônes renommées/dépréciées
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-warning border-2">
+                    <div class="card-body text-center">
+                        <h2 class="card-title display-6 mb-3 text-warning">{{ number_formatted($stats['warnings']) }}</h2>
+                        <h5 class="card-subtitle text-muted">Avertissements</h5>
+                        <div class="mt-3 text-warning small">
+                            <i class="bi bi-exclamation-triangle"></i> Icônes renommées/dépréciées
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
     </div>
 
@@ -661,103 +604,6 @@
             </div>
         </div>
     </div>
-
-
-    <!-- Informations supplémentaires -->
-    <div id="info-section" class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title section-title"><i class="bi bi-info-circle"></i> Informations supplémentaires</h2>
-            <p><strong>Rapport généré :</strong> {{ $timestamp }}</p>
-            <p><strong>Package :</strong> FontAwesome Migrator version {{ $packageVersion }}</p>
-
-            @if ($stats['total_changes'] > 0 && !$isDryRun)
-                <div class="alert alert-info">
-                    <i class="bi bi-lightbulb"></i> <strong>Conseil :</strong> Testez votre application pour vous assurer que tous les changements fonctionnent correctement.
-                </div>
-            @endif
-
-            @if ($isDryRun && $stats['total_changes'] > 0)
-                <div class="alert alert-warning">
-                    <i class="bi bi-play-fill"></i> <strong>Prêt pour la migration :</strong> Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces changements.
-                </div>
-            @endif
-        </div>
-    </div>
-
-    @if ($stats['total_changes'] > 0)
-        <!-- Résumé de migration -->
-        <div id="summary-section" class="section">
-            <h2 class="section-title"><i class="bi bi-clipboard-check"></i> Résumé de la migration</h2>
-
-            @if ($stats['migration_success'])
-                <div class="alert alert-success">
-                    <i class="bi bi-check-square"></i> Migration terminée avec succès ! {{ number_formatted($stats['total_changes']) }} changement(s) appliqué(s) sur {{ number_formatted($stats['modified_files']) }} fichier(s).
-                </div>
-            @else
-                <div class="alert alert-warning">
-                    <i class="bi bi-search"></i> Migration partielle. Certains éléments n'ont pas pu être migrés automatiquement.
-                </div>
-            @endif
-
-            @if (!empty($stats['changes_by_type']))
-                <table class="table table-striped table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">Type de changement</th>
-                            <th scope="col" class="text-end">Nombre</th>
-                            <th scope="col" class="text-end">Pourcentage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($stats['changes_by_type'] as $type => $count)
-                            @php
-                                $percentage = $stats['total_changes'] > 0 ? round(($count / $stats['total_changes']) * 100, 1) : 0;
-                            @endphp
-                            <tr>
-                                <td>
-                                    @switch($type)
-                                        @case('style_update') Mise à jour de style @break
-                                        @case('renamed_icon') Icône renommée @break
-                                        @case('pro_fallback') Fallback Pro→Free @break
-                                        @case('asset') Asset migré @break
-                                        @case('deprecated_icon') Icône dépréciée @break
-                                        @case('manual_review') Révision manuelle @break
-                                        @default {{ ucfirst(str_replace('_', ' ', $type)) }}
-                                    @endswitch
-                                </td>
-                                <td class="text-end">{{ number_formatted($count) }}</td>
-                                <td class="text-end">{{ number_formatted($percentage, 1) }} %</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
-        </div>
-
-        <!-- Section des assets si présents -->
-        @if (!empty($stats['asset_types']))
-            <div id="assets-section" class="card mb-4">
-                <div class="card-body">
-                    <h2 class="card-title section-title"><i class="bi bi-box"></i> Assets détectés</h2>
-                    <table class="table table-striped table-sm">
-                        <thead>
-                            <tr><th>Type d'asset</th><th>Nombre</th><th>Description</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach($stats['asset_types'] as $assetType => $count)
-                                <tr>
-                                    <td><strong>{{ $assetType }}</strong></td>
-                                    <td>{{ number_formatted($count) }}</td>
-                                    <td>{{ ucfirst(str_replace('_', ' ', $assetType)) }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        @endif
-
-    @endif
 
     <!-- Détail des fichiers modifiés avec recherche -->
     <div id="details-section" class="card mb-4">
