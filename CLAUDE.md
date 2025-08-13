@@ -141,3 +141,9 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Refactorisation MigrateCommand v2.0 complète**: Mode interactif/non-interactif, services spécialisés (CommandFlowService, InteractivePromptService), architecture propre
 - **PRINCIPE ARCHITECTURAL v2.0**: metadata.json est LA source unique de vérité. Structure consistante, compréhensible, utilisée uniformément dans toute l'UI
 - **Règle d'or metadata.json**: Un seul endroit calcule/stocke les stats (MigrationProcessor), tous les autres services/UI lisent depuis metadata.json sans recalculer
+- **Août 2025 - Nettoyage code mort massif**: ~450+ lignes supprimées (MigrationReporter, StatisticsCalculator, CleanupManager, FileValidator, méthodes inutilisées)
+- **Services manquants corrigés**: MigrationProcessor et VersionConfigurationService ajoutés au ServiceProvider pour injection DI fonctionnelle
+- **Architecture v2.0 finalisée**: Zéro code mort, tous services enregistrés, metadata.json source unique respectée partout
+- **CLAUDE_TEMPLATE.md enrichi**: Ajout guidelines refactoring, principes architecture, leçons critiques pour futurs projets
+- **État actuel**: Architecture nettoyée, code mort supprimé, CLI testé fonctionnel. Interface web et tests complets restent à vérifier
+- **LEÇON HUMILITÉ**: Claude Code souvent trop sûr de lui - éviter déclarations absolues, utiliser langage nuancé ("semble", "devrait"), jamais déclarer "production-ready"

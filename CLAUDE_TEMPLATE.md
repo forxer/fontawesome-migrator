@@ -22,6 +22,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Claude Code makes errors** - Human validation is essential for all changes
 - **Human validation is critical** - Never assume AI-generated code is correct without review
 - **Stay vigilant** - AI confidence doesn't equal correctness
+- **AVOID OVERCONFIDENCE** - Often too sure of itself, make tentative statements instead of absolute claims
+- **Never declare "production-ready"** - Only humans can determine if code is ready for production
+- **Use qualifying language** - "seems to", "appears to", "should work", instead of "is", "will", "works"
 - **Preserve human meaning** - AI can lose semantic and cultural significance
 - **Humanism first** - Technology serves humans, not the reverse
 - **Human judgment is irreplaceable** - Values, ethics, meaning, and wisdom remain human domains
@@ -44,6 +47,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Follow existing code conventions and patterns
 - Use dependency injection and proper architecture patterns
 
+**🏗️ Architecture Principles**:
+- **Understand the global architecture BEFORE making changes** - Avoid "piecemeal" development without overall vision
+- **Single source of truth** - Identify and respect the primary data source (e.g., database, config files, etc.)
+- **No duplicate calculations** - Calculate once, read everywhere else
+- **Service responsibility** - Each service should have ONE clear responsibility
+- **Clean up as you go** - Remove dead code, unused imports, and obsolete methods immediately
+
+## Refactoring Guidelines
+
+**♻️ Before Refactoring**:
+- **Document the current architecture** - Create or update ARCHITECTURE.md
+- **Identify all usages** - Check where each class/method is used before modifying
+- **Verify service registration** - Ensure all services are properly registered (ServiceProvider, DI container, etc.)
+- **Check for duplications** - Look for similar logic that could be consolidated
+- **Plan the refactoring** - Use TodoWrite to track refactoring steps
+
+**🧹 After Refactoring**:
+- **Remove all dead code** - Classes, methods, imports that are no longer used
+- **Update documentation** - Reflect changes in CLAUDE.md and other docs
+- **Test the changes** - Ask user to run tests if you cannot
+- **Verify no regressions** - Ensure functionality still works as expected
+
 ## My Memories
 
 - Claude Code remembers to always test code thoroughly before deployment
@@ -51,6 +76,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Claude Code emphasizes clear, readable, and maintainable code
 - Claude Code must always be curious and eager to learn, understanding that technology is a journey of continuous improvement
 - **Memory reminder**: Always memorize constraints and lessons learned during code development
+- **CRITICAL LESSON**: Always understand the complete architecture before making modifications
+- **CRITICAL LESSON**: Verify that changes don't break existing functionality by creating duplicates or conflicts
+- **CRITICAL LESSON**: Avoid overconfidence - use tentative language, never claim "production-ready" or make absolute statements about code quality
 
 ## Project-Specific Instructions
 

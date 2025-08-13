@@ -29,7 +29,6 @@
                     $stats['total_changes'] > 0 ? ['#recommendations-section', 'Recommandations'] : null,
                     ['#configuration-section', 'Configuration'],
                     ['#environment-section', 'Environnement'],
-                    (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0) ? ['#backups-section', 'Sauvegardes'] : null,
                     ['#info-section', 'Informations'],
                     $stats['total_changes'] > 0 ? ['#summary-section', 'Résumé'] : null,
                     (!empty($stats['asset_types']) && $stats['total_changes'] > 0) ? ['#assets-section', 'Assets'] : null,
@@ -128,22 +127,22 @@
                     </a>
                 </div>
 
-                @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
-                <!-- Sauvegardes -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="#backups-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-hdd text-primary fs-5 me-3"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">Sauvegardes</div>
-                                    <small class="text-muted">Fichiers protégés</small>
+                @if ($backupsCount > 0)
+                    <!-- Sauvegardes -->
+                    <div class="col-md-6 col-lg-4">
+                        <a href="#backups-section" class="text-decoration-none">
+                            <div class="p-3 border rounded hover-bg-light transition-all">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-hdd text-primary fs-5 me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold">Sauvegardes</div>
+                                        <small class="text-muted">Fichier(s) sauvegardé(s)</small>
+                                    </div>
+                                    <span class="badge bg-warning">{{ $backupsCount }}</span>
                                 </div>
-                                <span class="badge bg-warning">{{ count($migrationOptions['created_backups']) }}</span>
                             </div>
-                        </div>
-                    </a>
-                </div>
+                        </a>
+                    </div>
                 @endif
 
                 <!-- Informations -->
@@ -578,10 +577,10 @@
                                 {{ ($configuration['backup_enabled'] ?? true) ? 'Activée' : 'Désactivée' }}
                             @endif
                         </td></tr>
-                        @if (isset($migrationOptions['backups_count']) && $migrationOptions['backups_count'] > 0)
+                        @if ($backupsCount > 0)
                         <tr><td><strong>Sauvegardes créées</strong></td><td>
                             <span class="text-success fw-bold">
-                                {{ number_formatted($migrationOptions['backups_count']) }} fichier(s) sauvegardé(s)
+                                {{ number_formatted($backupsCount) }} fichier(s) sauvegardé(s)
                             </span>
                         </td></tr>
                         @endif
@@ -663,34 +662,6 @@
         </div>
     </div>
 
-    @if (isset($migrationOptions['created_backups']) && count($migrationOptions['created_backups']) > 0)
-    <!-- Section des sauvegardes créées -->
-    <div id="backups-section" class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title section-title"><i class="bi bi-hdd"></i> Sauvegardes créées ({{ count($migrationOptions['created_backups']) }})</h2>
-        <p>Liste des fichiers sauvegardés avant modification :</p>
-
-        <div class="backups-list">
-            @foreach ($migrationOptions['created_backups'] as $backup)
-            <div class="backup-item">
-                <div class="backup-header">
-                    <span class="backup-file"><i class="bi bi-download"></i> {{ $backup['relative_path'] }}</span>
-                    <span class="backup-date">{{ $backup['created_at']->isoFormat('DD/MM/YYYY [à] HH:mm') }}</span>
-                </div>
-                <div class="backup-details">
-                    <span class="backup-size">Taille: {{ human_readable_bytes_size($backup['size'], 2) }}</span>
-                    <span class="backup-path">Sauvegarde: {{ basename($backup['backup_path']) }}</span>
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-        <div class="alert alert-info" style="margin-top: 20px;">
-            <i class="bi bi-info-circle"></i> <strong>Note :</strong> Ces sauvegardes peuvent être utilisées pour restaurer les fichiers originaux en cas de besoin.
-            Utilisez la commande <code>php artisan fontawesome:backup</code> pour gérer les sauvegardes.
-        </div>
-    </div>
-    @endif
 
     <!-- Informations supplémentaires -->
     <div id="info-section" class="card mb-4">
@@ -819,7 +790,14 @@
                         <div class="card mb-3" data-file="{{ $result['file'] }}" data-index="{{ $index }}">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-file-code text-primary"></i> {{ $result['file'] }}</span>
+                                    <div>
+                                        <span><i class="bi bi-file-code text-primary"></i> {{ $result['file'] }}</span>
+                                        @if(isset($result['backup']) && $result['backup'] !== null)
+                                            <span class="badge bg-secondary ms-2" title="Sauvegarde créée : {{ basename($result['backup']['backup_path']) }}">
+                                                <i class="bi bi-shield-check"></i> Sauvegardé
+                                            </span>
+                                        @endif
+                                    </div>
                                     <button class="btn btn-outline-primary btn-sm" onclick="toggleFileDetails({{ $index }})">
                                         <i id="toggle-icon-{{ $index }}" class="bi bi-chevron-right"></i>
                                         {{ count($result['changes']) }} changement(s)
