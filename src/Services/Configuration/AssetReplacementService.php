@@ -168,7 +168,7 @@ class AssetReplacementService
             if (str_starts_with($search, '/') && str_ends_with($search, '/')) {
                 // Remplacer {target_version} par la version cible configurée
                 $processedReplace = str_replace('{target_version}', $this->getTargetVersion(), $replace);
-                $content = preg_replace($search, $processedReplace, $content);
+                $content = preg_replace($search, $processedReplace, (string) $content);
             } else {
                 // Utiliser str_replace classique pour les patterns exacts
                 $content = str_replace($search, $replace, $content);

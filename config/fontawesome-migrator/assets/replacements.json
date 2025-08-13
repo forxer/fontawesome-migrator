@@ -5,26 +5,26 @@
     "stylesheets": {
       "free": {
         "cdn_urls": {
-          "font-awesome/5.": "font-awesome/6.",
-          "/font-awesome/5.": "/font-awesome/6.",
-          "https://use.fontawesome.com/releases/v5.": "https://use.fontawesome.com/releases/v6.",
-          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.",
-          "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.",
-          "https://maxcdn.bootstrapcdn.com/font-awesome/5.": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6."
+          "/font-awesome\\/(\\d+)\\./": "font-awesome/{target_version}.",
+          "/\\/font-awesome\\/(\\d+)\\./": "/font-awesome/{target_version}.",
+          "/https:\\/\\/use\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "https://use.fontawesome.com/releases/v{target_version}.",
+          "/https:\\/\\/cdnjs\\.cloudflare\\.com\\/ajax\\/libs\\/font-awesome\\/(\\d+)\\./": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{target_version}.",
+          "/https:\\/\\/cdn\\.jsdelivr\\.net\\/npm\\/@fortawesome\\/fontawesome-free@(\\d+)\\./": "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@{target_version}.",
+          "/https:\\/\\/maxcdn\\.bootstrapcdn\\.com\\/font-awesome\\/(\\d+)\\./": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{target_version}."
         },
         "local_paths": {
-          "/fontawesome-free-5.": "/fontawesome-free-6.",
-          "/font-awesome-5.": "/font-awesome-6.",
-          "node_modules/@fortawesome/fontawesome-free-": "node_modules/@fortawesome/fontawesome-free/"
+          "/\\/fontawesome-free-(\\d+)\\./": "/fontawesome-free-{target_version}.",
+          "/\\/font-awesome-(\\d+)\\./": "/font-awesome-{target_version}.",
+          "/node_modules\\/@fortawesome\\/fontawesome-free-(\\d+)\\./": "node_modules/@fortawesome/fontawesome-free/"
         }
       },
       "pro": {
         "cdn_urls": {
-          "https://pro.fontawesome.com/releases/v5.": "https://pro.fontawesome.com/releases/v6."
+          "/https:\\/\\/pro\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "https://pro.fontawesome.com/releases/v{target_version}."
         },
         "local_paths": {
-          "node_modules/@fortawesome/fontawesome-pro-": "node_modules/@fortawesome/fontawesome-pro/",
-          "/fontawesome-pro-5.": "/fontawesome-pro-6."
+          "/node_modules\\/@fortawesome\\/fontawesome-pro-(\\d+)\\./": "node_modules/@fortawesome/fontawesome-pro/",
+          "/\\/fontawesome-pro-(\\d+)\\./": "/fontawesome-pro-{target_version}."
         }
       }
     },
@@ -46,7 +46,7 @@
           "require(\"@fortawesome/fontawesome-free-brands\")": "require(\"@fortawesome/free-brands-svg-icons\")"
         },
         "cdn_urls": {
-          "https://use.fontawesome.com/releases/v5.": "https://use.fontawesome.com/releases/v6."
+          "/https:\\/\\/use\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "https://use.fontawesome.com/releases/v{target_version}."
         }
       },
       "pro": {
@@ -77,19 +77,23 @@
     "html": {
       "free": {
         "cdn_links": {
-          "href=\"https://use.fontawesome.com/releases/v5.": "href=\"https://use.fontawesome.com/releases/v6.",
-          "href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.": "href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.",
-          "src=\"https://use.fontawesome.com/releases/v5.": "src=\"https://use.fontawesome.com/releases/v6."
+          "/href=\"https:\\/\\/use\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "href=\"https://use.fontawesome.com/releases/v{target_version}.",
+          "/href=\"https:\\/\\/cdnjs\\.cloudflare\\.com\\/ajax\\/libs\\/font-awesome\\/(\\d+)\\./": "href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{target_version}.",
+          "/src=\"https:\\/\\/use\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "src=\"https://use.fontawesome.com/releases/v{target_version}."
         },
         "local_paths": {
-          "href=\"/fontawesome-free-5.": "href=\"/fontawesome-free-6.",
-          "src=\"/fontawesome-free-5.": "src=\"/fontawesome-free-6."
+          "/href=\"\\/fontawesome-free-(\\d+)\\./": "href=\"/fontawesome-free-{target_version}.",
+          "/src=\"\\/fontawesome-free-(\\d+)\\./": "src=\"/fontawesome-free-{target_version}."
         }
       },
       "pro": {
         "cdn_links": {
-          "href=\"https://pro.fontawesome.com/releases/v5.": "href=\"https://pro.fontawesome.com/releases/v6.",
-          "src=\"https://pro.fontawesome.com/releases/v5.": "src=\"https://pro.fontawesome.com/releases/v6."
+          "/href=\"https:\\/\\/pro\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "href=\"https://pro.fontawesome.com/releases/v{target_version}.",
+          "/src=\"https:\\/\\/pro\\.fontawesome\\.com\\/releases\\/v(\\d+)\\./": "src=\"https://pro.fontawesome.com/releases/v{target_version}."
+        },
+        "local_paths": {
+          "/href=\"\\/fontawesome-pro-(\\d+)\\./": "href=\"/fontawesome-pro-{target_version}.",
+          "/src=\"\\/fontawesome-pro-(\\d+)\\./": "src=\"/fontawesome-pro-{target_version}."
         }
       }
     },
