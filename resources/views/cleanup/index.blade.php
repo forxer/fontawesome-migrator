@@ -40,7 +40,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-muted">Espace disque utilisé</span>
                         <span class="fw-bold fs-5">
-                            {{ number_format($totalSize / 1024 / 1024, 1) }} MB
+                            {{ human_readable_bytes_size($totalSize, 2) }}
                         </span>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                     <div class="d-flex align-items-center mb-3">
                         <i class="bi bi-radioactive fs-2 text-danger me-3"></i>
                         <div>
-                            <h5 class="card-title text-danger mb-1">⚠️ SUPPRESSION TOTALE</h5>
+                            <h5 class="card-title text-danger mb-1">SUPPRESSION TOTALE</h5>
                             <p class="card-text text-danger small mb-0">Option nucléaire - Supprimer TOUTES les migrations sans exception</p>
                         </div>
                     </div>
@@ -216,7 +216,7 @@
                                 class="btn btn-danger w-100"
                                 data-confirm-text="ÊTES-VOUS ABSOLUMENT CERTAIN de vouloir supprimer TOUTES les migrations ? Cette action est IRRÉVERSIBLE !">
                             <i class="bi bi-radioactive me-1"></i>
-                            ⚠️ SUPPRIMER TOUT ({{ $totalMigrations }} migrations)
+                            SUPPRIMER TOUT ({{ $totalMigrations }} migrations)
                         </button>
                     </form>
                 </div>
@@ -238,8 +238,8 @@
                             <th>Migration</th>
                             <th>Type</th>
                             <th>Âge</th>
-                            <th>Taille</th>
-                            <th>Actions</th>
+                            <th class="text-end">Taille</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -265,10 +265,10 @@
                             <td class="text-muted small">
                                 {{ $migration['created_at']->diffForHumans() }}
                             </td>
-                            <td class="text-muted small">
-                                {{ number_format(($migration['directory_size'] ?? 0) / 1024, 1) }} KB
+                            <td class="text-end text-muted small">
+                                {{ human_readable_bytes_size($migration['metadata']['total_size'] ?? 0, 2) }}
                             </td>
-                            <td>
+                            <td class="text-end">
                                 <button type="button"
                                         class="btn btn-outline-danger btn-sm delete-migration-btn"
                                         data-migration-id="{{ $migration['short_id'] }}"

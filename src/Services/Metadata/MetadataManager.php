@@ -71,6 +71,28 @@ class MetadataManager implements MetadataManagerInterface
     }
 
     /**
+     * Mettre à jour la taille totale du répertoire de migration
+     * À appeler APRÈS la première sauvegarde des métadonnées
+     */
+    public function updateMigrationSize(): self
+    {
+        $migrationDir = $this->getMigrationDirectory();
+        $totalSize = 0;
+
+        if (File::exists($migrationDir)) {
+            $files = File::allFiles($migrationDir);
+
+            foreach ($files as $file) {
+                $totalSize += $file->getSize();
+            }
+        }
+
+        $this->metadata['total_size'] = $totalSize;
+
+        return $this;
+    }
+
+    /**
      * Ajouter une sauvegarde
      */
     public function addBackup(array $backupInfo): self

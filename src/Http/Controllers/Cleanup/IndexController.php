@@ -19,15 +19,14 @@ class IndexController extends Controller
 
         // Calculer les statistiques de nettoyage
         $now = now();
-        $old30Days = $migrations->filter(fn ($migration): bool => $now->diffInDays($migration['created_at']) > 30
-        )->count();
+        $old30Days = $migrations->filter(fn ($migration): bool => $now->diffInDays($migration['created_at']) > 30)->count();
 
         $old7Days = $migrations->filter(fn ($migration): bool => $now->diffInDays($migration['created_at']) > 7 &&
                 ($migration['source'] ?? 'cli') === 'web_interface' // migrations de test
         )->count();
 
         // Calculer l'espace disque utilisé
-        $totalSize = $migrations->sum('directory_size');
+        $totalSize = $migrations->sum('metadata.total_size');
 
         return view('fontawesome-migrator::cleanup.index', [
             'totalMigrations' => $migrations->count(),

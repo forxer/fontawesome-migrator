@@ -25,7 +25,6 @@
                 </h2>
                 <small class="text-muted">{{ collect([
                     ['#statistics', 'Statistiques'],
-                    $stats['total_changes'] > 0 ? ['#timeline-section', 'Chronologie'] : null,
                     $stats['total_changes'] > 0 ? ['#recommendations-section', 'Recommandations'] : null,
                     ['#configuration-section', 'Configuration'],
                     ['#environment-section', 'Environnement'],
@@ -53,24 +52,6 @@
                 </div>
 
                 @if ($stats['total_changes'] > 0)
-                <!-- Chronologie -->
-                <div class="col-md-6 col-lg-4">
-                    <a href="#timeline-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-clock-history text-primary fs-5 me-3"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">Chronologie</div>
-                                    <small class="text-muted">Étapes de migration</small>
-                                </div>
-                                <span class="badge {{ $isDryRun ? 'bg-warning' : 'bg-success' }}">
-                                    {{ $isDryRun ? 'Dry-run' : 'Appliquée' }}
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
                 <!-- Recommandations -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#recommendations-section" class="text-decoration-none">
@@ -282,66 +263,9 @@
         @endif
     </div>
 
-    @if ($stats['total_changes'] > 0)
-    <!-- Chronologie de migration -->
-    <div id="timeline-section" class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title section-title"><i class="bi bi-clock"></i> Chronologie de migration</h2>
-            <div class="timeline-container">
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <h4 class="section-title"><i class="bi bi-search"></i> Analyse effectuée</h4>
-                    <p>{{ number_formatted($stats['total_files']) }} fichier(s) analysé(s) pour détecter Font Awesome 5</p>
-                    <small>{{ $timestamp }}</small>
-                </div>
-            </div>
-
-            @if ($stats['modified_files'] > 0)
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <h4 class="section-title"><i class="bi bi-bullseye"></i> Fichiers ciblés</h4>
-                    <p>{{ number_formatted($stats['modified_files']) }} fichier(s) contenant du code Font Awesome 5</p>
-                    <small>Détection automatique</small>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <h4 class="section-title"><i class="bi bi-arrow-left-right"></i> Migration appliquée</h4>
-                    <p>{{ number_formatted($stats['total_changes']) }} changement(s) {{ $isDryRun ? 'identifiés' : 'appliqués' }}</p>
-                    <small>{{ $isDryRun ? 'Mode prévisualisation' : 'Modifications effectives' }}</small>
-                </div>
-            </div>
-            @endif
-
-            @if (($stats['assets_migrated'] ?? 0) > 0)
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <h4 class="section-title"><i class="bi bi-box"></i> Assets migrés</h4>
-                    <p>{{ number_formatted($stats['assets_migrated']) }} asset(s) CDN/NPM {{ $isDryRun ? 'détectés' : 'mis à jour' }}</p>
-                    <small>Packages et liens modernisés</small>
-                </div>
-            </div>
-            @endif
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    @if ($stats['migration_success'] ?? true)
-                        <h4 class="section-title"><i class="bi bi-check-square"></i> Migration {{ $isDryRun ? 'planifiée' : 'terminée' }}</h4>
-                        <p>Votre code est {{ $isDryRun ? 'prêt pour' : 'maintenant compatible avec' }} Font Awesome 6</p>
-                    @else
-                        <h4 class="section-title"><i class="bi bi-search"></i> Migration partielle</h4>
-                        <p>Certains éléments nécessitent une vérification manuelle</p>
-                    @endif
-                    <small>{{ $timestamp }}</small>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Recommandations intelligentes -->
-    <div id="recommendations-section" class="mb-4">
+    @if ($stats['total_changes'] > 0)
+    <div id="recommendations-section">
         <h2 class="section-title mb-3"><i class="bi bi-lightbulb"></i> Recommandations</h2>
         <div class="row mb-4">
             @if ($isDryRun && $stats['total_changes'] > 0)
@@ -462,21 +386,6 @@
                     </div>
                 </div>
             @endif
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body d-flex">
-                        <div class="me-3">
-                            <i class="bi bi-book fs-2 text-info"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h5 class="card-title">Documentation officielle</h5>
-                            <p class="card-text">Consultez le guide de migration Font Awesome 6 pour plus d'informations.</p>
-                            <a href="https://fontawesome.com/v6/docs/web/setup/upgrade/" target="_blank" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-up-right"></i> Guide officiel</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     @endif
 

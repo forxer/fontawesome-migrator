@@ -207,8 +207,12 @@ class MigrationProcessor
         $this->metadata->storeMigrationResults($fileResults, $stats, $enrichedWarnings);
         $this->metadata->completeMigration();
 
-        // Sauvegarder les métadonnées
-        $this->metadata->saveToFile();
+        // Sauvegarder les métadonnées (première passe)
+        $filePath = $this->metadata->saveToFile();
+
+        // Calculer et ajouter la taille du répertoire de migration (deuxième passe)
+        $this->metadata->updateMigrationSize();
+        $this->metadata->saveToFile($filePath);
 
         // Afficher le message de succès si nécessaire
         if (! $dryRun && $results['total_files_modified'] > 0) {
