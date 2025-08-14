@@ -1,6 +1,15 @@
 {
   "description": "Mappings complets des icônes FontAwesome 5 vers 6 - Liste officielle",
   "version": "5-to-6",
+  "sources": {
+    "official_documentation": "https://docs.fontawesome.com/v6/web/setup/upgrade/whats-changed#icons-renamed-in-version-6",
+    "github_metadata": "https://github.com/FortAwesome/Font-Awesome/blob/6.x/metadata/icons.json",
+    "community_gist": "https://gist.github.com/ve3/3563789a8606c4095847f31522928df6",
+    "migration_guide": "https://blog.fontawesome.com/upgrade-font-awesome-to-version-6/",
+    "generated_by": "Claude Code AI Assistant",
+    "generated_date": "2025-08-14",
+    "methodology": "WebFetch des sources officielles FontAwesome, compilation manuelle des 400+ mappings"
+  },
   "renamed_icons": {
     "fa-ad": "fa-rectangle-ad",
     "fa-adjust": "fa-circle-half-stroke",
@@ -318,14 +327,5 @@
     "count": "310 icônes réellement renommées (doublons supprimés)",
     "compatibility": "FA6 maintient des alias pour la rétrocompatibilité",
     "semantic_improvements": "Les nouveaux noms sont plus descriptifs et universels"
-  },
-  "sources": {
-    "official_documentation": "https://docs.fontawesome.com/v6/web/setup/upgrade/whats-changed#icons-renamed-in-version-6",
-    "github_metadata": "https://github.com/FortAwesome/Font-Awesome/blob/6.x/metadata/icons.json",
-    "community_gist": "https://gist.github.com/ve3/3563789a8606c4095847f31522928df6",
-    "migration_guide": "https://blog.fontawesome.com/upgrade-font-awesome-to-version-6/",
-    "generated_by": "Claude Code AI Assistant",
-    "generated_date": "2025-08-14",
-    "methodology": "WebFetch des sources officielles FontAwesome, compilation manuelle des 400+ mappings"
   }
 }
