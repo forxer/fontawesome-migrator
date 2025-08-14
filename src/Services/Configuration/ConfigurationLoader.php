@@ -82,7 +82,7 @@ class ConfigurationLoader
         }
 
         if (isset($iconConfig['renamed_icons'])) {
-            return array_merge($mappings, $iconConfig['renamed_icons']);
+            $mappings = array_merge($mappings, $iconConfig['renamed_icons']);
         }
 
         return $mappings;

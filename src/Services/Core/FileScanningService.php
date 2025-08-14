@@ -68,10 +68,10 @@ class FileScanningService
         // Détecter la version FontAwesome
         $detectedVersion = $this->patternService->detectVersion($content);
 
-        if ($detectedVersion === null) {
+        if ($detectedVersion === 'unknown') {
             return [
                 'has_icons' => false,
-                'version' => null,
+                'version' => 'unknown',
                 'icons' => [],
             ];
         }
