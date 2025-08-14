@@ -7,6 +7,7 @@ namespace FontAwesome\Migrator\Services\Metadata;
 use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
+use FontAwesome\Migrator\Support\DirectoryHelper;
 use FontAwesome\Migrator\Support\JsonFileHelper;
 use Illuminate\Support\Facades\File;
 
@@ -237,7 +238,7 @@ class MetadataManager implements MetadataManagerInterface
             $migrationDir = $this->getMigrationDirectory();
 
             // S'assurer que le répertoire de migration existe avec .gitignore
-            $this->ensureMigrationDirectoryExists($migrationDir);
+            DirectoryHelper::ensureExistsWithGitignore($migrationDir);
 
             $filePath = $migrationDir.'/metadata.json';
         }
@@ -299,23 +300,6 @@ class MetadataManager implements MetadataManagerInterface
             'changes_made' => $this->metadata['total_changes'] ?? 0,
             'duration' => $this->metadata['duration'] ?? null,
         ];
-    }
-
-    /**
-     * S'assurer que le répertoire de migration existe avec .gitignore
-     */
-    protected function ensureMigrationDirectoryExists(string $migrationDir): void
-    {
-        if (! File::exists($migrationDir)) {
-            File::makeDirectory($migrationDir, 0755, true);
-        }
-
-        $gitignorePath = $migrationDir.'/.gitignore';
-
-        if (! File::exists($gitignorePath)) {
-            $gitignoreContent = "# FontAwesome Migrator - Migration Backups\n*\n!.gitignore\n!metadata.json\n";
-            File::put($gitignorePath, $gitignoreContent);
-        }
     }
 
     /**

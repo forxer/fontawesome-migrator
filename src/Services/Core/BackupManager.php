@@ -30,7 +30,7 @@ class BackupManager implements BackupManagerInterface
         $backupDir = $migrationDirectory.'/backups';
 
         // S'assurer que le répertoire et le .gitignore existent
-        DirectoryHelper::ensureExistsWithGitignore($backupDir);
+        DirectoryHelper::ensureExists($backupDir);
 
         $relativePath = str_replace(base_path().'/', '', $filePath);
         $backupPath = $backupDir.'/'.$relativePath.'.backup';

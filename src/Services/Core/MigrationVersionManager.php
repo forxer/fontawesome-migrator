@@ -106,7 +106,7 @@ class MigrationVersionManager
     {
         $supported = $this->getSupportedMigrations();
 
-        return array_any($supported, fn ($migration): bool => (string) $migration['from'] === $fromVersion && (string) $migration['to'] === $toVersion);
+        return array_any($supported, fn ($migration): bool => $migration['from'] === $fromVersion && $migration['to'] === $toVersion);
     }
 
     /**
