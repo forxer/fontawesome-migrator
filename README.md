@@ -4,7 +4,7 @@
 
 🚀 **Package Laravel professionnel** pour automatiser la migration FontAwesome multi-versions (4 → 5 → 6 → 7) avec architecture moderne et interface web complète.
 
-**🚧 Version 2.0.0 en développement** : Architecture multi-versions avec configuration JSON externalisée.
+**🎉 Version 2.0.0** : Architecture multi-versions avec configuration JSON externalisée.
 
 ## Prérequis
 
@@ -99,9 +99,10 @@ return [
         'public/js',
         'custom/path'  // Chemin ajouté
     ],
-    'pro_styles' => [
-        'thin' => true,   // Activé pour FA6 Pro
-        'sharp' => true,  // Activé pour FA6 Pro
+    'auto_detect_version' => true,
+    'supported_versions' => [
+        'from' => [4, 5, 6],
+        'to' => [5, 6, 7]
     ]
 ];
 ```
@@ -121,12 +122,11 @@ return [
     // Type de licence: 'free' ou 'pro'
     'license_type' => env('FONTAWESOME_LICENSE', 'free'),
 
-    // Styles Font Awesome Pro disponibles
-    'pro_styles' => [
-        'light' => true,
-        'duotone' => true,
-        'thin' => false,    // Nouveau FA6 Pro
-        'sharp' => false,   // Nouveau FA6 Pro
+    // Configuration multi-versions
+    'auto_detect_version' => true,
+    'supported_versions' => [
+        'from' => [4, 5, 6],
+        'to' => [5, 6, 7]
     ],
 
     // Style de fallback si Pro non disponible
