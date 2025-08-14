@@ -181,7 +181,7 @@ abstract class BaseVersionMapper implements VersionMapperInterface
         }
 
         // Trier par confiance décroissante
-        usort($similar, fn ($a, $b): int => $b['confidence'] <=> $a['confidence']);
+        usort($similar, fn (array $a, array $b): int => $b['confidence'] <=> $a['confidence']);
 
         return \array_slice($similar, 0, 5);
     }

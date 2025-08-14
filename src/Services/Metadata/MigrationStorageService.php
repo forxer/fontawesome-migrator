@@ -87,7 +87,7 @@ class MigrationStorageService
         }
 
         // Trier par date de création (plus récent en premier)
-        usort($migrations, fn ($a, $b): int => ($b['started_at'] ?? '') <=> ($a['started_at'] ?? ''));
+        usort($migrations, fn (array $a, array $b): int => ($b['started_at'] ?? '') <=> ($a['started_at'] ?? ''));
 
         return $migrations;
     }

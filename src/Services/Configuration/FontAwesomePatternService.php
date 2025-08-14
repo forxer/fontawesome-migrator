@@ -139,13 +139,7 @@ class FontAwesomePatternService
     {
         $patterns = $this->getDetectionPatterns($version);
 
-        foreach ($patterns as $pattern) {
-            if (preg_match($pattern, $content)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($patterns, fn ($pattern): int|false => preg_match($pattern, $content));
     }
 
     /**

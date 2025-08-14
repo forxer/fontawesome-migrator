@@ -76,7 +76,7 @@ class IndexController extends Controller
         }
 
         // Trier par date de création (plus récent en premier)
-        usort($reports, fn ($a, $b): int => $b['created_at'] <=> $a['created_at']);
+        usort($reports, fn (array $a, array $b): int => $b['created_at'] <=> $a['created_at']);
 
         // Calculer les statistiques globales
         $stats = $this->getMigrationStats($migrations);

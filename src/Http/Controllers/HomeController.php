@@ -105,7 +105,7 @@ class HomeController extends Controller
         }
 
         // Trier par date et garder les 5 plus récents
-        usort($recentMigrations, fn ($a, $b): int => $b['created_at'] <=> $a['created_at']);
+        usort($recentMigrations, fn (array $a, array $b): int => $b['created_at'] <=> $a['created_at']);
         $recentMigrations = \array_slice($recentMigrations, 0, 5);
 
         return view('fontawesome-migrator::home.index', [

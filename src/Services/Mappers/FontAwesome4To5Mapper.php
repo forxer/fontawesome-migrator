@@ -48,12 +48,6 @@ class FontAwesome4To5Mapper extends BaseVersionMapper
             '/^fa-file-.*-o$/',     // fa-file-text-o, etc.
         ];
 
-        foreach ($outlinedPatterns as $pattern) {
-            if (preg_match($pattern, $iconName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($outlinedPatterns, fn ($pattern): int|false => preg_match($pattern, $iconName));
     }
 }

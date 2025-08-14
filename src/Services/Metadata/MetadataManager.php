@@ -428,7 +428,7 @@ class MetadataManager implements MetadataManagerInterface
         }
 
         // Trier par date de création décroissante
-        usort($migrations, fn ($a, $b): int => Carbon::parse($b['created_at'])->timestamp - Carbon::parse($a['created_at'])->timestamp);
+        usort($migrations, fn (array $a, array $b): int => Carbon::parse($b['created_at'])->timestamp - Carbon::parse($a['created_at'])->timestamp);
 
         return $migrations;
     }
