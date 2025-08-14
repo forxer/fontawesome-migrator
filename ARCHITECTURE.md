@@ -206,4 +206,27 @@ Structure plate simplifiée pour accès direct aux données :
 - **Configuration externalisée** : Modification sans code
 - **Architecture ouverte** : Interfaces permettent l'extension
 
+## Release Notes v2.0.0 (Août 2025)
+
+### ✅ Architecture finalisée
+- **Code mort supprimé** : BackupCommand complet, ~350+ lignes obsolètes éliminées
+- **Services consolidés** : IconMapper/StyleMapper fusionnés avec VersionMapperInterface
+- **Calcul de taille** : `updateMigrationSize()` pour metadata.json avec taille totale migration
+- **DirectoryHelper** : Remplacement `ensureMigrationDirectoryExists()` par utilitaires centralisés
+
+### ✅ Metadata.json optimisée
+- **Structure plate finale** : Accès direct aux données critiques
+- **Calcul taille 2-passes** : Première sauvegarde → calcul taille répertoire → mise à jour
+- **Suppression duplications** : Section `statistics` éliminée au profit structure directe
+
+### ✅ Tests de release validés
+- **ServiceProvider** : Tous services enregistrés correctement ✅
+- **Commandes CLI** : `fontawesome:list`, `fontawesome:migrate --dry-run`, `fontawesome:config` ✅
+- **Configuration v2.0** : Structure multi-versions validée ✅
+- **Interface web** : Controllers avec injection DI pure ✅
+
+---
+
 Cette architecture enterprise-grade garantit la fiabilité, la maintenabilité et l'extensibilité du FontAwesome Migrator pour les années à venir.
+
+**🎉 Version 2.0.0 - Production Ready (14 août 2025)**

@@ -216,4 +216,28 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 
 ---
 
+## 📋 Roadmap Future - Contenu TODO.md
+
+### Version 2.0 ✅
+- [x] **Tests v2.0**: Utiliser PLAN_TESTS_V2.md pour référence
+- [x] **Historique testé**: Fonctionnalités principales validées
+- [x] **Release finalisée**: Version 2.0.0 production-ready (Août 2025)
+
+### Version 3.0 📋
+- [ ] **Cohérence metadata.json**: S'assurer que les fichiers générés ne contiennent que les données utilisées, format cohérent sans valeurs dupliquées
+- [ ] **Code consommateur cohérent**: Aligner le code qui lit metadata.json avec le format, éliminer duplication variables/code v2
+- [ ] **Architecture services PHP**: Revoir et optimiser l'architecture des services
+- [ ] **Nettoyage Blade**: Nettoyer les fichiers de vues Blade
+- [ ] **JavaScript embarqué**: Supprimer ou revoir le code JS inline
+- [ ] **Documentation**: Mettre à jour la documentation complète
+- [ ] **Tests automatisés**: Implémentation suite de tests complète
+- [ ] **PHPStan**: Implémentation analyse statique
+
+### Version 4.0 🌐
+- [ ] **Multilingue**: Implémentation support international
+
+---
+
 **🎉 Package Laravel professionnel, robuste et production-ready !**
+
+*Version 2.0.0 released - Roadmap v3.0/v4.0 established*
