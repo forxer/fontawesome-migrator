@@ -124,6 +124,7 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Validation transformation full metadata v2.0**: Suppression méthodes obsolètes (generateComparisonReport, cleanOldReports), README corrigé, tous Controllers avec injection DI pure, fini les appels statiques
 - **Optimisation Laravel finale**: Facades utilisées partout (File::, PackageVersionService singleton), fonctions PHP natives remplacées, ConfigHelper corrigé, architecture Laravel pure respectée
 - **MIGRATION AOÛT 2025 - FINALISATION COMPLÈTE v2.0**: Architecture enterprise-grade terminée après 3 jours refactorisation intensive. 0 erreur PHP/IDE, injection DI pure, ~350+ lignes dupliquées supprimées, 25+ services organisés, full metadata validée, Facades Laravel optimisées. Package production-ready, prêt déploiement/nouvelles fonctionnalités.
+- **Mappings 4→5 finalisés (Août 2025)**: 270 mappings officiels intégrés depuis `fa4-to-fa5-raw.json`, structure unifiée avec 5→6 et 6→7, métadonnées enrichies, cohérence architecturale complète
 - **TestsController corrigé**: MigrationVersionManager injecté via constructeur, plus d'instanciation manuelle qui échouait
 - **FileScanner modernisé**: Suppression code FA5-spécifique, utilise FontAwesomePatternService + ConfigurationLoader, générique multi-versions
 - **AssetMigrator simplifié**: Toutes méthodes 3-4 lignes (vs 40-50 avant), délègue à AssetReplacementService, patterns externalisés

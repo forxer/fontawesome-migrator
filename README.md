@@ -16,6 +16,7 @@
 
 ### 🎯 Migration multi-versions des icônes
 - ✅ **Architecture multi-versions** : FA4 → FA5 → FA6 → FA7 avec MigrationVersionManager
+- ✅ **Mappings complets officiels** : 270 (4→5) + 310 (5→6) + 13 (6→7) icônes
 - ✅ **Détection automatique** de la version source dans votre code
 - ✅ **Support complet Pro** (Light, Duotone, Thin, Sharp) avec fallbacks Free
 - ✅ **Configuration JSON** : Mappings externalisés avec ConfigurationLoader et cache
@@ -266,7 +267,13 @@ Le package supporte maintenant les **migrations multi-versions** avec:
 
 ```
 FontAwesome 4 ──→ FontAwesome 5 ──→ FontAwesome 6 ──→ FontAwesome 7
+           (270)          (310)          (13)
 ```
+
+**Ampleur des migrations :**
+- **4→5** : 270 mappings (refonte majeure, préfixes et suffixes)
+- **5→6** : 310 mappings (restructuration sémantique complète)  
+- **6→7** : 13 mappings (simplifications mineures, fixed-width par défaut)
 
 #### Interface web interactive
 
@@ -335,17 +342,25 @@ php artisan fontawesome:migrate --from=6 --to=7
 <i class="fa-duotone fa-heart"></i>
 ```
 
-### FA6 → FA7 : Simplifications
+### FA6 → FA7 : Simplifications (13 mappings)
 
 ```html
 <!-- Font Awesome 6 -->
 <i class="fa-solid fa-user-large"></i>
+<i class="fa-solid fa-headphones-simple"></i>
+<i class="fa-solid fa-handshake-simple"></i>
+<i class="fa-solid fa-film-simple"></i>
+<i class="fa-solid fa-vector-square"></i>
 <i class="fa-solid fa-fw fa-icon"></i>
 <div class="sr-only">Texte caché</div>
 
 <!-- Font Awesome 7 -->
 <i class="fa-solid fa-user"></i>
-<i class="fa-solid fa-icon"></i> <!-- fa-fw supprimé -->
+<i class="fa-solid fa-headphones"></i>
+<i class="fa-solid fa-handshake"></i>
+<i class="fa-solid fa-film"></i>
+<i class="fa-solid fa-draw-square"></i>
+<i class="fa-solid fa-icon"></i> <!-- fa-fw supprimé (fixed-width par défaut) -->
 <div aria-label="Texte caché"></div> <!-- sr-only → aria-label -->
 ```
 

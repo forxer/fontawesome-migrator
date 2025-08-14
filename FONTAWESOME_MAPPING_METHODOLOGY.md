@@ -38,10 +38,10 @@ php scripts/generate-mappings.php \
 - Valide la syntaxe JSON
 - Optimise la structure
 
-**Validation intégrée** :
-- Vérifie les mappings critiques connus
-- Affiche un rapport de validation
-- Détecte les incohérences
+**Validation simplifiée** :
+- Compte les mappings chargés depuis le fichier source
+- Vérifie la cohérence des données
+- Validation métier gérée par l'architecture JSON v2.0
 
 **Sources documentées** :
 - Intègre automatiquement les sources officielles
@@ -71,7 +71,7 @@ php scripts/generate-mappings.php \
 - **Entrée** : 823 mappings bruts
 - **Doublons supprimés** : 513
 - **Sortie finale** : 310 mappings valides
-- **Validation** : 6/6 mappings critiques ✅
+- **Validation** : Mappings chargés et validés ✅
 
 #### 6. Structure de sortie générée
 
@@ -138,7 +138,7 @@ php -r "json_decode(file_get_contents('config/mappings/5-to-6/icons.json')); ech
 ### Points d'attention
 
 1. **Sources officielles obligatoires** - Toujours partir de la documentation FontAwesome
-2. **Mappings critiques** - Le script valide automatiquement les renommages importants
+2. **Architecture JSON v2.0** - Les mappings sont maintenant gérés par les fichiers de configuration
 3. **Nettoyage systématique** - Les doublons sont supprimés automatiquement
 4. **Traçabilité complète** - Sources et méthodologie documentées dans le fichier final
 5. **Validation avant usage** - Tester sur échantillon réel avant déploiement production
@@ -155,14 +155,20 @@ private array $officialSources = [
     ]
 ];
 
-private array $criticalMappings = [
-    '7-to-8' => [
-        'fa-new-icon' => 'fa-updated-icon'
-    ]
-];
+// Note: Mappings critiques supprimés en v2.0
+// Validation maintenant basée sur les fichiers JSON externalisés
 ```
+
+### Note architecturale v2.0
+
+⚠️ **Evolution importante** : Depuis la v2.0, les mappings critiques hardcodés ont été supprimés du script. La validation s'appuie maintenant sur l'architecture JSON externalisée :
+
+- **Avantage** : Une seule source de vérité (fichiers JSON)
+- **Simplicité** : Plus de duplication entre script et configuration
+- **Cohérence** : Aligné avec l'approche v2.0 d'externalisation
 
 ---
 **Généré le** : 2025-08-14  
+**Mis à jour le** : 2025-08-14 (suppression mappings hardcodés)  
 **Script** : `scripts/generate-mappings.php`  
 **Contexte** : FontAwesome Migrator v2.0

@@ -111,12 +111,13 @@
 ## 🚀 Fonctionnalités validées
 
 ### Migration multi-versions automatique
-- ✅ **FA4 → FA5**: Préfixes (`fa` → `fas/far`), suffixes `-o`, renommages
-- ✅ **FA5 → FA6**: Styles longs (`fas` → `fa-solid`), icônes renommées
+- ✅ **FA4 → FA5**: 270 mappings officiels (suffixes `-o`, renommages, structure unifiée)
+- ✅ **FA5 → FA6**: 310 mappings officiels (styles longs, icônes renommées)
 - ✅ **FA6 → FA7**: Simplifications, fixed width par défaut, accessibilité
 - ✅ **Détection automatique**: Identification de la version source dans le code
 - ✅ **Support Pro/Free**: Fallbacks automatiques selon licence
 - ✅ **Configuration JSON**: Mappings externalisés avec ConfigurationLoader
+- ✅ **Cohérence architecturale**: Structure identique pour toutes les versions
 
 ### Commandes Artisan étendues
 - ✅ **Migration automatique**: `php artisan fontawesome:migrate` avec détection version
@@ -205,6 +206,7 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 - **Bug critique résolu**: Erreur "migration_results" corrigée dans MetadataManager
 - **Services actifs**: MigrateCommand, ConfigureCommand, InstallCommand (BackupCommand supprimé)
 - **Structure garantie**: Métadonnées complètes dès l'initialisation des migrations
+- **Mappings 4→5 finalisés**: 270 mappings officiels intégrés, structure unifiée avec 5→6 et 6→7
 
 ### Refactorisation InstallCommand & Configuration Août 2025 ✅
 - **InstallCommand v2.0 complet**: Backup version actuelle → réécriture depuis zéro, simplification 4→2 étapes

@@ -1,14 +1,32 @@
 {
   "description": "Mappings des icônes FontAwesome 6 vers 7",
   "version": "6-to-7",
+  "sources": {
+    "documentation": "https://docs.fontawesome.com/upgrade/whats-changed",
+    "generated_date": "2025-08-14",
+    "methodology": "Extraction officielle depuis documentation FontAwesome"
+  },
   "renamed_icons": {
-    "fa-user-large": "fa-user",
-    "fa-headphones-simple": "fa-headphones",
-    "fa-handshake-simple": "fa-handshake"
+    "user-large": "user",
+    "user-large-slash": "user-slash",
+    "hexagon-vertical-nft-slanted": "hexagon-vertical-nft",
+    "headphones-simple": "headphones",
+    "toilet-paper-blank": "toilet-paper",
+    "toilet-paper-blank-under": "toilet-paper-under",
+    "vector-circle": "draw-circle",
+    "vector-polygon": "draw-polygon",
+    "vector-square": "draw-square",
+    "film-simple": "film",
+    "grid-horizontal": "grip",
+    "handshake-simple": "handshake",
+    "handshake-simple-slash": "handshake-slash"
   },
   "notes": {
+    "complete_list": "Mappings FontAwesome 6 → 7",
+    "count": "13 icônes renommées (simplifications principalement)",
     "simplification": "FA7 simplifie les noms d'icônes en supprimant les suffixes redondants",
-    "minimal_changes": "Peu de changements par rapport à FA6, principalement des simplifications",
-    "to_complete": "Liste à compléter selon les releases officielles FA7"
+    "fixed_width": "FA7 applique fixed-width par défaut (équivalent fa-fw)",
+    "accessibility": "Icônes décoratives par défaut, cachées des lecteurs d'écran",
+    "compatibility": "Aliases automatiques pour rétrocompatibilité avec FA6"
   }
 }
