@@ -66,6 +66,94 @@
         }
     }
 
+    /* Trajectoire alternative 1 - oscillations plus amples */
+    @keyframes bubbleRise2 {
+        0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.8;
+        }
+        10% {
+            transform: translateY(-10vh) translateX(-15px);
+            opacity: 0.85;
+        }
+        22% {
+            transform: translateY(-22vh) translateX(-35px);
+            opacity: 0.9;
+        }
+        35% {
+            transform: translateY(-35vh) translateX(-25px);
+            opacity: 0.85;
+        }
+        48% {
+            transform: translateY(-48vh) translateX(20px);
+            opacity: 0.8;
+        }
+        60% {
+            transform: translateY(-60vh) translateX(40px);
+            opacity: 0.7;
+        }
+        72% {
+            transform: translateY(-72vh) translateX(30px);
+            opacity: 0.6;
+        }
+        82% {
+            transform: translateY(-82vh) translateX(-10px);
+            opacity: 0.45;
+        }
+        92% {
+            transform: translateY(-92vh) translateX(-20px);
+            opacity: 0.25;
+        }
+        100% {
+            transform: translateY(-105vh) translateX(-15px);
+            opacity: 0;
+        }
+    }
+
+    /* Trajectoire alternative 2 - oscillations douces et courtes */
+    @keyframes bubbleRise3 {
+        0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.8;
+        }
+        12% {
+            transform: translateY(-12vh) translateX(8px);
+            opacity: 0.85;
+        }
+        28% {
+            transform: translateY(-28vh) translateX(18px);
+            opacity: 0.9;
+        }
+        40% {
+            transform: translateY(-40vh) translateX(12px);
+            opacity: 0.85;
+        }
+        55% {
+            transform: translateY(-55vh) translateX(-8px);
+            opacity: 0.8;
+        }
+        68% {
+            transform: translateY(-68vh) translateX(-15px);
+            opacity: 0.7;
+        }
+        78% {
+            transform: translateY(-78vh) translateX(-12px);
+            opacity: 0.6;
+        }
+        88% {
+            transform: translateY(-88vh) translateX(5px);
+            opacity: 0.4;
+        }
+        96% {
+            transform: translateY(-96vh) translateX(8px);
+            opacity: 0.15;
+        }
+        100% {
+            transform: translateY(-105vh) translateX(5px);
+            opacity: 0;
+        }
+    }
+
     /* Bulles animées - plus subtiles */
     .bubble {
         position: absolute;
