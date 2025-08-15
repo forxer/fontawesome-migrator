@@ -8,7 +8,7 @@
         height: 100%;
         overflow: hidden;
         pointer-events: none;
-        z-index: 0; /* Niveau de base pour permettre z-index -1 et +1 sur les bulles */
+        /* Pas de z-index pour permettre aux bulles enfants d'avoir leurs propres z-index relatifs */
     }
 
     /* Animation naturelle de montée avec oscillations douces */
@@ -197,7 +197,31 @@
         bottom: 0;
         pointer-events: none;
         opacity: 0.6;
-        /* Pas de z-index pour permettre aux bulles animées z-index: -1 de passer derrière */
+        z-index: 0; /* Niveau de référence - bulles statiques normales */
+    }
+
+    /* Layer arrière pour bulles statiques discrètes */
+    .bubbles-pattern-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        opacity: 0.3;
+        z-index: -1; /* Derrière tout */
+    }
+
+    /* Layer avant pour bulles statiques visibles */
+    .bubbles-pattern-front {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        opacity: 0.4;
+        z-index: 2; /* Devant tout */
     }
 
     /* Densité augmentée pour la hero section */
@@ -413,16 +437,46 @@
 
     /* Styles pour les différentes profondeurs de bulles animées */
     .bubble.behind-static {
-        /* Bulles derrière les statiques - plus floues et discrètes */
-        filter: blur(0.5px);
+        /* Bulles derrière les statiques - floues et discrètes (lointaines) */
+        filter: blur(1.2px);
     }
 
     .bubble.with-static {
-        /* Bulles au niveau des statiques - normales */
+        /* Bulles au niveau des statiques - légèrement floues */
+        filter: blur(0.3px);
     }
 
     .bubble.front-static {
-        /* Bulles devant les statiques - plus nettes et lumineuses */
-        filter: brightness(1.1);
+        /* Bulles devant les statiques - nettes et lumineuses (proches) */
+        filter: brightness(1.15) blur(0px);
+    }
+
+    /* Patterns pour layer arrière (z-index -1) */
+    .bubbles-pattern-back::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        left: -50px;
+        right: -50px;
+        bottom: -50px;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><defs><radialGradient id="bubbleGradBack1" cx="0.3" cy="0.3"><stop offset="0%" stop-color="white" stop-opacity="0.2"/><stop offset="70%" stop-color="white" stop-opacity="0.08"/><stop offset="100%" stop-color="white" stop-opacity="0.03"/></radialGradient><radialGradient id="bubbleGradBack2" cx="0.25" cy="0.25"><stop offset="0%" stop-color="white" stop-opacity="0.15"/><stop offset="75%" stop-color="white" stop-opacity="0.06"/><stop offset="100%" stop-color="white" stop-opacity="0.02"/></radialGradient><pattern id="bubblesBack" width="180" height="180" patternUnits="userSpaceOnUse"><circle cx="40" cy="40" r="3" fill="url(%23bubbleGradBack1)"/><circle cx="120" cy="120" r="2.5" fill="url(%23bubbleGradBack2)"/><circle cx="70" cy="25" r="2.2" fill="url(%23bubbleGradBack2)"/><circle cx="25" cy="100" r="3.5" fill="url(%23bubbleGradBack1)"/><circle cx="140" cy="50" r="2.8" fill="url(%23bubbleGradBack2)"/><circle cx="90" cy="140" r="3.2" fill="url(%23bubbleGradBack1)"/></pattern></defs><rect width="180" height="180" fill="url(%23bubblesBack)"/></svg>');
+        animation: floatPattern1 30s ease-in-out infinite;
+    }
+
+    /* Bulles statiques du premier plan - éléments DOM réels pour z-index correct */
+    .static-bubble-front {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 28% 28%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.25) 55%, rgba(255, 255, 255, 0.12) 100%);
+        pointer-events: none;
+        z-index: 2;
+        animation: floatStatic 40s ease-in-out infinite;
+    }
+
+    @keyframes floatStatic {
+        0%, 100% { transform: translate3d(0, 0, 0); }
+        25% { transform: translate3d(-10px, -15px, 0); }
+        50% { transform: translate3d(8px, -25px, 0); }
+        75% { transform: translate3d(-5px, -10px, 0); }
     }
 </style>

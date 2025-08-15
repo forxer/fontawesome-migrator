@@ -66,41 +66,51 @@
 
             bubble.classList.add(sizeClass);
 
-            // Taille aléatoire dans la catégorie
-            const size = Math.random() * (config.sizes[sizeCategory].max - config.sizes[sizeCategory].min) + config.sizes[sizeCategory].min;
-            bubble.style.width = size + 'px';
-            bubble.style.height = size + 'px';
+            // Profondeur aléatoire pour entrelacement avec bulles statiques
+            const depthRand = Math.random();
+            let depthMultiplier, speedMultiplier;
+            
+            if (depthRand < 0.3) {
+                // 30% des bulles passent derrière (z-index -1)
+                bubble.style.zIndex = '-1';
+                bubble.style.opacity = '0.4';
+                bubble.classList.add('behind-static');
+                depthMultiplier = 0.75; // 25% plus petites (lointaines)
+                speedMultiplier = 1.2;  // 20% plus lentes (parallaxe)
+            } else if (depthRand < 0.7) {
+                // 40% des bulles au niveau des statiques (z-index 0)
+                bubble.style.zIndex = '0';
+                bubble.style.opacity = '0.7';
+                bubble.classList.add('with-static');
+                depthMultiplier = 1.0;  // Taille normale
+                speedMultiplier = 1.0;  // Vitesse normale
+            } else {
+                // 30% des bulles devant (z-index 1)
+                bubble.style.zIndex = '1';
+                bubble.style.opacity = '0.9';
+                bubble.classList.add('front-static');
+                depthMultiplier = 1.2;  // 20% plus grandes (proches)
+                speedMultiplier = 0.85; // 15% plus rapides (proche = mouvement visible)
+            }
+
+            // Taille ajustée selon la profondeur
+            const baseSize = Math.random() * (config.sizes[sizeCategory].max - config.sizes[sizeCategory].min) + config.sizes[sizeCategory].min;
+            const adjustedSize = baseSize * depthMultiplier;
+            bubble.style.width = adjustedSize + 'px';
+            bubble.style.height = adjustedSize + 'px';
 
             // Position horizontale aléatoire
             bubble.style.left = Math.random() * 85 + 5 + '%';
 
-            // Vitesse selon la taille
-            const speed = Math.random() * (config.speeds[sizeCategory].max - config.speeds[sizeCategory].min) + config.speeds[sizeCategory].min;
-            bubble.style.animationDuration = speed + 's';
+            // Vitesse ajustée selon la profondeur
+            const baseSpeed = Math.random() * (config.speeds[sizeCategory].max - config.speeds[sizeCategory].min) + config.speeds[sizeCategory].min;
+            const adjustedSpeed = baseSpeed * speedMultiplier;
+            bubble.style.animationDuration = adjustedSpeed + 's';
 
             // Trajectoire aléatoire parmi 6 possibilités
             const trajectories = ['bubbleRise', 'bubbleRise2', 'bubbleRise3', 'bubbleRise4', 'bubbleRise5', 'bubbleRise6'];
             const randomTrajectory = trajectories[Math.floor(Math.random() * trajectories.length)];
             bubble.style.animationName = randomTrajectory;
-
-            // Profondeur aléatoire pour entrelacement avec bulles statiques
-            const depthRand = Math.random();
-            if (depthRand < 0.3) {
-                // 30% des bulles passent derrière (z-index -1, plus transparentes)
-                bubble.style.zIndex = '-1';
-                bubble.style.opacity = '0.4';
-                bubble.classList.add('behind-static');
-            } else if (depthRand < 0.7) {
-                // 40% des bulles au niveau des statiques (z-index 0, opacité normale)
-                bubble.style.zIndex = '0';
-                bubble.style.opacity = '0.7';
-                bubble.classList.add('with-static');
-            } else {
-                // 30% des bulles devant (z-index 1, plus visibles)
-                bubble.style.zIndex = '1';
-                bubble.style.opacity = '0.9';
-                bubble.classList.add('front-static');
-            }
 
             bubblesContainer.appendChild(bubble);
 
@@ -109,7 +119,7 @@
                 if (bubble.parentNode) {
                     bubble.remove();
                 }
-            }, speed * 1000);
+            }, adjustedSpeed * 1000);
         }
 
         // Créer des bulles initiales avec délais échelonnés
@@ -126,18 +136,48 @@
         return () => clearInterval(bubbleInterval);
     }
 
+    // Créer des bulles statiques DOM réelles pour le premier plan
+    function createStaticFrontBubbles(containerSelector) {
+        const container = document.querySelector(containerSelector);
+        if (!container) return;
+
+        // Créer quelques bulles statiques du premier plan
+        const staticBubbles = [
+            { left: '15%', top: '20%', size: 18 },
+            { left: '75%', top: '35%', size: 22 },
+            { left: '45%', top: '70%', size: 16 },
+            { left: '85%', top: '15%', size: 20 },
+            { left: '25%', top: '80%', size: 14 },
+            { left: '65%', top: '25%', size: 24 }
+        ];
+
+        staticBubbles.forEach((bubbleData, index) => {
+            const staticBubble = document.createElement('div');
+            staticBubble.classList.add('static-bubble-front');
+            staticBubble.style.left = bubbleData.left;
+            staticBubble.style.top = bubbleData.top;
+            staticBubble.style.width = bubbleData.size + 'px';
+            staticBubble.style.height = bubbleData.size + 'px';
+            staticBubble.style.animationDelay = (index * 2) + 's';
+            
+            container.appendChild(staticBubble);
+        });
+    }
+
     // Auto-initialisation
     document.addEventListener('DOMContentLoaded', function() {
         // Hero section
         const heroElement = document.querySelector('.hero-section.with-bubbles');
         if (heroElement) {
             initBubbles('.hero-section.with-bubbles');
+            createStaticFrontBubbles('.hero-section.with-bubbles');
         }
 
         // Page headers
         const pageHeaderElement = document.querySelector('.page-header.with-bubbles');
         if (pageHeaderElement) {
             initBubbles('.page-header.with-bubbles');
+            createStaticFrontBubbles('.page-header.with-bubbles');
         }
     });
 </script>

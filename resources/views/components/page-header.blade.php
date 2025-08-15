@@ -3,10 +3,12 @@
 @include('fontawesome-migrator::partials.css.bubbles')
 <div class="page-header with-bubbles mb-4 shadow-sm border-0 rounded position-relative overflow-hidden">
 
-    <!-- Motifs de bulles statiques/flottantes -->
-    <div class="bubbles-pattern"></div>
+    <!-- Motifs de bulles statiques en couches pour effet de profondeur -->
+    <div class="bubbles-pattern-back"></div>  <!-- Arrière-plan z-index: -1 -->
+    <div class="bubbles-pattern"></div>       <!-- Niveau moyen z-index: 0 -->
+    <!-- Bulles premier plan créées dynamiquement via JS -->
 
-    <!-- Conteneur pour les bulles animées -->
+    <!-- Conteneur pour les bulles animées (z-index -1, 0, 1) -->
     <div class="bubbles-container"></div>
 
     <div class="page-header-content p-4 position-relative">
