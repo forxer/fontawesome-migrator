@@ -274,4 +274,134 @@
             transform: translate3d(25px, -12px, 0);
         }
     }
+
+    /* Trajectoires supplémentaires pour plus de variété */
+    
+    /* Trajectoire 4 - montée presque droite */
+    @keyframes bubbleRise4 {
+        0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.8;
+        }
+        15% {
+            transform: translateY(-15vh) translateX(3px);
+            opacity: 0.85;
+        }
+        35% {
+            transform: translateY(-35vh) translateX(-2px);
+            opacity: 0.9;
+        }
+        55% {
+            transform: translateY(-55vh) translateX(4px);
+            opacity: 0.8;
+        }
+        75% {
+            transform: translateY(-75vh) translateX(-1px);
+            opacity: 0.6;
+        }
+        90% {
+            transform: translateY(-90vh) translateX(2px);
+            opacity: 0.3;
+        }
+        100% {
+            transform: translateY(-105vh) translateX(0);
+            opacity: 0;
+        }
+    }
+
+    /* Trajectoire 5 - zigzag prononcé mais adouci */
+    @keyframes bubbleRise5 {
+        0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.8;
+        }
+        8% {
+            transform: translateY(-8vh) translateX(25px);
+            opacity: 0.82;
+        }
+        16% {
+            transform: translateY(-16vh) translateX(40px);
+            opacity: 0.88;
+        }
+        22% {
+            transform: translateY(-22vh) translateX(35px);
+            opacity: 0.9;
+        }
+        30% {
+            transform: translateY(-30vh) translateX(10px);
+            opacity: 0.88;
+        }
+        38% {
+            transform: translateY(-38vh) translateX(-20px);
+            opacity: 0.85;
+        }
+        46% {
+            transform: translateY(-46vh) translateX(-35px);
+            opacity: 0.82;
+        }
+        54% {
+            transform: translateY(-54vh) translateX(-30px);
+            opacity: 0.8;
+        }
+        62% {
+            transform: translateY(-62vh) translateX(-10px);
+            opacity: 0.75;
+        }
+        70% {
+            transform: translateY(-70vh) translateX(15px);
+            opacity: 0.7;
+        }
+        78% {
+            transform: translateY(-78vh) translateX(25px);
+            opacity: 0.6;
+        }
+        86% {
+            transform: translateY(-86vh) translateX(15px);
+            opacity: 0.4;
+        }
+        94% {
+            transform: translateY(-94vh) translateX(5px);
+            opacity: 0.2;
+        }
+        100% {
+            transform: translateY(-105vh) translateX(0);
+            opacity: 0;
+        }
+    }
+
+    /* Trajectoire 6 - spirale douce */
+    @keyframes bubbleRise6 {
+        0% {
+            transform: translateY(0) translateX(0);
+            opacity: 0.8;
+        }
+        14% {
+            transform: translateY(-14vh) translateX(20px);
+            opacity: 0.85;
+        }
+        28% {
+            transform: translateY(-28vh) translateX(10px);
+            opacity: 0.9;
+        }
+        42% {
+            transform: translateY(-42vh) translateX(-15px);
+            opacity: 0.85;
+        }
+        56% {
+            transform: translateY(-56vh) translateX(-25px);
+            opacity: 0.8;
+        }
+        70% {
+            transform: translateY(-70vh) translateX(-10px);
+            opacity: 0.65;
+        }
+        84% {
+            transform: translateY(-84vh) translateX(15px);
+            opacity: 0.4;
+        }
+        100% {
+            transform: translateY(-105vh) translateX(10px);
+            opacity: 0;
+        }
+    }
 </style>

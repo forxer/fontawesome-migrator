@@ -78,8 +78,8 @@
             const speed = Math.random() * (config.speeds[sizeCategory].max - config.speeds[sizeCategory].min) + config.speeds[sizeCategory].min;
             bubble.style.animationDuration = speed + 's';
 
-            // Trajectoire aléatoire
-            const trajectories = ['bubbleRise', 'bubbleRise2', 'bubbleRise3'];
+            // Trajectoire aléatoire parmi 6 possibilités
+            const trajectories = ['bubbleRise', 'bubbleRise2', 'bubbleRise3', 'bubbleRise4', 'bubbleRise5', 'bubbleRise6'];
             const randomTrajectory = trajectories[Math.floor(Math.random() * trajectories.length)];
             bubble.style.animationName = randomTrajectory;
 
