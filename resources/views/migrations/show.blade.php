@@ -36,7 +36,7 @@
                 <!-- Statistiques -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#statistics" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
+                        <div class="p-3 border rounded hover-bg-light">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-graph-up text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
@@ -55,7 +55,7 @@
                 <!-- Recommandations -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#recommendations-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
+                        <div class="p-3 border rounded hover-bg-light">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-lightbulb text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
@@ -74,7 +74,7 @@
                 <!-- Configuration -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#configuration-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
+                        <div class="p-3 border rounded hover-bg-light">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-gear text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
@@ -90,7 +90,7 @@
                 <!-- Environnement -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#environment-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
+                        <div class="p-3 border rounded hover-bg-light">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-server text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
@@ -109,7 +109,7 @@
                     <!-- Sauvegardes -->
                     <div class="col-md-6 col-lg-4">
                         <a href="#backups-section" class="text-decoration-none">
-                            <div class="p-3 border rounded hover-bg-light transition-all">
+                            <div class="p-3 border rounded hover-bg-light">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-hdd text-primary fs-5 me-3"></i>
                                     <div class="flex-grow-1">
@@ -126,7 +126,7 @@
                 <!-- Détails -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#details-section" class="text-decoration-none">
-                        <div class="p-3 border rounded hover-bg-light transition-all">
+                        <div class="p-3 border rounded hover-bg-light">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-code-slash text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
