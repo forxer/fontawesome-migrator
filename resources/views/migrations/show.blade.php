@@ -923,7 +923,7 @@
             textElements.forEach(el => {
                 const originalText = el.textContent;
                 const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
-                el.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+                el.innerHTML = originalText.replace(regex, '<mark class="p-0">$1</mark>');
             });
         }
 

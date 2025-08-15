@@ -135,6 +135,7 @@ class FontAwesomeMappingGenerator
         return [
             'description' => "Mappings des icônes FontAwesome {$fromVersion} vers {$toVersion}",
             'version' => $versionKey,
+            'sources' => $sources,
             'renamed_icons' => $mappings,
             'notes' => [
                 'complete_list' => "Mappings FontAwesome {$fromVersion} → {$toVersion}",
@@ -142,7 +143,6 @@ class FontAwesomeMappingGenerator
                 'compatibility' => "FA{$toVersion} maintient des alias pour la rétrocompatibilité",
                 'semantic_improvements' => 'Nomenclature améliorée pour plus de cohérence',
             ],
-            'sources' => $sources,
         ];
     }
 
