@@ -4,12 +4,14 @@
         background: linear-gradient(135deg, rgba(66, 153, 225, 0.85) 0%, rgba(102, 126, 234, 0.9) 100%);
         color: white;
         border: 1px solid rgba(66, 153, 225, 0.4);
+        position: relative;
+        overflow: hidden;
     }
 
-    .page-header-bubbles {
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90"><circle cx="20" cy="20" r="3" fill="white" opacity="0.4"/><circle cx="60" cy="60" r="2.5" fill="white" opacity="0.35"/><circle cx="35" cy="10" r="2.2" fill="white" opacity="0.32"/><circle cx="10" cy="50" r="3.2" fill="white" opacity="0.42"/><circle cx="70" cy="25" r="2" fill="white" opacity="0.3"/><circle cx="25" cy="70" r="2.8" fill="white" opacity="0.38"/></svg>');
-        pointer-events: none;
-        opacity: 0.6;
+    /* S'assurer que les bulles sont derrière le contenu */
+    .page-header .bubbles-pattern,
+    .page-header .bubbles-container {
+        z-index: 0;
     }
 
     .page-header-content {

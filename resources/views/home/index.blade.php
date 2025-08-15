@@ -5,11 +5,18 @@
 @section('head-extra')
     @include('fontawesome-migrator::partials.css.bootstrap-common')
     @include('fontawesome-migrator::partials.css.home')
+    @include('fontawesome-migrator::partials.css.bubbles')
 @endsection
 
 @section('content')
     <!-- Hero Section -->
-    <div class="hero-section mt-4">
+    <div class="hero-section with-bubbles mt-4">
+        <!-- Motifs de bulles statiques/flottantes -->
+        <div class="bubbles-pattern"></div>
+
+        <!-- Conteneur pour les bulles animées -->
+        <div class="bubbles-container"></div>
+
         <div class="hero-content">
             <div class="hero-icon"><i class="bi bi-arrow-clockwise"></i></div>
             <h1 class="hero-title">FontAwesome Migrator</h1>
@@ -267,6 +274,7 @@
 @endsection
 
 @section('scripts')
+@include('fontawesome-migrator::partials.js.bubbles')
 <script>
     // Fonction pour copier les commandes
     function copyCommand(command) {
@@ -297,46 +305,5 @@
         document.body.appendChild(alert);
         setTimeout(() => alert.remove(), 3000);
     }
-
-    // Génération dynamique de bulles
-    function createBubble() {
-        const heroSection = document.querySelector('.hero-section');
-        const bubble = document.createElement('div');
-        bubble.classList.add('bubble');
-
-        // Taille aléatoire entre 10 et 40px
-        const size = Math.random() * 30 + 10;
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-
-        // Position horizontale aléatoire
-        bubble.style.left = Math.random() * 90 + 5 + '%';
-
-        // Vitesse basée sur la taille (petites bulles = plus rapides)
-        const speed = 8 + (40 - size) / 5; // Entre 8 et 14 secondes
-        bubble.style.animationDuration = speed + 's';
-
-        // Léger mouvement horizontal pendant la montée
-        const sway = (Math.random() - 0.5) * 30;
-        bubble.style.setProperty('--sway', sway + 'px');
-
-        heroSection.appendChild(bubble);
-
-        // Supprimer la bulle après l'animation
-        setTimeout(() => {
-            bubble.remove();
-        }, speed * 1000);
-    }
-
-    // Créer des bulles périodiquement
-    document.addEventListener('DOMContentLoaded', function() {
-        // Créer quelques bulles au démarrage
-        for (let i = 0; i < 5; i++) {
-            setTimeout(createBubble, i * 800);
-        }
-
-        // Continuer à créer des bulles à un rythme modéré
-        setInterval(createBubble, 2500);
-    });
 </script>
 @endsection

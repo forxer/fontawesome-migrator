@@ -1,9 +1,13 @@
 {{-- Component Blade pour l'en-tête standardisé des pages --}}
 @include('fontawesome-migrator::partials.css.page-header')
-<div class="page-header mb-4 shadow-sm border-0 rounded position-relative">
+@include('fontawesome-migrator::partials.css.bubbles')
+<div class="page-header with-bubbles mb-4 shadow-sm border-0 rounded position-relative overflow-hidden">
 
-    <!-- Effet de bulles léger -->
-    <div class="page-header-bubbles position-absolute top-0 start-0 w-100 h-100 opacity-25"></div>
+    <!-- Motifs de bulles statiques/flottantes -->
+    <div class="bubbles-pattern"></div>
+
+    <!-- Conteneur pour les bulles animées -->
+    <div class="bubbles-container"></div>
 
     <div class="page-header-content p-4 position-relative">
         <div class="row align-items-center">
@@ -48,3 +52,6 @@
         </div>
     </div>
 </div>
+
+{{-- Script pour les bulles animées --}}
+@include('fontawesome-migrator::partials.js.bubbles')
