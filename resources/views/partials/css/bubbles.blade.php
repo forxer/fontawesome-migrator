@@ -8,6 +8,7 @@
         height: 100%;
         overflow: hidden;
         pointer-events: none;
+        z-index: 0; /* Niveau de base pour permettre z-index -1 et +1 sur les bulles */
     }
 
     /* Animation naturelle de montée avec oscillations douces */
@@ -196,6 +197,7 @@
         bottom: 0;
         pointer-events: none;
         opacity: 0.6;
+        /* Pas de z-index pour permettre aux bulles animées z-index: -1 de passer derrière */
     }
 
     /* Densité augmentée pour la hero section */
@@ -407,5 +409,20 @@
             transform: translateY(-105vh) translateX(10px);
             opacity: 0;
         }
+    }
+
+    /* Styles pour les différentes profondeurs de bulles animées */
+    .bubble.behind-static {
+        /* Bulles derrière les statiques - plus floues et discrètes */
+        filter: blur(0.5px);
+    }
+
+    .bubble.with-static {
+        /* Bulles au niveau des statiques - normales */
+    }
+
+    .bubble.front-static {
+        /* Bulles devant les statiques - plus nettes et lumineuses */
+        filter: brightness(1.1);
     }
 </style>

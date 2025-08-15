@@ -83,6 +83,25 @@
             const randomTrajectory = trajectories[Math.floor(Math.random() * trajectories.length)];
             bubble.style.animationName = randomTrajectory;
 
+            // Profondeur aléatoire pour entrelacement avec bulles statiques
+            const depthRand = Math.random();
+            if (depthRand < 0.3) {
+                // 30% des bulles passent derrière (z-index -1, plus transparentes)
+                bubble.style.zIndex = '-1';
+                bubble.style.opacity = '0.4';
+                bubble.classList.add('behind-static');
+            } else if (depthRand < 0.7) {
+                // 40% des bulles au niveau des statiques (z-index 0, opacité normale)
+                bubble.style.zIndex = '0';
+                bubble.style.opacity = '0.7';
+                bubble.classList.add('with-static');
+            } else {
+                // 30% des bulles devant (z-index 1, plus visibles)
+                bubble.style.zIndex = '1';
+                bubble.style.opacity = '0.9';
+                bubble.classList.add('front-static');
+            }
+
             bubblesContainer.appendChild(bubble);
 
             // Supprimer la bulle après l'animation
