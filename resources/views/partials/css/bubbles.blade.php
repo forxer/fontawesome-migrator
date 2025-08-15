@@ -146,43 +146,43 @@
 
     /* Animations de flottement aléatoires pour les motifs de fond */
     @keyframes floatPattern1 {
-        0%, 100% { 
+        0%, 100% {
             transform: translate3d(0, 0, 0);
         }
-        15% { 
+        15% {
             transform: translate3d(-18px, -22px, 0);
         }
-        35% { 
+        35% {
             transform: translate3d(12px, -35px, 0);
         }
-        55% { 
+        55% {
             transform: translate3d(-8px, -28px, 0);
         }
-        75% { 
+        75% {
             transform: translate3d(20px, -15px, 0);
         }
-        90% { 
+        90% {
             transform: translate3d(-5px, -18px, 0);
         }
     }
 
     @keyframes floatPattern2 {
-        0%, 100% { 
+        0%, 100% {
             transform: translate3d(0, 0, 0);
         }
-        12% { 
+        12% {
             transform: translate3d(15px, -18px, 0);
         }
-        28% { 
+        28% {
             transform: translate3d(-22px, -32px, 0);
         }
-        45% { 
+        45% {
             transform: translate3d(8px, -25px, 0);
         }
-        68% { 
+        68% {
             transform: translate3d(-12px, -40px, 0);
         }
-        85% { 
+        85% {
             transform: translate3d(25px, -12px, 0);
         }
     }
