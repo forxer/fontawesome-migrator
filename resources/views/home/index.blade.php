@@ -257,6 +257,11 @@
                                         Migration <span data-bs-toggle="tooltip" title="ID complet : {{ $migration['migration_id'] }}">{{ $migration['short_id'] }}</span>
                                         • {{ $migration['created_at']->isoFormat('DD/MM/YYYY [à] HH:mm') }}
                                         • {{ number_formatted($migration['files_modified']) }} fichier(s) • {{ number_formatted($migration['total_changes']) }} changement(s)
+                                        • @if(($migration['source'] ?? 'cli') === 'web_interface')
+                                            <span class="badge bg-info"><i class="bi bi-globe me-1"></i>Web</span>
+                                        @else
+                                            <span class="badge bg-primary"><i class="bi bi-terminal me-1"></i>CLI</span>
+                                        @endif
                                         @if($migration['dry_run'])
                                             • <span class="badge bg-warning text-dark"><i class="bi bi-eye me-1"></i>DRY-RUN</span>
                                         @else

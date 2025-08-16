@@ -100,6 +100,7 @@ class HomeController extends Controller
                     'dry_run' => $migrationMetadata['migration_options']['dry_run'] ?? false,
                     'files_modified' => $migrationMetadata['modified_files'] ?? 0,
                     'total_changes' => $migrationMetadata['total_changes'] ?? 0,
+                    'source' => $migrationMetadata['source'] ?? 'cli',
                 ];
             }
         }

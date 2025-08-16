@@ -248,7 +248,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Migration</th>
-                            <th>Type</th>
+                            <th>Origine</th>
                             <th>Mode</th>
                             <th>Âge</th>
                             <th class="text-end">Taille</th>
