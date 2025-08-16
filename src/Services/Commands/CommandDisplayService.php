@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Services\Commands;
 
+use Illuminate\Support\Facades\Config;
+
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\table;
 
@@ -46,10 +48,10 @@ class CommandDisplayService
         table(
             ['📋 Configuration', 'Value'],
             [
-                ['Scan Paths', implode(', ', config('fontawesome-migrator.scan_paths', []))],
-                ['Migrations Path', config('fontawesome-migrator.migrations_path')],
-                ['Backup Enabled', config('fontawesome-migrator.backup_files') ? '✅ Yes' : '❌ No'],
-                ['Auto-detect Version', config('fontawesome-migrator.auto_detect_version') ? '✅ Yes' : '❌ No'],
+                ['Scan Paths', implode(', ', Config::array('fontawesome-migrator.scan_paths', []))],
+                ['Migrations Path', Config::string('fontawesome-migrator.migrations_path')],
+                ['Backup Enabled', Config::boolean('fontawesome-migrator.backup_files') ? '✅ Yes' : '❌ No'],
+                ['Auto-detect Version', Config::boolean('fontawesome-migrator.auto_detect_version') ? '✅ Yes' : '❌ No'],
             ]
         );
 

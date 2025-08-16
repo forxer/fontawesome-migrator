@@ -9,6 +9,7 @@ use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Support\DirectoryHelper;
 use FontAwesome\Migrator\Support\JsonFileHelper;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 class MetadataManager implements MetadataManagerInterface
@@ -317,7 +318,7 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function cleanOldMigrations(int $daysToKeep = 30): int
     {
-        $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
+        $migrationsDir = Config::string('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
 
         if (! File::exists($migrationsDir)) {
             return 0;
@@ -353,7 +354,7 @@ class MetadataManager implements MetadataManagerInterface
      */
     public function getAvailableMigrations(): array
     {
-        $migrationsDir = config('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
+        $migrationsDir = Config::string('fontawesome-migrator.migrations_path', storage_path('app/fontawesome-migrator/migrations'));
         $migrations = [];
 
         if (! File::exists($migrationsDir)) {

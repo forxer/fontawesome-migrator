@@ -8,6 +8,7 @@ use FontAwesome\Migrator\Contracts\FileScannerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Core\MigrationProcessor;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use RuntimeException;
 
 use function Laravel\Prompts\info;
@@ -124,7 +125,7 @@ class CommandFlowService
     private function scanFiles(): array
     {
         // Récupérer les chemins configurés
-        $paths = config('fontawesome-migrator.scan_paths', []);
+        $paths = Config::array('fontawesome-migrator.scan_paths', []);
 
         if (empty($paths)) {
             throw new RuntimeException('Aucun chemin configuré pour le scan. Vérifiez votre configuration fontawesome-migrator.scan_paths');

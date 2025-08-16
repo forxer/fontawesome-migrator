@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services\Commands;
 
 use FontAwesome\Migrator\Services\Core\VersionConfigurationService;
+use Illuminate\Support\Facades\Config;
 use RuntimeException;
 
 use function Laravel\Prompts\confirm;
@@ -193,7 +194,7 @@ class InteractivePromptService
         // Sinon on demande
         $migrationOptions['create_backups'] = confirm(
             label: 'Voulez-vous créer des sauvegardes avant modification ?',
-            default: config('fontawesome-migrator.backup_files', true),
+            default: Config::boolean('fontawesome-migrator.backup_files', true),
             yes: '💾 Oui, sauvegarder',
             no: '⚡ Non, modifier directement',
             hint: 'Recommandé pour pouvoir revenir en arrière si nécessaire'

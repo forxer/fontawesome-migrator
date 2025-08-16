@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Http\Controllers\Cleanup;
 
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Config;
 
 class IndexController extends Controller
 {
@@ -18,8 +19,8 @@ class IndexController extends Controller
         $migrations = collect($metadataManager->getAvailableMigrations());
 
         // Récupérer les valeurs de configuration
-        $oldDaysThreshold = config('fontawesome-migrator.cleanup.old_migrations_days', 10);
-        $testDaysThreshold = config('fontawesome-migrator.cleanup.test_migrations_days', 7);
+        $oldDaysThreshold = Config::integer('fontawesome-migrator.cleanup.old_migrations_days', 10);
+        $testDaysThreshold = Config::integer('fontawesome-migrator.cleanup.test_migrations_days', 7);
 
         // Calculer les statistiques de nettoyage
         $now = now();

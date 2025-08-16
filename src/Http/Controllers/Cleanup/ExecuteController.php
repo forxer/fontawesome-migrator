@@ -7,6 +7,7 @@ namespace FontAwesome\Migrator\Http\Controllers\Cleanup;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 class ExecuteController extends Controller
@@ -21,7 +22,7 @@ class ExecuteController extends Controller
 
         switch ($action) {
             case 'cleanup_old_migrations':
-                $days = (int) $request->input('days', config('fontawesome-migrator.cleanup.old_migrations_days', 10));
+                $days = (int) $request->input('days', Config::integer('fontawesome-migrator.cleanup.old_migrations_days', 10));
                 $deleted = $metadataManager->cleanOldMigrations($days);
                 $results = [
                     'message' => \sprintf('Nettoyage terminé : %d migrations supprimées (plus de %s jours)', $deleted, $days),
@@ -31,7 +32,7 @@ class ExecuteController extends Controller
                 break;
 
             case 'cleanup_test_migrations':
-                $days = (int) $request->input('days', config('fontawesome-migrator.cleanup.test_migrations_days', 7));
+                $days = (int) $request->input('days', Config::integer('fontawesome-migrator.cleanup.test_migrations_days', 7));
                 // Nettoyer spécifiquement les migrations de test/web interface
                 $migrations = $metadataManager->getAvailableMigrations();
                 $deleted = 0;
@@ -75,8 +76,8 @@ class ExecuteController extends Controller
 
             case 'cleanup_all':
                 // Nettoyage complet : toutes les migrations anciennes
-                $oldDaysThreshold = (int) config('fontawesome-migrator.cleanup.old_migrations_days', 10);
-                $testDaysThreshold = (int) config('fontawesome-migrator.cleanup.test_migrations_days', 7);
+                $oldDaysThreshold = Config::integer('fontawesome-migrator.cleanup.old_migrations_days', 10);
+                $testDaysThreshold = Config::integer('fontawesome-migrator.cleanup.test_migrations_days', 7);
 
                 $deletedOld = $metadataManager->cleanOldMigrations($oldDaysThreshold);
 

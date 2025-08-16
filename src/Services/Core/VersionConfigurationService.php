@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FontAwesome\Migrator\Services\Core;
 
 use FontAwesome\Migrator\Contracts\FileScannerInterface;
+use Illuminate\Support\Facades\Config;
 use RuntimeException;
 
 class VersionConfigurationService
@@ -22,7 +23,7 @@ class VersionConfigurationService
      */
     public function detectCurrentVersion(): ?string
     {
-        $scanPaths = config('fontawesome-migrator.scan_paths', []);
+        $scanPaths = Config::array('fontawesome-migrator.scan_paths', []);
 
         if (empty($scanPaths)) {
             return null;

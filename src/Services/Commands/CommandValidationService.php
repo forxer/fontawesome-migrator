@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Services\Commands;
 
 use FontAwesome\Migrator\Services\Core\VersionConfigurationService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use RuntimeException;
 
 use function Laravel\Prompts\info;
@@ -84,7 +85,7 @@ class CommandValidationService
         } elseif ($migrationOptions['backup']) {
             $migrationOptions['create_backups'] = true;
         } else {
-            $migrationOptions['create_backups'] = config('fontawesome-migrator.backup_files', true);
+            $migrationOptions['create_backups'] = Config::boolean('fontawesome-migrator.backup_files', true);
         }
 
         $status = $migrationOptions['create_backups'] ? 'activées' : 'désactivées';
