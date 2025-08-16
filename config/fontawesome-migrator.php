@@ -145,4 +145,18 @@ return [
 
     'verbose' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Configuration du nettoyage
+    |--------------------------------------------------------------------------
+    |
+    | Valeurs par défaut pour le nettoyage automatique des migrations
+    |
+    */
+
+    'cleanup' => [
+        'old_migrations_days' => 10,  // Migrations anciennes (défaut: 10 jours)
+        'test_migrations_days' => 7,   // Migrations de test (défaut: 7 jours)
+    ],
+
 ];

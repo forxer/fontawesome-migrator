@@ -21,7 +21,7 @@ class ExecuteController extends Controller
 
         switch ($action) {
             case 'cleanup_old_migrations':
-                $days = $request->input('days', 30);
+                $days = (int) $request->input('days', config('fontawesome-migrator.cleanup.old_migrations_days', 10));
                 $deleted = $metadataManager->cleanOldMigrations($days);
                 $results = [
                     'message' => \sprintf('Nettoyage terminé : %d migrations supprimées (plus de %s jours)', $deleted, $days),
@@ -31,13 +31,16 @@ class ExecuteController extends Controller
                 break;
 
             case 'cleanup_test_migrations':
-                $days = $request->input('days', 7);
+                $days = (int) $request->input('days', config('fontawesome-migrator.cleanup.test_migrations_days', 7));
                 // Nettoyer spécifiquement les migrations de test/web interface
                 $migrations = $metadataManager->getAvailableMigrations();
                 $deleted = 0;
 
                 foreach ($migrations as $migration) {
-                    $age = now()->diffInDays($migration['created_at']);
+                    $createdAt = \is_string($migration['created_at'])
+                        ? \Carbon\Carbon::parse($migration['created_at'])
+                        : $migration['created_at'];
+                    $age = abs(now()->diffInDays($createdAt, false));
                     $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
 
                     if ($age > $days && $isTestMigration && File::deleteDirectory($migration['directory'])) {
@@ -72,17 +75,23 @@ class ExecuteController extends Controller
 
             case 'cleanup_all':
                 // Nettoyage complet : toutes les migrations anciennes
-                $deletedOld = $metadataManager->cleanOldMigrations(30);
+                $oldDaysThreshold = (int) config('fontawesome-migrator.cleanup.old_migrations_days', 10);
+                $testDaysThreshold = (int) config('fontawesome-migrator.cleanup.test_migrations_days', 7);
 
-                // Plus nettoyer les migrations de test > 7 jours
+                $deletedOld = $metadataManager->cleanOldMigrations($oldDaysThreshold);
+
+                // Plus nettoyer les migrations de test
                 $migrations = $metadataManager->getAvailableMigrations();
                 $deletedTests = 0;
 
                 foreach ($migrations as $migration) {
-                    $age = now()->diffInDays($migration['created_at']);
+                    $createdAt = \is_string($migration['created_at'])
+                        ? \Carbon\Carbon::parse($migration['created_at'])
+                        : $migration['created_at'];
+                    $age = abs(now()->diffInDays($createdAt, false));
                     $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
 
-                    if ($age > 7 && $isTestMigration && File::deleteDirectory($migration['directory'])) {
+                    if ($age > $testDaysThreshold && $isTestMigration && File::deleteDirectory($migration['directory'])) {
                         $deletedTests++;
                     }
                 }

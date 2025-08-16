@@ -23,16 +23,16 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-body-secondary">Migrations anciennes (30+ jours)</span>
-                        <span class="fw-bold fs-5 {{ $old30Days > 0 ? 'text-warning' : 'text-success' }}">
-                            {{ $old30Days }}
+                        <span class="text-body-secondary">Migrations anciennes ({{ $oldDaysThreshold }}+ jours)</span>
+                        <span class="fw-bold fs-5 {{ $oldMigrationsCount > 0 ? 'text-warning' : 'text-success' }}">
+                            {{ $oldMigrationsCount }}
                         </span>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-body-secondary">Migrations de test (7+ jours)</span>
-                        <span class="fw-bold fs-5 {{ $old7Days > 0 ? 'text-warning' : 'text-success' }}">
-                            {{ $old7Days }}
+                        <span class="text-body-secondary">Migrations de test ({{ $testDaysThreshold }}+ jours)</span>
+                        <span class="fw-bold fs-5 {{ $oldTestMigrationsCount > 0 ? 'text-warning' : 'text-success' }}">
+                            {{ $oldTestMigrationsCount }}
                         </span>
                     </div>
 
@@ -53,21 +53,21 @@
                 <div class="card-body">
                     <h5 class="card-title text-primary"><i class="bi bi-lightbulb"></i> Actions recommandées</h5>
 
-                    @if ($old30Days > 0)
+                    @if ($oldMigrationsCount > 0)
                     <div class="d-flex align-items-center mb-2 text-primary">
                         <i class="bi bi-info-circle me-2"></i>
-                        <span>{{ $old30Days }} migrations anciennes peuvent être supprimées</span>
+                        <span>{{ $oldMigrationsCount }} migrations anciennes peuvent être supprimées</span>
                     </div>
                     @endif
 
-                    @if ($old7Days > 0)
+                    @if ($oldTestMigrationsCount > 0)
                     <div class="d-flex align-items-center mb-2 text-primary">
                         <i class="bi bi-info-circle me-2"></i>
-                        <span>{{ $old7Days }} migrations de test peuvent être nettoyées</span>
+                        <span>{{ $oldTestMigrationsCount }} migrations de test peuvent être nettoyées</span>
                     </div>
                     @endif
 
-                    @if ($old30Days == 0 && $old7Days == 0)
+                    @if ($oldMigrationsCount == 0 && $oldTestMigrationsCount == 0)
                     <div class="d-flex align-items-center mb-2 text-success">
                         <i class="bi bi-check-circle me-2"></i>
                         <span>Aucun nettoyage nécessaire pour le moment</span>
@@ -95,23 +95,23 @@
                     </div>
 
                     <p class="card-text text-body-secondary small mb-3">
-                        Supprimer les migrations de plus de 30 jours (recommandé pour libérer de l'espace).
+                        Supprimer les migrations de plus de {{ $oldDaysThreshold }} jours (recommandé pour libérer de l'espace).
                     </p>
 
                     <form class="cleanup-form" data-action="cleanup_old_migrations">
                         <div class="mb-3">
                             <label class="form-label small">Âge minimum (jours)</label>
-                            <input type="number" name="days" value="30" min="1" max="365" class="form-control form-control-sm">
+                            <input type="number" name="days" value="{{ $oldDaysThreshold }}" min="0" max="365" class="form-control form-control-sm">
                         </div>
 
                         <button type="submit"
                                 class="btn btn-warning btn-sm w-100"
-                                {{ $old30Days == 0 ? 'disabled' : '' }}
+                                {{ $oldMigrationsCount == 0 ? 'disabled' : '' }}
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
-                                title="Supprimer les migrations de plus de 30 jours pour libérer de l'espace">
+                                title="Supprimer les migrations de plus de {{ $oldDaysThreshold }} jours pour libérer de l'espace">
                             <i class="bi bi-trash me-1"></i>
-                            Nettoyer ({{ $old30Days }} migrations)
+                            Nettoyer ({{ $oldMigrationsCount }} migrations)
                         </button>
                     </form>
                 </div>
@@ -128,23 +128,23 @@
                     </div>
 
                     <p class="card-text text-body-secondary small mb-3">
-                        Supprimer les migrations créées via l'interface web de plus de 7 jours.
+                        Supprimer les migrations créées via l'interface web de plus de {{ $testDaysThreshold }} jours.
                     </p>
 
                     <form class="cleanup-form" data-action="cleanup_test_migrations">
                         <div class="mb-3">
                             <label class="form-label small">Âge minimum (jours)</label>
-                            <input type="number" name="days" value="7" min="1" max="30" class="form-control form-control-sm">
+                            <input type="number" name="days" value="{{ $testDaysThreshold }}" min="0" max="30" class="form-control form-control-sm">
                         </div>
 
                         <button type="submit"
                                 class="btn btn-info btn-sm w-100"
-                                {{ $old7Days == 0 ? 'disabled' : '' }}
+                                {{ $oldTestMigrationsCount == 0 ? 'disabled' : '' }}
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
                                 title="Nettoyer les migrations de test créées via l'interface web">
                             <i class="bi bi-flask me-1"></i>
-                            Nettoyer tests ({{ $old7Days }} migrations)
+                            Nettoyer tests ({{ $oldTestMigrationsCount }} migrations)
                         </button>
                     </form>
                 </div>
@@ -161,7 +161,7 @@
                     </div>
 
                     <p class="card-text text-body-secondary small mb-3">
-                        Effectuer un nettoyage automatique : anciennes (30j+) + tests (7j+).
+                        Effectuer un nettoyage automatique : anciennes ({{ $oldDaysThreshold }}j+) + tests ({{ $testDaysThreshold }}j+).
                     </p>
 
                     <form class="cleanup-form" data-action="cleanup_all">
@@ -174,12 +174,12 @@
 
                         <button type="submit"
                                 class="btn btn-danger btn-sm w-100"
-                                {{ $old30Days + $old7Days == 0 ? 'disabled' : '' }}
+                                {{ $oldMigrationsCount + $oldTestMigrationsCount == 0 ? 'disabled' : '' }}
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
                                 title="Supprimer rapidement toutes les anciennes migrations et migrations de test">
                             <i class="bi bi-lightning me-1"></i>
-                            Nettoyage complet ({{ $old30Days + $old7Days }} migrations)
+                            Nettoyage complet ({{ $oldMigrationsCount + $oldTestMigrationsCount }} migrations)
                         </button>
                     </form>
                 </div>
@@ -319,6 +319,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('.cleanup-form');
     const messagesContainer = document.getElementById('cleanup-messages');
 
+    // Mise à jour dynamique des textes selon les inputs
+    updateDynamicTexts();
+
+    // Ajouter les événements pour mettre à jour les textes dynamiquement
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', updateDynamicTexts);
+        input.addEventListener('change', updateDynamicTexts);
+    });
+
     forms.forEach(form => {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -443,6 +452,96 @@ document.addEventListener('DOMContentLoaded', function() {
                 messagesContainer.style.display = 'none';
             }
         }, 5000);
+    }
+
+    // Fonction pour mettre à jour les textes dynamiques selon les valeurs des inputs
+    async function updateDynamicTexts() {
+        // Mettre à jour le texte du bouton "migrations anciennes"
+        const oldMigrationsInput = document.querySelector('form[data-action="cleanup_old_migrations"] input[name="days"]');
+        const oldMigrationsButton = document.querySelector('form[data-action="cleanup_old_migrations"] button[type="submit"]');
+        if (oldMigrationsInput && oldMigrationsButton) {
+            const days = parseInt(oldMigrationsInput.value);
+            const originalDays = {{ $oldDaysThreshold }};
+            const originalCount = {{ $oldMigrationsCount }};
+
+            if (days !== originalDays) {
+                // Faire appel AJAX pour récupérer le vrai nombre
+                try {
+                    const response = await fetch(`{{ route('fontawesome-migrator.cleanup.count-migrations', ['days' => '__DAYS__']) }}`.replace('__DAYS__', days));
+                    const data = await response.json();
+                    const count = data.old_migrations;
+
+                    oldMigrationsButton.removeAttribute('disabled');
+                    oldMigrationsButton.innerHTML = `<i class="bi bi-trash me-1"></i>Nettoyer (${count} migrations)`;
+
+                    if (count === 0) {
+                        oldMigrationsButton.setAttribute('disabled', 'disabled');
+                    }
+                } catch (error) {
+                    // Fallback en cas d'erreur
+                    oldMigrationsButton.removeAttribute('disabled');
+                    oldMigrationsButton.innerHTML = `<i class="bi bi-trash me-1"></i>Nettoyer (${days} jours)`;
+                }
+            } else {
+                // Remettre l'état original
+                if (originalCount == 0) {
+                    oldMigrationsButton.setAttribute('disabled', 'disabled');
+                }
+                oldMigrationsButton.innerHTML = `<i class="bi bi-trash me-1"></i>Nettoyer (${originalCount} migrations)`;
+            }
+            oldMigrationsButton.setAttribute('title', `Supprimer les migrations de plus de ${days} jours pour libérer de l'espace`);
+        }
+
+        // Mettre à jour le texte du bouton "migrations de test"
+        const testMigrationsInput = document.querySelector('form[data-action="cleanup_test_migrations"] input[name="days"]');
+        const testMigrationsButton = document.querySelector('form[data-action="cleanup_test_migrations"] button[type="submit"]');
+        if (testMigrationsInput && testMigrationsButton) {
+            const days = parseInt(testMigrationsInput.value);
+            const originalDays = {{ $testDaysThreshold }};
+            const originalCount = {{ $oldTestMigrationsCount }};
+
+            if (days !== originalDays) {
+                // Faire appel AJAX pour récupérer le vrai nombre
+                try {
+                    const response = await fetch(`{{ route('fontawesome-migrator.cleanup.count-migrations', ['days' => '__DAYS__']) }}`.replace('__DAYS__', days));
+                    const data = await response.json();
+                    const count = data.test_migrations;
+
+                    testMigrationsButton.removeAttribute('disabled');
+                    testMigrationsButton.innerHTML = `<i class="bi bi-flask me-1"></i>Nettoyer tests (${count} migrations)`;
+
+                    if (count === 0) {
+                        testMigrationsButton.setAttribute('disabled', 'disabled');
+                    }
+                } catch (error) {
+                    // Fallback en cas d'erreur
+                    testMigrationsButton.removeAttribute('disabled');
+                    testMigrationsButton.innerHTML = `<i class="bi bi-flask me-1"></i>Nettoyer tests (${days} jours)`;
+                }
+            } else {
+                // Remettre l'état original
+                if (originalCount == 0) {
+                    testMigrationsButton.setAttribute('disabled', 'disabled');
+                }
+                testMigrationsButton.innerHTML = `<i class="bi bi-flask me-1"></i>Nettoyer tests (${originalCount} migrations)`;
+            }
+            testMigrationsButton.setAttribute('title', `Nettoyer les migrations de test créées via l'interface web de plus de ${days} jours`);
+        }
+
+        // Mettre à jour les descriptions des cartes (chercher dans l'élément parent direct)
+        const oldMigrationsCard = document.querySelector('form[data-action="cleanup_old_migrations"]').closest('.card-body');
+        const oldMigrationsDescription = oldMigrationsCard ? oldMigrationsCard.querySelector('.card-text') : null;
+        if (oldMigrationsDescription && oldMigrationsInput) {
+            const days = oldMigrationsInput.value;
+            oldMigrationsDescription.textContent = `Supprimer les migrations de plus de ${days} jours.`;
+        }
+
+        const testMigrationsCard = document.querySelector('form[data-action="cleanup_test_migrations"]').closest('.card-body');
+        const testMigrationsDescription = testMigrationsCard ? testMigrationsCard.querySelector('.card-text') : null;
+        if (testMigrationsDescription && testMigrationsInput) {
+            const days = testMigrationsInput.value;
+            testMigrationsDescription.textContent = `Supprimer les migrations créées via l'interface web de plus de ${days} jours.`;
+        }
     }
 });
 </script>

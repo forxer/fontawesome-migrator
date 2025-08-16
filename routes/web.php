@@ -41,4 +41,5 @@ Route::prefix('tests')->name('tests.')->group(function () {
 Route::prefix('cleanup')->name('cleanup.')->group(function () {
     Route::get('/', CleanupIndexController::class)->name('index');
     Route::post('/execute', CleanupExecuteController::class)->name('execute');
+    Route::get('/count-migrations/{days}', [CleanupIndexController::class, 'countMigrations'])->name('count-migrations');
 });
