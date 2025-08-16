@@ -290,32 +290,7 @@
 <script>
     // Fonction pour copier les commandes
     function copyCommand(command) {
-        navigator.clipboard.writeText(command).then(() => {
-            showAlert(`Commande copiée : ${command}`, 'success');
-        }).catch(() => {
-            // Fallback pour les anciens navigateurs
-            const textArea = document.createElement('textarea');
-            textArea.value = command;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            showAlert(`Commande copiée : ${command}`, 'success');
-        });
-    }
-
-    // Fonction pour afficher les alertes
-    function showAlert(message, type = 'success') {
-        const existing = document.querySelector('.temp-alert');
-        if (existing) existing.remove();
-
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type} temp-alert`;
-        alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-        alert.textContent = message;
-
-        document.body.appendChild(alert);
-        setTimeout(() => alert.remove(), 3000);
+        copyToClipboard(command);
     }
 </script>
 @endsection

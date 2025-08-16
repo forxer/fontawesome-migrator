@@ -215,16 +215,7 @@ function formatFileSize(bytes, decimals = 2) {
 }
 
 function showAlert(message, type = 'success') {
-    const existing = document.querySelector('.temp-alert');
-    if (existing) existing.remove();
-
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type} temp-alert`;
-    alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    alert.textContent = message;
-
-    document.body.appendChild(alert);
-    setTimeout(() => alert.remove(), 4000);
+    showTempAlert(message, type);
 }
 
 function refreshPage() {
@@ -392,19 +383,7 @@ function generateCommand() {
 function copyCommand() {
     const commandText = document.getElementById('commandText');
     const text = commandText.textContent;
-
-    navigator.clipboard.writeText(text).then(() => {
-        showAlert('Commande copiée dans le presse-papier');
-    }).catch(() => {
-        // Fallback pour les anciens navigateurs
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showAlert('Commande copiée dans le presse-papier');
-    });
+    copyToClipboard(text, 'Commande copiée dans le presse-papier');
 }
 
 // Exécuter la migration multi-versions

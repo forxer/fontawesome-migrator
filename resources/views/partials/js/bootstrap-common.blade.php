@@ -35,6 +35,37 @@
         }, 5000);
     };
     
+    // Fonction utilitaire pour afficher des alertes temporaires (position fixe)
+    window.showTempAlert = function(message, type = 'success') {
+        const existing = document.querySelector('.temp-alert');
+        if (existing) existing.remove();
+
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} temp-alert`;
+        alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alert.textContent = message;
+
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 4000);
+    };
+    
+    // Fonction utilitaire pour copier du texte dans le presse-papier
+    window.copyToClipboard = function(text, successMessage = null) {
+        navigator.clipboard.writeText(text).then(() => {
+            const message = successMessage || `Commande copiée : ${text}`;
+            window.showTempAlert(message, 'success');
+        }).catch(() => {
+            // Fallback pour les anciens navigateurs
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            const message = successMessage || `Commande copiée : ${text}`;
+            window.showTempAlert(message, 'success');
+        });
+    };
     
     // ========================================
     // Bouton retour en haut

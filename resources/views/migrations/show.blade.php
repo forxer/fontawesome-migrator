@@ -865,7 +865,14 @@
             navigator.clipboard.writeText(command).then(() => {
                 showNotification(`Commande copiée : ${command}`, 'success');
             }).catch(() => {
-                showNotification('Erreur lors de la copie', 'error');
+                // Fallback pour les anciens navigateurs
+                const textArea = document.createElement('textarea');
+                textArea.value = command;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification(`Commande copiée : ${command}`, 'success');
             });
         }
 
