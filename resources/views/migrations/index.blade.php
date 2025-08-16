@@ -35,7 +35,7 @@
                         <div class="card-body">
                             <i class="bi bi-folder fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ count($reports) }}</div>
-                            <div class="text-muted small">Migrations</div>
+                            <div class="text-body-secondary small">Migrations</div>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <div class="card-body">
                             <i class="bi bi-files fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ $stats['total_backups'] }}</div>
-                            <div class="text-muted small">Fichiers sauvegardés</div>
+                            <div class="text-body-secondary small">Fichiers sauvegardés</div>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <div class="card-body">
                             <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size($stats['total_size'], 2) }}</div>
-                            <div class="text-muted small">Taille totale</div>
+                            <div class="text-body-secondary small">Taille totale</div>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                                     -
                                 @endif
                             </div>
-                            <div class="text-muted small">Dernière migration</div>
+                            <div class="text-body-secondary small">Dernière migration</div>
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                                 <div class="col-6">
                                     <div class="border rounded p-3">
                                         <div class="fw-semibold">{{ number_formatted($report['statistics']['total_files']) }}</div>
-                                        <div class="text-muted small"><i class="bi bi-file-code"></i> Fichier(s) analisé(s)</div>
+                                        <div class="text-body-secondary small"><i class="bi bi-file-code"></i> Fichier(s) analisé(s)</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -111,7 +111,7 @@
                                                 -
                                             @endif
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-file-text"></i> Changement(s)</div>
+                                        <div class="text-body-secondary small"><i class="bi bi-file-text"></i> Changement(s)</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -123,7 +123,7 @@
                                                 <i class="bi bi-terminal text-secondary"></i> CLI
                                             @endif
                                         </div>
-                                        <div class="text-muted small"><i class="bi bi-arrow-right"></i> Origine</div>
+                                        <div class="text-body-secondary small"><i class="bi bi-arrow-right"></i> Origine</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -143,7 +143,7 @@
                                                 {{ $report['short_id'] }}
                                             @endif
                                         </div>
-                                        <div class="text-muted small">
+                                        <div class="text-body-secondary small">
                                             <i class="bi bi-arrow-repeat"></i>
                                             @if($sourceVersion || $targetVersion)
                                                 Versions
@@ -180,10 +180,10 @@
         <div class="card mb-3">
             <div class="card-body text-center py-5">
                 <div class="mb-4">
-                    <i class="bi bi-file-text display-1 text-muted"></i>
+                    <i class="bi bi-file-text display-1 text-body-secondary"></i>
                 </div>
                 <h3 class="mb-3">Aucune migration disponible</h3>
-                <p class="text-muted mb-4">
+                <p class="text-body-secondary mb-4">
                     Les migrations sont automatiquement enregistrées avec leurs résultats.<br>
                     Exécutez une migration pour voir l'historique des changements FontAwesome.
                 </p>
@@ -192,7 +192,7 @@
                         php artisan fontawesome:migrate --dry-run
                     </code>
                 </div>
-                <div class="text-muted">
+                <div class="text-body-secondary">
                     <i class="bi bi-info-circle me-1"></i> Ajouter <code class="bg-light px-2 py-1 rounded">--dry-run</code> permet de prévisualiser sans modifier les fichiers
                 </div>
             </div>
@@ -305,17 +305,17 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <h6 class="text-muted">Identifiant</h6>
+                                        <h6 class="text-body-secondary">Identifiant</h6>
                                         <p class="font-monospace">${data.migration_id}</p>
                                     </div>
 
                                     <div class="mb-3">
-                                        <h6 class="text-muted">Répertoire</h6>
+                                        <h6 class="text-body-secondary">Répertoire</h6>
                                         <p class="font-monospace small">${data.migration_dir}</p>
                                     </div>
 
                                     <div class="mb-3">
-                                        <h6 class="text-muted">Fichiers de sauvegarde (${data.files_count})</h6>
+                                        <h6 class="text-body-secondary">Fichiers de sauvegarde (${data.files_count})</h6>
                                         ${data.backup_files && data.backup_files.length > 0 ? `
                                             <div class="list-group">
                                                 ${data.backup_files.map(file => `
@@ -327,11 +327,11 @@
                                                     </div>
                                                 `).join('')}
                                             </div>
-                                        ` : '<p class="text-muted">Aucun fichier de sauvegarde</p>'}
+                                        ` : '<p class="text-body-secondary">Aucun fichier de sauvegarde</p>'}
                                     </div>
 
                                     <div class="mb-3">
-                                        <h6 class="text-muted">Métadonnées</h6>
+                                        <h6 class="text-body-secondary">Métadonnées</h6>
                                         <pre class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
 ${JSON.stringify(data.metadata, null, 2)}
                                         </pre>

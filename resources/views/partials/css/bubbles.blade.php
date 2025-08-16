@@ -437,18 +437,22 @@
 
     /* Styles pour les différentes profondeurs de bulles animées */
     .bubble.behind-static {
-        /* Bulles derrière les statiques - floues et discrètes (lointaines) */
-        filter: blur(1.2px);
+        /* Bulles derrière les statiques - très floues et discrètes (très lointaines) */
+        filter: blur(2px) brightness(0.8);
+        transform-origin: center center;
     }
 
     .bubble.with-static {
         /* Bulles au niveau des statiques - légèrement floues */
-        filter: blur(0.3px);
+        filter: blur(0.8px) brightness(0.95);
+        transform-origin: center center;
     }
 
     .bubble.front-static {
-        /* Bulles devant les statiques - nettes et lumineuses (proches) */
-        filter: brightness(1.15) blur(0px);
+        /* Bulles devant les statiques - très nettes, lumineuses et contrastées (très proches) */
+        filter: brightness(1.3) contrast(1.1) blur(0px);
+        transform-origin: center center;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
     }
 
     /* Patterns pour layer arrière (z-index -1) */

@@ -73,24 +73,24 @@
             if (depthRand < 0.3) {
                 // 30% des bulles passent derrière (z-index -1)
                 bubble.style.zIndex = '-1';
-                bubble.style.opacity = '0.4';
+                bubble.style.opacity = '0.25'; // Beaucoup plus discrètes
                 bubble.classList.add('behind-static');
-                depthMultiplier = 0.75; // 25% plus petites (lointaines)
-                speedMultiplier = 1.2;  // 20% plus lentes (parallaxe)
+                depthMultiplier = 0.6;  // 40% plus petites (très lointaines)
+                speedMultiplier = 1.5;  // 50% plus lentes (effet parallaxe fort)
             } else if (depthRand < 0.7) {
                 // 40% des bulles au niveau des statiques (z-index 0)
                 bubble.style.zIndex = '0';
-                bubble.style.opacity = '0.7';
+                bubble.style.opacity = '0.65';
                 bubble.classList.add('with-static');
-                depthMultiplier = 1.0;  // Taille normale
-                speedMultiplier = 1.0;  // Vitesse normale
+                depthMultiplier = 0.9;  // Légèrement plus petites
+                speedMultiplier = 1.1;  // Légèrement plus lentes
             } else {
                 // 30% des bulles devant (z-index 1)
                 bubble.style.zIndex = '1';
-                bubble.style.opacity = '0.9';
+                bubble.style.opacity = '1.0'; // Très visibles
                 bubble.classList.add('front-static');
-                depthMultiplier = 1.2;  // 20% plus grandes (proches)
-                speedMultiplier = 0.85; // 15% plus rapides (proche = mouvement visible)
+                depthMultiplier = 1.4;  // 40% plus grandes (très proches)
+                speedMultiplier = 0.7;  // 30% plus rapides (mouvement évident)
             }
 
             // Taille ajustée selon la profondeur

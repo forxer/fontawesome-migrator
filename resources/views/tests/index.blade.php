@@ -35,7 +35,7 @@
                         <div class="card-body">
                             <i class="bi bi-folder fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ $backupStats['total_migrations'] }}</div>
-                            <div class="text-muted small">Migrations</div>
+                            <div class="text-body-secondary small">Migrations</div>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <div class="card-body">
                             <i class="bi bi-files fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ $backupStats['total_backups'] }}</div>
-                            <div class="text-muted small">Fichiers</div>
+                            <div class="text-body-secondary small">Fichiers</div>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <div class="card-body">
                             <i class="bi bi-hdd fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ human_readable_bytes_size($backupStats['total_size'], 2) }}</div>
-                            <div class="text-muted small">Taille totale</div>
+                            <div class="text-body-secondary small">Taille totale</div>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                                     -
                                 @endif
                             </div>
-                            <div class="text-muted small">Dernière migration</div>
+                            <div class="text-body-secondary small">Dernière migration</div>
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
 
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div id="migrationInfo" class="text-muted">
+                        <div id="migrationInfo" class="text-body-secondary">
                             <i class="bi bi-info-circle"></i> Sélectionnez les versions pour voir les détails de migration
                         </div>
                         <div>
@@ -410,7 +410,7 @@ async function runMultiVersionMigration() {
     startBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Migration en cours...';
     output.style.display = 'block';
     result.innerHTML = `<i class="bi bi-rocket"></i> Lancement de la migration ${fromVersion || 'auto'}→${toVersion || 'auto'}...\n`;
-    
+
     // Masquer le bouton de rapport précédent
     const reportBtn = document.getElementById('migration-report-btn');
     reportBtn.style.display = 'none';
@@ -452,14 +452,14 @@ ${data.command}
             // Afficher le bouton du rapport si on a un migration_id
             const reportBtn = document.getElementById('migration-report-btn');
             const reportLink = document.getElementById('view-report-link');
-            
+
             if (data.migration_id) {
                 reportLink.href = `/fontawesome-migrator/migrations/${data.migration_id}`;
                 reportBtn.style.display = 'block';
             }
 
             showAlert('Migration terminée avec succès');
-            
+
             // Réinitialiser le formulaire après succès
             setTimeout(() => {
                 resetMigrationForm();
@@ -495,20 +495,20 @@ function resetMigrationForm() {
     const dryRun = document.getElementById('dryRun');
     const migrationInfo = document.getElementById('migrationInfo');
     const commandOutput = document.getElementById('commandOutput');
-    
+
     // Réinitialiser les sélecteurs
     fromVersionSelect.value = '';
     toVersionSelect.innerHTML = '<option value="">Sélectionnez d\'abord la version source</option>';
     toVersionSelect.disabled = true;
     migrationMode.value = 'complete';
     dryRun.checked = true;
-    
+
     // Réinitialiser les informations
     migrationInfo.innerHTML = '<i class="bi bi-info-circle"></i> Sélectionnez les versions pour voir les détails de migration';
-    
+
     // Masquer la sortie de commande
     commandOutput.style.display = 'none';
-    
+
     // Remettre à jour l'état des boutons
     updateButtonStates();
 }

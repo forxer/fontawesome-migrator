@@ -23,7 +23,7 @@
                     <i class="bi bi-compass text-primary me-2"></i>
                     Navigation rapide
                 </h2>
-                <small class="text-muted">{{ collect([
+                <small class="text-body-secondary">{{ collect([
                     ['#statistics', 'Statistiques'],
                     $stats['total_changes'] > 0 ? ['#recommendations-section', 'Recommandations'] : null,
                     ['#configuration-section', 'Configuration'],
@@ -41,7 +41,7 @@
                                 <i class="bi bi-graph-up text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold">Statistiques</div>
-                                    <small class="text-muted">{{ number_formatted($stats['total_files']) }} fichiers</small>
+                                    <small class="text-body-secondary">{{ number_formatted($stats['total_files']) }} fichiers</small>
                                 </div>
                                 @if ($stats['total_changes'] > 0)
                                     <span class="badge bg-success">{{ number_formatted($stats['total_changes']) }}</span>
@@ -60,7 +60,7 @@
                                 <i class="bi bi-lightbulb text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold">Recommandations</div>
-                                    <small class="text-muted">Actions suggérées</small>
+                                    <small class="text-body-secondary">Actions suggérées</small>
                                 </div>
                                 @if (($stats['warnings'] ?? 0) > 0)
                                     <span class="badge bg-warning">{{ $stats['warnings'] }}</span>
@@ -79,7 +79,7 @@
                                 <i class="bi bi-gear text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold">Configuration</div>
-                                    <small class="text-muted">Paramètres utilisés</small>
+                                    <small class="text-body-secondary">Paramètres utilisés</small>
                                 </div>
                                 <span class="badge bg-secondary">{{ ucfirst($configuration['license_type'] ?? 'free') }}</span>
                             </div>
@@ -95,7 +95,7 @@
                                 <i class="bi bi-server text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold">Environnement</div>
-                                    <small class="text-muted">Contexte d'exécution</small>
+                                    <small class="text-body-secondary">Contexte d'exécution</small>
                                 </div>
                                 <span class="badge {{ $migrationSource === 'web_interface' ? 'bg-info' : 'bg-primary' }}">
                                     {{ $migrationSource === 'web_interface' ? 'Web' : 'CLI' }}
@@ -114,7 +114,7 @@
                                     <i class="bi bi-hdd text-primary fs-5 me-3"></i>
                                     <div class="flex-grow-1">
                                         <div class="fw-semibold">Sauvegardes</div>
-                                        <small class="text-muted">Fichier(s) sauvegardé(s)</small>
+                                        <small class="text-body-secondary">Fichier(s) sauvegardé(s)</small>
                                     </div>
                                     <span class="badge bg-warning">{{ $backupsCount }}</span>
                                 </div>
@@ -131,7 +131,7 @@
                                 <i class="bi bi-code-slash text-primary fs-5 me-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-semibold">Détails</div>
-                                    <small class="text-muted">Modifications par fichier</small>
+                                    <small class="text-body-secondary">Modifications par fichier</small>
                                 </div>
                                 <span class="badge bg-primary">{{ number_formatted($stats['modified_files']) }}</span>
                             </div>
@@ -161,14 +161,14 @@
                             <span class="text-warning fw-bold">
                                 <i class="bi bi-eye"></i> DRY-RUN
                             </span>
-                            <div class="small text-muted mt-2">
+                            <div class="small text-body-secondary mt-2">
                                 Prévisualisation uniquement
                             </div>
                         @else
                             <span class="text-success fw-bold">
                                 <i class="bi bi-lightning-fill"></i> MIGRATION RÉELLE
                             </span>
-                            <div class="small text-muted mt-2">
+                            <div class="small text-body-secondary mt-2">
                                 Fichiers modifiés
                             </div>
                         @endif
@@ -181,7 +181,7 @@
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['total_files']) }}</h2>
-                    <h5 class="card-subtitle text-muted">Fichiers analysés</h5>
+                    <h5 class="card-subtitle text-body-secondary">Fichiers analysés</h5>
                     @if ($stats['total_files'] > 0)
                         <div class="mt-3 text-primary small">
                             <i class="bi bi-search"></i> Scan terminé
@@ -195,7 +195,7 @@
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['modified_files']) }}</h2>
-                    <h5 class="card-subtitle text-muted">Fichiers modifiés</h5>
+                    <h5 class="card-subtitle text-body-secondary">Fichiers modifiés</h5>
                     @if ($stats['modified_files'] > 0)
                         <div class="mt-3 text-success small">
                             <i class="bi bi-pencil-square"></i>
@@ -210,7 +210,7 @@
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['total_changes']) }}</h2>
-                    <h5 class="card-subtitle text-muted">Total des changements</h5>
+                    <h5 class="card-subtitle text-body-secondary">Total des changements</h5>
                     @if ($stats['total_changes'] > 0)
                         <div class="mt-3 text-success small">
                             <i class="bi bi-check-circle"></i> Prêt pour Font Awesome 6
@@ -224,7 +224,7 @@
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['icons_migrated']) }}</h2>
-                    <h5 class="card-subtitle text-muted">Icônes migrées</h5>
+                    <h5 class="card-subtitle text-body-secondary">Icônes migrées</h5>
                     @if (($stats['icons_migrated'] ?? 0) > 0)
                         <div class="mt-3 text-primary small">
                             <i class="bi bi-arrow-right"></i> FA{{ $migrationOptions['source_version'] }} → FA{{ $migrationOptions['target_version'] }}
@@ -239,7 +239,7 @@
                 <div class="card h-100">
                     <div class="card-body text-center">
                         <h2 class="card-title display-6 mb-3">{{ number_formatted($stats['assets_migrated']) }}</h2>
-                        <h5 class="card-subtitle text-muted">Assets migrés</h5>
+                        <h5 class="card-subtitle text-body-secondary">Assets migrés</h5>
                         <div class="mt-3 text-info small">
                             <i class="bi bi-box"></i> CDN + NPM
                         </div>
@@ -253,7 +253,7 @@
                 <div class="card h-100 border-warning border-2">
                     <div class="card-body text-center">
                         <h2 class="card-title display-6 mb-3 text-warning">{{ number_formatted($stats['warnings']) }}</h2>
-                        <h5 class="card-subtitle text-muted">Avertissements</h5>
+                        <h5 class="card-subtitle text-body-secondary">Avertissements</h5>
                         <div class="mt-3 text-warning small">
                             <i class="bi bi-exclamation-triangle"></i> Icônes renommées/dépréciées
                         </div>
@@ -484,26 +484,26 @@
                                         <i class="bi bi-globe text-info fs-4 me-3"></i>
                                         <div>
                                             <strong>Interface Web</strong>
-                                            <small class="d-block text-muted">Migration lancée depuis l'interface web</small>
+                                            <small class="d-block text-body-secondary">Migration lancée depuis l'interface web</small>
                                         </div>
                                     @else
                                         <i class="bi bi-terminal text-primary fs-4 me-3"></i>
                                         <div>
                                             <strong>Ligne de Commande</strong>
-                                            <small class="d-block text-muted">Migration lancée via CLI</small>
+                                            <small class="d-block text-body-secondary">Migration lancée via CLI</small>
                                         </div>
                                     @endif
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="p-3 border rounded">
-                                    <label class="small text-muted fw-bold">User Agent</label>
+                                    <label class="small text-body-secondary fw-bold">User Agent</label>
                                     <div class="small">{{ $userAgent }}</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="p-3 border rounded">
-                                    <label class="small text-muted fw-bold">Adresse IP</label>
+                                    <label class="small text-body-secondary fw-bold">Adresse IP</label>
                                     <div class="small">{{ $ipAddress }}</div>
                                 </div>
                             </div>
@@ -599,22 +599,22 @@
                                                         {{-- Conseils contextuels selon le type --}}
                                                         @switch($change['type'])
                                                             @case('pro_fallback')
-                                                                <div class="text-muted small mt-1">
+                                                                <div class="text-body-secondary small mt-1">
                                                                     <i class="bi bi-gem"></i> <em>Considérez une licence Pro pour conserver le style original</em>
                                                                 </div>
                                                                 @break
                                                             @case('renamed_icon')
-                                                                <div class="text-muted small mt-1">
+                                                                <div class="text-body-secondary small mt-1">
                                                                     <i class="bi bi-check-square"></i> <em>Renommage automatique appliqué</em>
                                                                 </div>
                                                                 @break
                                                             @case('deprecated_icon')
-                                                                <div class="text-muted small mt-1">
+                                                                <div class="text-body-secondary small mt-1">
                                                                     <i class="bi bi-eye"></i> <em>Vérifiez le rendu et remplacez manuellement si nécessaire</em>
                                                                 </div>
                                                                 @break
                                                             @case('manual_review')
-                                                                <div class="text-muted small mt-1">
+                                                                <div class="text-body-secondary small mt-1">
                                                                     <i class="bi bi-eye"></i> <em>Révision manuelle recommandée</em>
                                                                 </div>
                                                                 @break
@@ -623,7 +623,7 @@
                                                 @endif
                                             </div>
 
-                                            <div class="text-end text-muted small">
+                                            <div class="text-end text-body-secondary small">
                                                 @if (isset($change['line']))
                                                     <span class="badge bg-primary mb-1">
                                                         <i class="bi bi-hash"></i> L.{{ $change['line'] }}
@@ -669,7 +669,7 @@
                                                 <i class="bi bi-shield-check text-success me-2"></i>
                                                 <span class="fw-semibold">Fichier sauvegardé</span>
                                             </div>
-                                            <div class="d-flex align-items-center text-muted">
+                                            <div class="d-flex align-items-center text-body-secondary">
                                                 <small class="me-3">
                                                     <i class="bi bi-calendar3 me-1"></i>
                                                     {{ \Carbon\Carbon::parse($result['backup']['created_at'])->format('d/m/Y à H:i:s') }}
@@ -680,7 +680,7 @@
                                                 </small>
                                             </div>
                                         </div>
-                                        <small class="text-muted d-block mt-2">
+                                        <small class="text-body-secondary d-block mt-2">
                                             <i class="bi bi-folder me-1"></i>
                                             {{ $result['backup']['backup_path'] }}
                                         </small>
@@ -699,7 +699,7 @@
             @endif
         </div>
 
-        <div id="noResults" class="text-center py-5 text-muted" style="display: none;">
+        <div id="noResults" class="text-center py-5 text-body-secondary" style="display: none;">
             <div class="display-3 mb-3"><i class="bi bi-search"></i></div>
             <p class="mb-0">Aucun résultat trouvé pour votre recherche</p>
         </div>
@@ -1010,12 +1010,12 @@
                         <div class="list-group-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="fw-bold small text-body-secondary">${w.file}:${w.line}</div>
                                     <div class="font-monospace small">
                                         <span class="text-danger">- ${w.from}</span> →
                                         <span class="text-success">+ ${w.to}</span>
                                     </div>
-                                    <div class="text-muted small mt-1">
+                                    <div class="text-body-secondary small mt-1">
                                         <i class="bi bi-info-circle"></i> ${w.message || 'Icône Pro remplacée par une alternative gratuite'}
                                     </div>
                                 </div>
@@ -1038,12 +1038,12 @@
                         <div class="list-group-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="fw-bold small text-body-secondary">${w.file}:${w.line}</div>
                                     <div class="font-monospace small">
                                         <span class="text-danger">- ${w.from}</span> →
                                         <span class="text-success">+ ${w.to}</span>
                                     </div>
-                                    <div class="text-muted small mt-1">
+                                    <div class="text-body-secondary small mt-1">
                                         <i class="bi bi-check-circle"></i> ${w.message || 'Nom d\'icône mis à jour automatiquement'}
                                     </div>
                                 </div>
@@ -1066,12 +1066,12 @@
                         <div class="list-group-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="fw-bold small text-body-secondary">${w.file}:${w.line}</div>
                                     <div class="font-monospace small">
                                         <span class="text-danger">- ${w.from}</span> →
                                         <span class="text-success">+ ${w.to}</span>
                                     </div>
-                                    <div class="text-muted small mt-1">
+                                    <div class="text-body-secondary small mt-1">
                                         <i class="bi bi-eye"></i> ${w.message || 'Vérifiez le rendu de cette icône'}
                                     </div>
                                 </div>
@@ -1094,12 +1094,12 @@
                         <div class="list-group-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold small text-muted">${w.file}:${w.line}</div>
+                                    <div class="fw-bold small text-body-secondary">${w.file}:${w.line}</div>
                                     <div class="font-monospace small">
                                         <span class="text-danger">- ${w.from}</span> →
                                         <span class="text-success">+ ${w.to}</span>
                                     </div>
-                                    <div class="text-muted small mt-1">
+                                    <div class="text-body-secondary small mt-1">
                                         <i class="bi bi-pencil"></i> ${w.message || 'Vérification manuelle recommandée'}
                                     </div>
                                 </div>

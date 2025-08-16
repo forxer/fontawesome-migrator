@@ -18,19 +18,19 @@
                     <h5 class="card-title"><i class="bi bi-bar-chart"></i> Statistiques du stockage</h5>
 
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted">Total des migrations</span>
+                        <span class="text-body-secondary">Total des migrations</span>
                         <span class="fw-bold fs-5">{{ $totalMigrations }}</span>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted">Migrations anciennes (30+ jours)</span>
+                        <span class="text-body-secondary">Migrations anciennes (30+ jours)</span>
                         <span class="fw-bold fs-5 {{ $old30Days > 0 ? 'text-warning' : 'text-success' }}">
                             {{ $old30Days }}
                         </span>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted">Migrations de test (7+ jours)</span>
+                        <span class="text-body-secondary">Migrations de test (7+ jours)</span>
                         <span class="fw-bold fs-5 {{ $old7Days > 0 ? 'text-warning' : 'text-success' }}">
                             {{ $old7Days }}
                         </span>
@@ -38,7 +38,7 @@
 
                     <hr>
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-muted">Espace disque utilisé</span>
+                        <span class="text-body-secondary">Espace disque utilisé</span>
                         <span class="fw-bold fs-5">
                             {{ human_readable_bytes_size($totalSize, 2) }}
                         </span>
@@ -74,7 +74,7 @@
                     </div>
                     @endif
 
-                    <div class="d-flex align-items-center text-muted small">
+                    <div class="d-flex align-items-center text-body-secondary small">
                         <i class="bi bi-lightbulb me-2"></i>
                         <span>Un nettoyage régulier maintient les performances optimales</span>
                     </div>
@@ -94,7 +94,7 @@
                         <h6 class="card-title mb-0">Migrations anciennes</h6>
                     </div>
 
-                    <p class="card-text text-muted small mb-3">
+                    <p class="card-text text-body-secondary small mb-3">
                         Supprimer les migrations de plus de 30 jours (recommandé pour libérer de l'espace).
                     </p>
 
@@ -124,7 +124,7 @@
                         <h6 class="card-title mb-0">Migrations de test</h6>
                     </div>
 
-                    <p class="card-text text-muted small mb-3">
+                    <p class="card-text text-body-secondary small mb-3">
                         Supprimer les migrations créées via l'interface web de plus de 7 jours.
                     </p>
 
@@ -154,7 +154,7 @@
                         <h6 class="card-title mb-0">Nettoyage complet</h6>
                     </div>
 
-                    <p class="card-text text-muted small mb-3">
+                    <p class="card-text text-body-secondary small mb-3">
                         Effectuer un nettoyage automatique : anciennes (30j+) + tests (7j+).
                     </p>
 
@@ -248,7 +248,7 @@
                             <td>
                                 <div>
                                     <div class="fw-bold">{{ $migration['short_id'] }}</div>
-                                    <div class="text-muted small">{{ $migration['created_at']->format('d/m/Y H:i') }}</div>
+                                    <div class="text-body-secondary small">{{ $migration['created_at']->format('d/m/Y H:i') }}</div>
                                 </div>
                             </td>
                             <td>
@@ -262,10 +262,10 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="text-muted small">
+                            <td class="text-body-secondary small">
                                 {{ $migration['created_at']->diffForHumans() }}
                             </td>
-                            <td class="text-end text-muted small">
+                            <td class="text-end text-body-secondary small">
                                 {{ human_readable_bytes_size($migration['metadata']['total_size'] ?? 0, 2) }}
                             </td>
                             <td class="text-end">
@@ -284,7 +284,7 @@
 
                 @if(count($migrations) > 20)
                 <div class="text-center mt-3">
-                    <p class="text-muted small">
+                    <p class="text-body-secondary small">
                         Affichage de 20 migrations sur {{ count($migrations) }} total.
                         <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="link-primary">
                             Voir toutes les migrations

@@ -41,7 +41,7 @@
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">1</span>
                             <div class="activity-content flex-grow-1">
                                 <h5 class="mb-2">Installation</h5>
-                                <p class="text-muted mb-3">Configurez le package dans votre projet Laravel</p>
+                                <p class="text-body-secondary mb-3">Configurez le package dans votre projet Laravel</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <code class="flex-grow-1 bg-dark text-light p-2 rounded" id="install-command">php artisan fontawesome:install</code>
                                     <button class="btn btn-sm btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:install')" title="Copier la commande">
@@ -58,7 +58,7 @@
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">2</span>
                             <div class="activity-content flex-grow-1">
                                 <h5 class="mb-2">Test de Migration</h5>
-                                <p class="text-muted mb-3">Testez la migration en mode dry-run pour voir les changements</p>
+                                <p class="text-body-secondary mb-3">Testez la migration en mode dry-run pour voir les changements</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <code class="flex-grow-1 bg-dark text-light p-2 rounded" id="test-command">php artisan fontawesome:migrate --dry-run</code>
                                     <button class="btn btn-sm btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:migrate --dry-run')" title="Copier la commande">
@@ -75,7 +75,7 @@
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">3</span>
                             <div class="activity-content flex-grow-1">
                                 <h5 class="mb-2">Migration Réelle</h5>
-                                <p class="text-muted mb-3">Appliquez les changements définitivement</p>
+                                <p class="text-body-secondary mb-3">Appliquez les changements définitivement</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <code class="flex-grow-1 bg-dark text-light p-2 rounded" id="migrate-command">php artisan fontawesome:migrate</code>
                                     <button class="btn btn-sm btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:migrate')" title="Copier la commande">
@@ -100,9 +100,9 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm {{ $stats['total_migrations'] > 0 ? 'border-primary' : '' }}">
                     <div class="card-body text-center">
-                        <i class="bi bi-folder fs-1 {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                        <h3 class="card-title {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['total_migrations'] }}</h3>
-                        <p class="card-text text-muted">Migrations effectuées</p>
+                        <i class="bi bi-folder fs-1 {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-body-secondary' }} mb-3"></i>
+                        <h3 class="card-title {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ $stats['total_migrations'] }}</h3>
+                        <p class="card-text text-body-secondary">Migrations effectuées</p>
                     </div>
                     @if($stats['total_migrations'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
@@ -113,9 +113,9 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm {{ $stats['successful_migrations'] > 0 ? 'border-primary' : '' }}">
                     <div class="card-body text-center">
-                        <i class="bi bi-check-square fs-1 {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                        <h3 class="card-title {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-muted' }}">{{ $stats['successful_migrations'] }}</h3>
-                        <p class="card-text text-muted">Migrations réussies</p>
+                        <i class="bi bi-check-square fs-1 {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-body-secondary' }} mb-3"></i>
+                        <h3 class="card-title {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ $stats['successful_migrations'] }}</h3>
+                        <p class="card-text text-body-secondary">Migrations réelles</p>
                     </div>
                     @if($stats['successful_migrations'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
@@ -126,9 +126,9 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm {{ $stats['total_size'] > 0 ? 'border-primary' : '' }}">
                     <div class="card-body text-center">
-                        <i class="bi bi-hdd fs-1 {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                        <h3 class="card-title {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-muted' }}">{{ human_readable_bytes_size($stats['total_size'], 2) }}</h3>
-                        <p class="card-text text-muted">Données générées</p>
+                        <i class="bi bi-hdd fs-1 {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-body-secondary' }} mb-3"></i>
+                        <h3 class="card-title {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ human_readable_bytes_size($stats['total_size'], 2) }}</h3>
+                        <p class="card-text text-body-secondary">Données générées</p>
                     </div>
                     @if($stats['total_size'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
@@ -143,7 +143,7 @@
                     <div class="card-body text-center">
                         <i class="bi bi-arrow-repeat fs-1 text-info mb-3"></i>
                         <h3 class="card-title text-info">{{ number_formatted($stats['total_changes']) }}</h3>
-                        <p class="card-text text-muted">Total des changements</p>
+                        <p class="card-text text-body-secondary">Total des changements</p>
                     </div>
                     @if($stats['total_migrations'] > 0)
                         <div class="card-footer bg-info bg-opacity-10 border-0"></div>
@@ -154,9 +154,9 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm {{ $stats['avg_changes'] > 0 ? 'border-primary' : '' }}">
                     <div class="card-body text-center">
-                        <i class="bi bi-graph-up fs-1 {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-muted' }} mb-3"></i>
-                        <h3 class="card-title {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-muted' }}">{{ number_formatted($stats['avg_changes']) }}</h3>
-                        <p class="card-text text-muted">Changements moyens</p>
+                        <i class="bi bi-graph-up fs-1 {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-body-secondary' }} mb-3"></i>
+                        <h3 class="card-title {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ number_formatted($stats['avg_changes']) }}</h3>
+                        <p class="card-text text-body-secondary">Changements moyens</p>
                     </div>
                     @if($stats['avg_changes'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
@@ -171,15 +171,15 @@
                         <div class="d-flex justify-content-center align-items-center">
                             <div class="me-3">
                                 <span class="badge bg-success fs-6">{{ $stats['real_run_count'] }}</span>
-                                <div class="text-muted small">Réel</div>
+                                <div class="text-body-secondary small">Réelle(s)</div>
                             </div>
-                            <div class="text-muted fs-3">/</div>
+                            <div class="text-body-secondary fs-2">/</div>
                             <div class="ms-3">
                                 <span class="badge bg-warning text-dark fs-6">{{ $stats['dry_run_count'] }}</span>
-                                <div class="text-muted small">Test</div>
+                                <div class="text-body-secondary small">Test(s)</div>
                             </div>
                         </div>
-                        <p class="card-text text-muted mt-2">Types de migration</p>
+                        <p class="card-text text-body-secondary mt-2">Types de migration</p>
                     </div>
                     <div class="card-footer bg-secondary bg-opacity-10 border-0"></div>
                 </div>
@@ -198,8 +198,8 @@
                         <div class="card-body text-center p-4">
                             <i class="bi bi-folder action-icon"></i>
                             <h5 class="card-title">Migrations</h5>
-                            <p class="card-text text-muted">Consultez l'historique des migrations et leurs rapports détaillés</p>
-                            <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="btn btn-primary">
+                            <p class="card-text text-body-secondary">Consultez l'historique des migrations et leurs rapports détaillés</p>
+                            <a href="{{ route('fontawesome-migrator.migrations.index') }}" class="btn btn-primary stretched-link">
                                 Voir les migrations
                             </a>
                         </div>
@@ -211,9 +211,22 @@
                         <div class="card-body text-center p-4">
                             <i class="bi bi-flask action-icon"></i>
                             <h5 class="card-title">Tests</h5>
-                            <p class="card-text text-muted">Testez la migration et débugguez les problèmes</p>
-                            <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary">
+                            <p class="card-text text-body-secondary">Testez la migration et débugguez les problèmes</p>
+                            <a href="{{ route('fontawesome-migrator.tests.index') }}" class="btn btn-primary stretched-link">
                                 Accéder aux tests
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="card action-card">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-recycle action-icon"></i>
+                            <h5 class="card-title">Nettoyage</h5>
+                            <p class="card-text text-body-secondary">Supprimer les données des migrations précédentes</p>
+                            <a href="{{ route('fontawesome-migrator.cleanup.index') }}" class="btn btn-primary stretched-link">
+                                Nettoyer
                             </a>
                         </div>
                     </div>
