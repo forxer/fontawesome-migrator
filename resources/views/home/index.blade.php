@@ -258,9 +258,9 @@
                                         • {{ $migration['created_at']->isoFormat('DD/MM/YYYY [à] HH:mm') }}
                                         • {{ number_formatted($migration['files_modified']) }} fichier(s) • {{ number_formatted($migration['total_changes']) }} changement(s)
                                         @if($migration['dry_run'])
-                                            • <span class="badge bg-warning text-dark">DRY-RUN</span>
+                                            • <span class="badge bg-warning text-dark"><i class="bi bi-eye me-1"></i>DRY-RUN</span>
                                         @else
-                                            • <span class="badge bg-success">RÉEL</span>
+                                            • <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>LIVE</span>
                                         @endif
                                     </div>
                                 </div>

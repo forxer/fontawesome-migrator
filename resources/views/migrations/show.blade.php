@@ -98,7 +98,11 @@
                                     <small class="text-body-secondary">Contexte d'exécution</small>
                                 </div>
                                 <span class="badge {{ $migrationSource === 'web_interface' ? 'bg-info' : 'bg-primary' }}">
-                                    {{ $migrationSource === 'web_interface' ? 'Web' : 'CLI' }}
+                                    @if($migrationSource === 'web_interface')
+                                        <i class="bi bi-globe me-1"></i>Web
+                                    @else
+                                        <i class="bi bi-terminal me-1"></i>CLI
+                                    @endif
                                 </span>
                             </div>
                         </div>
@@ -142,14 +146,14 @@
                     <div class="mt-3">
                         @if ($isDryRun)
                             <span class="text-warning fw-bold">
-                                <i class="bi bi-eye"></i> DRY-RUN
+                                <i class="bi bi-eye me-1"></i>DRY-RUN
                             </span>
                             <div class="small text-body-secondary mt-2">
                                 Prévisualisation uniquement
                             </div>
                         @else
                             <span class="text-success fw-bold">
-                                <i class="bi bi-lightning-fill"></i> MIGRATION RÉELLE
+                                <i class="bi bi-check-circle me-1"></i>MIGRATION LIVE
                             </span>
                             <div class="small text-body-secondary mt-2">
                                 Fichiers modifiés
@@ -277,7 +281,13 @@
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Prêt pour la migration</h5>
                                 <p class="card-text">Exécutez <code>php artisan fontawesome:migrate</code> pour appliquer ces {{ number_formatted($stats['total_changes']) }} changements.</p>
-                                <button class="btn btn-primary btn-sm" onclick="copyCommand('php artisan fontawesome:migrate')"><i class="bi bi-clipboard"></i> Copier la commande</button>
+                                <button class="btn btn-primary btn-sm" 
+                                        onclick="copyCommand('php artisan fontawesome:migrate')"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Copier la commande de migration dans le presse-papier">
+                                    <i class="bi bi-clipboard"></i> Copier la commande
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -294,7 +304,13 @@
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Tests recommandés</h5>
                                 <p class="card-text">Testez votre application pour vérifier que les icônes s'affichent correctement.</p>
-                                <button class="btn btn-info btn-sm" onclick="showTestingTips()"><i class="bi bi-flask"></i> Conseils de test</button>
+                                <button class="btn btn-info btn-sm" 
+                                        onclick="showTestingTips()"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Afficher les conseils pour tester votre migration">
+                                    <i class="bi bi-flask"></i> Conseils de test
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -311,7 +327,13 @@
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Icônes à vérifier</h5>
                                 <p class="card-text">{{ number_formatted($stats['warnings']) }} icône(s) renommée(s), dépréciée(s) ou Pro détectée(s). Vérifiez le rendu.</p>
-                                <button class="btn btn-warning btn-sm" onclick="showWarningsModal()"><i class="bi bi-exclamation-triangle"></i> Voir les avertissements</button>
+                                <button class="btn btn-warning btn-sm" 
+                                        onclick="showWarningsModal()"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Afficher la liste détaillée des avertissements et recommandations">
+                                    <i class="bi bi-exclamation-triangle"></i> Voir les avertissements
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -328,7 +350,13 @@
                             <div class="flex-grow-1">
                                 <h5 class="card-title">Mise à jour des dépendances</h5>
                                 <p class="card-text">N'oubliez pas d'exécuter <code>npm install</code> pour installer les nouvelles versions.</p>
-                                <button class="btn btn-primary btn-sm" onclick="copyCommand('npm install')"><i class="bi bi-clipboard"></i> Copier npm install</button>
+                                <button class="btn btn-primary btn-sm" 
+                                        onclick="copyCommand('npm install')"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Copier la commande npm install dans le presse-papier">
+                                    <i class="bi bi-clipboard"></i> Copier npm install
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -403,9 +431,9 @@
                                 <td><strong>Origine</strong></td>
                                 <td>
                                     @if ($migrationSource === 'web_interface')
-                                        <i class="bi bi-globe text-info"></i> Interface Web
+                                        <i class="bi bi-globe text-info me-1"></i>Interface Web
                                     @else
-                                        <i class="bi bi-terminal text-primary"></i> Ligne de commande
+                                        <i class="bi bi-terminal text-primary me-1"></i>Ligne de commande
                                     @endif
                                 </td>
                             </tr>
@@ -520,10 +548,18 @@
                 <h2 class="card-title section-title mb-0"><i class="bi bi-code-slash"></i> Détail des modifications</h2>
 
                 <div class="btn-group btn-group-sm" role="group" aria-label="Actions sur le rapport">
-                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                    <button class="btn btn-primary" 
+                            onclick="copyToClipboard()"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Copier un résumé du rapport dans le presse-papier">
                         <i class="bi bi-clipboard"></i> Copier le rapport
                     </button>
-                    <button class="btn btn-outline-primary" onclick="toggleAllDetails()">
+                    <button class="btn btn-outline-primary" 
+                            onclick="toggleAllDetails()"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Développer ou réduire tous les détails des fichiers modifiés">
                         <i class="bi bi-arrows-expand"></i> Développer/Réduire
                     </button>
                 </div>

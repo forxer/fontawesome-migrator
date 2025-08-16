@@ -410,6 +410,12 @@ class MetadataManager implements MetadataManagerInterface
 
             // Ajouter le nombre de sauvegardes depuis les métadonnées
             $migrationInfo['backup_count'] = $metadata['backups_count'] ?? 0;
+            
+            // Ajouter la source de la migration pour affichage correct dans cleanup
+            $migrationInfo['source'] = $metadata['source'] ?? 'cli';
+            
+            // Ajouter le mode dry_run pour affichage dans cleanup
+            $migrationInfo['dry_run'] = $metadata['migration_options']['dry_run'] ?? false;
 
             $migrations[] = $migrationInfo;
         }

@@ -134,10 +134,16 @@
                             <i class="bi bi-info-circle"></i> Sélectionnez les versions pour voir les détails de migration
                         </div>
                         <div>
-                            <button type="button" class="btn btn-outline-secondary me-2" id="generateCommand">
+                            <button type="button" class="btn btn-outline-secondary me-2" id="generateCommand"
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Générer la commande CLI correspondante aux options sélectionnées">
                                 <i class="bi bi-terminal"></i> Générer Commande
                             </button>
-                            <button type="submit" class="btn btn-primary" id="startMigration" disabled>
+                            <button type="submit" class="btn btn-primary" id="startMigration" disabled
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Lancer la migration avec les paramètres configurés">
                                 <i class="bi bi-play-circle"></i> Démarrer Migration
                             </button>
                         </div>
@@ -156,7 +162,11 @@
                     <div class="card-body">
                         <pre id="commandText" class="mb-0"></pre>
                         <div class="mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-light" onclick="copyCommand()">
+                            <button type="button" class="btn btn-sm btn-outline-light" 
+                                    onclick="copyCommand()"
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Copier la commande dans le presse-papier">
                                 <i class="bi bi-clipboard"></i> Copier
                             </button>
                         </div>
@@ -168,7 +178,10 @@
                 <h3 class="section-title">Résultat de la migration :</h3>
                 <pre id="test-result" class="bg-dark text-light p-3 rounded"></pre>
                 <div id="migration-report-btn" class="mt-3" style="display: none;">
-                    <a id="view-report-link" href="#" class="btn btn-success" target="_blank">
+                    <a id="view-report-link" href="#" class="btn btn-success" target="_blank"
+                       data-bs-toggle="tooltip" 
+                       data-bs-placement="top" 
+                       title="Ouvrir le rapport détaillé de la migration dans un nouvel onglet">
                         <i class="bi bi-file-text"></i> Voir le rapport de migration
                     </a>
                 </div>

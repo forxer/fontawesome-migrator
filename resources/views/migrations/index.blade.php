@@ -89,9 +89,9 @@
                                    {{ $report['created_at']->isoFormat('DD/MM [à] HH:mm') }}
                                 </h5>
                                 @if ($report['dry_run'])
-                                    <span class="badge bg-warning text-dark">DRY-RUN</span>
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-eye me-1"></i>DRY-RUN</span>
                                 @else
-                                    <span class="badge bg-success">RÉELLE</span>
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>LIVE</span>
                                 @endif
                         </div>
                         <div class="card-body py-4">
@@ -158,16 +158,32 @@
 
                         <div class="card-footer bg-light">
                             <div class="btn-group btn-group-sm d-flex flex-wrap" role="group" aria-label="Actions du rapport">
-                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}" class="btn btn-primary">
+                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}" 
+                                   class="btn btn-primary"
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="top" 
+                                   title="Voir le rapport détaillé avec toutes les modifications">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-                                <button onclick="viewJSON('{{ $report['short_id'] }}')" class="btn btn-outline-primary">
+                                <button onclick="viewJSON('{{ $report['short_id'] }}')" 
+                                        class="btn btn-outline-primary"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Télécharger les métadonnées au format JSON brut">
                                     <i class="bi bi-database"></i> JSON
                                 </button>
-                                <button onclick="inspectMigration('{{ $report['short_id'] }}')" class="btn btn-outline-secondary">
+                                <button onclick="inspectMigration('{{ $report['short_id'] }}')" 
+                                        class="btn btn-outline-secondary"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Inspecter les fichiers de sauvegarde et métadonnées">
                                     <i class="bi bi-search"></i> Inspecter
                                 </button>
-                                <button onclick="deleteReport('{{ $report['short_id'] }}')" class="btn btn-outline-danger">
+                                <button onclick="deleteReport('{{ $report['short_id'] }}')" 
+                                        class="btn btn-outline-danger"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Supprimer définitivement cette migration et ses sauvegardes">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>

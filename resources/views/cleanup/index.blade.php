@@ -106,7 +106,10 @@
 
                         <button type="submit"
                                 class="btn btn-warning btn-sm w-100"
-                                {{ $old30Days == 0 ? 'disabled' : '' }}>
+                                {{ $old30Days == 0 ? 'disabled' : '' }}
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Supprimer les migrations de plus de 30 jours pour libérer de l'espace">
                             <i class="bi bi-trash me-1"></i>
                             Nettoyer ({{ $old30Days }} migrations)
                         </button>
@@ -136,7 +139,10 @@
 
                         <button type="submit"
                                 class="btn btn-info btn-sm w-100"
-                                {{ $old7Days == 0 ? 'disabled' : '' }}>
+                                {{ $old7Days == 0 ? 'disabled' : '' }}
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Nettoyer les migrations de test créées via l'interface web">
                             <i class="bi bi-flask me-1"></i>
                             Nettoyer tests ({{ $old7Days }} migrations)
                         </button>
@@ -168,7 +174,10 @@
 
                         <button type="submit"
                                 class="btn btn-danger btn-sm w-100"
-                                {{ $old30Days + $old7Days == 0 ? 'disabled' : '' }}>
+                                {{ $old30Days + $old7Days == 0 ? 'disabled' : '' }}
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Supprimer rapidement toutes les anciennes migrations et migrations de test">
                             <i class="bi bi-lightning me-1"></i>
                             Nettoyage complet ({{ $old30Days + $old7Days }} migrations)
                         </button>
@@ -214,7 +223,10 @@
 
                         <button type="submit"
                                 class="btn btn-danger w-100"
-                                data-confirm-text="ÊTES-VOUS ABSOLUMENT CERTAIN de vouloir supprimer TOUTES les migrations ? Cette action est IRRÉVERSIBLE !">
+                                data-confirm-text="ÊTES-VOUS ABSOLUMENT CERTAIN de vouloir supprimer TOUTES les migrations ? Cette action est IRRÉVERSIBLE !"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="⚠️ DANGER : Supprimer toutes les migrations sans exception">
                             <i class="bi bi-radioactive me-1"></i>
                             SUPPRIMER TOUT ({{ $totalMigrations }} migrations)
                         </button>
@@ -237,6 +249,7 @@
                         <tr>
                             <th>Migration</th>
                             <th>Type</th>
+                            <th>Mode</th>
                             <th>Âge</th>
                             <th class="text-end">Taille</th>
                             <th class="text-end">Actions</th>
@@ -262,6 +275,17 @@
                                     </span>
                                 @endif
                             </td>
+                            <td>
+                                @if($migration['dry_run'] ?? false)
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-eye me-1"></i>DRY-RUN
+                                    </span>
+                                @else
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>LIVE
+                                    </span>
+                                @endif
+                            </td>
                             <td class="text-body-secondary small">
                                 {{ $migration['created_at']->diffForHumans() }}
                             </td>
@@ -272,7 +296,10 @@
                                 <button type="button"
                                         class="btn btn-outline-danger btn-sm delete-migration-btn"
                                         data-migration-id="{{ $migration['short_id'] }}"
-                                        data-migration-date="{{ $migration['created_at']->format('d/m/Y H:i') }}">
+                                        data-migration-date="{{ $migration['created_at']->format('d/m/Y H:i') }}"
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Supprimer cette migration spécifique et tous ses fichiers de sauvegarde">
                                     <i class="bi bi-trash"></i>
                                     Supprimer
                                 </button>
