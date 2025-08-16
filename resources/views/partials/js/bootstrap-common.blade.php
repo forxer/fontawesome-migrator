@@ -35,61 +35,6 @@
         }, 5000);
     };
     
-    // Fonction utilitaire pour animer un spinner sur un bouton
-    window.toggleButtonSpinner = function(buttonElement, loading = true) {
-        const icon = buttonElement.querySelector('i, .icon');
-        const originalIcon = icon ? icon.outerHTML : '';
-        
-        if (loading) {
-            buttonElement.disabled = true;
-            if (icon) {
-                icon.outerHTML = '<span class="spinner"></span>';
-            }
-            buttonElement.dataset.originalIcon = originalIcon;
-        } else {
-            buttonElement.disabled = false;
-            if (buttonElement.dataset.originalIcon) {
-                const spinnerElement = buttonElement.querySelector('.spinner');
-                if (spinnerElement) {
-                    spinnerElement.outerHTML = buttonElement.dataset.originalIcon;
-                }
-                delete buttonElement.dataset.originalIcon;
-            }
-        }
-    };
-    
-    // Fonction utilitaire pour les requêtes AJAX avec gestion d'erreurs
-    window.makeAjaxRequest = async function(url, options = {}) {
-        const defaultOptions = {
-            headers: {
-                'X-CSRF-TOKEN': window.csrfToken,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        };
-        
-        const mergedOptions = {
-            ...defaultOptions,
-            ...options,
-            headers: {
-                ...defaultOptions.headers,
-                ...options.headers
-            }
-        };
-        
-        try {
-            const response = await fetch(url, mergedOptions);
-            const data = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(data.error || `HTTP error! status: ${response.status}`);
-            }
-            
-            return { success: true, data };
-        } catch (error) {
-            return { success: false, error: error.message };
-        }
-    };
     
     // ========================================
     // Bouton retour en haut
