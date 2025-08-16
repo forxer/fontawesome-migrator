@@ -6,14 +6,6 @@
         transition: box-shadow 0.2s ease;
     }
 
-    /* Action cards avec effet hover plus prononcé */
-    .action-card-hover {
-        transition: box-shadow 0.2s ease;
-    }
-
-    .action-card-hover:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
 
     /* Tooltips Bootstrap */
     [data-bs-toggle="tooltip"] {
@@ -123,13 +115,6 @@
      * COMPOSANTS MÉTIER MUTUALISÉS
      * ========================================*/
 
-    /* Liens de navigation avec icône */
-    .nav-link-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-    }
 
     /* Titres de section avec icône */
     .section-title {
@@ -149,40 +134,6 @@
         margin-bottom: 0.75rem;
     }
 
-    /* Cards statistiques uniformisées */
-    .stat-card-bootstrap {
-        text-align: center;
-        height: 100%;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: box-shadow 0.2s ease;
-    }
-
-    .stat-card-bootstrap.active {
-        border-left: 4px solid var(--bs-primary);
-    }
-
-    .stat-card-bootstrap .stat-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    .stat-card-bootstrap .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-card-bootstrap .stat-label {
-        color: var(--bs-secondary);
-        font-size: 0.9rem;
-    }
-
-    .stat-card-bootstrap .stat-footer {
-        background: var(--bs-primary);
-        background: linear-gradient(90deg, var(--bs-primary) 0%, rgba(var(--bs-primary-rgb), 0.1) 100%);
-        border: 0;
-        height: 4px;
-    }
 
     /* Cards d'actions avec hover prononcé */
     .action-card {
@@ -202,43 +153,6 @@
         margin-bottom: 1rem;
     }
 
-    /* Cards de migrations */
-    .entity-card {
-        height: 100%;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: box-shadow 0.2s ease;
-    }
-
-    .entity-card .entity-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .entity-card .entity-icon {
-        font-size: 1.5rem;
-        color: var(--bs-primary);
-    }
-
-    .entity-card .entity-meta {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        text-align: center;
-    }
-
-    .entity-card .entity-meta-item {
-        border: 1px solid var(--bs-border-color);
-        border-radius: var(--bs-border-radius);
-        padding: 0.5rem;
-    }
-
-    .entity-card .entity-actions {
-        background: var(--bs-light);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.25rem;
-    }
 
     /* Badges de statut uniformisés */
     .status-badge-dry-run {
@@ -256,45 +170,6 @@
         color: var(--bs-white);
     }
 
-    /* État vide réutilisable */
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-    }
-
-    .empty-state .empty-icon {
-        font-size: 4rem;
-        color: var(--bs-secondary);
-        margin-bottom: 1.5rem;
-    }
-
-    .empty-state .empty-title {
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
-    }
-
-    .empty-state .empty-description {
-        color: var(--bs-secondary);
-        margin-bottom: 1.5rem;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .empty-state .empty-command {
-        background: var(--bs-dark);
-        color: var(--bs-light);
-        padding: 0.75rem 1rem;
-        border-radius: var(--bs-border-radius);
-        display: inline-block;
-        font-family: var(--bs-font-monospace);
-        margin-bottom: 1rem;
-    }
-
-    .empty-state .empty-hint {
-        color: var(--bs-secondary);
-        font-size: 0.875rem;
-    }
 
     /* Liste d'activité récente */
     .activity-list .activity-item {
