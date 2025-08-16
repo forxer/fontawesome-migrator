@@ -17,17 +17,6 @@
         font-size: 0.75em;
     }
 
-    /* Code blocks dans les pages */
-    code.command-block {
-        background: var(--bs-dark);
-        color: var(--bs-light);
-        padding: 0.75rem 1rem;
-        border-radius: var(--bs-border-radius);
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-        font-size: 0.9rem;
-        display: block;
-        overflow-x: auto;
-    }
 
     /* Spinner pour les boutons de chargement */
     .spinner {
@@ -154,21 +143,6 @@
     }
 
 
-    /* Badges de statut uniformisés */
-    .status-badge-dry-run {
-        background-color: var(--bs-warning);
-        color: var(--bs-dark);
-    }
-
-    .status-badge-real {
-        background-color: var(--bs-success);
-        color: var(--bs-white);
-    }
-
-    .status-badge-migration {
-        background-color: var(--bs-info);
-        color: var(--bs-white);
-    }
 
 
     /* Liste d'activité récente */

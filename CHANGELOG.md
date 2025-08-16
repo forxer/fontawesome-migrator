@@ -6,7 +6,7 @@ CHANGELOG
 
 ### Optimisations JavaScript
 
-- Suppression ~300 lignes de code JavaScript mort
+- Suppression ~456 lignes de code JavaScript/CSS mort
 - Toast Bootstrap pour notifications (remplace 3 implémentations artisanales)
 - Bouton "Inspecter" supprimé (redondant avec "Détails")
 

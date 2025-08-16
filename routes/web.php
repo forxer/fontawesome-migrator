@@ -5,7 +5,6 @@ use FontAwesome\Migrator\Http\Controllers\Cleanup\IndexController as CleanupInde
 use FontAwesome\Migrator\Http\Controllers\HomeController;
 use FontAwesome\Migrator\Http\Controllers\Migrations\DestroyController;
 use FontAwesome\Migrator\Http\Controllers\Migrations\IndexController;
-use FontAwesome\Migrator\Http\Controllers\Migrations\InspectController;
 use FontAwesome\Migrator\Http\Controllers\Migrations\ShowController;
 use FontAwesome\Migrator\Http\Controllers\Tests\IndexController as TestsIndexController;
 use FontAwesome\Migrator\Http\Controllers\Tests\RunMultiVersionMigrationController;
@@ -27,7 +26,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::prefix('migrations')->name('migrations.')->group(function () {
     Route::get('/', IndexController::class)->name('index');
     Route::get('/{migrationId}', ShowController::class)->name('show');
-    Route::get('/{migrationId}/inspect', InspectController::class)->name('inspect');
     Route::delete('/{migrationId}', DestroyController::class)->name('destroy');
 });
 

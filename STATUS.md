@@ -97,7 +97,7 @@
 - [x] **Traçabilité complète**: Origine CLI/Web, métadonnées enrichies
 
 ### Phase 13: Nettoyage JavaScript & Optimisations v2.0.1 ✅
-- [x] **Code mort supprimé**: ~300 lignes JavaScript inutilisées éliminées (fonctions orphelines + duplications)
+- [x] **Code mort supprimé**: ~456 lignes JavaScript/CSS inutilisées éliminées (fonctions orphelines + classes CSS + commentaires)
 - [x] **Bouton Inspecter supprimé**: Élimination redondance avec bouton Détails 
 - [x] **Unification notifications**: showAlert, copyCommand, showNotification centralisées
 - [x] **Toast Bootstrap implémentés**: Remplacement notifications artisanales par composants professionnels

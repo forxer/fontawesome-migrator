@@ -174,7 +174,7 @@
                 </div>
             </div>
 
-            <div id="test-output" class="test-output mt-4" style="display: none;">
+            <div id="test-output" class="mt-4" style="display: none;">
                 <h3 class="section-title">Résultat de la migration :</h3>
                 <pre id="test-result" class="bg-dark text-light p-3 rounded"></pre>
                 <div id="migration-report-btn" class="mt-3" style="display: none;">
@@ -200,19 +200,6 @@ window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribut
 
 // Migrations supportées (passées depuis le contrôleur)
 const supportedMigrations = @json($supportedMigrations);
-
-// Format des tailles de fichiers (équivalent PHP human_readable_bytes_size)
-function formatFileSize(bytes, decimals = 2) {
-    if (bytes === 0) return '0 B';
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
 
 function showAlert(message, type = 'success') {
     showToast(message, type);
