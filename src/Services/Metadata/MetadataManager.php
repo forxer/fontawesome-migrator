@@ -408,6 +408,9 @@ class MetadataManager implements MetadataManagerInterface
                 continue;
             }
 
+            // Ajouter le nombre de sauvegardes depuis les métadonnées
+            $migrationInfo['backup_count'] = $metadata['backups_count'] ?? 0;
+
             $migrations[] = $migrationInfo;
         }
 

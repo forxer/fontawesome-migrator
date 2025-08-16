@@ -34,7 +34,7 @@
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <i class="bi bi-folder fs-1 text-primary mb-2"></i>
-                            <div class="fs-3 fw-bold text-primary">{{ count($reports) }}</div>
+                            <div class="fs-3 fw-bold text-primary">{{ number_formatted(count($reports)) }}</div>
                             <div class="text-body-secondary small">Migrations</div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <i class="bi bi-files fs-1 text-primary mb-2"></i>
-                            <div class="fs-3 fw-bold text-primary">{{ $stats['total_backups'] }}</div>
+                            <div class="fs-3 fw-bold text-primary">{{ number_formatted($stats['total_backups']) }}</div>
                             <div class="text-body-secondary small">Fichiers sauvegardés</div>
                         </div>
                     </div>

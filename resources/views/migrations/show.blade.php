@@ -105,23 +105,6 @@
                     </a>
                 </div>
 
-                @if ($backupsCount > 0)
-                    <!-- Sauvegardes -->
-                    <div class="col-md-6 col-lg-4">
-                        <a href="#backups-section" class="text-decoration-none">
-                            <div class="p-3 border rounded hover-bg-light">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-hdd text-primary fs-5 me-3"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-semibold">Sauvegardes</div>
-                                        <small class="text-body-secondary">Fichier(s) sauvegardé(s)</small>
-                                    </div>
-                                    <span class="badge bg-warning">{{ $backupsCount }}</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                @endif
 
                 <!-- Détails -->
                 <div class="col-md-6 col-lg-4">
@@ -243,6 +226,22 @@
                         <div class="mt-3 text-info small">
                             <i class="bi bi-box"></i> CDN + NPM
                         </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if ($backupsCount > 0)
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h2 class="card-title display-6 mb-3">{{ number_formatted($backupsCount) }}</h2>
+                        <h5 class="card-subtitle text-body-secondary">Fichiers sauvegardés</h5>
+                        @if ($backupsCount > 0)
+                            <div class="mt-3 text-warning small">
+                                <i class="bi bi-shield-check"></i> Sauvegardes réalisées
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -84,6 +84,11 @@
 - [x] **6 trajectoires naturelles**: Animations variées avec oscillations douces
 - [x] **Entrelacement z-index**: 3 couches de profondeur avec parallaxe
 - [x] **Effets visuels avancés**: Blur progressif, brightness, shadows, glow
+
+### Phase 12: Corrections interface migrations ✅
+- [x] **Statistiques corrigées**: Utilisation backups_count depuis metadata.json pour calcul exact fichiers sauvegardés
+- [x] **Navigation nettoyée**: Suppression lien navigation rapide vers section sauvegardes inexistante  
+- [x] **Card statistiques ajoutée**: Intégration statistiques sauvegardes dans détail migration avec style cohérent
 - [x] **Navigation optimisée**: Correction scroll avec offset pour navbar fixe
 - [x] **Architecture modulaire**: Séparation CSS/JS dans partials réutilisables
 - [x] **Interface web avancée**: Configurateur multi-versions interactif `/tests`

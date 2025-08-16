@@ -9,11 +9,12 @@ CHANGELOG
 - **593 mappings officiels** : 270 (4→5) + 310 (5→6) + 13 (6→7)
 - **Structure unifiée** entre toutes les versions avec métadonnées
 
-### Interface utilisateur améliorée
+### Interface utilisateur corrigée
 
 - **Effets visuels avancés** : Système de bulles animées réalistes avec effet 3D
 - **Navigation optimisée** : Correction du scroll avec offset pour navbar fixe
 - **Architecture UI** : Séparation des composants CSS/JS réutilisables
+- **Corrections diverses** : Calculs, affichage, etc.
 
 
 2.0.0 (2025-08-14)
