@@ -28,7 +28,7 @@
     </div>
 
     <!-- Getting Started -->
-    @if($stats['total_migrations'] == 0)
+    @if ($stats['total_migrations'] == 0)
         <div class="card shadow-sm mb-5">
             <div class="card-body p-4">
                 <h2 class="section-title">
@@ -104,7 +104,7 @@
                         <h3 class="card-title {{ $stats['total_migrations'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ $stats['total_migrations'] }}</h3>
                         <p class="card-text text-body-secondary">Migrations effectuées</p>
                     </div>
-                    @if($stats['total_migrations'] > 0)
+                    @if ($stats['total_migrations'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
                     @endif
                 </div>
@@ -117,7 +117,7 @@
                         <h3 class="card-title {{ $stats['successful_migrations'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ $stats['successful_migrations'] }}</h3>
                         <p class="card-text text-body-secondary">Migrations réelles</p>
                     </div>
-                    @if($stats['successful_migrations'] > 0)
+                    @if ($stats['successful_migrations'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
                     @endif
                 </div>
@@ -130,7 +130,7 @@
                         <h3 class="card-title {{ $stats['total_size'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ human_readable_bytes_size($stats['total_size'], 2) }}</h3>
                         <p class="card-text text-body-secondary">Données générées</p>
                     </div>
-                    @if($stats['total_size'] > 0)
+                    @if ($stats['total_size'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
                     @endif
                 </div>
@@ -145,7 +145,7 @@
                         <h3 class="card-title text-info">{{ number_formatted($stats['total_changes']) }}</h3>
                         <p class="card-text text-body-secondary">Total des changements</p>
                     </div>
-                    @if($stats['total_migrations'] > 0)
+                    @if ($stats['total_migrations'] > 0)
                         <div class="card-footer bg-info bg-opacity-10 border-0"></div>
                     @endif
                 </div>
@@ -158,7 +158,7 @@
                         <h3 class="card-title {{ $stats['avg_changes'] > 0 ? 'text-primary' : 'text-body-secondary' }}">{{ number_formatted($stats['avg_changes']) }}</h3>
                         <p class="card-text text-body-secondary">Changements moyens</p>
                     </div>
-                    @if($stats['avg_changes'] > 0)
+                    @if ($stats['avg_changes'] > 0)
                         <div class="card-footer bg-primary bg-opacity-10 border-0"></div>
                     @endif
                 </div>
@@ -235,7 +235,7 @@
         </div>
 
         <!-- Recent Activity -->
-        @if(count($recentMigrations) > 0)
+        @if (count($recentMigrations) > 0)
             <div class="mb-5">
                 <h2 class="section-title section-title-lg">
                     <i class="bi bi-folder text-primary"></i> Migrations Récentes
@@ -257,16 +257,8 @@
                                         Migration <span data-bs-toggle="tooltip" title="ID complet : {{ $migration['migration_id'] }}">{{ $migration['short_id'] }}</span>
                                         • {{ $migration['created_at']->isoFormat('DD/MM/YYYY [à] HH:mm') }}
                                         • {{ number_formatted($migration['files_modified']) }} fichier(s) • {{ number_formatted($migration['total_changes']) }} changement(s)
-                                        • @if(($migration['source'] ?? 'cli') === 'web_interface')
-                                            <span class="badge bg-info"><i class="bi bi-globe me-1"></i>Web</span>
-                                        @else
-                                            <span class="badge bg-primary"><i class="bi bi-terminal me-1"></i>CLI</span>
-                                        @endif
-                                        @if($migration['dry_run'])
-                                            • <span class="badge bg-warning text-dark"><i class="bi bi-eye me-1"></i>DRY-RUN</span>
-                                        @else
-                                            • <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>LIVE</span>
-                                        @endif
+                                        • <x-fontawesome-migrator::migration-origin-badge :source="$migration['source']" />
+                                        • <x-fontawesome-migrator::migration-mode-badge :dry-run="$migration['dry_run']" />
                                     </div>
                                 </div>
                                 <span class="badge activity-badge">

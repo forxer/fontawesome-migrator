@@ -25,22 +25,22 @@
                 </div>
             </div>
 
-            @if($hasActions || $hasCounter)
+            @if ($hasActions || $hasCounter)
             <div class="col-md-4">
                 <div class="d-flex flex-column align-items-end gap-2">
-                    @if($hasCounter)
+                    @if ($hasCounter)
                     <div class="page-header-counter">
                         <i class="bi bi-{{ $counterIcon }} me-1 opacity-75"></i> {{ $counterText }}
                     </div>
                     @endif
 
-                    @if($hasActions)
+                    @if ($hasActions)
                     <div class="dropdown">
                         <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-gear"></i> {{ $actionsLabel }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            @if(isset($actions))
+                            @if (isset($actions))
                                 {{ $actions }}
                             @else
                                 {{ $slot }}

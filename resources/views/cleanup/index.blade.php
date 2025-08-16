@@ -53,21 +53,21 @@
                 <div class="card-body">
                     <h5 class="card-title text-primary"><i class="bi bi-lightbulb"></i> Actions recommandées</h5>
 
-                    @if($old30Days > 0)
+                    @if ($old30Days > 0)
                     <div class="d-flex align-items-center mb-2 text-primary">
                         <i class="bi bi-info-circle me-2"></i>
                         <span>{{ $old30Days }} migrations anciennes peuvent être supprimées</span>
                     </div>
                     @endif
 
-                    @if($old7Days > 0)
+                    @if ($old7Days > 0)
                     <div class="d-flex align-items-center mb-2 text-primary">
                         <i class="bi bi-info-circle me-2"></i>
                         <span>{{ $old7Days }} migrations de test peuvent être nettoyées</span>
                     </div>
                     @endif
 
-                    @if($old30Days == 0 && $old7Days == 0)
+                    @if ($old30Days == 0 && $old7Days == 0)
                     <div class="d-flex align-items-center mb-2 text-success">
                         <i class="bi bi-check-circle me-2"></i>
                         <span>Aucun nettoyage nécessaire pour le moment</span>
@@ -107,8 +107,8 @@
                         <button type="submit"
                                 class="btn btn-warning btn-sm w-100"
                                 {{ $old30Days == 0 ? 'disabled' : '' }}
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="top" 
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
                                 title="Supprimer les migrations de plus de 30 jours pour libérer de l'espace">
                             <i class="bi bi-trash me-1"></i>
                             Nettoyer ({{ $old30Days }} migrations)
@@ -140,8 +140,8 @@
                         <button type="submit"
                                 class="btn btn-info btn-sm w-100"
                                 {{ $old7Days == 0 ? 'disabled' : '' }}
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="top" 
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
                                 title="Nettoyer les migrations de test créées via l'interface web">
                             <i class="bi bi-flask me-1"></i>
                             Nettoyer tests ({{ $old7Days }} migrations)
@@ -175,8 +175,8 @@
                         <button type="submit"
                                 class="btn btn-danger btn-sm w-100"
                                 {{ $old30Days + $old7Days == 0 ? 'disabled' : '' }}
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="top" 
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
                                 title="Supprimer rapidement toutes les anciennes migrations et migrations de test">
                             <i class="bi bi-lightning me-1"></i>
                             Nettoyage complet ({{ $old30Days + $old7Days }} migrations)
@@ -188,7 +188,7 @@
     </div>
 
     <!-- Option NUCLÉAIRE - Supprimer TOUT -->
-    @if($totalMigrations > 0)
+    @if ($totalMigrations > 0)
     <div class="row g-4 mb-4">
         <div class="col-12">
             <div class="card border-danger bg-danger bg-opacity-10">
@@ -224,8 +224,8 @@
                         <button type="submit"
                                 class="btn btn-danger w-100"
                                 data-confirm-text="ÊTES-VOUS ABSOLUMENT CERTAIN de vouloir supprimer TOUTES les migrations ? Cette action est IRRÉVERSIBLE !"
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="top" 
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
                                 title="⚠️ DANGER : Supprimer toutes les migrations sans exception">
                             <i class="bi bi-radioactive me-1"></i>
                             SUPPRIMER TOUT ({{ $totalMigrations }} migrations)
@@ -238,10 +238,10 @@
     @endif
 
     <!-- Liste des migrations pour suppression sélective -->
-    @if(count($migrations) > 0)
+    @if (count($migrations) > 0)
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-list-ul"></i> Gestion sélective des migrations</h5>
+            <h5 class="card-title"><i class="bi bi-list-ul"></i> Migrations</h5>
 
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -265,26 +265,10 @@
                                 </div>
                             </td>
                             <td>
-                                @if(($migration['source'] ?? 'cli') === 'web_interface')
-                                    <span class="badge bg-info">
-                                        <i class="bi bi-globe me-1"></i>Web
-                                    </span>
-                                @else
-                                    <span class="badge bg-primary">
-                                        <i class="bi bi-terminal me-1"></i>CLI
-                                    </span>
-                                @endif
+                                <x-fontawesome-migrator::migration-origin-badge :source="$migration['source']" />
                             </td>
                             <td>
-                                @if($migration['dry_run'] ?? false)
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-eye me-1"></i>DRY-RUN
-                                    </span>
-                                @else
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle me-1"></i>LIVE
-                                    </span>
-                                @endif
+                                <x-fontawesome-migrator::migration-mode-badge :dry-run="$migration['dry_run']" />
                             </td>
                             <td class="text-body-secondary small">
                                 {{ $migration['created_at']->diffForHumans() }}
@@ -297,8 +281,8 @@
                                         class="btn btn-outline-danger btn-sm delete-migration-btn"
                                         data-migration-id="{{ $migration['short_id'] }}"
                                         data-migration-date="{{ $migration['created_at']->format('d/m/Y H:i') }}"
-                                        data-bs-toggle="tooltip" 
-                                        data-bs-placement="top" 
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
                                         title="Supprimer cette migration spécifique et tous ses fichiers de sauvegarde">
                                     <i class="bi bi-trash"></i>
                                     Supprimer
@@ -309,7 +293,7 @@
                     </tbody>
                 </table>
 
-                @if(count($migrations) > 20)
+                @if (count($migrations) > 20)
                 <div class="text-center mt-3">
                     <p class="text-body-secondary small">
                         Affichage de 20 migrations sur {{ count($migrations) }} total.

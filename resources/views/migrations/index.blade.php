@@ -62,7 +62,7 @@
                         <div class="card-body">
                             <i class="bi bi-calendar fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">
-                                @if($stats['last_migration'])
+                                @if ($stats['last_migration'])
                                     {{ $stats['last_migration']->isoFormat('DD/MM') }}
                                 @else
                                     -
@@ -88,11 +88,7 @@
                                     <i class="bi bi-file-text text-primary fs-4"></i>
                                    {{ $report['created_at']->isoFormat('DD/MM [à] HH:mm') }}
                                 </h5>
-                                @if ($report['dry_run'])
-                                    <span class="badge bg-warning text-dark"><i class="bi bi-eye me-1"></i>DRY-RUN</span>
-                                @else
-                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>LIVE</span>
-                                @endif
+                                <x-fontawesome-migrator::migration-mode-badge :dry-run="$report['dry_run']" />
                         </div>
                         <div class="card-body py-4">
                             <div class="row g-3 text-center">
@@ -105,7 +101,7 @@
                                 <div class="col-6">
                                     <div class="border rounded p-3">
                                         <div class="fw-semibold">
-                                            @if(isset($report['migration_summary']['total_changes']))
+                                            @if (isset($report['migration_summary']['total_changes']))
                                                 {{ number_formatted($report['migration_summary']['total_changes']) }}
                                             @else
                                                 -
@@ -117,7 +113,7 @@
                                 <div class="col-6">
                                     <div class="border rounded p-3">
                                         <div class="fw-semibold">
-                                            @if($report['migration_origin'] === 'web_interface')
+                                            @if ($report['migration_origin'] === 'web_interface')
                                                 <i class="bi bi-globe text-info"></i> Web
                                             @else
                                                 <i class="bi bi-terminal text-secondary"></i> CLI
@@ -133,7 +129,7 @@
                                                 $sourceVersion = $report['migration_options']['source_version'] ?? null;
                                                 $targetVersion = $report['migration_options']['target_version'] ?? null;
                                             @endphp
-                                            @if($sourceVersion && $targetVersion)
+                                            @if ($sourceVersion && $targetVersion)
                                                 FA{{ $sourceVersion }} → FA{{ $targetVersion }}
                                             @elseif($sourceVersion)
                                                 Depuis FA{{ $sourceVersion }}
@@ -145,7 +141,7 @@
                                         </div>
                                         <div class="text-body-secondary small">
                                             <i class="bi bi-arrow-repeat"></i>
-                                            @if($sourceVersion || $targetVersion)
+                                            @if ($sourceVersion || $targetVersion)
                                                 Versions
                                             @else
                                                 Migration ID
@@ -158,31 +154,31 @@
 
                         <div class="card-footer bg-light">
                             <div class="btn-group btn-group-sm d-flex flex-wrap" role="group" aria-label="Actions du rapport">
-                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}" 
+                                <a href="{{ route('fontawesome-migrator.migrations.show', $report['short_id']) }}"
                                    class="btn btn-primary"
-                                   data-bs-toggle="tooltip" 
-                                   data-bs-placement="top" 
+                                   data-bs-toggle="tooltip"
+                                   data-bs-placement="top"
                                    title="Voir le rapport détaillé avec toutes les modifications">
                                     <i class="bi bi-file-text"></i> Rapport
                                 </a>
-                                <button onclick="viewJSON('{{ $report['short_id'] }}')" 
+                                <button onclick="viewJSON('{{ $report['short_id'] }}')"
                                         class="btn btn-outline-primary"
-                                        data-bs-toggle="tooltip" 
-                                        data-bs-placement="top" 
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
                                         title="Télécharger les métadonnées au format JSON brut">
                                     <i class="bi bi-database"></i> JSON
                                 </button>
-                                <button onclick="inspectMigration('{{ $report['short_id'] }}')" 
+                                <button onclick="inspectMigration('{{ $report['short_id'] }}')"
                                         class="btn btn-outline-secondary"
-                                        data-bs-toggle="tooltip" 
-                                        data-bs-placement="top" 
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
                                         title="Inspecter les fichiers de sauvegarde et métadonnées">
                                     <i class="bi bi-search"></i> Inspecter
                                 </button>
-                                <button onclick="deleteReport('{{ $report['short_id'] }}')" 
+                                <button onclick="deleteReport('{{ $report['short_id'] }}')"
                                         class="btn btn-outline-danger"
-                                        data-bs-toggle="tooltip" 
-                                        data-bs-placement="top" 
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
                                         title="Supprimer définitivement cette migration et ses sauvegardes">
                                     <i class="bi bi-trash"></i>
                                 </button>
