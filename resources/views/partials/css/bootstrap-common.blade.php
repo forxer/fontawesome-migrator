@@ -3,20 +3,15 @@
 
     /* Transitions des cards */
     .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-2px);
+        transition: box-shadow 0.2s ease;
     }
 
     /* Action cards avec effet hover plus prononcé */
     .action-card-hover {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: box-shadow 0.2s ease;
     }
 
     .action-card-hover:hover {
-        transform: translateY(-5px);
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
 
@@ -159,11 +154,7 @@
         text-align: center;
         height: 100%;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .stat-card-bootstrap:hover {
-        transform: translateY(-2px);
+        transition: box-shadow 0.2s ease;
     }
 
     .stat-card-bootstrap.active {
@@ -197,12 +188,11 @@
     .action-card {
         border: 0;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: box-shadow 0.2s ease;
         height: 100%;
     }
 
     .action-card:hover {
-        transform: translateY(-5px);
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
 
@@ -216,11 +206,7 @@
     .entity-card {
         height: 100%;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .entity-card:hover {
-        transform: translateY(-2px);
+        transition: box-shadow 0.2s ease;
     }
 
     .entity-card .entity-header {

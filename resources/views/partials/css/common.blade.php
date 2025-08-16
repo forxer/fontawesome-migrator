@@ -109,11 +109,10 @@
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: box-shadow 0.2s;
     }
 
     .stat-card:hover {
-        transform: translateY(-2px);
         box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     }
 
@@ -593,7 +592,6 @@
     }
 
     .metric-card:hover {
-        transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
         border-color: var(--primary-color);
     }
@@ -681,7 +679,6 @@
     }
 
     .recommendation-card:hover {
-        transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
     }
 
@@ -729,7 +726,6 @@
     }
 
     .report-card:hover {
-        transform: translateY(-4px);
         box-shadow: 0 12px 40px rgba(0,0,0,0.15);
     }
 
@@ -1004,9 +1000,6 @@
         transition: all 0.3s ease;
     }
 
-    .navbar-brand:hover {
-        transform: translateY(-1px);
-    }
 
     .navbar-brand .fw-bold {
         color: var(--gray-800);

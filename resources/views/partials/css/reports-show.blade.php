@@ -30,7 +30,6 @@
     .hover-bg-light:hover {
         background-color: #f8f9fa !important;
         border-color: #dee2e6 !important;
-        transform: translateY(-1px);
         transition: all 0.2s ease-in-out;
     }
 </style>
