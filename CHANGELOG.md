@@ -14,7 +14,7 @@ CHANGELOG
 - **Effets visuels avancés** : Système de bulles animées réalistes avec effet 3D
 - **Navigation optimisée** : Correction du scroll avec offset pour navbar fixe
 - **Architecture UI** : Séparation des composants CSS/JS réutilisables
-- **Corrections diverses** : Calculs, affichage, etc.
+- **Corrections diverses** : Calculs, affichages, etc.
 
 
 2.0.0 (2025-08-14)

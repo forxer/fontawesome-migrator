@@ -91,7 +91,7 @@
                                 @if ($report['dry_run'])
                                     <span class="badge bg-warning text-dark">DRY-RUN</span>
                                 @else
-                                    <span class="badge bg-success">RÉEL</span>
+                                    <span class="badge bg-success">RÉELLE</span>
                                 @endif
                         </div>
                         <div class="card-body py-4">
