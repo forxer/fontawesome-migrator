@@ -274,7 +274,6 @@
         })
         .catch(error => {
             showAlert('Erreur lors de la récupération du JSON', 'error');
-            console.error('Erreur:', error);
         });
     }
 
@@ -377,7 +376,6 @@ ${JSON.stringify(data.metadata, null, 2)}
             }
         } catch (error) {
             showAlert('Erreur de connexion', 'error');
-            console.error('Erreur:', error);
         }
     }
 </script>

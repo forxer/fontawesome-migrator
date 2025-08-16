@@ -65,4 +65,9 @@ interface MetadataManagerInterface
      * Nettoyer les anciennes migrations
      */
     public function cleanOldMigrations(int $daysToKeep = 30): int;
+
+    /**
+     * Mettre à jour la taille du répertoire de migration
+     */
+    public function updateMigrationSize(): self;
 }

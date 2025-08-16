@@ -212,17 +212,6 @@
         z-index: -1; /* Derrière tout */
     }
 
-    /* Layer avant pour bulles statiques visibles */
-    .bubbles-pattern-front {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        pointer-events: none;
-        opacity: 0.4;
-        z-index: 2; /* Devant tout */
-    }
 
     /* Densité augmentée pour la hero section */
     .hero-section .bubbles-pattern {

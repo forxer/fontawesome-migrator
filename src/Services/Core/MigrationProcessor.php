@@ -154,8 +154,7 @@ class MigrationProcessor
 
         // Consolider tous les file_results
         $allFileResults = array_merge(
-            $iconResults['file_results'] ?? [],
-            // TODO: ajouter asset file_results quand disponible
+            $iconResults['file_results'] ?? []
         );
 
         $results = [

@@ -87,7 +87,6 @@
             
             return { success: true, data };
         } catch (error) {
-            console.error('AJAX request failed:', error);
             return { success: false, error: error.message };
         }
     };
