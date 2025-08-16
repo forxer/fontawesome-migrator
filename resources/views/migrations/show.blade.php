@@ -856,14 +856,14 @@
         function copyToClipboard() {
             const text = `Rapport de migration FontAwesome\nGénéré le ${new Date().toLocaleDateString('fr-FR')}`;
             navigator.clipboard.writeText(text).catch(() => {
-                showNotification('Impossible de copier dans le presse-papier', 'error');
+                showToast('Impossible de copier dans le presse-papier', 'error');
             });
         }
 
         // Fonction optimisée pour copier les commandes
         function copyCommand(command) {
             navigator.clipboard.writeText(command).then(() => {
-                showNotification(`Commande copiée : ${command}`, 'success');
+                showToast(`Commande copiée : ${command}`, 'success');
             }).catch(() => {
                 // Fallback pour les anciens navigateurs
                 const textArea = document.createElement('textarea');
@@ -872,35 +872,10 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showNotification(`Commande copiée : ${command}`, 'success');
+                showToast(`Commande copiée : ${command}`, 'success');
             });
         }
 
-        // Système de notifications léger
-        function showNotification(message, type = 'info') {
-            // Supprimer les notifications existantes
-            const existing = document.querySelector('.temp-notification');
-            if (existing) existing.remove();
-
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type} temp-notification`;
-            notification.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 9999;
-                min-width: 300px; opacity: 0; transition: opacity 0.3s ease;
-            `;
-            notification.textContent = message;
-
-            document.body.appendChild(notification);
-
-            // Animation d'apparition
-            setTimeout(() => notification.style.opacity = '1', 10);
-
-            // Suppression automatique
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
 
         // Modal simple pour les conseils de test
         function showTestingTips() {
@@ -1018,7 +993,7 @@
             @endforeach
 
             if (warnings.length === 0) {
-                showNotification('Aucun avertissement trouvé', 'info');
+                showToast('Aucun avertissement trouvé', 'info');
                 return;
             }
 

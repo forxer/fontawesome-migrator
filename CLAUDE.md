@@ -153,3 +153,6 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Août 2025 - Code mort supprimé dans AssetMigrator**: ~147 lignes supprimées - 5 méthodes inutilisées : hasFA5Assets(), getAssetStats(), analyzeAssets(), getAssetPatterns(), isProAsset()
 - **IMPORTANT**: Toujours vérifier avant de supprimer du code - j'ai tendance à introduire des régressions
 - **Août 2025 - Interface migrations corrigée**: Statistiques sauvegardes index migrations corrigées (utilisation backups_count metadata.json), navigation rapide nettoyée (suppression lien section inexistante), card statistiques sauvegardes ajoutée dans détail migration
+- **Août 2025 - Nettoyage JavaScript massif v2.0.1**: ~300 lignes JS mortes supprimées (fonctions orphelines + duplications), unification notifications avec Toast Bootstrap, suppression bouton "Inspecter" redondant, architecture centralisée
+- **Toast Bootstrap implémentés**: Remplacement notifications artisanales par composants professionnels (animations, accessibilité, design unifié), conteneur global dans layout, API moderne
+- **Qualité code améliorée**: Plus de duplications, maintenabilité simplifiée, standards respectés, UX professionnelle avec toasts empilables

@@ -12,48 +12,69 @@
         });
     });
     
-    // Fonction utilitaire pour afficher des alertes Bootstrap
-    window.showBootstrapAlert = function(message, type = 'success', containerId = 'alerts') {
-        const alertsContainer = document.getElementById(containerId);
-        if (!alertsContainer) return;
-        
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type} alert-dismissible fade show`;
-        alert.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        
-        alertsContainer.appendChild(alert);
-        
-        // Auto-dismiss après 5 secondes
-        setTimeout(() => {
-            if (alert.parentNode) {
-                const bootstrapAlert = bootstrap.Alert.getOrCreateInstance(alert);
-                bootstrapAlert.close();
-            }
-        }, 5000);
-    };
     
-    // Fonction utilitaire pour afficher des alertes temporaires (position fixe)
-    window.showTempAlert = function(message, type = 'success') {
-        const existing = document.querySelector('.temp-alert');
-        if (existing) existing.remove();
+    // Fonction utilitaire pour afficher des Toasts Bootstrap
+    window.showToast = function(message, type = 'success') {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            console.warn('Toast container not found');
+            return;
+        }
 
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type} temp-alert`;
-        alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-        alert.textContent = message;
+        // Icônes par type
+        const icons = {
+            success: 'bi-check-circle-fill text-success',
+            error: 'bi-x-circle-fill text-danger',
+            warning: 'bi-exclamation-triangle-fill text-warning',
+            info: 'bi-info-circle-fill text-info'
+        };
 
-        document.body.appendChild(alert);
-        setTimeout(() => alert.remove(), 4000);
+        // Couleurs de bordure par type
+        const borderColors = {
+            success: 'border-success',
+            error: 'border-danger', 
+            warning: 'border-warning',
+            info: 'border-info'
+        };
+
+        const icon = icons[type] || icons.info;
+        const borderColor = borderColors[type] || borderColors.info;
+        
+        // Créer le toast
+        const toastId = 'toast-' + Date.now();
+        const toastHtml = `
+            <div class="toast ${borderColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="bi ${icon} me-2"></i>
+                    <span class="flex-grow-1">${message}</span>
+                    <button type="button" class="btn-close btn-close-sm ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+
+        // Ajouter au conteneur
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+        // Initialiser et afficher le toast
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 4000
+        });
+        
+        // Supprimer l'élément du DOM après fermeture
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            toastElement.remove();
+        });
+
+        toast.show();
     };
     
     // Fonction utilitaire pour copier du texte dans le presse-papier
     window.copyToClipboard = function(text, successMessage = null) {
         navigator.clipboard.writeText(text).then(() => {
             const message = successMessage || `Commande copiée : ${text}`;
-            window.showTempAlert(message, 'success');
+            window.showToast(message, 'success');
         }).catch(() => {
             // Fallback pour les anciens navigateurs
             const textArea = document.createElement('textarea');
@@ -63,7 +84,7 @@
             document.execCommand('copy');
             document.body.removeChild(textArea);
             const message = successMessage || `Commande copiée : ${text}`;
-            window.showTempAlert(message, 'success');
+            window.showToast(message, 'success');
         });
     };
     

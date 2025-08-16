@@ -76,7 +76,6 @@
         </div>
     @endif
 
-    <div id="alerts"></div>
 
     @if (count($reports) > 0)
         <div class="row g-4">
@@ -208,7 +207,7 @@
 @section('scripts')
 <script>
     function showAlert(message, type = 'success') {
-        showBootstrapAlert(message, type, 'alerts');
+        showToast(message, type);
     }
 
     function refreshReports() {

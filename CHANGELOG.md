@@ -1,8 +1,14 @@
 CHANGELOG
 =========
 
-2.0.1 (2025-08-xx)
+2.0.1 (2025-08-16)
 ------------------
+
+### Optimisations JavaScript
+
+- Suppression ~300 lignes de code JavaScript mort
+- Toast Bootstrap pour notifications (remplace 3 implémentations artisanales)
+- Bouton "Inspecter" supprimé (redondant avec "Détails")
 
 ### Mappings FontAwesome complétés
 

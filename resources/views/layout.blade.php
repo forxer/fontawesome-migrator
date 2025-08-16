@@ -68,6 +68,10 @@
         <i class="bi bi-arrow-up"></i>
     </button>
 
+    <!-- Conteneur Toast Bootstrap -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer">
+    </div>
+
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 

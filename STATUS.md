@@ -96,6 +96,15 @@
 - [x] **Documentation complète**: Guide multi-versions, API reference, quick reference
 - [x] **Traçabilité complète**: Origine CLI/Web, métadonnées enrichies
 
+### Phase 13: Nettoyage JavaScript & Optimisations v2.0.1 ✅
+- [x] **Code mort supprimé**: ~300 lignes JavaScript inutilisées éliminées (fonctions orphelines + duplications)
+- [x] **Bouton Inspecter supprimé**: Élimination redondance avec bouton Détails 
+- [x] **Unification notifications**: showAlert, copyCommand, showNotification centralisées
+- [x] **Toast Bootstrap implémentés**: Remplacement notifications artisanales par composants professionnels
+- [x] **Architecture centralisée**: Fonctions communes dans bootstrap-common.blade.php
+- [x] **Qualité améliorée**: Plus de duplications, maintenabilité simplifiée, UX moderne
+- [x] **Interface unifiée**: Un seul système de notification avec animations, accessibilité, empilage automatique
+
 ### Phase 8: Refactorisation architecturale services v2.0 ✅
 - [x] **Services centralisés**: FontAwesomePatternService et AssetReplacementService créés
 - [x] **Injection de dépendances pure**: Container Laravel utilisé partout, 0 instanciation manuelle

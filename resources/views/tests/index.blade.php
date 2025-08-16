@@ -215,7 +215,7 @@ function formatFileSize(bytes, decimals = 2) {
 }
 
 function showAlert(message, type = 'success') {
-    showTempAlert(message, type);
+    showToast(message, type);
 }
 
 function refreshPage() {
