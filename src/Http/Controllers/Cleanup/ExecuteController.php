@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Http\Controllers\Cleanup;
 
+use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -39,7 +40,7 @@ class ExecuteController extends Controller
 
                 foreach ($migrations as $migration) {
                     $createdAt = \is_string($migration['created_at'])
-                        ? \Carbon\Carbon::parse($migration['created_at'])
+                        ? Carbon::parse($migration['created_at'])
                         : $migration['created_at'];
                     $age = abs(now()->diffInDays($createdAt, false));
                     $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';
@@ -87,7 +88,7 @@ class ExecuteController extends Controller
 
                 foreach ($migrations as $migration) {
                     $createdAt = \is_string($migration['created_at'])
-                        ? \Carbon\Carbon::parse($migration['created_at'])
+                        ? Carbon::parse($migration['created_at'])
                         : $migration['created_at'];
                     $age = abs(now()->diffInDays($createdAt, false));
                     $isTestMigration = ($migration['source'] ?? 'cli') === 'web_interface';

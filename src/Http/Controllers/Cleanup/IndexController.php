@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Http\Controllers\Cleanup;
 
+use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Config;
@@ -26,7 +27,7 @@ class IndexController extends Controller
         $now = now();
         $oldMigrationsCount = $migrations->filter(function ($migration) use ($now, $oldDaysThreshold): bool {
             $createdAt = \is_string($migration['created_at'])
-                ? \Carbon\Carbon::parse($migration['created_at'])
+                ? Carbon::parse($migration['created_at'])
                 : $migration['created_at'];
 
             return $now->diffInDays($createdAt) > $oldDaysThreshold;
@@ -34,7 +35,7 @@ class IndexController extends Controller
 
         $oldTestMigrationsCount = $migrations->filter(function ($migration) use ($now, $testDaysThreshold): bool {
             $createdAt = \is_string($migration['created_at'])
-                ? \Carbon\Carbon::parse($migration['created_at'])
+                ? Carbon::parse($migration['created_at'])
                 : $migration['created_at'];
 
             return $now->diffInDays($createdAt) > $testDaysThreshold &&
@@ -68,8 +69,9 @@ class IndexController extends Controller
             if (! isset($migration['created_at'])) {
                 return false;
             }
+
             $createdAt = \is_string($migration['created_at'])
-                ? \Carbon\Carbon::parse($migration['created_at'])
+                ? Carbon::parse($migration['created_at'])
                 : $migration['created_at'];
             $diffDays = abs($now->diffInDays($createdAt, false)); // false = signed difference
 
@@ -81,8 +83,9 @@ class IndexController extends Controller
             if (! isset($migration['created_at'])) {
                 return false;
             }
+
             $createdAt = \is_string($migration['created_at'])
-                ? \Carbon\Carbon::parse($migration['created_at'])
+                ? Carbon::parse($migration['created_at'])
                 : $migration['created_at'];
             $diffDays = abs($now->diffInDays($createdAt, false)); // false = signed difference
 
