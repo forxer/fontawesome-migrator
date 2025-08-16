@@ -1,13 +1,19 @@
 CHANGELOG
 =========
 
-2.0.1 (2025-08-14)
+2.0.1 (2025-08-xx)
 ------------------
 
 ### Mappings FontAwesome complétés
 
 - **593 mappings officiels** : 270 (4→5) + 310 (5→6) + 13 (6→7)
 - **Structure unifiée** entre toutes les versions avec métadonnées
+
+### Interface utilisateur améliorée
+
+- **Effets visuels avancés** : Système de bulles animées réalistes avec effet 3D
+- **Navigation optimisée** : Correction du scroll avec offset pour navbar fixe
+- **Architecture UI** : Séparation des composants CSS/JS réutilisables
 
 
 2.0.0 (2025-08-14)

@@ -78,6 +78,7 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - Documentation utilisateur créée et nettoyée des références internes
 - Configuration JSON externalisée avec système de fallbacks pour compatibilité
 - Importante leçon : distinguer "tambouille interne" vs documentation utilisateur
+- **Août 2025 - Effets UI avancés v2.0.1**: Système de bulles animées 3D avec gradients radiaux, 6 trajectoires, entrelacement z-index, effets parallaxe
 - **LEÇON CRITIQUE** : NE JAMAIS créer de nouveaux fichiers de résumé quand les informations peuvent être ajoutées aux fichiers existants (CLAUDE.md, STATUS.md). Maintenir les fichiers existants au lieu de créer des doublons inutiles.
 - Environnement Docker d-packages-exec clarifié comme propriétaire AXN Informatique
 - Version 2.0.0 encore en développement, pas terminée - rester factuel sur l'avancement
