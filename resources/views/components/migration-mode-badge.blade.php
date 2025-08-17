@@ -1,7 +1,7 @@
 @props(['dryRun'])
 
 @if ($dryRun ?? false)
-    <span class="badge bg-warning text-dark">
+    <span class="badge bg-warning">
         <i class="bi bi-eye me-1"></i>DRY-RUN
     </span>
 @else

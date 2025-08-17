@@ -32,7 +32,7 @@
         <div class="card shadow-sm mb-5">
             <div class="card-body p-4">
                 <h2 class="section-title">
-                    <i class="bi bi-flask"></i> Premiers Pas
+                    <i class="bi bi-flask"></i> Premiers pas
                 </h2>
                 <div class="row g-4">
                     <div class="col-12">
@@ -44,7 +44,7 @@
                                 <p class="text-body-secondary mb-3">Configurez le package dans votre projet Laravel</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <code class="flex-grow-1 bg-dark text-light p-2 rounded" id="install-command">php artisan fontawesome:install</code>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:install')" title="Copier la commande">
+                                    <button class="btn btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:install')" title="Copier la commande">
                                         <i class="bi bi-clipboard"></i>
                                     </button>
                                 </div>
@@ -57,11 +57,11 @@
                             <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">2</span>
                             <div class="activity-content flex-grow-1">
-                                <h5 class="mb-2">Test de Migration</h5>
+                                <h5 class="mb-2">Test de migration</h5>
                                 <p class="text-body-secondary mb-3">Testez la migration en mode dry-run pour voir les changements</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <code class="flex-grow-1 bg-dark text-light p-2 rounded" id="test-command">php artisan fontawesome:migrate --dry-run</code>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:migrate --dry-run')" title="Copier la commande">
+                                    <button class="btn btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:migrate --dry-run')" title="Copier la commande">
                                         <i class="bi bi-clipboard"></i>
                                     </button>
                                 </div>
@@ -74,11 +74,11 @@
                             <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                                   style="width: 40px; height: 40px; font-size: 1.2rem;">3</span>
                             <div class="activity-content flex-grow-1">
-                                <h5 class="mb-2">Migration Réelle</h5>
+                                <h5 class="mb-2">Migration réelle</h5>
                                 <p class="text-body-secondary mb-3">Appliquez les changements définitivement</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <code class="flex-grow-1 bg-dark text-light p-2 rounded" id="migrate-command">php artisan fontawesome:migrate</code>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:migrate')" title="Copier la commande">
+                                    <button class="btn btn-outline-secondary" onclick="copyCommand('php artisan fontawesome:migrate')" title="Copier la commande">
                                         <i class="bi bi-clipboard"></i>
                                     </button>
                                 </div>
@@ -175,7 +175,7 @@
                             </div>
                             <div class="text-body-secondary fs-2">/</div>
                             <div class="ms-3">
-                                <span class="badge bg-warning text-dark fs-6">{{ $stats['dry_run_count'] }}</span>
+                                <span class="badge bg-warning fs-6">{{ $stats['dry_run_count'] }}</span>
                                 <div class="text-body-secondary small">Test(s)</div>
                             </div>
                         </div>
@@ -249,7 +249,7 @@
                                 <div class="activity-content">
                                     <div class="activity-title">
                                         <a href="{{ route('fontawesome-migrator.migrations.show', $migration['short_id']) }}"
-                                        class="text-decoration-none text-dark">
+                                        class="text-decoration-none">
                                             {{ $migration['name'] }}
                                         </a>
                                     </div>

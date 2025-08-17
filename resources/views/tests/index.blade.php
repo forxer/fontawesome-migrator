@@ -35,7 +35,7 @@
                         <div class="card-body">
                             <i class="bi bi-folder fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ $backupStats['total_migrations'] }}</div>
-                            <div class="text-body-secondary small">Migrations</div>
+                            <div class="text-body-secondary small">Migration(s)</div>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <div class="card-body">
                             <i class="bi bi-files fs-1 text-primary mb-2"></i>
                             <div class="fs-3 fw-bold text-primary">{{ $backupStats['total_backups'] }}</div>
-                            <div class="text-body-secondary small">Fichiers</div>
+                            <div class="text-body-secondary small">Fichier(s) sauvegardé(s)</div>
                         </div>
                     </div>
                 </div>
@@ -82,70 +82,91 @@
             <h2 class="section-title">
                 <i class="bi bi-arrow-clockwise"></i> Migration multi-versions
             </h2>
-            <form id="migrationForm" class="row g-3">
-                <div class="col-md-4">
-                    <label for="fromVersion" class="form-label">
-                        <i class="bi bi-arrow-up-right"></i> Version Source
-                    </label>
-                    <select class="form-select" id="fromVersion" name="from">
-                        <option value="">Détection automatique</option>
-                        <option value="4">FontAwesome 4</option>
-                        <option value="5">FontAwesome 5</option>
-                        <option value="6">FontAwesome 6</option>
-                    </select>
-                    <div class="form-text">La version actuelle de votre projet</div>
-                </div>
+            <form id="migrationForm">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="fromVersion" class="form-label">
+                                    <i class="bi bi-arrow-up-right"></i> Version Source
+                                </label>
+                                <select class="form-select" id="fromVersion" name="from">
+                                    <option value="">Détection automatique</option>
+                                    <option value="4">FontAwesome 4</option>
+                                    <option value="5">FontAwesome 5</option>
+                                    <option value="6">FontAwesome 6</option>
+                                </select>
+                                <div class="form-text">La version actuelle de votre projet</div>
+                            </div>
 
-                <div class="col-md-4">
-                    <label for="toVersion" class="form-label">
-                        <i class="bi bi-arrow-down-right"></i> Version Cible
-                    </label>
-                    <select class="form-select" id="toVersion" name="to" disabled>
-                        <option value="">Sélectionnez d'abord la version source</option>
-                    </select>
-                    <div class="form-text">La version vers laquelle migrer</div>
-                </div>
+                            <div class="col-md-6">
+                                <label for="toVersion" class="form-label">
+                                    <i class="bi bi-arrow-down-right"></i> Version Cible
+                                </label>
+                                <select class="form-select" id="toVersion" name="to" disabled>
+                                    <option value="">Sélectionnez d'abord la version source</option>
+                                </select>
+                                <div class="form-text">La version vers laquelle migrer</div>
+                            </div>
 
-                <div class="col-md-4">
-                    <label for="migrationMode" class="form-label">
-                        <i class="bi bi-sliders"></i> Mode de Migration
-                    </label>
-                    <select class="form-select" id="migrationMode" name="mode">
-                        <option value="complete">Complète (icônes + assets)</option>
-                        <option value="icons-only">Icônes seulement</option>
-                        <option value="assets-only">Assets seulement</option>
-                    </select>
-                    <div class="form-text">Type de migration à effectuer</div>
-                </div>
-
-                <div class="col-12">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="dryRun" name="dry_run" checked>
-                        <label class="form-check-label" for="dryRun">
-                            <i class="bi bi-eye"></i> Mode Dry-Run (simulation)
-                        </label>
-                        <div class="form-text">Recommandé pour tester avant migration réelle. Les résultats sont automatiquement enregistrés.</div>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div id="migrationInfo" class="text-body-secondary">
-                            <i class="bi bi-info-circle"></i> Sélectionnez les versions pour voir les détails de migration
+                            <div class="col-12">
+                                <div class="alert alert-info d-flex align-items-center" role="alert">
+                                    <div class="form-check form-switch mb-0 flex-grow-1">
+                                        <input class="form-check-input" type="checkbox" id="dryRun" name="dry_run" checked>
+                                        <label class="form-check-label" for="dryRun">
+                                            <i class="bi bi-eye"></i> Mode Dry-Run (simulation)
+                                            <span class="badge bg-success ms-2">Recommandé</span>
+                                        </label>
+                                        <div class="form-text mb-0">Testez votre migration sans modifier les fichiers. Les résultats sont automatiquement enregistrés.</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <button type="button" class="btn btn-outline-secondary me-2" id="generateCommand"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="top"
-                                    title="Générer la commande CLI correspondante aux options sélectionnées">
-                                <i class="bi bi-terminal"></i> Générer Commande
-                            </button>
-                            <button type="submit" class="btn btn-primary" id="startMigration" disabled
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="top"
-                                    title="Lancer la migration avec les paramètres configurés">
-                                <i class="bi bi-play-circle"></i> Démarrer Migration
-                            </button>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            <i class="bi bi-sliders"></i> Mode de Migration
+                        </label>
+                        <div class="btn-group-vertical w-100" role="group">
+                            <input type="radio" class="btn-check" name="mode" id="modeComplete" value="complete" checked>
+                            <label class="btn btn-outline-primary text-start" for="modeComplete">
+                                <i class="bi bi-check2-all"></i> <strong>Complète</strong>
+                                <small class="d-block text-body-secondary">Icônes + Assets</small>
+                            </label>
+
+                            <input type="radio" class="btn-check" name="mode" id="modeIcons" value="icons-only">
+                            <label class="btn btn-outline-primary text-start" for="modeIcons">
+                                <i class="bi bi-fonts"></i> <strong>Icônes seulement</strong>
+                                <small class="d-block text-body-secondary">Classes FA uniquement</small>
+                            </label>
+
+                            <input type="radio" class="btn-check" name="mode" id="modeAssets" value="assets-only">
+                            <label class="btn btn-outline-primary text-start" for="modeAssets">
+                                <i class="bi bi-file-earmark-code"></i> <strong>Assets seulement</strong>
+                                <small class="d-block text-body-secondary">CSS/JS uniquement</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div id="migrationInfo" class="text-body-secondary">
+                                <i class="bi bi-info-circle"></i> Sélectionnez les versions pour voir les détails de migration
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-outline-secondary me-2" id="generateCommand"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Générer la commande CLI correspondante aux options sélectionnées">
+                                    <i class="bi bi-terminal"></i> Générer Commande
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="startMigration" disabled
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Lancer la migration avec les paramètres configurés">
+                                    <i class="bi bi-play-circle"></i> Démarrer Migration
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -175,7 +196,15 @@
             </div>
 
             <div id="test-output" class="mt-4" style="display: none;">
-                <h3 class="section-title">Résultat de la migration :</h3>
+                <h3 class="section-title">
+                    <span id="migration-status-icon"><i class="bi bi-hourglass-split"></i></span>
+                    <span id="migration-status-text">Migration en cours...</span>
+                </h3>
+                <div id="migration-progress" class="progress mb-3" style="height: 25px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%">
+                        <span class="fw-bold">Traitement en cours...</span>
+                    </div>
+                </div>
                 <pre id="test-result" class="bg-dark text-light p-3 rounded"></pre>
                 <div id="migration-report-btn" class="mt-3" style="display: none;">
                     <a id="view-report-link" href="#" class="btn btn-success" target="_blank"
@@ -346,7 +375,7 @@ function generateAndShowCommand() {
 function generateCommand() {
     const fromVersion = document.getElementById('fromVersion').value;
     const toVersion = document.getElementById('toVersion').value;
-    const mode = document.getElementById('migrationMode').value;
+    const mode = document.querySelector('input[name="mode"]:checked').value;
     const dryRun = document.getElementById('dryRun').checked;
 
     let command = 'php artisan fontawesome:migrate';
@@ -377,7 +406,7 @@ function copyCommand() {
 async function runMultiVersionMigration() {
     const fromVersion = document.getElementById('fromVersion').value;
     const toVersion = document.getElementById('toVersion').value;
-    const mode = document.getElementById('migrationMode').value;
+    const mode = document.querySelector('input[name="mode"]:checked').value;
     const dryRun = document.getElementById('dryRun').checked;
 
     const startBtn = document.getElementById('startMigration');
@@ -388,6 +417,11 @@ async function runMultiVersionMigration() {
     startBtn.disabled = true;
     startBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Migration en cours...';
     output.style.display = 'block';
+
+    // Afficher la barre de progression
+    document.getElementById('migration-progress').style.display = 'block';
+    document.getElementById('migration-status-icon').innerHTML = '<i class="bi bi-hourglass-split"></i>';
+    document.getElementById('migration-status-text').textContent = 'Migration en cours...';
     result.innerHTML = `<i class="bi bi-rocket"></i> Lancement de la migration ${fromVersion || 'auto'}→${toVersion || 'auto'}...\n`;
 
     // Masquer le bouton de rapport précédent
@@ -412,6 +446,11 @@ async function runMultiVersionMigration() {
         const data = await response.json();
 
         if (data.success) {
+            // Masquer la barre de progression et mettre à jour le statut
+            document.getElementById('migration-progress').style.display = 'none';
+            document.getElementById('migration-status-icon').innerHTML = '<i class="bi bi-check-circle text-success"></i>';
+            document.getElementById('migration-status-text').textContent = 'Migration terminée avec succès';
+
             result.innerHTML = `<i class="bi bi-check-square text-success"></i> Migration ${data.from_version || 'auto'}→${data.to_version || 'auto'} terminée avec succès!
 
 <strong><i class="bi bi-rocket"></i> Commande :</strong>
@@ -444,6 +483,11 @@ ${data.command}
                 resetMigrationForm();
             }, 2000); // Attendre 2 secondes pour que l'utilisateur voit les résultats
         } else {
+            // Masquer la barre de progression et afficher l'erreur
+            document.getElementById('migration-progress').style.display = 'none';
+            document.getElementById('migration-status-icon').innerHTML = '<i class="bi bi-x-circle text-danger"></i>';
+            document.getElementById('migration-status-text').textContent = 'Erreur lors de la migration';
+
             result.innerHTML = `<i class="bi bi-x-square text-danger"></i> Erreur lors de la migration
 
 <strong><i class="bi bi-rocket"></i> Commande :</strong>
@@ -457,6 +501,11 @@ ${data.error || data.output}
             showAlert('Erreur lors de la migration', 'error');
         }
     } catch (error) {
+        // Masquer la barre de progression et afficher l'erreur de connexion
+        document.getElementById('migration-progress').style.display = 'none';
+        document.getElementById('migration-status-icon').innerHTML = '<i class="bi bi-wifi-off text-danger"></i>';
+        document.getElementById('migration-status-text').textContent = 'Erreur de connexion';
+
         result.innerHTML = `<i class="bi bi-wifi-off text-danger"></i> Erreur de connexion\n\n${error.message}`;
         showAlert('Erreur de connexion', 'error');
     } finally {
@@ -470,7 +519,6 @@ ${data.error || data.output}
 function resetMigrationForm() {
     const fromVersionSelect = document.getElementById('fromVersion');
     const toVersionSelect = document.getElementById('toVersion');
-    const migrationMode = document.getElementById('migrationMode');
     const dryRun = document.getElementById('dryRun');
     const migrationInfo = document.getElementById('migrationInfo');
     const commandOutput = document.getElementById('commandOutput');
@@ -479,7 +527,7 @@ function resetMigrationForm() {
     fromVersionSelect.value = '';
     toVersionSelect.innerHTML = '<option value="">Sélectionnez d\'abord la version source</option>';
     toVersionSelect.disabled = true;
-    migrationMode.value = 'complete';
+    document.getElementById('modeComplete').checked = true;
     dryRun.checked = true;
 
     // Réinitialiser les informations

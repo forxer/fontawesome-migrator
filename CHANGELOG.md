@@ -1,14 +1,8 @@
 CHANGELOG
 =========
 
-2.0.1 (2025-08-16)
+2.0.1 (2025-08-17)
 ------------------
-
-### Optimisations JavaScript
-
-- Suppression ~456 lignes de code JavaScript/CSS mort
-- Toast Bootstrap pour notifications (remplace 3 implémentations artisanales)
-- Bouton "Inspecter" supprimé (redondant avec "Détails")
 
 ### Mappings FontAwesome complétés
 
@@ -21,6 +15,12 @@ CHANGELOG
 - **Navigation optimisée** : Correction du scroll avec offset pour navbar fixe
 - **Architecture UI** : Séparation des composants CSS/JS réutilisables
 - **Corrections diverses** : Calculs, affichages, etc.
+
+### Optimisations JavaScript/CSS
+
+- Suppression ~456 lignes de code JavaScript/CSS mort
+- Toast Bootstrap pour notifications (remplace 3 implémentations artisanales)
+- Bouton "Inspecter" supprimé (redondant avec "Détails")
 
 
 2.0.0 (2025-08-14)
