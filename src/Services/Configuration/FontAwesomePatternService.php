@@ -181,34 +181,14 @@ class FontAwesomePatternService
         // Construire les patterns dynamiquement selon les versions
         $patterns = $this->buildStylePatternsFromConfiguration($fromVersion, $toVersion);
 
-        // Debug: afficher les patterns construits seulement pour le fichier de test
-        if (str_contains($content, 'fa fa-lg fa-cog')) {
-            error_log('=== DEBUG TEST FILE ===');
-            error_log(\sprintf('extractIconsWithPositions: %s → %s', $fromVersion, $toVersion));
-            error_log('Patterns construits: '.print_r($patterns, true));
-        }
-
         if ($patterns === []) {
-            if (str_contains($content, 'fa fa-lg fa-cog')) {
-                error_log(\sprintf('ERREUR: Aucun pattern construit pour %s → %s', $fromVersion, $toVersion));
-            }
-
             return [];
         }
 
         $mainPattern = $patterns[0]; // Utiliser le pattern principal
 
-        if (str_contains($content, 'fa fa-lg fa-cog')) {
-            error_log('Pattern principal utilisé: '.$mainPattern);
-        }
-
         foreach ($lines as $lineNumber => $line) {
             if (preg_match_all($mainPattern, $line, $matches, PREG_OFFSET_CAPTURE)) {
-                if (str_contains($content, 'fa fa-lg fa-cog')) {
-                    error_log('Ligne '.($lineNumber + 1).(': '.$line));
-                    error_log('Matches trouvés: '.print_r($matches[0], true));
-                }
-
                 foreach ($matches[0] as $index => $match) {
                     $fullMatch = $match[0];
                     $lineOffset = $match[1];
