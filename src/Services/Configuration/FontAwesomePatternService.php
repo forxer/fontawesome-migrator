@@ -172,17 +172,42 @@ class FontAwesomePatternService
     /**
      * Extraire toutes les icônes FontAwesome d'un contenu avec leurs positions
      */
-    public function extractIconsWithPositions(string $content): array
+    public function extractIconsWithPositions(string $content, string $fromVersion, string $toVersion): array
     {
         $icons = [];
         $lines = explode("\n", $content);
         $offset = 0;
 
-        // Pattern simple pour détecter fas/far/etc + fa-xxx
-        $pattern = '/(fas|far|fal|fab|fad|fa-solid|fa-regular|fa-light|fa-brands|fa-duotone|fa-thin|fa-sharp)\s+(fa-[a-zA-Z0-9-]+)/';
+        // Construire les patterns dynamiquement selon les versions
+        $patterns = $this->buildStylePatternsFromConfiguration($fromVersion, $toVersion);
+
+        // Debug: afficher les patterns construits seulement pour le fichier de test
+        if (str_contains($content, 'fa fa-lg fa-cog')) {
+            error_log("=== DEBUG TEST FILE ===");
+            error_log("extractIconsWithPositions: $fromVersion → $toVersion");
+            error_log("Patterns construits: " . print_r($patterns, true));
+        }
+
+        if (empty($patterns)) {
+            if (str_contains($content, 'fa fa-lg fa-cog')) {
+                error_log("ERREUR: Aucun pattern construit pour $fromVersion → $toVersion");
+            }
+            return [];
+        }
+
+        $mainPattern = $patterns[0]; // Utiliser le pattern principal
+        
+        if (str_contains($content, 'fa fa-lg fa-cog')) {
+            error_log("Pattern principal utilisé: $mainPattern");
+        }
 
         foreach ($lines as $lineNumber => $line) {
-            if (preg_match_all($pattern, $line, $matches, PREG_OFFSET_CAPTURE)) {
+            if (preg_match_all($mainPattern, $line, $matches, PREG_OFFSET_CAPTURE)) {
+                if (str_contains($content, 'fa fa-lg fa-cog')) {
+                    error_log("Ligne " . ($lineNumber + 1) . ": $line");
+                    error_log("Matches trouvés: " . print_r($matches[0], true));
+                }
+                
                 foreach ($matches[0] as $index => $match) {
                     $fullMatch = $match[0];
                     $lineOffset = $match[1];

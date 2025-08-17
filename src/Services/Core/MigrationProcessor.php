@@ -42,7 +42,7 @@ class MigrationProcessor
         info(\sprintf('🔄 Migration des icônes FontAwesome %s → %s', $sourceVersion, $targetVersion).($dryRun ? ' (dry-run)' : ''));
 
         // Traiter les fichiers
-        $fileResults = $this->replacer->processFiles($files, $dryRun);
+        $fileResults = $this->replacer->processFiles($files, $dryRun, $sourceVersion, $targetVersion);
 
         // Calculer les statistiques
         $totalChanges = 0;

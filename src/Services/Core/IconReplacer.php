@@ -33,7 +33,7 @@ class IconReplacer
     /**
      * Traiter une liste de fichiers pour la migration
      */
-    public function processFiles(array $files, bool $isDryRun = false): array
+    public function processFiles(array $files, bool $isDryRun, string $fromVersion, string $toVersion): array
     {
         $results = [];
 
@@ -42,7 +42,7 @@ class IconReplacer
             // Calculer le chemin relatif à l'application
             $relativePath = str_replace(base_path().'/', '', $actualPath);
 
-            $result = $this->processFile($actualPath, $isDryRun);
+            $result = $this->processFile($actualPath, $isDryRun, $fromVersion, $toVersion);
             $result['file'] = $relativePath;
 
             $results[] = $result;
@@ -54,7 +54,7 @@ class IconReplacer
     /**
      * Traiter un fichier individuel
      */
-    public function processFile(string $filePath, bool $isDryRun = false): array
+    public function processFile(string $filePath, bool $isDryRun, string $fromVersion, string $toVersion): array
     {
         try {
             $fileValidation = $this->validateFile($filePath);
@@ -64,7 +64,7 @@ class IconReplacer
             }
 
             $content = $fileValidation['content'];
-            $icons = $this->patternService->extractIconsWithPositions($content);
+            $icons = $this->patternService->extractIconsWithPositions($content, $fromVersion, $toVersion);
 
             if ($icons === []) {
                 return $this->buildEmptyResult();
