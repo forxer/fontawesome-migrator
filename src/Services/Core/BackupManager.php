@@ -44,8 +44,8 @@ class BackupManager implements BackupManagerInterface
         if ($success) {
             $this->backupCount++;
 
-            // Convertir le backup_path en chemin relatif depuis le répertoire de migration
-            $relativeBackupPath = str_replace($this->metadataManager->getMigrationDirectory().'/', '', $backupPath);
+            // Convertir le backup_path en chemin relatif depuis le répertoire de l'application
+            $relativeBackupPath = str_replace(base_path().'/', '', $backupPath);
 
             return [
                 'original_path' => $relativePath,

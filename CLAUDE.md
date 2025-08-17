@@ -152,6 +152,7 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 - **Août 2025 - Audit complet code mort v2.0.1**: 456 lignes supprimées (fonctions JS, styles CSS, classes orphelines), qualité maintenue avec suppression commentaires associés
 - **RÈGLE QUALITÉ CRITIQUE**: Lors de suppression de code, TOUJOURS nettoyer les commentaires orphelins associés - pas de "bruit" inutile toléré
 - **LEÇON CLAUDE CODE**: Quand l'utilisateur dit "to memorize", utiliser immédiatement l'outil Edit pour ajouter dans CLAUDE.md - pas de réponse vide "Leçon mémorisée" sans action concrète
+- **Août 2025 - Optimisation metadata.json v2.0.1**: Structure allégée - suppression `original_file`, `relative_path`, `content` redondants. Tous chemins (`file`, `backup_path`) relatifs à l'application incluant `migrations_path` configuré. Gain significatif en taille et cohérence des métadonnées.
 - **Suppression complète support Vue.js**: Méthodes, patterns, configurations et références Vue supprimées du système
 - **Août 2025 - Code mort supprimé dans AssetMigrator**: ~147 lignes supprimées - 5 méthodes inutilisées : hasFA5Assets(), getAssetStats(), analyzeAssets(), getAssetPatterns(), isProAsset()
 - **IMPORTANT**: Toujours vérifier avant de supprimer du code - j'ai tendance à introduire des régressions

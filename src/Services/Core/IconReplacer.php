@@ -39,7 +39,8 @@ class IconReplacer
 
         foreach ($files as $fileInfo) {
             $actualPath = $fileInfo['path'];
-            $relativePath = $fileInfo['relative_path'] ?? basename((string) $actualPath);
+            // Calculer le chemin relatif à l'application
+            $relativePath = str_replace(base_path().'/', '', $actualPath);
 
             $result = $this->processFile($actualPath, $isDryRun);
             $result['file'] = $relativePath;
@@ -190,7 +191,6 @@ class IconReplacer
             'changes' => $processResult['changes'],
             'changes_count' => \count($processResult['changes']),
             'warnings' => $processResult['warnings'],
-            'content' => $processResult['content'],
             'backup' => $backupInfo,
         ];
     }

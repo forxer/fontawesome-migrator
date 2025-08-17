@@ -16,6 +16,12 @@ CHANGELOG
 - **Architecture UI** : Séparation des composants CSS/JS réutilisables
 - **Corrections diverses** : Calculs, affichages, etc.
 
+### Optimisation métadonnées
+
+- Structure metadata.json allégée (suppression champs redondants)
+- Tous chemins relatifs à l'application (file, backup_path)
+- Suppression données inutiles (original_file, relative_path, content)
+
 ### Optimisations JavaScript/CSS
 
 - Suppression ~456 lignes de code JavaScript/CSS mort
