@@ -76,11 +76,10 @@
         </div>
     @endif
 
-
     @if (count($reports) > 0)
-        <div class="row g-4">
+        <div class="row g-4 mb-4">
             @foreach ($reports as $report)
-                <div class="col-md-6 col-xl-4 mb-4">
+                <div class="col-md-6 col-xl-4">
                     <div class="card h-100 shadow-sm" data-migration="{{ $report['migration_id'] }}">
                         <div class="card-header d-flex justify-content-between align-items-center gap-3">
                                 <h5 class="card-title mb-1 text-truncate">
@@ -181,7 +180,7 @@
             @endforeach
         </div>
     @else
-        <div class="card mb-3">
+        <div class="card mb-4">
             <div class="card-body text-center py-5">
                 <div class="mb-4">
                     <i class="bi bi-file-text display-1 text-body-secondary"></i>

@@ -106,7 +106,7 @@ class CommandDisplayService
 
         // Statistiques globales
         info('📁 Fichiers analysés : '.$results['total_files_processed']);
-        info('✏️  Fichiers modifiés : '.$results['total_files_modified']);
+        info('✏️ Fichiers modifiés : '.$results['total_files_modified']);
 
         // Détails icônes
         $iconChanges = $results['icons']['total_changes'] ?? 0;

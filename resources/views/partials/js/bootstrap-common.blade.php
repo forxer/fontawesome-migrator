@@ -1,9 +1,9 @@
 <script>
     // JavaScript commun Bootstrap pour toutes les pages
-    
+
     // Configuration CSRF globale pour les requêtes AJAX
     window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
+
     // Initialisation automatique des tooltips Bootstrap
     document.addEventListener('DOMContentLoaded', function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -11,8 +11,8 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     });
-    
-    
+
+
     // Fonction utilitaire pour afficher des Toasts Bootstrap
     window.showToast = function(message, type = 'success') {
         const toastContainer = document.getElementById('toastContainer');
@@ -32,14 +32,14 @@
         // Couleurs de bordure par type
         const borderColors = {
             success: 'border-success',
-            error: 'border-danger', 
+            error: 'border-danger',
             warning: 'border-warning',
             info: 'border-info'
         };
 
         const icon = icons[type] || icons.info;
         const borderColor = borderColors[type] || borderColors.info;
-        
+
         // Créer le toast
         const toastId = 'toast-' + Date.now();
         const toastHtml = `
@@ -61,7 +61,7 @@
             autohide: true,
             delay: 4000
         });
-        
+
         // Supprimer l'élément du DOM après fermeture
         toastElement.addEventListener('hidden.bs.toast', function() {
             toastElement.remove();
@@ -69,7 +69,7 @@
 
         toast.show();
     };
-    
+
     // Fonction utilitaire pour copier du texte dans le presse-papier
     window.copyToClipboard = function(text, successMessage = null) {
         navigator.clipboard.writeText(text).then(() => {
@@ -87,11 +87,11 @@
             window.showToast(message, 'success');
         });
     };
-    
+
     // ========================================
     // Bouton retour en haut
     // ========================================
-    
+
     // Fonction retour en haut
     window.scrollToTop = function() {
         window.scrollTo({
@@ -99,7 +99,7 @@
             behavior: 'smooth'
         });
     };
-    
+
     // Gestion de la visibilité du bouton retour en haut
     document.addEventListener('DOMContentLoaded', function() {
         const backToTopButton = document.getElementById('backToTopBtn');

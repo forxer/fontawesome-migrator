@@ -6,12 +6,6 @@
         transition: box-shadow 0.2s ease;
     }
 
-
-    /* Tooltips Bootstrap */
-    [data-bs-toggle="tooltip"] {
-        cursor: help;
-    }
-
     /* Amélioration des badges */
     .badge {
         font-size: 0.75em;

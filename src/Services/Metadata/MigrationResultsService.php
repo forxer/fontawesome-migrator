@@ -43,7 +43,7 @@ class MigrationResultsService
     public function addBackup(array $backupInfo): self
     {
         $this->backups[] = [
-            'file' => $backupInfo['original_file'],
+            'file' => $backupInfo['original_path'] ?? $backupInfo['relative_path'] ?? '',
             'backup_path' => $backupInfo['backup_path'],
             'created_at' => $backupInfo['created_at'] ?? now()->toDateTimeString(),
             'size' => $backupInfo['size'] ?? 0,

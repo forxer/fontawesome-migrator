@@ -42,8 +42,7 @@ class IconReplacer
             $relativePath = $fileInfo['relative_path'] ?? basename((string) $actualPath);
 
             $result = $this->processFile($actualPath, $isDryRun);
-            $result['file'] = $actualPath;
-            $result['relative_path'] = $relativePath;
+            $result['file'] = $relativePath;
 
             $results[] = $result;
         }
