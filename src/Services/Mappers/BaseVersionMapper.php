@@ -106,20 +106,43 @@ abstract class BaseVersionMapper implements VersionMapperInterface
     }
 
     /**
+     * Trouver le mapping d'une icône selon la structure des données
+     */
+    private function findIconMapping(string $iconName, string $iconKey): ?string
+    {
+        // Détecter la structure des mappings selon les clés existantes
+        $sampleKeys = array_keys(\array_slice($this->iconMappings, 0, 3, true));
+        $hasPrefix = $sampleKeys !== [] && str_starts_with($sampleKeys[0], 'fa-');
+
+        if ($hasPrefix) {
+            // Structure FA5→6 : clés avec préfixe "fa-"
+            return $this->iconMappings[$iconName] ?? $this->iconMappings[$iconKey] ?? null;
+        }
+
+        // Structure FA4→5 : clés sans préfixe
+        return $this->iconMappings[$iconKey] ?? $this->iconMappings[$iconName] ?? null;
+    }
+
+    /**
      * Mapping d'icône avec informations détaillées
      */
     public function mapIcon(string $iconName, string $style = ''): array
     {
         $this->loadMappings();
 
-        // Supprimer le préfixe fa- pour chercher dans les mappings
+        // Toujours définir $iconKey pour les vérifications ultérieures
         $iconKey = str_starts_with($iconName, 'fa-') ? substr($iconName, 3) : $iconName;
 
-        // Chercher le mapping
-        $mappedName = $this->iconMappings[$iconKey] ?? null;
+        // Chercher le mapping - essayer avec et sans préfixe selon la structure
+        $mappedName = $this->findIconMapping($iconName, $iconKey);
 
-        // Si un mapping existe, ajouter le préfixe fa-
-        $newName = $mappedName !== null ? 'fa-'.$mappedName : $iconName;
+        // Si un mapping existe, l'utiliser tel quel (il peut déjà avoir le préfixe)
+        if ($mappedName !== null) {
+            // Si le mapping n'a pas de préfixe fa-, l'ajouter
+            $newName = str_starts_with($mappedName, 'fa-') ? $mappedName : 'fa-'.$mappedName;
+        } else {
+            $newName = $iconName;
+        }
 
         $isRenamed = $newName !== $iconName;
         $isDeprecated = isset($this->deprecatedIcons[$iconKey]);
