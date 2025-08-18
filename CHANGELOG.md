@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-2.0.1 (2025-08-18)
+2.1.0 (2025-08-18)
 ------------------
 
 ### Mappings FontAwesome complétés
@@ -11,8 +11,10 @@ CHANGELOG
 
 ### Migration progressive automatique
 
-- Migration automatique 4→5→6→7 en une commande/un clic (avec `--no-progressive` pour désactiver)
-- Interface web mise à jour avec checkbox progressive
+- **Migration automatique 4→5→6→7** en une commande/un clic (avec `--no-progressive` pour désactiver)
+- **Détection intelligente** des versions présentes dans le projet
+- **Interface web** mise à jour avec checkbox progressive
+- **Architecture robuste** : BaseVersionMapper corrigé pour gérer toutes les structures de mappings
 
 ### Optimisation métadonnées
 

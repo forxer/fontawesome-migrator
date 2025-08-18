@@ -1,16 +1,13 @@
 # Font Awesome Migrator pour Laravel
 
-> ⚠️ **Disclaimer**: Ce code a été largement généré avec Claude Code (claude.ai/code) à des fins d'apprentissage et pédagogiques. Bien que fonctionnel, **je n'ai pas entièrement confiance en l'IA** - j'ai dû corriger de nombreuses erreurs et imprécisions tout au long du développement. Utilisez ce package avec prudence et testez soigneusement avant usage en production.
+## ⚠️ **Disclaimer**
 
-🚀 **Package Laravel professionnel** pour automatiser la migration FontAwesome multi-versions (4 → 5 → 6 → 7) avec architecture moderne et interface web complète.
-
-**🎉 Version 2.0.0** : Architecture multi-versions avec configuration JSON externalisée.
+Ce code a été largement généré avec Claude Code (claude.ai/code) à des fins d'apprentissage et pédagogiques. Bien que fonctionnel, **je n'ai pas entièrement confiance en l'IA** - j'ai dû corriger de nombreuses erreurs et imprécisions tout au long du développement. Utilisez ce package avec prudence et testez soigneusement avant usage en production.
 
 ## Prérequis
 
 - PHP 8.4+
 - Laravel 12.0+
-- Symfony Finder 8.0+
 
 ## Fonctionnalités
 
@@ -168,7 +165,7 @@ php artisan fontawesome:migrate
 php artisan fontawesome:migrate --no-interactive
 ```
 
-### ⚡ Migration progressive automatique (NOUVEAU v2.0)
+### ⚡ Migration progressive automatique (NOUVEAU v2.1.0)
 
 **Par défaut**, le système détecte toutes les versions présentes et exécute automatiquement la séquence complète :
 
@@ -178,13 +175,14 @@ php artisan fontawesome:migrate --from=5 --to=6
 
 # ✨ Résultat automatique :
 # 1. Détection : FA4 présent → Migration progressive activée
-# 2. Étape 1/2 : FA4 → FA5 (30 icônes migrées)
-# 3. Étape 2/2 : FA5 → FA6 (55 icônes migrées)  
-# 4. Total : 85 modifications en un seul clic !
+# 2. Étape 1/3 : FA4 → FA5 (70 icônes migrées)
+# 3. Étape 2/3 : FA5 → FA6 (1125 icônes migrées)
+# 4. Étape 3/3 : FA6 → FA7 (0 icônes - normal)
+# 5. Total : 1195 modifications complètes FA4→7 !
 ```
 
 **Avantages** :
-- 🎯 **Un seul clic** migre tout (ex: 4→5→6 automatiquement)
+- 🎯 **Un seul clic** migre tout (ex: 4→5→6→7 automatiquement)
 - 🔍 **Détection intelligente** des versions mixtes
 - 📊 **Statistiques cumulées** pour toutes les étapes
 - ✅ **Garantit la cohérence** (pas de versions sautées)
@@ -203,7 +201,7 @@ php artisan fontawesome:migrate --from=4 --to=5
 # Migration FA5 → FA6 (modernisation des noms)
 php artisan fontawesome:migrate --from=5 --to=6
 
-# Migration FA6 → FA7 (optimisations comportementales)
+# Migration FA6 → FA7 (13 simplifications + optimisations comportementales)
 php artisan fontawesome:migrate --from=6 --to=7
 
 # Aperçu des changements (dry-run)
@@ -301,7 +299,7 @@ FontAwesome 4 ──→ FontAwesome 5 ──→ FontAwesome 6 ──→ FontAwes
 
 **Ampleur des migrations :**
 - **4→5** : 270 mappings (refonte majeure, préfixes et suffixes)
-- **5→6** : 310 mappings (restructuration sémantique complète)  
+- **5→6** : 310 mappings (restructuration sémantique complète)
 - **6→7** : 13 mappings (simplifications mineures, fixed-width par défaut)
 
 #### Interface web interactive
