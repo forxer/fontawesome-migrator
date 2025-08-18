@@ -2,8 +2,8 @@
 
 ## ✅ VERSION 2.0.1 - En développement
 
-**Date**: 2025-08-16
-**Statut**: ✅ Architecture multi-versions complète + UI améliorée
+**Date**: 2025-08-18
+**Statut**: ✅ Architecture multi-versions complète + Migration progressive automatique
 **Version cible**: Laravel 12.0+ / PHP 8.4+
 **Tests**: En attente de refonte (priorité basse)
 **Architecture**: Multi-versions FA4→5→6→7 opérationnelle
@@ -113,6 +113,13 @@
 - [x] **Chemins cohérents**: Tous chemins relatifs à l'application (file, backup_path)
 - [x] **Données épurées**: Suppression original_file, relative_path, content inutiles
 
+### Phase 15: Migration progressive automatique v2.0.1 ✅
+- [x] **Migration automatique 4→5→6**: Détection intelligente des versions mixtes
+- [x] **Option --no-progressive**: Désactivation pour migrations directes
+- [x] **Interface web mise à jour**: Checkbox progressive dans `/tests`
+- [x] **Consolidation des résultats**: Préservation warnings et changes multi-étapes
+- [x] **Architecture cohérente**: file_results toujours à la racine
+
 ### Phase 8: Refactorisation architecturale services v2.0 ✅
 - [x] **Services centralisés**: FontAwesomePatternService et AssetReplacementService créés
 - [x] **Injection de dépendances pure**: Container Laravel utilisé partout, 0 instanciation manuelle
@@ -186,6 +193,7 @@
 ## 📋 Prochaines étapes
 
 ### Priorité haute
+- [ ] **Système de warnings défectueux**: Correction urgente (soit absents soit tous présents)
 - [ ] **Optimisation CSS**: Consolidation des 1782 lignes de CSS partials
 - [ ] **Tests unitaires**: Nouveaux mappers multi-versions et ConfigurationLoader
 

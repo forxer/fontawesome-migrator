@@ -9,6 +9,11 @@ CHANGELOG
 - **593 mappings officiels** : 270 (4→5) + 310 (5→6) + 13 (6→7)
 - **Structure unifiée** entre toutes les versions avec métadonnées
 
+### Migration progressive automatique
+
+- Migration automatique 4→5→6 en un clic avec `--no-progressive` pour désactiver
+- Interface web mise à jour avec checkbox progressive
+
 ### Interface utilisateur corrigée
 
 - **Effets visuels avancés** : Système de bulles animées réalistes avec effet 3D
@@ -27,6 +32,10 @@ CHANGELOG
 - Suppression ~456 lignes de code JavaScript/CSS mort
 - Toast Bootstrap pour notifications (remplace 3 implémentations artisanales)
 - Bouton "Inspecter" supprimé (redondant avec "Détails")
+
+### Bugs identifiés
+
+- Système de warnings défectueux (correction ultérieure)
 
 
 2.0.0 (2025-08-14)

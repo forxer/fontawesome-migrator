@@ -121,6 +121,18 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-12">
+                                <div class="alert alert-info d-flex align-items-center" role="alert">
+                                    <div class="form-check form-switch mb-0 flex-grow-1">
+                                        <input class="form-check-input" type="checkbox" id="progressiveMigration" name="progressive_migration" checked>
+                                        <label class="form-check-label" for="progressiveMigration">
+                                            <i class="bi bi-arrow-repeat"></i> Migration progressive automatique
+                                        </label>
+                                        <div class="form-text mb-0">Détection intelligente et exécution automatique des étapes (ex: 4→5→6 en un clic). Décochez pour forcer une migration directe.</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -377,6 +389,7 @@ function generateCommand() {
     const toVersion = document.getElementById('toVersion').value;
     const mode = document.querySelector('input[name="mode"]:checked').value;
     const dryRun = document.getElementById('dryRun').checked;
+    const progressiveMigration = document.getElementById('progressiveMigration').checked;
 
     let command = 'php artisan fontawesome:migrate';
 
@@ -390,6 +403,7 @@ function generateCommand() {
 
     // Ajouter les autres options
     if (dryRun) command += ' --dry-run';
+    if (!progressiveMigration) command += ' --no-progressive';
     command += ' --no-interactive';
 
     return command;
@@ -440,6 +454,7 @@ async function runMultiVersionMigration() {
                 to: toVersion || null,
                 mode: mode,
                 dry_run: dryRun,
+                no_progressive: !progressiveMigration,
             })
         });
 

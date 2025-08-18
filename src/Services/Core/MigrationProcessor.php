@@ -191,8 +191,8 @@ class MigrationProcessor
     {
         $dryRun = $options['dry_run'] ?? false;
 
-        // Récupérer les résultats par fichier
-        $fileResults = $results['icons']['file_results'] ?? [];
+        // Récupérer les résultats par fichier (toujours à la racine maintenant)
+        $fileResults = $results['file_results'] ?? [];
 
         // Préparer les statistiques pour les métadonnées
         $stats = [
@@ -241,38 +241,25 @@ class MigrationProcessor
         foreach ($results as $result) {
             $filePath = $result['file'] ?? 'Fichier inconnu';
 
-            // Collecter les changements qui génèrent des avertissements
-            if (! empty($result['changes'])) {
-                foreach ($result['changes'] as $changeIndex => $change) {
-                    // Seulement les types qui génèrent des avertissements
-                    $warningTypes = ['pro_fallback', 'renamed_icon', 'deprecated_icon', 'manual_review'];
+            // Collecter seulement les warnings réels (pas tous les changes)
+            if (! empty($result['warnings'])) {
+                foreach ($result['warnings'] as $warningIndex => $warningMessage) {
+                    // Chercher le change correspondant si il existe
+                    $correspondingChange = null;
 
-                    if (\in_array($change['type'] ?? '', $warningTypes)) {
-                        // Chercher le warning correspondant dans la liste
-                        $warningMessage = null;
-
-                        if (! empty($result['warnings']) && isset($result['warnings'][$changeIndex])) {
-                            $warningMessage = $result['warnings'][$changeIndex];
-                        } else {
-                            // Fallback si pas de correspondance exacte
-                            foreach ($result['warnings'] ?? [] as $warning) {
-                                if (str_contains((string) $warning, $change['from'] ?? '')) {
-                                    $warningMessage = $warning;
-                                    break;
-                                }
-                            }
-                        }
-
-                        $enrichedWarnings[] = [
-                            'file' => $filePath,
-                            'type' => $change['type'],
-                            'from' => $change['from'] ?? '',
-                            'to' => $change['to'] ?? '',
-                            'message' => $warningMessage ?? 'Avertissement générique',
-                            'line' => $change['line'] ?? null,
-                            'context' => $change['context'] ?? '',
-                        ];
+                    if (! empty($result['changes']) && isset($result['changes'][$warningIndex])) {
+                        $correspondingChange = $result['changes'][$warningIndex];
                     }
+
+                    $enrichedWarnings[] = [
+                        'file' => $filePath,
+                        'type' => $correspondingChange['type'] ?? 'warning',
+                        'from' => $correspondingChange['from'] ?? '',
+                        'to' => $correspondingChange['to'] ?? '',
+                        'message' => $warningMessage,
+                        'line' => $correspondingChange['line'] ?? null,
+                        'context' => $correspondingChange['context'] ?? '',
+                    ];
                 }
             }
         }
@@ -382,10 +369,13 @@ class MigrationProcessor
     private function executeProgressiveMigration(array $files, array $migrationSequence, array $options): array
     {
         $allResults = [];
+        $consolidatedFileResults = [];
         $cumulativeStats = [
             'total_files' => 0,
             'modified_files' => 0,
             'total_changes' => 0,
+            'icons_migrated' => 0,
+            'assets_migrated' => 0,
         ];
 
         foreach ($migrationSequence as $step) {
@@ -399,38 +389,57 @@ class MigrationProcessor
                 'no_progressive' => true, // Éviter la récursion
             ]);
 
-            // Exécuter cette étape de migration
-            $stepResult = $this->processSingleMigration($files, $stepOptions);
+            // Exécuter cette étape de migration (sans finaliser pour éviter les sauvegardes multiples)
+            $stepResult = $this->processSingleMigrationWithoutFinalization($files, $stepOptions);
 
             $allResults[] = [
                 'step' => \sprintf('%s → %s', $step['from'], $step['to']),
                 'result' => $stepResult,
             ];
 
+            // Consolider tous les file_results de cette étape en préservant les warnings de toutes les étapes
+            if (! empty($stepResult['file_results'])) {
+                $consolidatedFileResults = $this->consolidateFileResults($consolidatedFileResults, $stepResult['file_results'], $step);
+            }
+
             // Accumuler les statistiques
             $cumulativeStats['total_files'] = max($cumulativeStats['total_files'], $stepResult['total_files_processed'] ?? 0);
             $cumulativeStats['modified_files'] += $stepResult['total_files_modified'] ?? 0;
             $cumulativeStats['total_changes'] += ($stepResult['icons']['total_changes'] ?? 0) + ($stepResult['assets']['total_assets'] ?? 0);
+            $cumulativeStats['icons_migrated'] += $stepResult['icons']['total_changes'] ?? 0;
+            $cumulativeStats['assets_migrated'] += $stepResult['assets']['total_assets'] ?? 0;
         }
 
         info('');
         info('✅ Migration progressive terminée !');
         info('   Total des modifications : '.$cumulativeStats['total_changes']);
 
-        // Retourner un résultat consolidé
-        return [
+        // Créer le résultat final consolidé avec tous les file_results
+        $finalResult = [
             'progressive' => true,
             'steps' => $allResults,
             'cumulative' => $cumulativeStats,
             'total_files_processed' => $cumulativeStats['total_files'],
             'total_files_modified' => $cumulativeStats['modified_files'],
+            'file_results' => $consolidatedFileResults,
+            'icons' => [
+                'total_changes' => $cumulativeStats['icons_migrated'],
+            ],
+            'assets' => [
+                'total_assets' => $cumulativeStats['assets_migrated'],
+            ],
         ];
+
+        // Finaliser la migration progressive une seule fois avec tous les résultats consolidés
+        $this->finalizeMigration($finalResult, $options);
+
+        return $finalResult;
     }
 
     /**
-     * Exécuter une migration simple (une étape)
+     * Exécuter une migration simple sans finalisation (pour les migrations progressives)
      */
-    private function processSingleMigration(array $files, array $options): array
+    private function processSingleMigrationWithoutFinalization(array $files, array $options): array
     {
         // Code de migration normale (extrait de la méthode process)
         // Configurer le mapper pour cette migration
@@ -459,7 +468,7 @@ class MigrationProcessor
             $iconResults['file_results'] ?? []
         );
 
-        $results = [
+        return [
             'icons' => $iconResults,
             'assets' => $assetResults,
             'file_results' => $allFileResults,
@@ -469,11 +478,94 @@ class MigrationProcessor
                 $assetResults['modified_files'] ?? []
             ))),
         ];
+    }
 
-        // Finaliser la migration
-        $this->finalizeMigration($results, $options);
+    /**
+     * Consolider les file_results en préservant tous les warnings et changements de toutes les étapes
+     */
+    private function consolidateFileResults(array $existingResults, array $newResults, array $step): array
+    {
+        // Si pas de résultats existants, retourner les nouveaux avec annotation d'étape
+        if ($existingResults === []) {
+            return $this->annotateResultsWithStep($newResults, $step);
+        }
 
-        return $results;
+        // Créer un index par fichier pour faciliter la consolidation
+        $consolidatedByFile = [];
+
+        // D'abord, indexer les résultats existants par fichier
+        foreach ($existingResults as $result) {
+            $fileKey = $result['file'] ?? 'unknown';
+
+            if (! isset($consolidatedByFile[$fileKey])) {
+                $consolidatedByFile[$fileKey] = $result;
+            } else {
+                // Si le fichier existe déjà, cumule les données
+                $consolidatedByFile[$fileKey] = $this->mergeFileResults($consolidatedByFile[$fileKey], $result);
+            }
+        }
+
+        // Ensuite, intégrer les nouveaux résultats
+        foreach ($newResults as $newResult) {
+            $fileKey = $newResult['file'] ?? 'unknown';
+
+            // Annoter avec l'étape courante
+            $annotatedResult = $this->annotateResultWithStep($newResult, $step);
+
+            if (! isset($consolidatedByFile[$fileKey])) {
+                $consolidatedByFile[$fileKey] = $annotatedResult;
+            } else {
+                // Fusionner avec les résultats existants
+                $consolidatedByFile[$fileKey] = $this->mergeFileResults($consolidatedByFile[$fileKey], $annotatedResult);
+            }
+        }
+
+        return array_values($consolidatedByFile);
+    }
+
+    /**
+     * Fusionner deux résultats de fichier en cumulant changes et warnings
+     */
+    private function mergeFileResults(array $existing, array $new): array
+    {
+        $merged = [
+            'file' => $existing['file'],
+            'success' => $existing['success'] && $new['success'],
+            'changes' => array_merge($existing['changes'] ?? [], $new['changes'] ?? []),
+            'changes_count' => ($existing['changes_count'] ?? 0) + ($new['changes_count'] ?? 0),
+            'warnings' => array_merge($existing['warnings'] ?? [], $new['warnings'] ?? []),
+            'progressive_steps' => array_unique(array_merge(
+                $existing['progressive_steps'] ?? [],
+                $new['progressive_steps'] ?? []
+            )),
+        ];
+
+        // Ajouter backup seulement si présent (garder la dernière sauvegarde)
+        if (isset($new['backup'])) {
+            $merged['backup'] = $new['backup'];
+        } elseif (isset($existing['backup'])) {
+            $merged['backup'] = $existing['backup'];
+        }
+
+        return $merged;
+    }
+
+    /**
+     * Annoter un résultat avec l'étape de migration
+     */
+    private function annotateResultWithStep(array $result, array $step): array
+    {
+        $result['progressive_steps'] = [$step['from'].'→'.$step['to']];
+
+        return $result;
+    }
+
+    /**
+     * Annoter tous les résultats avec l'étape de migration
+     */
+    private function annotateResultsWithStep(array $results, array $step): array
+    {
+        return array_map(fn ($result): array => $this->annotateResultWithStep($result, $step), $results);
     }
 
     /**

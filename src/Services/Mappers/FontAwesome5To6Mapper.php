@@ -25,9 +25,10 @@ class FontAwesome5To6Mapper extends BaseVersionMapper
         $warnings = [];
 
         // Logique spécifique FA5→FA6
-        if ($this->requiresStyleChange($style)) {
+        // Seuls les styles Pro nécessitent un avertissement (changement de licence potentiel)
+        if ($this->requiresWarningForStyleChange($style)) {
             $newStyle = $this->mapStyle($style);
-            $warnings[] = \sprintf("Style FA5 '%s' → '%s' en FA6", $style, $newStyle);
+            $warnings[] = \sprintf("Style Pro FA5 '%s' → '%s' en FA6 - Vérifier licence", $style, $newStyle);
         }
 
         // Icônes avec changements majeurs
@@ -39,10 +40,12 @@ class FontAwesome5To6Mapper extends BaseVersionMapper
     }
 
     /**
-     * Vérifier si un style nécessite un changement FA5→FA6
+     * Vérifier si un changement de style nécessite un avertissement
+     * Seuls les styles Pro ou les cas problématiques devraient générer des warnings
      */
-    private function requiresStyleChange(string $style): bool
+    private function requiresWarningForStyleChange(string $style): bool
     {
-        return \in_array($style, ['fas', 'far', 'fal', 'fab', 'fad'], true);
+        // Avertir seulement pour les styles Pro (problème de licence potentiel)
+        return \in_array($style, ['fal', 'fad'], true);
     }
 }
