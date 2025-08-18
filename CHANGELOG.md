@@ -11,8 +11,14 @@ CHANGELOG
 
 ### Migration progressive automatique
 
-- Migration automatique 4→5→6 en un clic avec `--no-progressive` pour désactiver
+- Migration automatique 4→5→6 en une commande/un clic (avec `--no-progressive` pour désactiver)
 - Interface web mise à jour avec checkbox progressive
+
+### Optimisation métadonnées
+
+- Structure metadata.json allégée (suppression champs redondants)
+- Tous chemins relatifs à l'application (file, backup_path)
+- Suppression données inutiles (original_file, relative_path, content)
 
 ### Interface utilisateur corrigée
 
@@ -20,12 +26,6 @@ CHANGELOG
 - **Navigation optimisée** : Correction du scroll avec offset pour navbar fixe
 - **Architecture UI** : Séparation des composants CSS/JS réutilisables
 - **Corrections diverses** : Calculs, affichages, etc.
-
-### Optimisation métadonnées
-
-- Structure metadata.json allégée (suppression champs redondants)
-- Tous chemins relatifs à l'application (file, backup_path)
-- Suppression données inutiles (original_file, relative_path, content)
 
 ### Optimisations JavaScript/CSS
 
