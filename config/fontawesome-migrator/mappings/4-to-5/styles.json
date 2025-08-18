@@ -2,12 +2,10 @@
   "description": "Mappings des styles FontAwesome 4 vers 5",
   "version": "4-to-5",
   "mappings": {
-    "fa": "fas",
-    "fa fa-": "fas fa-"
+    "fa": "fas"
   },
   "notes": {
-    "fa": "Par défaut : transformation vers solid",
-    "fa fa-": "Transformation générique pour les préfixes"
+    "fa": "Par défaut : transformation vers solid"
   },
   "special_cases": {
     "outlined_icons": {

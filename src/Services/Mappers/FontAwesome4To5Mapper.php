@@ -42,12 +42,33 @@ class FontAwesome4To5Mapper extends BaseVersionMapper
      */
     private function isOutlinedIcon(string $iconName): bool
     {
-        $outlinedPatterns = [
-            '/^fa-.*-o$/',          // fa-star-o, fa-heart-o
-            '/^fa-envelope-o$/',    // Cas spécial
-            '/^fa-file-.*-o$/',     // fa-file-text-o, etc.
-        ];
+        // Simplifier : toute icône finissant par -o est outlined
+        return str_ends_with($iconName, '-o');
+    }
 
-        return array_any($outlinedPatterns, fn ($pattern): int|false => preg_match($pattern, $iconName));
+    /**
+     * Override mapStyle pour gérer les cas spéciaux FA4
+     */
+    public function mapStyle(string $style, bool $withFallback = true): string
+    {
+        // Pour FA4, le style par défaut est toujours 'fa' qui devient 'fas'
+        return parent::mapStyle($style, $withFallback);
+    }
+
+    /**
+     * Override mapIcon pour gérer les icons outlined
+     */
+    public function mapIcon(string $iconName, string $style = ''): array
+    {
+        $result = parent::mapIcon($iconName, $style);
+
+        // Si c'est une icône outlined, elle doit utiliser le style 'far' (regular)
+        if ($this->isOutlinedIcon($iconName)) {
+            // L'icône renommée n'a plus le suffixe -o
+            $result['style_override'] = 'far';
+            $result['warnings'][] = "Icon outlined : utilise 'far' (regular) au lieu de 'fas' (solid)";
+        }
+
+        return $result;
     }
 }

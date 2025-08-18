@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Testing Guide
+
+**Important** : Pour tester les migrations FontAwesome, utiliser le fichier `/resources/views/test-all-cases.blade.php` qui contient tous les cas de figure possibles. Consulter `/docs/TESTING-GUIDE.md` pour la procédure complète de test et validation.
+
 ## Architecture Overview v2.0
 
 **Package**: Laravel FontAwesome Migrator v2.0 - Migration automatisée FA 4→5→6→7 (Free/Pro)
@@ -70,6 +74,9 @@ This is a Laravel package called `fontawesome-migrator` that automates the migra
 **Target version**: Laravel 12.0+ with PHP 8.4+
 
 ## My Memories
+
+- **Problème icons outlined FA4 partiellement résolu** : `fa fa-envelope-o` → `far fa-envelope` fonctionne, mais `fa fa-lg fa-file-o` → `fas fa-lg fa-file-o` échoue. Le pattern regex détecte `fa fa-lg` comme style+icône au lieu de `fa` style + `fa-file-o` icône. Les modificateurs FA (lg, 2x, 3x, fw, spin) interfèrent avec la détection.
+- **Août 2025 - Migration progressive automatique implémentée v2.0** : Par défaut, détection multi-versions et exécution automatique séquence complète (4→5→6). Option `--no-progressive` pour désactiver. Test réussi : 85 modifications totales (30 en 4→5, 55 en 5→6). Architecture orientée objet pure, aucun global utilisé. UX exceptionnelle : un seul clic migre tout !
 
 - Claude Code remembers to always test PHP code thoroughly before deployment
 - Claude Code prefers comprehensive test coverage for each code modification

@@ -34,6 +34,7 @@ class MigrateCommand extends Command
                             {--icons-only : Migrer uniquement les classes d\'icônes}
                             {--assets-only : Migrer uniquement les assets (CSS, JS, CDN)}
                             {--no-interactive : Désactiver le mode interactif}
+                            {--no-progressive : Désactiver la migration progressive automatique}
                             {--debug : Afficher les informations de debug de l\'environnement}
                             {--web-interface : Marquer que la migration provient de l\'interface web}
                             ';
@@ -95,6 +96,7 @@ class MigrateCommand extends Command
             'icons_only' => $this->option('icons-only'),
             'assets_only' => $this->option('assets-only'),
             'no_interactive' => $this->option('no-interactive'),
+            'no_progressive' => $this->option('no-progressive'),
             'debug' => $this->option('debug'),
             'web_interface' => $this->option('web-interface'),
         ];

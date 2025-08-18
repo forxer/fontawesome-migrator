@@ -178,14 +178,15 @@ class FontAwesomePatternService
         $lines = explode("\n", $content);
         $offset = 0;
 
-        // Construire les patterns dynamiquement selon les versions
-        $patterns = $this->buildStylePatternsFromConfiguration($fromVersion, $toVersion);
+        // Construire patterns pour TOUTES les versions possibles (progressive migration)
+        $allStyles = $this->getAllStylesForVersionDetection($fromVersion);
 
-        if ($patterns === []) {
+        if ($allStyles === []) {
             return [];
         }
 
-        $mainPattern = $patterns[0]; // Utiliser le pattern principal
+        $stylesPattern = implode('|', array_map('preg_quote', $allStyles));
+        $mainPattern = '/\\b('.$stylesPattern.')\\s+(fa-[a-zA-Z0-9-]+)\\b/';
 
         foreach ($lines as $lineNumber => $line) {
             if (preg_match_all($mainPattern, $line, $matches, PREG_OFFSET_CAPTURE)) {
@@ -229,5 +230,54 @@ class FontAwesomePatternService
             'patterns_by_version' => $stats,
             'total_patterns' => array_sum($stats),
         ];
+    }
+
+    /**
+     * Détecter toutes les versions FontAwesome présentes dans un contenu
+     */
+    public function detectAllVersionsInContent(string $content): array
+    {
+        $versionCounts = [];
+        $versions = ['4', '5', '6', '7'];
+
+        foreach ($versions as $version) {
+            $patterns = $this->getDetectionPatterns($version);
+            $count = 0;
+
+            foreach ($patterns as $pattern) {
+                if (preg_match_all($pattern, $content)) {
+                    $count++;
+                }
+            }
+
+            if ($count > 0) {
+                $versionCounts[$version] = $count;
+            }
+        }
+
+        return $versionCounts;
+    }
+
+    /**
+     * Obtenir tous les styles supportés pour la détection d'une version
+     */
+    private function getAllStylesForVersionDetection(string $fromVersion): array
+    {
+        // TOUJOURS utiliser le fallback pour avoir tous les styles possibles
+        // Car on doit détecter TOUS les styles présents, pas seulement ceux du mapping spécifique
+        return $this->getBasicStylesForVersion($fromVersion);
+    }
+
+    /**
+     * Obtenir les styles de base pour une version (fallback)
+     */
+    private function getBasicStylesForVersion(string $version): array
+    {
+        return match ($version) {
+            '4' => ['fa'],
+            '5' => ['fas', 'far', 'fal', 'fab', 'fad'],
+            '6', '7' => ['fa-solid', 'fa-regular', 'fa-light', 'fa-brands', 'fa-duotone', 'fa-thin', 'fa-sharp'],
+            default => []
+        };
     }
 }

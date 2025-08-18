@@ -239,15 +239,31 @@ class IconReplacer
         $iconName = $icon['name'];
         $originalString = $icon['full_match'];
 
-        $newStyle = $this->mapper->mapStyle($style);
         $iconMapping = $this->mapper->mapIcon($iconName, $style);
         $newIconName = $iconMapping['new_name'];
 
-        $baseNewString = str_replace(
-            [$style, $iconName],
-            [$newStyle, $newIconName],
-            $originalString
-        );
+        // Utiliser le style_override si présent (pour les icons outlined FA4)
+        $newStyle = $iconMapping['style_override'] ?? $this->mapper->mapStyle($style);
+
+        // Construire la nouvelle chaîne en remplaçant style et icône
+        // $originalString contient le match exact (ex: "fa fa-cog")
+        // On doit remplacer "fa" par "fas" et "fa-cog" par le nouveau nom
+
+        // Pour éviter les remplacements multiples, on reconstruit la chaîne
+        $parts = explode(' ', (string) $originalString);
+        $newParts = [];
+
+        foreach ($parts as $part) {
+            if ($part === $style) {
+                $newParts[] = $newStyle;
+            } elseif ($part === $iconName) {
+                $newParts[] = $newIconName;
+            } else {
+                $newParts[] = $part;
+            }
+        }
+
+        $baseNewString = implode(' ', $newParts);
 
         return [
             'style' => $style,

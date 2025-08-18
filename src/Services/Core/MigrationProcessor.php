@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Services\Core;
 
 use FontAwesome\Migrator\Contracts\BackupManagerInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
+use FontAwesome\Migrator\Services\Configuration\FontAwesomePatternService;
 
 use function Laravel\Prompts\info;
 
@@ -16,7 +17,8 @@ class MigrationProcessor
         private readonly AssetMigrator $assetMigrator,
         private readonly MigrationVersionManager $versionManager,
         private readonly MetadataManagerInterface $metadata,
-        private readonly BackupManagerInterface $backupManager
+        private readonly BackupManagerInterface $backupManager,
+        private readonly FontAwesomePatternService $patternService
     ) {}
 
     /**
@@ -130,6 +132,14 @@ class MigrationProcessor
     {
         // Réinitialiser le compteur de backups pour cette migration
         $this->backupManager->resetBackupCount();
+
+        // Valider les prérequis de migration et obtenir la séquence progressive si nécessaire
+        $migrationSequence = $this->validateMigrationPrerequisites($files, $options);
+
+        // Si une séquence progressive est détectée et activée (par défaut)
+        if ($migrationSequence !== [] && ! ($options['no_progressive'] ?? false)) {
+            return $this->executeProgressiveMigration($files, $migrationSequence, $options);
+        }
 
         // Configurer le mapper pour cette migration
         $mapper = $this->versionManager->createMapper(
@@ -268,5 +278,231 @@ class MigrationProcessor
         }
 
         return $enrichedWarnings;
+    }
+
+    /**
+     * Valider les prérequis pour une migration
+     * Retourne une séquence de migration progressive si nécessaire
+     */
+    private function validateMigrationPrerequisites(array $files, array $options): array
+    {
+        $sourceVersion = $options['source_version'];
+        $targetVersion = $options['target_version'];
+
+        info(\sprintf('🔍 Validation des prérequis pour migration %s → %s', $sourceVersion, $targetVersion));
+
+        // Utiliser les services existants pour détecter les versions
+        $detectedVersions = $this->detectVersionsInFiles($files);
+
+        if ($detectedVersions !== []) {
+            foreach ($detectedVersions as $version => $count) {
+                info(\sprintf('   Détecté: FontAwesome %s (%s occurrences)', $version, $count));
+            }
+
+            // Vérifier si des versions antérieures sont présentes
+            return $this->checkForEarlierVersions($detectedVersions, $sourceVersion, $targetVersion);
+        }
+
+        return []; // Pas de séquence progressive nécessaire
+    }
+
+    /**
+     * Vérifier et proposer une migration progressive si nécessaire
+     * Retourne la séquence de migration ou un tableau vide
+     */
+    private function checkForEarlierVersions(array $detectedVersions, string $sourceVersion, string $targetVersion): array
+    {
+        $versions = ['4', '5', '6', '7'];
+        $sourceIndex = array_search($sourceVersion, $versions, true);
+
+        $hasEarlierVersions = false;
+        $lowestVersion = $sourceVersion;
+        $lowestVersionIndex = $sourceIndex;
+
+        foreach ($detectedVersions as $version => $count) {
+            if ($count > 0) {
+                // Convertir la version en string si nécessaire
+                $version = (string) $version;
+                $versionIndex = array_search($version, $versions, true);
+
+                if ($versionIndex !== false && $versionIndex < $sourceIndex) {
+                    $hasEarlierVersions = true;
+
+                    if ($versionIndex < $lowestVersionIndex) {
+                        $lowestVersion = $version;
+                        $lowestVersionIndex = $versionIndex;
+                    }
+                }
+            }
+        }
+
+        if ($hasEarlierVersions) {
+            info('');
+            info(\sprintf('⚠️  ATTENTION: Des icônes FontAwesome %s ont été détectées !', $lowestVersion));
+            info('   Migration progressive automatique :');
+
+            // Construire la séquence de migrations
+            $sequence = $this->buildMigrationSequence($lowestVersion, $targetVersion, $versions);
+
+            foreach ($sequence as $step) {
+                info(\sprintf('   → %s → %s', $step['from'], $step['to']));
+            }
+
+            info('   Utilisez --no-progressive pour désactiver cette fonctionnalité');
+
+            return $sequence;
+        }
+
+        return [];
+    }
+
+    /**
+     * Construire la séquence de migrations nécessaires
+     */
+    private function buildMigrationSequence(string $fromVersion, string $toVersion, array $versions): array
+    {
+        $fromIndex = array_search($fromVersion, $versions, true);
+        $toIndex = array_search($toVersion, $versions, true);
+
+        $sequence = [];
+
+        for ($i = $fromIndex; $i < $toIndex; $i++) {
+            $sequence[] = [
+                'from' => $versions[$i],
+                'to' => $versions[$i + 1],
+            ];
+        }
+
+        return $sequence;
+    }
+
+    /**
+     * Exécuter une migration progressive
+     */
+    private function executeProgressiveMigration(array $files, array $migrationSequence, array $options): array
+    {
+        $allResults = [];
+        $cumulativeStats = [
+            'total_files' => 0,
+            'modified_files' => 0,
+            'total_changes' => 0,
+        ];
+
+        foreach ($migrationSequence as $step) {
+            info('');
+            info(\sprintf('🔄 Étape : FontAwesome %s → %s', $step['from'], $step['to']));
+
+            // Préparer les options pour cette étape
+            $stepOptions = array_merge($options, [
+                'source_version' => $step['from'],
+                'target_version' => $step['to'],
+                'no_progressive' => true, // Éviter la récursion
+            ]);
+
+            // Exécuter cette étape de migration
+            $stepResult = $this->processSingleMigration($files, $stepOptions);
+
+            $allResults[] = [
+                'step' => \sprintf('%s → %s', $step['from'], $step['to']),
+                'result' => $stepResult,
+            ];
+
+            // Accumuler les statistiques
+            $cumulativeStats['total_files'] = max($cumulativeStats['total_files'], $stepResult['total_files_processed'] ?? 0);
+            $cumulativeStats['modified_files'] += $stepResult['total_files_modified'] ?? 0;
+            $cumulativeStats['total_changes'] += ($stepResult['icons']['total_changes'] ?? 0) + ($stepResult['assets']['total_assets'] ?? 0);
+        }
+
+        info('');
+        info('✅ Migration progressive terminée !');
+        info('   Total des modifications : '.$cumulativeStats['total_changes']);
+
+        // Retourner un résultat consolidé
+        return [
+            'progressive' => true,
+            'steps' => $allResults,
+            'cumulative' => $cumulativeStats,
+            'total_files_processed' => $cumulativeStats['total_files'],
+            'total_files_modified' => $cumulativeStats['modified_files'],
+        ];
+    }
+
+    /**
+     * Exécuter une migration simple (une étape)
+     */
+    private function processSingleMigration(array $files, array $options): array
+    {
+        // Code de migration normale (extrait de la méthode process)
+        // Configurer le mapper pour cette migration
+        $mapper = $this->versionManager->createMapper(
+            $options['source_version'],
+            $options['target_version']
+        );
+        $this->replacer->setMapper($mapper);
+
+        // Traiter les icônes sauf si --assets-only
+        $iconResults = [];
+
+        if (! ($options['assets_only'] ?? false)) {
+            $iconResults = $this->processIcons($files, $options);
+        }
+
+        // Traiter les assets sauf si --icons-only
+        $assetResults = [];
+
+        if (! ($options['icons_only'] ?? false)) {
+            $assetResults = $this->processAssets($files, $options);
+        }
+
+        // Consolider tous les file_results
+        $allFileResults = array_merge(
+            $iconResults['file_results'] ?? []
+        );
+
+        $results = [
+            'icons' => $iconResults,
+            'assets' => $assetResults,
+            'file_results' => $allFileResults,
+            'total_files_processed' => \count($files),
+            'total_files_modified' => \count(array_unique(array_merge(
+                $iconResults['modified_files'] ?? [],
+                $assetResults['modified_files'] ?? []
+            ))),
+        ];
+
+        // Finaliser la migration
+        $this->finalizeMigration($results, $options);
+
+        return $results;
+    }
+
+    /**
+     * Détecter toutes les versions FontAwesome présentes dans les fichiers
+     */
+    private function detectVersionsInFiles(array $files): array
+    {
+        $allVersionCounts = [];
+
+        foreach ($files as $fileInfo) {
+            $filePath = $fileInfo['path'];
+
+            if (! file_exists($filePath)) {
+                continue;
+            }
+
+            $content = file_get_contents($filePath);
+
+            if ($content === false) {
+                continue;
+            }
+
+            $versionCounts = $this->patternService->detectAllVersionsInContent($content);
+
+            foreach ($versionCounts as $version => $count) {
+                $allVersionCounts[$version] = ($allVersionCounts[$version] ?? 0) + $count;
+            }
+        }
+
+        return $allVersionCounts;
     }
 }

@@ -15,6 +15,7 @@
 ## Fonctionnalités
 
 ### 🎯 Migration multi-versions des icônes
+- ✅ **Migration progressive automatique** : Détection intelligente et exécution séquence complète (ex: 4→5→6 en un clic)
 - ✅ **Architecture multi-versions** : FA4 → FA5 → FA6 → FA7 avec MigrationVersionManager
 - ✅ **Mappings complets officiels** : 270 (4→5) + 310 (5→6) + 13 (6→7) icônes
 - ✅ **Détection automatique** de la version source dans votre code
@@ -167,6 +168,32 @@ php artisan fontawesome:migrate
 php artisan fontawesome:migrate --no-interactive
 ```
 
+### ⚡ Migration progressive automatique (NOUVEAU v2.0)
+
+**Par défaut**, le système détecte toutes les versions présentes et exécute automatiquement la séquence complète :
+
+```bash
+# Exemple : vous avez FA4 + FA5, vous voulez FA6
+php artisan fontawesome:migrate --from=5 --to=6
+
+# ✨ Résultat automatique :
+# 1. Détection : FA4 présent → Migration progressive activée
+# 2. Étape 1/2 : FA4 → FA5 (30 icônes migrées)
+# 3. Étape 2/2 : FA5 → FA6 (55 icônes migrées)  
+# 4. Total : 85 modifications en un seul clic !
+```
+
+**Avantages** :
+- 🎯 **Un seul clic** migre tout (ex: 4→5→6 automatiquement)
+- 🔍 **Détection intelligente** des versions mixtes
+- 📊 **Statistiques cumulées** pour toutes les étapes
+- ✅ **Garantit la cohérence** (pas de versions sautées)
+
+```bash
+# Désactiver la migration progressive (mode manuel)
+php artisan fontawesome:migrate --from=5 --to=6 --no-progressive
+```
+
 ### 🎯 Migrations spécifiques par version
 
 ```bash
@@ -202,6 +229,12 @@ php artisan fontawesome:migrate --icons-only
 
 # Migration assets uniquement (CSS, JS, CDN)
 php artisan fontawesome:migrate --assets-only
+
+# Mode non-interactif (sans confirmations)
+php artisan fontawesome:migrate --no-interactive
+
+# Désactiver la migration progressive automatique
+php artisan fontawesome:migrate --no-progressive
 ```
 
 ### 🔧 Gestion avancée de la configuration

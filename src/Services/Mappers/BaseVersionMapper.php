@@ -112,10 +112,18 @@ abstract class BaseVersionMapper implements VersionMapperInterface
     {
         $this->loadMappings();
 
-        $newName = $this->iconMappings[$iconName] ?? $iconName;
+        // Supprimer le préfixe fa- pour chercher dans les mappings
+        $iconKey = str_starts_with($iconName, 'fa-') ? substr($iconName, 3) : $iconName;
+
+        // Chercher le mapping
+        $mappedName = $this->iconMappings[$iconKey] ?? null;
+
+        // Si un mapping existe, ajouter le préfixe fa-
+        $newName = $mappedName !== null ? 'fa-'.$mappedName : $iconName;
+
         $isRenamed = $newName !== $iconName;
-        $isDeprecated = isset($this->deprecatedIcons[$iconName]);
-        $isProOnly = isset($this->proOnlyIcons[$iconName]);
+        $isDeprecated = isset($this->deprecatedIcons[$iconKey]);
+        $isProOnly = isset($this->proOnlyIcons[$iconKey]);
 
         $warnings = [];
 
