@@ -272,6 +272,30 @@ php artisan fontawesome:migrate --path=resources/views
 php artisan fontawesome:migrate --verbose
 ```
 
+### 🤝 Travail collaboratif (NOUVEAU v2.1.0)
+
+Les migrations sont maintenant **versionnables** pour faciliter la collaboration :
+
+**Workflow d'équipe :**
+1. **Développeur A** lance une migration réelle
+2. Les fichiers sont automatiquement organisés :
+   - `metadata.json` : Toujours versionné (détails complets de la migration)
+   - Backups : Versionnés en mode réel (traçabilité et rollback possible)
+3. **Développeur B** peut alors :
+   - Consulter exactement ce qui a été migré
+   - Accéder aux backups pour comparer ou restaurer
+   - Poursuivre la migration depuis l'état actuel
+
+**Gestion intelligente du `.gitignore` :**
+- **Mode dry-run** : Seul `metadata.json` est versionné (backups ignorés)
+- **Mode réel** : `metadata.json` + backups versionnés pour traçabilité complète
+
+**Avantages :**
+- ✅ **Traçabilité** : Historique complet des migrations dans Git
+- ✅ **Réversibilité** : Rollback possible même par un autre développeur
+- ✅ **Revue de code** : Les migrations apparaissent dans les Pull Requests
+- ✅ **Synchronisation** : L'équipe entière voit l'avancement
+
 ### Options disponibles
 
 | Option | Description |

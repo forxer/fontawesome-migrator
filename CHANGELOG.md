@@ -22,6 +22,13 @@ CHANGELOG
 - Tous chemins relatifs à l'application (file, backup_path)
 - Suppression données inutiles (original_file, relative_path, content)
 
+### Travail collaboratif
+
+- **Gestion intelligente des fichiers versionnés** : metadata.json toujours, backups selon le mode
+- **Mode dry-run** : Seuls metadata.json et .gitignore versionnés
+- **Mode réel** : metadata.json, .gitignore et backups versionnés pour traçabilité
+- **Workflow d'équipe** : Partage des migrations via Git pour synchronisation développeurs
+
 ### Interface utilisateur corrigée
 
 - **Effets visuels avancés** : Système de bulles animées réalistes avec effet 3D

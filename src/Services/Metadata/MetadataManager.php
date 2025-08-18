@@ -238,8 +238,11 @@ class MetadataManager implements MetadataManagerInterface
             // Déterminer le répertoire de migration pour les métadonnées
             $migrationDir = $this->getMigrationDirectory();
 
-            // S'assurer que le répertoire de migration existe avec .gitignore
-            DirectoryHelper::ensureExistsWithGitignore($migrationDir);
+            // Déterminer si on est en mode dry-run depuis les options
+            $isDryRun = $this->metadata['command_options']['dry_run'] ?? false;
+
+            // S'assurer que le répertoire de migration existe avec .gitignore adapté
+            DirectoryHelper::ensureExistsWithGitignore($migrationDir, $isDryRun);
 
             $filePath = $migrationDir.'/metadata.json';
         }

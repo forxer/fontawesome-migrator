@@ -121,6 +121,13 @@
 - [x] **Architecture cohérente**: file_results toujours à la racine
 - [x] **Test complet validé**: 1195 icônes migrées automatiquement en une commande (fa-cog→fa-gear, fa-home→fa-house, etc.)
 
+### Phase 16: Travail collaboratif v2.1.0 ✅
+- [x] **Gestion intelligente .gitignore**: DirectoryHelper avec logique adaptative selon mode
+- [x] **metadata.json toujours versionné**: Jamais ignoré par Git pour traçabilité
+- [x] **Backups conditionnels**: Ignorés en dry-run, versionnés en mode réel
+- [x] **Workflow d'équipe**: Partage des migrations via Git entre développeurs
+- [x] **Documentation enrichie**: README et CHANGELOG mis à jour avec nouvelle fonctionnalité
+
 ### Phase 8: Refactorisation architecturale services v2.0 ✅
 - [x] **Services centralisés**: FontAwesomePatternService et AssetReplacementService créés
 - [x] **Injection de dépendances pure**: Container Laravel utilisé partout, 0 instanciation manuelle
