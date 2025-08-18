@@ -57,7 +57,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Refactoring Guidelines
 
 **♻️ Before Refactoring**:
-- **Document the current architecture** - Create or update ARCHITECTURE.md
+- **Document the current architecture** - Update relevant documentation
 - **Identify all usages** - Check where each class/method is used before modifying
 - **Verify service registration** - Ensure all services are properly registered (ServiceProvider, DI container, etc.)
 - **Check for duplications** - Look for similar logic that could be consolidated

@@ -4,7 +4,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Testing Guide
 
-**Important** : Pour tester les migrations FontAwesome, utiliser le fichier `/resources/views/test-all-cases.blade.php` qui contient tous les cas de figure possibles. Consulter `/docs/TESTING-GUIDE.md` pour la procédure complète de test et validation.
 
 ## Architecture Overview v2.0
 

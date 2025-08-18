@@ -39,7 +39,7 @@
 - ✅ **Validation dynamique** : Vérification des migrations supportées en temps réel
 - ✅ **Aperçu de compatibilité** : Breaking changes et recommandations par migration
 - ✅ **Interface web complète** : Dashboard, rapports, migrations avec navigation moderne
-- ✅ **Documentation complète** : Guide multi-versions, API reference, Quick reference
+- ✅ **Documentation centralisée** : Documentation simplifiée et intégrée
 - ✅ **Architecture JSON** : Configuration externalisée avec ConfigurationLoader et fallbacks
 - ✅ **Mode dry-run** : Prévisualisation des changements avant application
 - ✅ **Rapports détaillés** : HTML interactifs et JSON avec métadonnées complètes
@@ -286,13 +286,9 @@ php artisan fontawesome:migrate --verbose
 | `--no-backup` | Désactive les sauvegardes |
 | `--verbose` | Mode verbeux avec détails |
 
-## 📖 Documentation complète
+## 📖 Documentation
 
-### 🎯 Guides détaillés
-
-- **[Guide Migration Multi-Versions](docs/migration-multi-versions-guide.md)** - Guide complet pour migrer entre FA4 → FA5 → FA6 → FA7
-- **[Référence Rapide](docs/quick-reference.md)** - Commandes essentielles et exemples
-- **[API Reference](docs/api-reference.md)** - Documentation programmatique pour développeurs
+Toute la documentation est intégrée dans ce README pour simplifier la maintenance.
 
 ### 🚀 Architecture Multi-Versions (v2.0)
 
@@ -881,7 +877,7 @@ Les contributions sont les bienvenues ! Veuillez :
 - ✅ **Architecture multi-versions** : MigrationVersionManager + mappers FA4→5→6→7
 - ✅ **Configuration JSON** : ConfigurationLoader avec mappings externalisés et cache
 - ✅ **Interface web avancée** : Configurateur multi-versions interactif `/tests`
-- ✅ **Documentation complète** : Guide multi-versions, API reference, Quick reference
+- ✅ **Documentation centralisée** : Documentation simplifiée et intégrée
 - ✅ **Injection de dépendances modernisée** dans les commandes Laravel
 - ✅ **Système de métadonnées centralisé** avec gestion des migrations
 - ✅ **Interface web reorganisée** avec contrôleurs spécialisés

@@ -33,8 +33,7 @@
 ### Phase 4: Documentation ✅
 - [x] README.md complet avec exemples
 - [x] CLAUDE.md pour développeurs IA
-- [x] DOCKER.md pour environnement spécifique
-- [x] Configuration et troubleshooting documentés
+- [x] Documentation simplifiée et centralisée
 
 ### Phase 5: Stabilisation v1.x ✅
 - [x] Corrections de bugs et optimisations
@@ -93,7 +92,7 @@
 - [x] **Architecture modulaire**: Séparation CSS/JS dans partials réutilisables
 - [x] **Interface web avancée**: Configurateur multi-versions interactif `/tests`
 - [x] **Commandes étendues**: Options --from et --to pour migrations spécifiques
-- [x] **Documentation complète**: Guide multi-versions, API reference, quick reference
+- [x] **Documentation centralisée**: Documentation simplifiée dans README
 - [x] **Traçabilité complète**: Origine CLI/Web, métadonnées enrichies
 
 ### Phase 13: Nettoyage JavaScript & Optimisations v2.0.1 ✅
@@ -238,7 +237,7 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 - **ConfigurationLoader**: Chargement JSON avec cache et fallbacks
 - **Mappers spécialisés**: Un mapper par migration (4→5, 5→6, 6→7)
 - **Interface web moderne**: Dashboard, tests, rapports, migrations
-- **Documentation complète**: Guides utilisateur et API reference
+- **Documentation centralisée**: Documentation simplifiée dans README
 
 ### Nettoyage Architectural Août 2025 ✅
 - **Code mort supprimé**: BackupCommand complet, méthodes obsolètes, imports inutilisés (~350+ lignes)
@@ -261,7 +260,7 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 ## 📋 Roadmap Future - Contenu TODO.md
 
 ### Version 2.0 ✅
-- [x] **Tests v2.0**: Utiliser PLAN_TESTS_V2.md pour référence
+- [x] **Tests v2.0**: Architecture de tests définie
 - [x] **Historique testé**: Fonctionnalités principales validées
 - [x] **Release finalisée**: Version 2.0.0 production-ready (Août 2025)
 
