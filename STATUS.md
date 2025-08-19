@@ -219,7 +219,7 @@
 
 ## 🎯 Recommandations
 
-Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-versions est maintenant **fonctionnellement complet**.
+Le package `fontawesome-migrator` **version 2.1.0** avec migration progressive et travail collaboratif est maintenant **fonctionnellement complet**.
 
 ### Usage recommandé:
 1. **Migration automatique**: Laissez le système détecter votre version
@@ -227,11 +227,13 @@ Le package `fontawesome-migrator` **version 2.0.0** avec architecture multi-vers
 3. **Mode dry-run**: Toujours prévisualiser avant d'appliquer
 4. **Documentation**: Consultez le guide multi-versions dans `/docs`
 
-### Points forts v2.0.0:
-- ✅ **Multi-versions**: Support complet FA4→5→6→7
+### Points forts v2.1.0:
+- ✅ **Migration progressive**: Séquence automatique 4→5→6→7 en une commande
+- ✅ **Multi-versions**: Support complet avec 593 mappings officiels
+- ✅ **Travail collaboratif**: Versionnement intelligent pour équipes
 - ✅ **Configuration JSON**: Mappings externalisés et personnalisables
 - ✅ **Interface moderne**: Bootstrap 5 avec configurateur interactif
-- ✅ **Documentation complète**: Guides détaillés et API reference
+- ✅ **Documentation complète**: Guides détaillés et workflow d'équipe
 
 ---
 

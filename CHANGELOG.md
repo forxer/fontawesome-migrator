@@ -1,33 +1,35 @@
 CHANGELOG
 =========
 
-2.1.0 (2025-08-18)
+2.1.0 (2025-08-19)
 ------------------
 
-### Mappings FontAwesome complétés
+### Migration progressive automatique complète
 
-- **593 mappings officiels** : 270 (4→5) + 310 (5→6) + 13 (6→7)
-- **Structure unifiée** entre toutes les versions avec métadonnées
+- **Séquence 4→5→6→7 automatique** : Détection intelligente et migration en cascade
+- **593 mappings officiels** : 270 (FA4→5) + 310 (FA5→6) + 13 (FA6→7)
+- **Fix critique BaseVersionMapper** : Gestion automatique des structures de mappings différentes
+  - FA4→5 : Clés sans préfixe (`"cog": "gear"`)
+  - FA5→6/6→7 : Clés avec préfixe (`"fa-cog": "fa-gear"`)
+- **Option `--no-progressive`** : Pour désactiver la migration progressive
+- **Test validé** : 1195 icônes migrées automatiquement en production
 
-### Migration progressive automatique
+### Travail collaboratif et versionnement intelligent
 
-- **Migration automatique 4→5→6→7** en une commande/un clic (avec `--no-progressive` pour désactiver)
-- **Détection intelligente** des versions présentes dans le projet
-- **Interface web** mise à jour avec checkbox progressive
-- **Architecture robuste** : BaseVersionMapper corrigé pour gérer toutes les structures de mappings
+- **DirectoryHelper amélioré** : Génération adaptative du `.gitignore` selon le contexte
+- **Règles de versionnement** :
+  - `metadata.json` : TOUJOURS versionné (jamais dans .gitignore)
+  - `.gitignore` : TOUJOURS versionné
+  - Backups : Ignorés en dry-run, versionnés en mode réel
+- **MetadataManager** : Détection automatique du mode dry-run pour adaptation
+- **Workflow d'équipe** : Les migrations peuvent être partagées via Git entre développeurs
 
-### Optimisation métadonnées
+### Optimisations techniques
 
-- Structure metadata.json allégée (suppression champs redondants)
-- Tous chemins relatifs à l'application (file, backup_path)
-- Suppression données inutiles (original_file, relative_path, content)
-
-### Travail collaboratif
-
-- **Gestion intelligente des fichiers versionnés** : metadata.json toujours, backups selon le mode
-- **Mode dry-run** : Seuls metadata.json et .gitignore versionnés
-- **Mode réel** : metadata.json, .gitignore et backups versionnés pour traçabilité
-- **Workflow d'équipe** : Partage des migrations via Git pour synchronisation développeurs
+- **Structure metadata.json allégée** : Suppression champs redondants
+- **Chemins relatifs** : Tous les chemins (file, backup_path) relatifs à l'application
+- **Interface web** : Checkbox progressive dans `/fontawesome-migrator/tests`
+- **Documentation enrichie** : README avec section travail collaboratif
 
 ### Interface utilisateur corrigée
 
