@@ -26,11 +26,11 @@
         "symfony/finder": "^7.0"
     },
     "require-dev": {
-        "driftingly/rector-laravel": "^2.0.6",
+        "driftingly/rector-laravel": "^2.0.7",
         "laravel/pint": "^1.24.0",
         "orchestra/testbench": "^10.4",
-        "phpunit/phpunit": "^11.5.33",
-        "rector/rector": "^2.1.4"
+        "phpunit/phpunit": "^11.5.36",
+        "rector/rector": "^2.1.6"
     },
     "autoload": {
         "psr-4": {

@@ -26,11 +26,11 @@ class DirectoryHelper
         $gitignorePath = $directory.'/.gitignore';
 
         $content = "# FontAwesome Migrator\n\n";
-        
+
         // Ces fichiers sont toujours versionnés (exclus du gitignore)
         $content .= "!.gitignore\n";
         $content .= "!metadata.json\n\n";
-        
+
         if ($isDryRun) {
             // En dry-run : ignorer les backups (pas de vraie migration)
             $content .= "# Mode dry-run : les backups sont ignorés\n";
