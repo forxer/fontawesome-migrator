@@ -7,6 +7,7 @@ namespace FontAwesome\Migrator\Http\Controllers;
 use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Configuration\PackageVersionService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
@@ -18,7 +19,7 @@ class HomeController extends Controller
     /**
      * Afficher la page d'accueil
      */
-    public function index(MetadataManagerInterface $metadataManager, PackageVersionService $packageVersionService)
+    public function index(MetadataManagerInterface $metadataManager, PackageVersionService $packageVersionService): View
     {
         // Récupérer les statistiques globales depuis les métadonnées de migrations
         $migrations = $metadataManager->getAvailableMigrations();

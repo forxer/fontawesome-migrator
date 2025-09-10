@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Http\Controllers\Cleanup;
 
 use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
+use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Config;
 
@@ -14,7 +15,7 @@ class IndexController extends Controller
     /**
      * Interface de nettoyage centralisée
      */
-    public function __invoke(MetadataManagerInterface $metadataManager)
+    public function __invoke(MetadataManagerInterface $metadataManager): View
     {
         // Récupérer les statistiques pour l'affichage
         $migrations = collect($metadataManager->getAvailableMigrations());

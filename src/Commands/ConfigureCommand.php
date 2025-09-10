@@ -334,7 +334,7 @@ class ConfigureCommand extends Command
 
         $pathsToRemove = multiselect(
             'Chemins à supprimer',
-            collect($currentPaths)->mapWithKeys(fn ($path) => [$path => $path])->toArray()
+            collect($currentPaths)->mapWithKeys(fn ($path): array => [$path => $path])->toArray()
         );
 
         if ($pathsToRemove !== []) {
@@ -506,7 +506,7 @@ class ConfigureCommand extends Command
 
         $extensionsToRemove = multiselect(
             'Extensions à supprimer',
-            collect($currentExtensions)->mapWithKeys(fn ($ext) => [$ext => '.'.$ext])->toArray()
+            collect($currentExtensions)->mapWithKeys(fn ($ext): array => [$ext => '.'.$ext])->toArray()
         );
 
         if ($extensionsToRemove !== []) {
@@ -633,7 +633,7 @@ class ConfigureCommand extends Command
 
         $patternsToRemove = multiselect(
             'Patterns à supprimer',
-            collect($currentPatterns)->mapWithKeys(fn ($pattern) => [$pattern => $pattern])->toArray()
+            collect($currentPatterns)->mapWithKeys(fn ($pattern): array => [$pattern => $pattern])->toArray()
         );
 
         if ($patternsToRemove !== []) {

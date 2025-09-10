@@ -6,6 +6,7 @@ namespace FontAwesome\Migrator\Http\Controllers\Migrations;
 
 use Carbon\Carbon;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
+use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
@@ -14,7 +15,7 @@ class IndexController extends Controller
     /**
      * Afficher la liste des migrations
      */
-    public function __invoke(MetadataManagerInterface $metadataManager)
+    public function __invoke(MetadataManagerInterface $metadataManager): View
     {
         // Récupérer les migrations qui contiennent des rapports
         $migrations = $metadataManager->getAvailableMigrations();

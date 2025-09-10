@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace FontAwesome\Migrator\Http\Controllers\Tests;
 
+use Carbon\CarbonInterface;
 use FontAwesome\Migrator\Contracts\ConfigurationInterface;
 use FontAwesome\Migrator\Contracts\MetadataManagerInterface;
 use FontAwesome\Migrator\Services\Core\MigrationVersionManager;
+use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
@@ -19,7 +21,7 @@ class IndexController extends Controller
     /**
      * Afficher la page d'index des tests
      */
-    public function __invoke(MetadataManagerInterface $metadataManager, ConfigurationInterface $config)
+    public function __invoke(MetadataManagerInterface $metadataManager, ConfigurationInterface $config): View
     {
         $migrations = $metadataManager->getAvailableMigrations();
         $backupStats = $this->getBackupStats($config);
@@ -87,7 +89,7 @@ class IndexController extends Controller
                 // Déterminer la dernière migration (comme objet Carbon)
                 $directoryTime = filemtime($directory);
 
-                if ($lastMigration === null || $directoryTime > $lastMigration->timestamp) {
+                if (! $lastMigration instanceof CarbonInterface || $directoryTime > $lastMigration->timestamp) {
                     $lastMigration = now()->createFromTimestamp($directoryTime);
                 }
             }

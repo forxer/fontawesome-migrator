@@ -36,7 +36,7 @@ class CommandDisplayService
 
         foreach ($migrationOptions as $key => $value) {
             $displayValue = \is_bool($value) ? ($value ? '✅ true' : '❌ false') : ($value ?? '⚪ null');
-            $commandOptions[] = [str_replace('_', ' ', ucfirst($key)), $displayValue];
+            $commandOptions[] = [str_replace('_', ' ', ucfirst((string) $key)), $displayValue];
         }
 
         table(

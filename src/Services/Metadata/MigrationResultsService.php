@@ -126,6 +126,8 @@ class MigrationResultsService
 
     /**
      * Valider les résultats
+     *
+     * @return string[]
      */
     public function validateResults(): array
     {

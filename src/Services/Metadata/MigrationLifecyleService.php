@@ -188,6 +188,8 @@ class MigrationLifecyleService
 
     /**
      * Valider les données de migration
+     *
+     * @return string[]
      */
     public function validateMigration(): array
     {

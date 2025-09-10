@@ -112,7 +112,7 @@ abstract class BaseVersionMapper implements VersionMapperInterface
     {
         // Détecter la structure des mappings selon les clés existantes
         $sampleKeys = array_keys(\array_slice($this->iconMappings, 0, 3, true));
-        $hasPrefix = $sampleKeys !== [] && str_starts_with($sampleKeys[0], 'fa-');
+        $hasPrefix = $sampleKeys !== [] && str_starts_with((string) $sampleKeys[0], 'fa-');
 
         if ($hasPrefix) {
             // Structure FA5→6 : clés avec préfixe "fa-"

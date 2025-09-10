@@ -153,7 +153,7 @@ class AssetReplacementService
     {
         foreach ($replacements as $search => $replace) {
             // Vérifier si c'est un pattern regex (commence par /)
-            if (str_starts_with($search, '/') && str_ends_with($search, '/')) {
+            if (str_starts_with((string) $search, '/') && str_ends_with((string) $search, '/')) {
                 // Remplacer {target_version} par la version cible configurée
                 $processedReplace = str_replace('{target_version}', $this->getTargetVersion(), $replace);
                 $content = preg_replace($search, $processedReplace, (string) $content);

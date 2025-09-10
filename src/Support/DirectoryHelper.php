@@ -36,8 +36,8 @@ class DirectoryHelper
             $content .= "# Mode dry-run : les backups sont ignorés\n";
             $content .= "backup-*\n";
         }
-        // En mode réel : les backups sont versionnés pour traçabilité
 
+        // En mode réel : les backups sont versionnés pour traçabilité
         File::put($gitignorePath, $content);
     }
 
